@@ -191,12 +191,12 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">三、能放量 + 次留好的素材</h2>
-    <p class="lx-note"><b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b> 且次留好；<b>潜力</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：成片 = 唯西表里的成片，原片 = 博主原帖，预览 = 巨量素材视频。</p>
+    <p class="lx-note"><b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：成片 = 唯西表里的成片，原片 = 博主原帖，预览 = 巨量素材视频。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
-            <th>分组</th>
+            <th>标签</th>
             <th>素材</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
@@ -215,12 +215,12 @@
 
   <section class="lx-sec" id="bad">
     <h2 class="lx-h2">四、拖后腿的素材</h2>
-    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>留存好但贵</b> = 次留率够、成本太高。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
+    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留好但贵</b> = 次留率够、次留成本太高。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
-            <th>分组</th>
+            <th>标签</th>
             <th>素材</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
@@ -357,7 +357,7 @@
     }
   });
 
-  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid'};
+  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '次留好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid'};
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -376,7 +376,7 @@
     }
   });
 
-  const groupCls = {'能放量': 'g-scale', '潜力': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid'};
+  const groupCls = statusCls;
   const matTable = (name, groups, flag) => fill(name, (tb) => {
     const rows = data('mat').filter((v) => groups.includes(v.group)); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -397,8 +397,8 @@
       tb.appendChild(tr);
     }
   });
-  matTable('goodrows', ['能放量', '潜力'], (r) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
-  matTable('badrows', ['拖后腿', '留存好但贵'], (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+  matTable('goodrows', ['能放量 + 次留好', '次留好、量还小'], (r) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
+  matTable('badrows', ['拖后腿', '次留好但贵'], (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
 
   fill('cohortrows', (tb) => {
     const rows = data('cohort'); const max = d3.max(rows, (r) => r.cost27) || 1;

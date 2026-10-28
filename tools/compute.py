@@ -124,7 +124,7 @@ def main():
         if rate >= o['rate_w'] and cpr is not None and cpr <= o['cpr_w']:
             return big if cost > th['scale'] else small
         if rate >= o['rate_w'] and pricey:
-            return '留存好但贵'
+            return '次留好但贵'
         if rate < th['low'] * o['rate_w'] or pricey:
             return '拖后腿'
         return '一般'
@@ -148,7 +148,7 @@ def main():
     by_id = defaultdict(list)
     for r in R:
         by_id[r['id']].append(r)
-    order = ['能放量', '潜力', '留存好但贵', '拖后腿', '一般']
+    order = ['能放量 + 次留好', '次留好、量还小', '次留好但贵', '拖后腿', '一般']
     mat = []
     for i, rs in by_id.items():
         c, a_, rt = win(rs)
@@ -156,7 +156,7 @@ def main():
             continue
         rate = rt / a_
         cpr = c / rt if rt else None
-        g = label(rate, cpr, c, '能放量', '潜力')
+        g = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小')
         f = first.get(i, '')
         uc = rs[0]['uc']
         lk = links.get(i, {})
@@ -164,8 +164,8 @@ def main():
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
                     'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'link': lk.get('link', ''), 'link_type': lk.get('type', '')})
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
-    good = [m for m in mat if m['group'] in ('能放量', '潜力')]
-    gs = {'n_scale': sum(m['group'] == '能放量' for m in mat), 'n_pot': sum(m['group'] == '潜力' for m in mat),
+    good = [m for m in mat if m['group'] in ('能放量 + 次留好', '次留好、量还小')]
+    gs = {'n_scale': sum(m['group'] == '能放量 + 次留好' for m in mat), 'n_pot': sum(m['group'] == '次留好、量还小' for m in mat),
           'n_drop': sum(m['cost27'] < th['drop'] for m in good)}
 
     # use case
