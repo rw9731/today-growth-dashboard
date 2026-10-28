@@ -30,7 +30,7 @@
   .lx-sec + .lx-sec { margin-top: 12px; }
   .lx-head { display: grid; gap: 6px; }
   .lx-topline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--gap-sm) var(--gap-lg); }
-  .lx-topline { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .lx-topline { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
   .lx-title { font-family: var(--font-serif); font-weight: 600; font-size: 32px; line-height: 1.2; letter-spacing: .01em; margin: 0; }
   .lx-title .d { color: var(--bar); }
   .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
@@ -55,7 +55,7 @@
   .lx-big { font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.25; font-variant-numeric: tabular-nums; }
   .lx-cmp { font-size: var(--fs-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
   .lx-sec { display: grid; gap: var(--gap-sm); }
-  .lx-h2 { font-size: 16px; font-weight: var(--fw-medium); margin: 0; }
+  .lx-h2 { font-size: 20px; font-weight: 700; line-height: 1.25; margin: 0; padding-left: 10px; border-left: 4px solid var(--bar); }
   .lx-note { color: var(--color-fg-muted); font-size: 12px; margin: 0; line-height: 1.5; }
   .lx-note b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
   /* Wide screens: no inner scroll box, headers stick to the top of the window.
@@ -109,7 +109,7 @@
     </nav>
     </div>
     <p class="lx-take" data-draw="take"></p>
-    <p class="lx-sub">口径：巨量「投放数据_分日」，按新一级分类。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全，单天样本太小）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
