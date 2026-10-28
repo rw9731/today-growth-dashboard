@@ -162,7 +162,7 @@ def main():
         mat.append({'id': i, 'group': g, 'name': names.get(i, i), 'first': f, 'is_new': f >= th['week'], 'l1': rs[0]['l1'],
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
                     'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'link': lk.get('link', ''), 'link_type': lk.get('type', '')})
-    mat.sort(key=lambda x: (order.index(x['group']), -x['cost27']))
+    mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量', '潜力')]
     gs = {'n_scale': sum(m['group'] == '能放量' for m in mat), 'n_pot': sum(m['group'] == '潜力' for m in mat),
           'n_drop': sum(m['cost27'] < th['drop'] for m in good)}
