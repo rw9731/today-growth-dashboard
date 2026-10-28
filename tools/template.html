@@ -53,7 +53,7 @@
   .lx-kpis .lx-card { padding: 10px 14px; gap: 2px; }
   .lx-label { color: var(--color-fg-muted); font-size: var(--fs-caption); }
   .lx-big { font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.25; font-variant-numeric: tabular-nums; }
-  .lx-cmp { font-size: var(--fs-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .lx-cmp { font-size: 12px; color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
   .lx-sec { display: grid; gap: var(--gap-sm); }
   .lx-h2 { font-size: 20px; font-weight: 700; line-height: 1.25; margin: 0; padding-left: 10px; border-left: 4px solid var(--bar); }
   .lx-note { color: var(--color-fg-muted); font-size: 12px; margin: 0; line-height: 1.5; }
@@ -121,15 +121,20 @@
     <div class="lx-card">
       <span class="lx-label">昨天激活（{{D}}）</span>
       <span class="lx-big" data-draw="k-act">—</span>
-      <span class="lx-cmp">激活成本 <span data-draw="k-cpa">—</span>（{{D1}} <span data-draw="k-cpa26">—</span>）· 在跑素材 <span data-draw="k-n27">—</span> 条</span>
+      <span class="lx-cmp">{{D1}} <span data-draw="k-act26">—</span> · 在跑素材 <span data-draw="k-n27">—</span> 条</span>
     </div>
     <div class="lx-card">
-      <span class="lx-label">全盘次留率（{{D1}} 激活 → {{D}} 回来）</span>
+      <span class="lx-label">激活成本（{{D}}）</span>
+      <span class="lx-big" data-draw="k-cpa">—</span>
+      <span class="lx-cmp">{{D1}} <span data-draw="k-cpa26">—</span> · {{D2}} <span data-draw="k-cpa25">—</span></span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘次留率（{{D1}} 激活）</span>
       <span class="lx-big" data-draw="k-rate">—</span>
       <span class="lx-cmp">{{D2}} <span data-draw="k-rate25">—</span> · {{D3}} <span data-draw="k-rate24">—</span> · 三天 <b data-draw="k-ratew">—</b></span>
     </div>
     <div class="lx-card">
-      <span class="lx-label">全盘次留成本（{{D1}}）</span>
+      <span class="lx-label">全盘次留成本（{{D1}} 激活）</span>
       <span class="lx-big" data-draw="k-cpr">—</span>
       <span class="lx-cmp">{{D2}} <span data-draw="k-cpr25">—</span> · 三天 <b data-draw="k-cprw">—</b></span>
     </div>
@@ -319,10 +324,10 @@
   fill('l1-note', (el) => { el.textContent = META.l1_note; });
   tile('k-cost', 'overview', 'cost27', fmtY); tile('k-cost26', 'overview', 'cost26', fmtY); tile('k-ios', 'overview', 'ios27', fmtY);
   tile('k-act', 'overview', 'act27', fmtN); tile('k-act26', 'overview', 'act26', fmtN); tile('k-n27', 'overview', 'n27', fmtN);
-  tile('k-cpa', 'overview', 'cpa27', fmtY); tile('k-cpa26', 'overview', 'cpa26', fmtY);
-  tile('k-rate', 'overview', 'rate26', fmtP); tile('k-rate25', 'overview', 'rate25', fmtP); tile('k-rate24', 'overview', 'rate24', fmtP);
+  tile('k-cpa', 'overview', 'cpa27', fmtY); tile('k-cpa26', 'overview', 'cpa26', fmtY); tile('k-cpa25', 'overview', 'cpa25', fmtY);
+  tile('k-rate', 'overview', 'rate26', fmtP); tile('k-rate25', 'overview', 'rate25', fmtP0); tile('k-rate24', 'overview', 'rate24', fmtP0);
   tile('k-cpr', 'overview', 'cpr26', fmtY); tile('k-cpr25', 'overview', 'cpr25', fmtY);
-  tile('k-ratew', 'overview', 'rate_w', fmtP); tile('k-cprw', 'overview', 'cpr_w', fmtY);
+  tile('k-ratew', 'overview', 'rate_w', fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
   tile('th-scale', 'th', 'scale', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
 

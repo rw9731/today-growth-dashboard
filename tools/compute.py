@@ -112,6 +112,7 @@ def main():
          'rate_w': rw / aw if aw else None, 'cpr_w': cw / rw if rw else None}
     o['cpa27'] = o['cost27'] / o['act27'] if o['act27'] else None
     o['cpa26'] = o['cost26'] / o['act26'] if o['act26'] else None
+    o['cpa25'] = S(R, D[1], 'cost') / S(R, D[1], 'act') if S(R, D[1], 'act') else None
     for i, n in [(0, 'rate24'), (1, 'rate25'), (2, 'rate26')]:
         a_ = S(R, D[i], 'act')
         o[n] = S(R, D[i + 1], 'ret') / a_ if a_ else None
