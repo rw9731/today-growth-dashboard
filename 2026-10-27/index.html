@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>10/27 素材分析</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-anthropic-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-anthropic-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --cds-font-size-caption: 13px; --cds-font-size-body: 15px; --cds-font-size-heading: 18px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
+    --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 14px; --cds-gap-lg: 20px; --cds-gap-xl: 32px;
+    --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-radius: 8px; --cds-dur-slow: .3s;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 28px 16px 48px; }
+  .lx .lx-title { font-weight: 600; }
+  .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
+</style>
+<style>
+  .lx { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); }
+  .lx-head { display: grid; gap: var(--cds-gap-sm); }
+  .lx-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+  .lx-sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0; max-width: 84ch; line-height: 1.6; }
+  .lx .lx-sub b { color: var(--color-fg); font-weight: 600; }
+  .lx-take { font-size: var(--cds-font-size-body); margin: 0; max-width: 76ch; line-height: 1.75; }
+  .lx .lx-take b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .lx-kpis { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+  .lx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; }
+  .lx-label { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .lx-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
+  .lx-cmp { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .lx-sec { display: grid; gap: var(--cds-gap-md); }
+  .lx-h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .lx-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0; max-width: 88ch; line-height: 1.6; }
+  .lx .lx-note b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .lx-scroll { overflow-x: auto; padding: var(--cds-pad-sm) var(--cds-pad-md); }
+  .lx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .lx-table th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .lx-table td { padding: var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+  .lx-table tbody tr:last-child td { border-bottom: 0; }
+  .lx-table .num { text-align: right; white-space: nowrap; }
+  .lx-table .name { min-width: 14rem; max-width: 24rem; word-break: break-all; }
+  .lx-table .uc { white-space: nowrap; font-weight: 600; }
+  .lx-table .short { white-space: nowrap; }
+  .lx-table .muted { color: var(--color-fg-muted); }
+  .lx-table .date { white-space: nowrap; }
+  .lx-table .date.new { font-weight: 600; color: var(--color-ok); }
+  .lx-table tr.is-new td { background: color-mix(in srgb, var(--color-ok) 8%, transparent); }
+  .lx-bar { display: flex; align-items: center; gap: var(--cds-gap-xs); min-width: 9rem; }
+  .lx-bar i { display: block; height: 10px; border-radius: 2px; flex: none; }
+  .lx-good { color: var(--color-ok); font-weight: 600; }
+  .lx-badv { color: var(--color-bad); font-weight: 600; }
+  .lx-warnv { color: var(--color-warn); font-weight: 600; }
+  .lx-pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: var(--cds-font-size-caption); white-space: nowrap; border: 1px solid currentColor; }
+  .g-scale { color: var(--color-ok); }
+  .g-pot { color: var(--color-ok); opacity: .7; }
+  .g-pricey { color: var(--color-warn); }
+  .g-bad { color: var(--color-bad); }
+  .g-mid { color: var(--color-fg-muted); }
+  .lx a { color: inherit; }
+  [data-dash-source-state=empty] { color: transparent; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script type="application/json" id="results">{"th":[{"scale":1000,"min":500,"act":30,"drop":200,"low":0.8,"high":1.25,"week":"2026-10-26"}],"overview":[{"cost27":27495.16,"cost26":51969.16,"act27":2082.0,"act26":2711.0,"ios27":425.19,"n27":280,"rate24":0.2537207654145996,"rate25":0.2375586854460094,"rate26":0.3183327185540391,"cpr25":70.27083003952569,"cpr26":60.21918887601391}],"by_l1":[{"l1":"个人日程与事务助理","n27":81,"n26":57,"cost27":10824.33,"share27":0.39368128790667156,"cost26":10787.32,"rate":0.3105263157894737,"cpr":60.94531073446328,"rate24":0.26475849731663686,"rate25":0.2161520190023753,"rate26":0.3105263157894737},{"l1":"工作沟通与协作","n27":60,"n26":53,"cost27":10094.32,"share27":0.36713079683842537,"cost26":5163.81,"rate":0.31333333333333335,"cpr":54.93414893617022,"rate24":0.2826086956521739,"rate25":0.2268041237113402,"rate26":0.31333333333333335},{"l1":"无 UC（库外）","n27":16,"n26":5,"cost27":1942.1200000000001,"share27":0.07063497721053451,"cost26":160.1,"rate":null,"cpr":null,"rate24":0.273972602739726,"rate25":0.3333333333333333,"rate26":null},{"l1":"购物与生活服务","n27":34,"n26":32,"cost27":1477.97,"share27":0.0537538243094421,"cost26":14418.74,"rate":0.303595206391478,"cpr":63.240087719298245,"rate24":0.22635135135135134,"rate25":0.1935483870967742,"rate26":0.303595206391478},{"l1":"学习与成长","n27":36,"n26":18,"cost27":1313.14,"share27":0.04775895102992673,"cost26":10190.3,"rate":0.34279918864097364,"cpr":60.29763313609467,"rate24":0.1891891891891892,"rate25":0.2857142857142857,"rate26":0.34279918864097364},{"l1":"信息检索与追踪","n27":4,"n26":6,"cost27":949.9899999999999,"share27":0.034551171915348004,"cost26":1542.94,"rate":0.36363636363636365,"cpr":55.105000000000004,"rate24":null,"rate25":null,"rate26":0.36363636363636365},{"l1":"健康与运动","n27":17,"n26":18,"cost27":446.56,"share27":0.016241403941639185,"cost26":4701.34,"rate":0.3118279569892473,"cpr":54.038390804597704,"rate24":0.24193548387096775,"rate25":0.2874251497005988,"rate26":0.3118279569892473},{"l1":"出行与旅行","n27":13,"n26":11,"cost27":180.46,"share27":0.006563336965487744,"cost26":2034.58,"rate":0.4166666666666667,"cpr":58.13085714285714,"rate24":0.2786885245901639,"rate25":null,"rate26":0.4166666666666667},{"l1":"随身记事与个人资料管理","n27":5,"n26":5,"cost27":135.75,"share27":0.004937232589299353,"cost26":625.0699999999999,"rate":0.22857142857142856,"cpr":78.13374999999999,"rate24":null,"rate25":null,"rate26":0.22857142857142856},{"l1":"AI 个人助理综述","n27":6,"n26":6,"cost27":62.32,"share27":0.002266580736391423,"cost26":2280.9,"rate":0.31958762886597936,"cpr":73.57741935483871,"rate24":null,"rate25":null,"rate26":0.31958762886597936},{"l1":"无 UC（客供）","n27":5,"n26":4,"cost27":50.03,"share27":0.0018195929756364393,"cost26":7.08,"rate":null,"cpr":null,"rate24":null,"rate25":null,"rate26":null},{"l1":"财务与投资","n27":3,"n26":6,"cost27":18.17,"share27":0.0006608435811975635,"cost26":56.980000000000004,"rate":null,"cpr":null,"rate24":null,"rate25":null,"rate26":null}],"mat":[{"id":"7698009643868749867","group":"能放量","name":"工作场景-约多人会议：查空档、发邀请，有冲突再协调-W11-ljq-01","first":"2026-10-19","is_new":false,"uc":"WK01","short":"会议前后全管","cost26":1465.71,"rate":0.3717948717948718,"cpr":50.541724137931034,"cost27":2157.35,"link":"","link_type":""},{"id":"7696839493517918251","group":"能放量","name":"learning_today kol_个性化读书与自我提升计划_01-二创-精简1zl","first":"2026-10-16","is_new":false,"uc":"LG01","short":"读书接着读和推书","cost26":1328.2,"rate":0.4647887323943662,"cpr":40.24848484848485,"cost27":25.58,"link":"https://xhslink.cn/o/4MOdCGt3h6I","link_type":"原片"},{"id":"7700867935506530340","group":"能放量","name":"AI个人助理定位-盯着你关心的公司、产品和话题，有新进展就挑出来推给你，附上来源-A18-06-cw-修改版","first":"2026-10-26","is_new":true,"uc":"IN01","short":"盯公司产品和话题","cost26":1262.34,"rate":0.38235294117647056,"cpr":48.551538461538456,"cost27":613.28,"link":"https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDI0MA","link_type":"成片"},{"id":"7699879742367531046","group":"潜力","name":"ai个人助手_today koc_按预算和空档选附近餐食_01_二创_精简1cw_扩量01_换开头_hyq_20261023","first":"2026-10-24","is_new":false,"uc":"SH04","short":"挑吃什么去哪家","cost26":923.53,"rate":0.38,"cpr":48.606842105263155,"cost27":0.89,"link":"https://v.douyin.com/vSS6OmQs6wc/","link_type":"原片"},{"id":"7700252310173253668","group":"潜力","name":"health_today koc_按训练和做饭时间安排一日三餐_01_扩量02_换开头_lzh_20261023-合规修改","first":"2026-10-26","is_new":true,"uc":"HL02","short":"个性化训练和饮食","cost26":893.41,"rate":0.4375,"cpr":42.54333333333333,"cost27":8.47,"link":"https://xhslink.cn/o/16aWxsDqvVV","link_type":"原片"},{"id":"7696850330962165798","group":"潜力","name":"ai个人助手_today koc_每天一张卡看清日程和待办_01_二创_混剪1xyn","first":"2026-10-15","is_new":false,"uc":"PS01","short":"早晚报和重排日程","cost26":866.55,"rate":0.3620689655172414,"cpr":41.26428571428571,"cost27":1026.18,"link":"https://xhslink.cn/o/9vs7EnTeqNA","link_type":"原片"},{"id":"7700088631414882323","group":"潜力","name":"健康场景-拍照记饮食，在容易乱吃的时候提前提醒-H02-02-cw-20261023","first":"2026-10-26","is_new":true,"uc":"HL02","short":"个性化训练和饮食","cost26":792.35,"rate":0.42857142857142855,"cpr":37.73095238095238,"cost27":67.72,"link":"https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDI1MQ","link_type":"成片"},{"id":"7699879306261430281","group":"潜力","name":"Money_today koc_查出忘记的自动扣费_01_扩量01_二创_精剪_zx01_20261023","first":"2026-10-24","is_new":false,"uc":"SH01","short":"记账和查自动扣费","cost26":753.28,"rate":0.47058823529411764,"cpr":47.08,"cost27":17.64,"link":"https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=6AHEfW&range=RTcx","link_type":"原片"},{"id":"7699879294869225510","group":"潜力","name":"Money_today koc_整理电子发票和差旅报销_02_扩量01_二创新剪_fjh_20261023","first":"2026-10-24","is_new":false,"uc":"WK05","short":"发票报销和采购比价","cost26":655.53,"rate":0.37142857142857144,"cpr":50.425384615384615,"cost27":21.689999999999998,"link":"https://xhslink.cn/o/46Yjtttp3DE","link_type":"原片"},{"id":"7697203505217011739","group":"潜力","name":"home&family_today koc_给孩子的具体问题定下一步_02_二创_精剪2cw","first":"2026-10-17","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":653.87,"rate":0.3333333333333333,"cpr":50.29769230769231,"cost27":89.94,"link":"https://xhslink.cn/o/9WmQsYhdFMn","link_type":"原片"},{"id":"7697204237188923430","group":"潜力","name":"home&family_today koc_给孩子的具体问题定下一步_02_二创_精剪1cw","first":"2026-10-17","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":649.73,"rate":0.3783783783783784,"cpr":46.409285714285716,"cost27":56.0,"link":"https://xhslink.cn/o/9WmQsYhdFMn","link_type":"原片"},{"id":"7699499682405810186","group":"潜力","name":"上班族家庭育儿-把班级群和学校通知变成清单和提醒，该填的报名表填好-F02-02-zl-20261022","first":"2026-10-22","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":596.07,"rate":0.36585365853658536,"cpr":39.73800000000001,"cost27":151.48,"link":"https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDIyMg","link_type":"成片"},{"id":"7698009394827296806","group":"潜力","name":"工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07","first":"2026-10-19","is_new":false,"uc":"WK01","short":"会议前后全管","cost26":590.73,"rate":0.35135135135135137,"cpr":45.440769230769234,"cost27":1548.55,"link":"","link_type":""},{"id":"7697218442655678473","group":"潜力","name":"work_today kol_整理电子发票和差旅报销_01_二创_精剪1xyn","first":"2026-10-17","is_new":false,"uc":"WK05","short":"发票报销和采购比价","cost26":543.92,"rate":0.358974358974359,"cpr":38.85142857142857,"cost27":187.33,"link":"https://v.douyin.com/WlKHLgD131Q/","link_type":"原片"},{"id":"7699879732644970506","group":"潜力","name":"ai个人助手_today koc_提前协调工作与接娃安排_01_二创_扩量01_换开头_fjh_20261023","first":"2026-10-24","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":500.6,"rate":0.4,"cpr":41.71666666666667,"cost27":639.5,"link":"https://xhslink.cn/o/AZkKxSTTWmM","link_type":"原片"},{"id":"7697219064594235411","group":"留存好但贵","name":"home&family_today koc_给孩子的具体问题定下一步_02_二创_精简1zl","first":"2026-10-17","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":1116.82,"rate":0.4,"cpr":79.77285714285713,"cost27":123.16,"link":"https://xhslink.cn/o/9WmQsYhdFMn","link_type":"原片"},{"id":"7698703529574547482","group":"拖后腿","name":"learning_today koc_个性化读书与自我提升计划_02_二创_精剪1zxc","first":"2026-10-21","is_new":false,"uc":"LG01","short":"读书接着读和推书","cost26":1093.21,"rate":0.23728813559322035,"cpr":78.08642857142857,"cost27":47.010000000000005,"link":"https://xhslink.cn/o/dgEF12iuTo","link_type":"原片"},{"id":"7699493776201990171","group":"拖后腿","name":"健康场景-连上你的健康数据（比如 Apple 健康、健康手环），帮你跟踪身体成分、压力和睡眠，给你个性化的健康建议，帮你管好健康和精力。比如体脂率、HRV、体重的变化帮你看明白，","first":"2026-10-22","is_new":false,"uc":"HL01","short":"健康数据解读","cost26":1028.99,"rate":0.24489795918367346,"cpr":85.74916666666667,"cost27":11.75,"link":"","link_type":""},{"id":"7700090684622127147","group":"拖后腿","name":"AI个人助理定位-你的 AI 个人助理：工作、学习、健康、家庭、理财、出行的大小事都交给它，它替你记着、替你办完，办完一件告诉你一件。比如会后跟进邮件替你发出去，出差的车票","first":"2026-10-24","is_new":false,"uc":"AI00","short":"AI 个人助理综述","cost26":798.09,"rate":0.23076923076923078,"cpr":88.67666666666668,"cost27":24.07,"link":"","link_type":""},{"id":"7699499991044538404","group":"拖后腿","name":"上班族家庭育儿-把班级群和学校通知变成清单和提醒，该填的报名表填好-F02-01-zl-20261022","first":"2026-10-22","is_new":false,"uc":"PS03","short":"接娃撞会和孩子的事","cost26":737.54,"rate":0.25,"cpr":73.75399999999999,"cost27":566.44,"link":"https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDIyMQ","link_type":"成片"}],"goodstats":[{"n_scale":3,"n_pot":12,"n_drop":10}],"uc_tbl":[{"uc":"PS03","status":"能放量 + 次留好","short":"接娃撞会和孩子的事","l1":"个人日程与事务助理","n27":40,"cost26":7109.269999999999,"rate":0.33602150537634407,"cpr":56.87415999999999,"cost27":7422.81,"n_good":4},{"uc":"HL02","status":"能放量 + 次留好","short":"个性化训练和饮食","l1":"健康与运动","n27":13,"cost26":2609.59,"rate":0.38235294117647056,"cpr":40.14753846153847,"cost27":335.69000000000005,"n_good":2},{"uc":"IN01","status":"能放量 + 次留好","short":"盯公司产品和话题","l1":"信息检索与追踪","n27":4,"cost26":1542.9399999999998,"rate":0.36363636363636365,"cpr":55.105,"cost27":949.99,"n_good":1},{"uc":"TR00","status":"能放量 + 次留好","short":"出行助理综述","l1":"出行与旅行","n27":5,"cost26":1136.43,"rate":0.4523809523809524,"cpr":59.812105263157896,"cost27":49.86,"n_good":0},{"uc":"TR02","status":"次留好、量还小","short":"订票和改签","l1":"出行与旅行","n27":3,"cost26":628.83,"rate":0.3548387096774194,"cpr":57.16636363636364,"cost27":68.53,"n_good":0},{"uc":"LG02","status":"次留好、量还小","short":"转行考证学习计划","l1":"学习与成长","n27":8,"cost26":602.0,"rate":0.42105263157894735,"cpr":37.625,"cost27":204.78,"n_good":0},{"uc":"LG01","status":"一般","short":"读书接着读和推书","l1":"学习与成长","n27":28,"cost26":9588.300000000001,"rate":0.3362637362637363,"cpr":62.6686274509804,"cost27":1108.3599999999994,"n_good":1},{"uc":"SH01","status":"一般","short":"记账和查自动扣费","l1":"购物与生活服务","n27":6,"cost26":7590.25,"rate":0.3157894736842105,"cpr":63.25208333333333,"cost27":736.7600000000001,"n_good":1},{"uc":"SH04","status":"一般","short":"挑吃什么去哪家","l1":"购物与生活服务","n27":17,"cost26":4721.67,"rate":0.2988929889298893,"cpr":58.29222222222222,"cost27":458.1400000000001,"n_good":1},{"uc":"WK01","status":"一般","short":"会议前后全管","l1":"工作沟通与协作","n27":18,"cost26":2824.46,"rate":0.31788079470198677,"cpr":58.84291666666667,"cost27":5891.58,"n_good":2},{"uc":"PS01","status":"一般","short":"早晚报和重排日程","l1":"个人日程与事务助理","n27":36,"cost26":2611.860000000001,"rate":0.28846153846153844,"cpr":58.041333333333355,"cost27":3270.7200000000003,"n_good":1},{"uc":"AI00","status":"一般","short":"AI 个人助理综述","l1":"AI 个人助理综述","n27":6,"cost26":2280.9,"rate":0.31958762886597936,"cpr":73.57741935483871,"cost27":62.32,"n_good":0},{"uc":"WK05","status":"一般","short":"发票报销和采购比价","l1":"工作沟通与协作","n27":7,"cost26":1717.9199999999996,"rate":0.3173076923076923,"cpr":52.05818181818181,"cost27":3468.31,"n_good":2},{"uc":"HL01","status":"拖后腿","short":"健康数据解读","l1":"健康与运动","n27":3,"cost26":2091.75,"rate":0.2018348623853211,"cpr":95.07954545454545,"cost27":110.67999999999999,"n_good":0},{"uc":"SH02","status":"拖后腿","short":"大件比价和盯机酒价","l1":"购物与生活服务","n27":6,"cost26":2090.8900000000003,"rate":0.27,"cpr":77.44037037037039,"cost27":281.59000000000003,"n_good":0},{"uc":"A07","status":"拖后腿","short":"旧编号，已下线","l1":"个人日程与事务助理","n27":3,"cost26":1066.1899999999998,"rate":0.16666666666666666,"cpr":152.31285714285713,"cost27":98.65,"n_good":0},{"uc":"NT01","status":"拖后腿","short":"人情往来提醒","l1":"随身记事与个人资料管理","n27":5,"cost26":625.0699999999999,"rate":0.22857142857142856,"cpr":78.13374999999999,"cost27":135.74999999999997,"n_good":0},{"uc":"WK03","status":"激活太少","short":"客户跟进和找客户","l1":"工作沟通与协作","n27":6,"cost26":397.64,"rate":null,"cpr":null,"cost27":69.71000000000001,"n_good":0},{"uc":"TR01","status":"激活太少","short":"攻略变行程","l1":"出行与旅行","n27":5,"cost26":269.32000000000005,"rate":null,"cpr":null,"cost27":62.07,"n_good":0},{"uc":"WK02","status":"激活太少","short":"待办提醒和回邮件","l1":"工作沟通与协作","n27":23,"cost26":223.67,"rate":null,"cpr":null,"cost27":279.6000000000001,"n_good":0},{"uc":"库外","status":"激活太少","short":"不在 UC 库里","l1":"无 UC（库外）","n27":17,"cost26":160.10000000000002,"rate":null,"cpr":null,"cost27":1943.3100000000002,"n_good":0},{"uc":"FN01","status":"激活太少","short":"持仓公告和研究","l1":"财务与投资","n27":3,"cost26":56.980000000000004,"rate":null,"cpr":null,"cost27":18.169999999999998,"n_good":0},{"uc":"SH05","status":"激活太少","short":"盯开票和票价","l1":"购物与生活服务","n27":5,"cost26":15.93,"rate":null,"cpr":null,"cost27":1.48,"n_good":0},{"uc":"客供","status":"激活太少","short":"客供素材","l1":"无 UC（客供）","n27":7,"cost26":7.08,"rate":null,"cpr":null,"cost27":50.48,"n_good":0},{"uc":"WK07","status":"激活太少","short":"求职投递和面试","l1":"工作沟通与协作","n27":4,"cost26":0.09,"rate":null,"cpr":null,"cost27":383.67,"n_good":0},{"uc":"WK04","status":"激活太少","short":"用自己资料写汇报","l1":"工作沟通与协作","n27":0,"cost26":0.03,"rate":null,"cpr":null,"cost27":0,"n_good":0},{"uc":"PS02","status":"激活太少","short":"家庭助理综述","l1":"个人日程与事务助理","n27":2,"cost26":0,"rate":null,"cpr":null,"cost27":32.15,"n_good":0}],"ucstats":[{"n_uc":4}],"cohort":[{"batch":"10/27 上线","n27":53,"cost27":10097.17,"share27":0.36723445144527256,"share26":0.0,"rate":null,"cpr":null},{"batch":"10/26 上线","n27":24,"cost27":1691.56,"share27":0.061522100616981316,"share26":0.245622596170498,"rate":0.3616666666666667,"cpr":58.82396313364055},{"batch":"10/24–10/25 上线","n27":35,"cost27":3564.71,"share27":0.12964863634181434,"share26":0.18053495573143763,"rate":0.3217391304347826,"cpr":63.39358108108108},{"batch":"10/19–10/23 上线","n27":64,"cost27":9340.38,"share27":0.33970997077303783,"share26":0.3588976616131567,"rate":0.2759961127308066,"cpr":65.67468309859156},{"batch":"10/18 及以前","n27":104,"cost27":2801.34,"share27":0.10188484082289392,"share26":0.21494478648490759,"rate":0.3440514469453376,"cpr":52.19859813084112}],"shift":[{"week27":0.4287565520622539,"week26":0.245622596170498,"rate_new":0.3616666666666667,"new_share26":0.245622596170498,"new_share27":0.061522100616981316}]}</script>
+<script>
+  const RESULTS = JSON.parse(document.getElementById('results').textContent);
+  const DRAWS = [];
+  window.dash = {
+    data: (id) => (id in RESULTS ? {status: 'ok', data: RESULTS[id]} : {status: 'missing', data: []}),
+    draw: (name, fn) => DRAWS.push([name, fn]),
+    colors: [getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8']
+  };
+</script>
+<div class="lx">
+  <header class="lx-head">
+    <h1 class="lx-title" id="top">10/27 素材分析</h1>
+    <p class="lx-sub">按新的一级分类，数据来自巨量（「投放数据_分日」）。巨量的次留按回传那天记：10/27 那一行的次留，是 10/26 激活的人第二天回来的。所以本页的次留率、次留成本都是 10/26 激活这组（最新的完整一天），10/27 激活的次留要等 10/28 过完才有。次留成本 = 10/26 消耗 ÷ 10/27 次留人数。<b>能放量</b> = 10/26 单条素材（或单个 use case）消耗超过 <b data-draw="th-scale" data-source="th" data-field="scale" data-row="0">—</b>；<b>次留好</b> = 次留率不低于全盘、次留成本不高于全盘。</p>
+    <p class="lx-take">能放量 + 次留好的 use case 有 <b data-draw="t-nuc" data-source="ucstats" data-field="n_uc" data-row="0">—</b> 个，素材只有 <b data-draw="t-nscale" data-source="goodstats" data-field="n_scale" data-row="0">—</b> 条，另有 <b data-draw="t-npot" data-source="goodstats" data-field="n_pot" data-row="0">—</b> 条次留好但量还小。这些好素材里 <b data-draw="t-gone" data-source="goodstats" data-field="n_drop" data-row="0">—</b> 条昨天花不到 <b data-draw="th-drop" data-source="th" data-field="drop" data-row="0">—</b>，没接上量。本周上线的新素材昨天占消耗的 <b data-draw="t-wk27" data-source="shift" data-field="week27" data-row="0">—</b>（10/26 是 <b data-draw="t-wk26" data-source="shift" data-field="week26" data-row="0">—</b>），但主要是 10/27 刚上的；10/26 上线那批次留率 <b data-draw="t-r26" data-source="shift" data-field="rate_new" data-row="0">—</b>，是最好的一批，消耗占比却从 <b data-draw="t-s26a" data-source="shift" data-field="new_share26" data-row="0">—</b> 掉到 <b data-draw="t-s26b" data-source="shift" data-field="new_share27" data-row="0">—</b>。</p>
+  </header>
+
+  <section class="lx-kpis" aria-label="昨天总览">
+    <div class="lx-card">
+      <span class="lx-label">昨天消耗（10/27）</span>
+      <span class="lx-big" data-draw="k-cost" data-source="overview" data-field="cost27" data-row="0">—</span>
+      <span class="lx-cmp">10/26 <span data-draw="k-cost26" data-source="overview" data-field="cost26" data-row="0">—</span> · iOS 只有 <span data-draw="k-ios" data-source="overview" data-field="ios27" data-row="0">—</span></span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">昨天激活（10/27）</span>
+      <span class="lx-big" data-draw="k-act" data-source="overview" data-field="act27" data-row="0">—</span>
+      <span class="lx-cmp">10/26 <span data-draw="k-act26" data-source="overview" data-field="act26" data-row="0">—</span> · 昨天在跑素材 <span data-draw="k-n27" data-source="overview" data-field="n27" data-row="0">—</span> 条</span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘次留率（10/26 激活 → 10/27 回来）</span>
+      <span class="lx-big" data-draw="k-rate" data-source="overview" data-field="rate26" data-row="0">—</span>
+      <span class="lx-cmp">10/25 激活 <span data-draw="k-rate25" data-source="overview" data-field="rate25" data-row="0">—</span> · 10/24 激活 <span data-draw="k-rate24" data-source="overview" data-field="rate24" data-row="0">—</span></span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘次留成本（10/26）</span>
+      <span class="lx-big" data-draw="k-cpr" data-source="overview" data-field="cpr26" data-row="0">—</span>
+      <span class="lx-cmp">10/25 <span data-draw="k-cpr25" data-source="overview" data-field="cpr25" data-row="0">—</span></span>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="by-l1">
+    <h2 class="lx-h2">一、按一级分类</h2>
+    <p class="lx-note">“在跑素材”是当天有消耗的素材条数，素材少的类目量小不一定是方向不行。掉得最多的是购物、学习、健康。次留率、次留成本：绿色 = 好于全盘，红色 = 明显差于全盘（次留率低于全盘的 <b data-draw="th-low" data-source="th" data-field="low" data-row="0">—</b>，或次留成本超过全盘的 <b data-draw="th-high" data-source="th" data-field="high" data-row="0">—</b>）；10/26 激活不到 <b data-draw="th-act" data-source="th" data-field="act" data-row="0">—</b> 的不算次留率。最后一列是 10/24、10/25、10/26 三天激活的次留率走势，虚线是全盘。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table" data-source="by_l1" data-row-key="l1">
+        <thead>
+          <tr>
+            <th data-field="l1">一级分类</th>
+            <th data-field="n27" class="num">昨天在跑素材</th>
+            <th data-field="n26" class="num">10/26 在跑</th>
+            <th data-field="cost27">昨天消耗</th>
+            <th data-field="share27" class="num">占比</th>
+            <th data-field="cost26" class="num">10/26 消耗</th>
+            <th data-field="rate" class="num">次留率</th>
+            <th data-field="cpr" class="num">次留成本</th>
+            <th data-field="rate26">三天次留率</th>
+          </tr>
+        </thead>
+        <tbody data-draw="l1rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="uc">
+    <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
+    <p class="lx-note">所有 10/26 或昨天有消耗的 use case，能放量 + 次留好的排最前；“次留好、量还小”是次留率和成本都好、但 10/26 消耗没超过 <b data-draw="th-scale2" data-source="th" data-field="scale" data-row="0">—</b>，可以试着加量。“好素材”是这个 use case 下次留好的素材条数（见三）。Use case 列是库里那条的简称。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table" data-source="uc_tbl" data-row-key="uc">
+        <thead>
+          <tr>
+            <th data-field="status">状态</th>
+            <th data-field="uc">UC</th>
+            <th data-field="short">Use case</th>
+            <th data-field="l1">一级分类</th>
+            <th data-field="n27" class="num">昨天在跑素材</th>
+            <th data-field="cost26">10/26 消耗</th>
+            <th data-field="rate" class="num">次留率</th>
+            <th data-field="cpr" class="num">次留成本</th>
+            <th data-field="cost27" class="num">昨天消耗</th>
+            <th data-field="n_good" class="num">好素材</th>
+          </tr>
+        </thead>
+        <tbody data-draw="ucrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="good">
+    <h2 class="lx-h2">三、能放量 + 次留好的素材</h2>
+    <p class="lx-note"><b>能放量</b> = 10/26 单条消耗超过 <b data-draw="th-scale3" data-source="th" data-field="scale" data-row="0">—</b> 且次留好；<b>潜力</b> = 次留好，10/26 消耗在 <b data-draw="th-min" data-source="th" data-field="min" data-row="0">—</b> 到这个数之间。绿底 = 本周（10/26 起）上线的新素材。“昨天消耗”黄色 = 昨天花不到 <b data-draw="th-drop2" data-source="th" data-field="drop" data-row="0">—</b>，该加量。链接：AI 短剧链到唯西表里的成片；KOC 二创链到博主原帖（投的是唯西剪过的版本）。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table" data-source="mat" data-row-key="id">
+        <thead>
+          <tr>
+            <th data-field="group">分组</th>
+            <th data-field="name">素材</th>
+            <th data-field="first">上线日期</th>
+            <th data-field="uc">UC</th>
+            <th data-field="short">Use case</th>
+            <th data-field="cost26">10/26 消耗</th>
+            <th data-field="rate" class="num">次留率</th>
+            <th data-field="cpr" class="num">次留成本</th>
+            <th data-field="cost27" class="num">昨天消耗</th>
+            <th data-field="link_type">链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="goodrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="bad">
+    <h2 class="lx-h2">四、拖后腿的素材</h2>
+    <p class="lx-note">10/26 消耗不低于 <b data-draw="th-min2" data-source="th" data-field="min" data-row="0">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low2" data-source="th" data-field="low" data-row="0">—</b>，或次留成本超过全盘的 <b data-draw="th-high2" data-source="th" data-field="high" data-row="0">—</b>；“留存好但贵”是次留率够、但成本太高的。绿底 = 本周新素材。“昨天消耗”红色 = 昨天还在花钱（不少于 <b data-draw="th-drop3" data-source="th" data-field="drop" data-row="0">—</b>），该降。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table" data-source="mat" data-row-key="id">
+        <thead>
+          <tr>
+            <th data-field="group">分组</th>
+            <th data-field="name">素材</th>
+            <th data-field="first">上线日期</th>
+            <th data-field="uc">UC</th>
+            <th data-field="short">Use case</th>
+            <th data-field="cost26">10/26 消耗</th>
+            <th data-field="rate" class="num">次留率</th>
+            <th data-field="cpr" class="num">次留成本</th>
+            <th data-field="cost27" class="num">昨天消耗</th>
+            <th data-field="link_type">链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="badrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="cohort">
+    <h2 class="lx-h2">五、昨天的钱花在哪批素材上</h2>
+    <p class="lx-note">按素材第一天花钱的日期分批（从 10/11 起的投放数据里找）。对比“昨天占比”和“10/26 占比”，就知道钱有没有往新素材走；次留率、次留成本是这批 10/26 激活的，10/27 上线的明天才有。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table" data-source="cohort" data-row-key="batch">
+        <thead>
+          <tr>
+            <th data-field="batch">批次</th>
+            <th data-field="n27" class="num">昨天在跑素材</th>
+            <th data-field="cost27">昨天消耗</th>
+            <th data-field="share27" class="num">昨天占比</th>
+            <th data-field="share26" class="num">10/26 占比</th>
+            <th data-field="rate" class="num">次留率</th>
+            <th data-field="cpr" class="num">次留成本</th>
+          </tr>
+        </thead>
+        <tbody data-draw="cohortrows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<p class="lx-foot">数据：巨量「投放数据_分日」10/24–10/27，次留按回传日。更新于 2026-10-28。</p>
+</div>
+<script>
+  const fmtY = (v) => (v === null || v === undefined || isNaN(v) ? '—' : '¥' + d3.format(',.0f')(v));
+  const fmtP = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.1%')(v));
+  const fmtP0 = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.0%')(v));
+  const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
+  const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
+  const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
+  const one = (id) => { const d = dash.data(id); return d.status === 'ok' && d.data.length ? d.data[0] : null; };
+  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate26 ? 'num lx-good' : v < t.low * o.rate26 ? 'num lx-badv' : 'num');
+  const cprCls = (v, o, t) => (v === null ? 'num muted' : v <= o.cpr26 ? 'num lx-good' : v > t.high * o.cpr26 ? 'num lx-badv' : 'num');
+  const barCell = (td, v, max, px) => {
+    const wrap = document.createElement('div'); wrap.className = 'lx-bar';
+    const bar = document.createElement('i'); bar.style.width = Math.max(2, (v / max) * px) + 'px'; bar.style.background = dash.colors[0];
+    const lab = document.createElement('span'); lab.textContent = fmtY(v);
+    wrap.append(bar, lab); td.appendChild(wrap);
+  };
+  const cellMaker = (tr) => (cls) => { const c = document.createElement('td'); if (cls) c.className = cls; tr.appendChild(c); return c; };
+  const pill = (td, text, cls) => { const p = document.createElement('span'); p.className = 'lx-pill ' + cls; p.textContent = text; td.appendChild(p); };
+
+  const tile = (name, id, field, fmt) => dash.draw(name, (el) => { const r = one(id); el.textContent = r ? fmt(r[field]) : '—'; });
+  tile('t-nuc', 'ucstats', 'n_uc', fmtN);
+  tile('t-nscale', 'goodstats', 'n_scale', fmtN);
+  tile('t-npot', 'goodstats', 'n_pot', fmtN);
+  tile('t-gone', 'goodstats', 'n_drop', fmtN);
+  tile('t-wk27', 'shift', 'week27', fmtP0);
+  tile('t-wk26', 'shift', 'week26', fmtP0);
+  tile('t-r26', 'shift', 'rate_new', fmtP0);
+  tile('t-s26a', 'shift', 'new_share26', fmtP0);
+  tile('t-s26b', 'shift', 'new_share27', fmtP0);
+  tile('k-cost', 'overview', 'cost27', fmtY);
+  tile('k-cost26', 'overview', 'cost26', fmtY);
+  tile('k-ios', 'overview', 'ios27', fmtY);
+  tile('k-act', 'overview', 'act27', fmtN);
+  tile('k-act26', 'overview', 'act26', fmtN);
+  tile('k-n27', 'overview', 'n27', fmtN);
+  tile('k-rate', 'overview', 'rate26', fmtP);
+  tile('k-rate25', 'overview', 'rate25', fmtP);
+  tile('k-rate24', 'overview', 'rate24', fmtP);
+  tile('k-cpr', 'overview', 'cpr26', fmtY);
+  tile('k-cpr25', 'overview', 'cpr25', fmtY);
+  for (const n of ['th-scale', 'th-scale2', 'th-scale3']) tile(n, 'th', 'scale', fmtY);
+  for (const n of ['th-min', 'th-min2']) tile(n, 'th', 'min', fmtY);
+  for (const n of ['th-drop', 'th-drop2', 'th-drop3']) tile(n, 'th', 'drop', fmtY);
+  for (const n of ['th-low', 'th-low2']) tile(n, 'th', 'low', fmtP0);
+  for (const n of ['th-high', 'th-high2']) tile(n, 'th', 'high', fmtX);
+  tile('th-act', 'th', 'act', fmtN);
+
+  dash.draw('l1rows', (tb) => {
+    const d = dash.data('by_l1'), o = one('overview'), t = one('th');
+    tb.replaceChildren();
+    if (d.status !== 'ok' || !o || !t) return;
+    const max = d3.max(d.data, (r) => r.cost27) || 1;
+    for (const r of d.data) {
+      const tr = document.createElement('tr'); tr.dataset.key = r.l1;
+      const td = cellMaker(tr);
+      td().textContent = r.l1;
+      const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
+      td('num muted').textContent = fmtN(r.n26);
+      barCell(td(), r.cost27, max, 110);
+      td('num').textContent = fmtP0(r.share27);
+      td('num muted').textContent = fmtY(r.cost26);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      const sp = td();
+      const pts = [r.rate24, r.rate25, r.rate26];
+      const w = 100, h = 24;
+      const svg = d3.select(sp).append('svg').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+      const y = d3.scaleLinear([0.1, 0.5], [h - 3, 3]).clamp(true);
+      const x = d3.scaleLinear([0, 2], [4, 60]);
+      svg.append('line').attr('x1', 4).attr('x2', 60).attr('y1', y(o.rate26)).attr('y2', y(o.rate26)).style('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '2 2');
+      const valid = pts.map((v, i) => [i, v]).filter((p) => p[1] !== null);
+      if (valid.length > 1) svg.append('path').attr('d', d3.line((p) => x(p[0]), (p) => y(p[1]))(valid)).style('fill', 'none').style('stroke', dash.colors[0]).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      svg.selectAll('circle').data(valid).join('circle').attr('cx', (p) => x(p[0])).attr('cy', (p) => y(p[1])).attr('r', 2.5).style('fill', dash.colors[0]);
+      if (r.rate26 !== null) svg.append('text').attr('x', 66).attr('y', h / 2 + 4).style('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(fmtP0(r.rate26));
+      tb.appendChild(tr);
+    }
+  });
+
+  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid'};
+  dash.draw('ucrows', (tb) => {
+    const d = dash.data('uc_tbl'), o = one('overview'), t = one('th');
+    tb.replaceChildren();
+    if (d.status !== 'ok' || !o || !t) return;
+    const max = d3.max(d.data, (r) => r.cost26) || 1;
+    for (const r of d.data) {
+      const tr = document.createElement('tr'); tr.dataset.key = r.uc;
+      const td = cellMaker(tr);
+      pill(td(), r.status, statusCls[r.status]);
+      td('uc').textContent = r.uc;
+      td('short').textContent = r.short;
+      td('muted').textContent = r.l1;
+      td('num').textContent = fmtN(r.n27);
+      barCell(td(), r.cost26, max, 110);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      td('num').textContent = fmtY(r.cost27);
+      td('num').textContent = fmtN(r.n_good);
+      tb.appendChild(tr);
+    }
+  });
+
+  const groupCls = {'能放量': 'g-scale', '潜力': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid'};
+  const matTable = (name, groups, flag) => dash.draw(name, (tb) => {
+    const d = dash.data('mat'), o = one('overview'), t = one('th');
+    tb.replaceChildren();
+    if (d.status !== 'ok' || !o || !t) return;
+    const max = d3.max(d.data, (r) => r.cost26) || 1;
+    for (const r of d.data.filter((v) => groups.includes(v.group))) {
+      const tr = document.createElement('tr'); tr.dataset.key = r.id;
+      if (r.is_new) tr.className = 'is-new';
+      const td = cellMaker(tr);
+      pill(td(), r.group, groupCls[r.group]);
+      td('name').textContent = r.name;
+      td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
+      td('uc').textContent = r.uc;
+      td('short').textContent = r.short;
+      barCell(td(), r.cost26, max, 110);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      const c27 = td('num'); c27.textContent = fmtY(r.cost27);
+      const f = flag(r, t); if (f) c27.className = 'num ' + f;
+      const lc = td();
+      if (r.link) { const a = document.createElement('a'); a.href = r.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.link_type; lc.appendChild(a); }
+      tb.appendChild(tr);
+    }
+  });
+  matTable('goodrows', ['能放量', '潜力'], (r, t) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
+  matTable('badrows', ['拖后腿', '留存好但贵'], (r, t) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+
+  dash.draw('cohortrows', (tb) => {
+    const d = dash.data('cohort'), o = one('overview'), t = one('th');
+    tb.replaceChildren();
+    if (d.status !== 'ok' || !o || !t) return;
+    const max = d3.max(d.data, (r) => r.cost27) || 1;
+    for (const r of d.data) {
+      const tr = document.createElement('tr'); tr.dataset.key = r.batch;
+      const td = cellMaker(tr);
+      td().textContent = r.batch;
+      td('num').textContent = fmtN(r.n27);
+      barCell(td(), r.cost27, max, 140);
+      const s = td('num'); s.textContent = fmtP0(r.share27); s.style.fontWeight = '600';
+      td('num muted').textContent = fmtP0(r.share26);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '明天看' : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      tb.appendChild(tr);
+    }
+  });
+</script>
+<script>
+  for (const [name, fn] of DRAWS) for (const el of document.querySelectorAll('[data-draw="' + name + '"]')) fn(el);
+</script>
+</body>
+</html>
