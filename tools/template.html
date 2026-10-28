@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{D}} 素材分析</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 20px 16px 48px; }
+  .lx { display: grid; gap: var(--gap-xl); }
+  .lx-head { display: grid; gap: var(--gap-sm); }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-sm); font-size: var(--fs-caption); color: var(--color-fg-muted); }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 6px; padding: 3px 6px; }
+  .lx-nav a { color: inherit; text-decoration: none; border: 1px solid var(--color-border-line); border-radius: 6px; padding: 3px 8px; background: var(--color-panel); }
+  .lx-nav a:hover { color: var(--color-fg); }
+  .lx-nav a.latest { color: var(--color-ok); border-color: currentColor; }
+  .lx-nav [hidden] { display: none; }
+  .lx-title { font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-title); margin: 0; }
+  .lx-sub { color: var(--color-fg-muted); font-size: var(--fs-caption); margin: 0; max-width: 84ch; line-height: 1.6; }
+  .lx-sub b { color: var(--color-fg); font-weight: 600; }
+  .lx-take { font-size: var(--fs-body); margin: 0; max-width: 76ch; line-height: 1.75; }
+  .lx-take b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .lx-kpis { display: grid; gap: var(--gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+  .lx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: var(--pad-lg); display: grid; gap: var(--gap-sm); min-width: 0; }
+  .lx-label { color: var(--color-fg-muted); font-size: var(--fs-caption); }
+  .lx-big { font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-title); font-variant-numeric: tabular-nums; }
+  .lx-cmp { font-size: var(--fs-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .lx-sec { display: grid; gap: var(--gap-md); }
+  .lx-h2 { font-size: var(--fs-heading); font-weight: var(--fw-medium); margin: 0; }
+  .lx-note { color: var(--color-fg-muted); font-size: var(--fs-caption); margin: 0; max-width: 88ch; line-height: 1.6; }
+  .lx-note b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* Wide screens: no inner scroll box, headers stick to the top of the window.
+     Narrow screens: each table scrolls in its own box, headers stick to the box. */
+  .lx-scroll { padding: 0 var(--pad-sm) var(--pad-xs); overflow: auto; max-height: 80vh; }
+  @media (min-width: 1100px) { .lx-scroll { overflow: visible; max-height: none; } }
+  .lx-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-caption); font-variant-numeric: tabular-nums; }
+  .lx-table th { position: sticky; top: 0; z-index: 2; background: var(--color-panel); text-align: left; vertical-align: bottom; font-weight: var(--fw-medium); color: var(--color-fg-muted); padding: 10px 6px 6px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .lx-table td { padding: 7px 6px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+  .lx-table tbody tr:last-child td { border-bottom: 0; }
+  .lx-table .num { text-align: right; white-space: nowrap; }
+  .lx-table td:first-child { white-space: nowrap; }
+  .lx-table .th-sub { display: block; font-weight: 400; font-size: 11px; line-height: 1.35; color: var(--color-fg-muted); white-space: normal; max-width: 7.5rem; }
+  .lx-table th.num .th-sub { margin-left: auto; }
+  .lx-table .name { min-width: 10rem; max-width: 17rem; word-break: break-all; line-height: 1.45; }
+  .lx-table .uc { white-space: nowrap; font-weight: 600; }
+  .lx-table .short { white-space: nowrap; }
+  .lx-table .muted { color: var(--color-fg-muted); }
+  .lx-table .stack { white-space: nowrap; line-height: 1.4; }
+  .lx-table .stack b { display: block; font-weight: 600; }
+  .lx-table .stack span { display: block; color: var(--color-fg-muted); }
+  .lx-table .date { white-space: nowrap; }
+  .lx-table .date.new { font-weight: 600; color: var(--color-ok); }
+  .lx-table tr.is-new td { background: color-mix(in srgb, var(--color-ok) 8%, transparent); }
+  .lx-bar { display: flex; align-items: center; gap: var(--gap-xs); white-space: nowrap; }
+  .lx-bar i { display: block; height: 10px; border-radius: 2px; flex: none; }
+  .lx-good { color: var(--color-ok); font-weight: 600; }
+  .lx-badv { color: var(--color-bad); font-weight: 600; }
+  .lx-warnv { color: var(--color-warn); font-weight: 600; }
+  .lx-pill { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 12px; white-space: nowrap; border: 1px solid currentColor; }
+  .g-scale { color: var(--color-ok); }
+  .g-pot { color: var(--color-ok); opacity: .7; }
+  .g-pricey { color: var(--color-warn); }
+  .g-bad { color: var(--color-bad); }
+  .g-mid { color: var(--color-fg-muted); }
+  .lx a { color: inherit; }
+  .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="lx">
+  <header class="lx-head">
+    <nav class="lx-nav" aria-label="往期日报">
+      <a id="nav-prev" href="#" hidden>‹ 前一天</a>
+      <label>日报 <select id="nav-sel" aria-label="选择日报日期"><option value="">{{D}} {{WEEKDAY}}</option></select></label>
+      <a id="nav-next" href="#" hidden>后一天 ›</a>
+      <a id="nav-latest" class="latest" href="{{REL}}" hidden>看最新</a>
+    </nav>
+    <h1 class="lx-title" id="top">{{D}} 素材分析</h1>
+    <p class="lx-sub">按新的一级分类，数据来自巨量「投放数据_分日」。消耗看 {{D}}（昨天）；次留率、次留成本看 {{W}} 三天激活的人（{{D}} 激活的次留要 {{T}} 过完才全，单天样本又太小）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。</p>
+    <p class="lx-take" data-draw="take"></p>
+  </header>
+
+  <section class="lx-kpis" aria-label="昨天总览">
+    <div class="lx-card">
+      <span class="lx-label">昨天消耗（{{D}}）</span>
+      <span class="lx-big" data-draw="k-cost">—</span>
+      <span class="lx-cmp">{{D1}} <span data-draw="k-cost26">—</span> · iOS 只有 <span data-draw="k-ios">—</span></span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">昨天激活（{{D}}）</span>
+      <span class="lx-big" data-draw="k-act">—</span>
+      <span class="lx-cmp">激活成本 <span data-draw="k-cpa">—</span>（{{D1}} <span data-draw="k-cpa26">—</span>）· {{D1}} 激活 <span data-draw="k-act26">—</span> · 昨天在跑素材 <span data-draw="k-n27">—</span> 条</span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘次留率（{{D1}} 激活 → {{D}} 回来）</span>
+      <span class="lx-big" data-draw="k-rate">—</span>
+      <span class="lx-cmp">{{D2}} 激活 <span data-draw="k-rate25">—</span> · {{D3}} 激活 <span data-draw="k-rate24">—</span> · 三天合计 <b data-draw="k-ratew">—</b></span>
+    </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘次留成本（{{D1}}）</span>
+      <span class="lx-big" data-draw="k-cpr">—</span>
+      <span class="lx-cmp">{{D2}} <span data-draw="k-cpr25">—</span> · 三天合计 <b data-draw="k-cprw">—</b></span>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="by-l1">
+    <h2 class="lx-h2">一、按一级分类</h2>
+    <p class="lx-note">按昨天消耗排。“在跑素材”= 当天有消耗的素材条数；激活成本 = 消耗 ÷ 激活。<span data-draw="l1-note"></span>绿色 = 好于三天全盘；红色 = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；激活不到 <b data-draw="th-act">—</b> 的不算次留率。最后一列的虚线是 {{D1}} 全盘。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>一级分类</th>
+            <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
+            <th class="num">在跑素材<span class="th-sub">{{D1}}</span></th>
+            <th>消耗<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗<span class="th-sub">{{D1}}（对比）</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th>分天次留率<span class="th-sub">{{D3}}、{{D2}}、{{D1}} 激活</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="l1rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="uc">
+    <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
+    <p class="lx-note">按昨天消耗排。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好但三天消耗没到这个数，可以试着加量。“好素材”是这个 use case 下次留好的素材条数（见三）。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>UC</th>
+            <th>Use case</th>
+            <th>一级分类</th>
+            <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th class="num">好素材<span class="th-sub">条数</span></th>
+            <th>标签<span class="th-sub">按 {{W}}</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="ucrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="good">
+    <h2 class="lx-h2">三、能放量 + 次留好的素材</h2>
+    <p class="lx-note"><b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b> 且次留好；<b>潜力</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。组内按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：成片 = 唯西表里的成片，原片 = 博主原帖，预览 = 巨量素材视频。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>分组</th>
+            <th>素材</th>
+            <th>上线<span class="th-sub">第一天有消耗</span></th>
+            <th>一级 / 二级分类</th>
+            <th>Use case</th>
+            <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="goodrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="bad">
+    <h2 class="lx-h2">四、拖后腿的素材</h2>
+    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>留存好但贵</b> = 次留率够、成本太高。组内按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>分组</th>
+            <th>素材</th>
+            <th>上线<span class="th-sub">第一天有消耗</span></th>
+            <th>一级 / 二级分类</th>
+            <th>Use case</th>
+            <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="badrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="cohort">
+    <h2 class="lx-h2">五、昨天的钱花在哪批素材上</h2>
+    <p class="lx-note">按素材第一天花钱的日期分批，一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没上线。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>上线日<span class="th-sub">第一天有消耗</span></th>
+            <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
+            <th>消耗<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D1}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D2}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D3}}</span></th>
+            <th class="num">次留率<span class="th-sub">{{D1}} 激活（各批统一比这天，{{D}} 上线的明天才有）</span></th>
+            <th class="num">次留成本<span class="th-sub">{{D1}}</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="cohortrows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<p class="lx-foot">数据：巨量「投放数据_分日」{{D3}}–{{D}}，次留按回传日。更新于 {{BUILT}}。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script type="application/json" id="results">{{RESULTS}}</script>
+<script>
+  const REL = '{{REL}}';
+  const RESULTS = JSON.parse(document.getElementById('results').textContent);
+  const data = (id) => RESULTS[id] || [];
+  const one = (id) => (RESULTS[id] && RESULTS[id].length ? RESULTS[id][0] : null);
+  const META = one('meta');
+  const COLOR = getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8';
+
+  // 往期日报：reports.json 在根目录，旧页面也会读到最新的列表
+  (async () => {
+    const sel = document.getElementById('nav-sel');
+    let list = [];
+    try { list = await (await fetch(REL + 'reports.json', {cache: 'no-store'})).json(); } catch (e) { return; }
+    if (!Array.isArray(list) || !list.length) return;
+    list.sort((a, b) => (a.date < b.date ? 1 : -1));
+    sel.replaceChildren(...list.map((r) => { const o = document.createElement('option'); o.value = REL + r.date + '/'; o.textContent = r.label + (r === list[0] ? '（最新）' : ''); o.selected = r.date === META.date; return o; }));
+    sel.addEventListener('change', () => { if (sel.value) location.href = sel.value; });
+    const i = list.findIndex((r) => r.date === META.date);
+    const prev = list[i + 1], next = list[i - 1];
+    const p = document.getElementById('nav-prev'), n = document.getElementById('nav-next'), l = document.getElementById('nav-latest');
+    if (prev) { p.href = REL + prev.date + '/'; p.hidden = false; }
+    if (next) { n.href = REL + next.date + '/'; n.hidden = false; }
+    if (i > 0) l.hidden = false;
+  })();
+
+  const fmtY = (v) => (v === null || v === undefined || isNaN(v) ? '—' : '¥' + d3.format(',.0f')(v));
+  const fmtP = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.1%')(v));
+  const fmtP0 = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.0%')(v));
+  const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
+  const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
+  const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
+  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate_w ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
+  const cprCls = (v, o, t) => (v === null ? 'num muted' : v <= o.cpr_w ? 'num lx-good' : v > t.high * o.cpr_w ? 'num lx-badv' : 'num');
+  const barCell = (td, v, max, px) => {
+    const wrap = document.createElement('div'); wrap.className = 'lx-bar';
+    const bar = document.createElement('i'); bar.style.width = Math.max(2, (v / max) * px) + 'px'; bar.style.background = COLOR;
+    const lab = document.createElement('span'); lab.textContent = fmtY(v);
+    wrap.append(bar, lab); td.appendChild(wrap);
+    return lab;
+  };
+  const cellMaker = (tr) => (cls) => { const c = document.createElement('td'); if (cls) c.className = cls; tr.appendChild(c); return c; };
+  const pill = (td, text, cls) => { const p = document.createElement('span'); p.className = 'lx-pill ' + cls; p.textContent = text; td.appendChild(p); };
+  const stack = (td, top, bottom) => { td.className = 'stack'; const b = document.createElement('b'); b.textContent = top; const s = document.createElement('span'); s.textContent = bottom; td.append(b, s); };
+  const fill = (name, fn) => document.querySelectorAll('[data-draw="' + name + '"]').forEach(fn);
+  const tile = (name, id, field, fmt) => fill(name, (el) => { const r = one(id); el.textContent = r ? fmt(r[field]) : '—'; });
+
+  const o = one('overview'), t = one('th');
+  fill('take', (el) => { el.innerHTML = META.take; });
+  fill('l1-note', (el) => { el.textContent = META.l1_note; });
+  tile('k-cost', 'overview', 'cost27', fmtY); tile('k-cost26', 'overview', 'cost26', fmtY); tile('k-ios', 'overview', 'ios27', fmtY);
+  tile('k-act', 'overview', 'act27', fmtN); tile('k-act26', 'overview', 'act26', fmtN); tile('k-n27', 'overview', 'n27', fmtN);
+  tile('k-cpa', 'overview', 'cpa27', fmtY); tile('k-cpa26', 'overview', 'cpa26', fmtY);
+  tile('k-rate', 'overview', 'rate26', fmtP); tile('k-rate25', 'overview', 'rate25', fmtP); tile('k-rate24', 'overview', 'rate24', fmtP);
+  tile('k-cpr', 'overview', 'cpr26', fmtY); tile('k-cpr25', 'overview', 'cpr25', fmtY);
+  tile('k-ratew', 'overview', 'rate_w', fmtP); tile('k-cprw', 'overview', 'cpr_w', fmtY);
+  tile('th-scale', 'th', 'scale', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
+  tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
+
+  fill('l1rows', (tb) => {
+    const rows = data('by_l1'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td().textContent = r.l1;
+      const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
+      td('num muted').textContent = fmtN(r.n26);
+      barCell(td(), r.cost27, max, 80);
+      td('num').textContent = fmtP0(r.share27);
+      td('num').textContent = fmtN(r.act27);
+      td('num').textContent = fmtY(r.cpa27);
+      td('num muted').textContent = fmtY(r.cost26);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      const sp = td(); const w = 96, h = 24;
+      const svg = d3.select(sp).append('svg').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+      const y = d3.scaleLinear([0.1, 0.5], [h - 3, 3]).clamp(true), x = d3.scaleLinear([0, 2], [4, 60]);
+      if (o.rate26 !== null) svg.append('line').attr('x1', 4).attr('x2', 60).attr('y1', y(o.rate26)).attr('y2', y(o.rate26)).style('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '2 2');
+      const valid = [r.rate24, r.rate25, r.rate26].map((v, i) => [i, v]).filter((p) => p[1] !== null);
+      if (valid.length > 1) svg.append('path').attr('d', d3.line((p) => x(p[0]), (p) => y(p[1]))(valid)).style('fill', 'none').style('stroke', COLOR).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      svg.selectAll('circle').data(valid).join('circle').attr('cx', (p) => x(p[0])).attr('cy', (p) => y(p[1])).attr('r', 2.5).style('fill', COLOR);
+      if (r.rate26 !== null) svg.append('text').attr('x', 66).attr('y', h / 2 + 4).style('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(fmtP0(r.rate26));
+      tb.appendChild(tr);
+    }
+  });
+
+  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid'};
+  fill('ucrows', (tb) => {
+    const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td('uc').textContent = r.uc;
+      td('short').textContent = r.short;
+      td('short muted').textContent = r.l1;
+      barCell(td(), r.cost27, max, 80);
+      td('num').textContent = fmtN(r.n27);
+      td('num muted').textContent = fmtY(r.cost_w);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
+      pill(td(), r.status, statusCls[r.status]);
+      tb.appendChild(tr);
+    }
+  });
+
+  const groupCls = {'能放量': 'g-scale', '潜力': 'g-pot', '留存好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid'};
+  const matTable = (name, groups, flag) => fill(name, (tb) => {
+    const rows = data('mat').filter((v) => groups.includes(v.group)); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
+      const td = cellMaker(tr);
+      pill(td(), r.group, groupCls[r.group]);
+      td('name').textContent = r.name;
+      td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
+      stack(td(), r.l1, r.l2);
+      stack(td(), r.uc, r.short);
+      const lab = barCell(td(), r.cost27, max, 80);
+      const f = flag(r); if (f) lab.className = f;
+      td('num muted').textContent = fmtY(r.cost_w);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      const lc = td('short');
+      if (r.link) { const a = document.createElement('a'); a.href = r.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.link_type; lc.appendChild(a); }
+      tb.appendChild(tr);
+    }
+  });
+  matTable('goodrows', ['能放量', '潜力'], (r) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
+  matTable('badrows', ['拖后腿', '留存好但贵'], (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+
+  fill('cohortrows', (tb) => {
+    const rows = data('cohort'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td().textContent = r.batch;
+      td('num').textContent = fmtN(r.n27);
+      barCell(td(), r.cost27, max, 90);
+      const s = td('num'); s.textContent = fmtP0(r.share27); s.style.fontWeight = '600';
+      for (const v of [r.share26, r.share25, r.share24]) td('num muted').textContent = fmtP0(v);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? (r.first === META.date ? '明天看' : '激活太少') : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      tb.appendChild(tr);
+    }
+  });
+</script>
+</body>
+</html>
