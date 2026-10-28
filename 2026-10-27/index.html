@@ -50,6 +50,10 @@
   .lx-table td { padding: var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
   .lx-table tbody tr:last-child td { border-bottom: 0; }
   .lx-table .num { text-align: right; white-space: nowrap; }
+  .lx-table th { vertical-align: bottom; }
+  .lx-table td:first-child { white-space: nowrap; }
+  .lx-table .th-sub { display: block; font-weight: 400; font-size: 11px; line-height: 1.35; color: var(--color-fg-muted); white-space: normal; min-width: 6.5rem; max-width: 11rem; }
+  .lx-table th.num .th-sub { margin-left: auto; }
   .lx-table .name { min-width: 14rem; max-width: 24rem; word-break: break-all; }
   .lx-table .uc { white-space: nowrap; font-weight: 600; }
   .lx-table .short { white-space: nowrap; }
@@ -124,16 +128,16 @@
         <thead>
           <tr>
             <th data-field="l1">一级分类</th>
-            <th data-field="n27" class="num">昨天在跑素材</th>
-            <th data-field="n26" class="num">10/26 在跑</th>
-            <th data-field="cost27">昨天消耗</th>
-            <th data-field="share27" class="num">占比</th>
-            <th data-field="act27" class="num">昨天激活</th>
-            <th data-field="cpa27" class="num">激活成本</th>
-            <th data-field="cost26" class="num">10/26 消耗</th>
-            <th data-field="rate" class="num">次留率（三天）</th>
-            <th data-field="cpr" class="num">次留成本（三天）</th>
-            <th data-field="rate26">分天次留率</th>
+            <th data-field="n27" class="num">在跑素材<span class="th-sub">10/27</span></th>
+            <th data-field="n26" class="num">在跑素材<span class="th-sub">10/26（对比）</span></th>
+            <th data-field="cost27">消耗<span class="th-sub">10/27</span></th>
+            <th data-field="share27" class="num">消耗占比<span class="th-sub">10/27</span></th>
+            <th data-field="act27" class="num">激活<span class="th-sub">10/27</span></th>
+            <th data-field="cpa27" class="num">激活成本<span class="th-sub">10/27</span></th>
+            <th data-field="cost26" class="num">消耗<span class="th-sub">10/26（看掉了多少）</span></th>
+            <th data-field="rate" class="num">次留率<span class="th-sub">10/24–10/26 激活（10/27 的次留还没出全）</span></th>
+            <th data-field="cpr" class="num">次留成本<span class="th-sub">10/24–10/26（和次留同一批人）</span></th>
+            <th data-field="rate26">分天次留率<span class="th-sub">10/24、10/25、10/26 激活</span></th>
           </tr>
         </thead>
         <tbody data-draw="l1rows"></tbody>
@@ -151,14 +155,14 @@
             <th data-field="uc">UC</th>
             <th data-field="short">Use case</th>
             <th data-field="l1">一级分类</th>
-            <th data-field="cost_w">三天消耗</th>
-            <th data-field="rate" class="num">次留率（三天）</th>
-            <th data-field="cpr" class="num">次留成本（三天）</th>
-            <th data-field="cost27" class="num">昨天消耗</th>
-            <th data-field="n27" class="num">昨天在跑素材</th>
-            <th data-field="n_good" class="num">好素材</th>
-            <th data-field="n_fuzzy" class="num">模糊匹配</th>
-            <th data-field="status">标签</th>
+            <th data-field="cost_w">消耗<span class="th-sub">10/24–10/26（和次留同一批人，按这列排）</span></th>
+            <th data-field="rate" class="num">次留率<span class="th-sub">10/24–10/26 激活（10/27 的次留还没出全）</span></th>
+            <th data-field="cpr" class="num">次留成本<span class="th-sub">10/24–10/26</span></th>
+            <th data-field="cost27" class="num">消耗<span class="th-sub">10/27（看钱有没有跟上）</span></th>
+            <th data-field="n27" class="num">在跑素材<span class="th-sub">10/27</span></th>
+            <th data-field="n_good" class="num">好素材<span class="th-sub">条数，见三</span></th>
+            <th data-field="n_fuzzy" class="num">模糊匹配<span class="th-sub">原库外，按内容归</span></th>
+            <th data-field="status">标签<span class="th-sub">按 10/24–10/26 和全盘比</span></th>
           </tr>
         </thead>
         <tbody data-draw="ucrows"></tbody>
@@ -175,15 +179,15 @@
           <tr>
             <th data-field="group">分组</th>
             <th data-field="name">素材</th>
-            <th data-field="first">上线日期</th>
+            <th data-field="first">上线日期<span class="th-sub">第一天有消耗</span></th>
             <th data-field="l1">一级分类</th>
             <th data-field="l2">二级分类</th>
             <th data-field="uc">UC</th>
             <th data-field="short">Use case</th>
-            <th data-field="cost_w">三天消耗</th>
-            <th data-field="rate" class="num">次留率（三天）</th>
-            <th data-field="cpr" class="num">次留成本（三天）</th>
-            <th data-field="cost27" class="num">昨天消耗</th>
+            <th data-field="cost_w">消耗<span class="th-sub">10/24–10/26（和次留同一批人，按这列排）</span></th>
+            <th data-field="rate" class="num">次留率<span class="th-sub">10/24–10/26 激活（10/27 的次留还没出全）</span></th>
+            <th data-field="cpr" class="num">次留成本<span class="th-sub">10/24–10/26</span></th>
+            <th data-field="cost27" class="num">消耗<span class="th-sub">10/27（看有没有接上量）</span></th>
             <th data-field="link_type">链接</th>
           </tr>
         </thead>
@@ -201,15 +205,15 @@
           <tr>
             <th data-field="group">分组</th>
             <th data-field="name">素材</th>
-            <th data-field="first">上线日期</th>
+            <th data-field="first">上线日期<span class="th-sub">第一天有消耗</span></th>
             <th data-field="l1">一级分类</th>
             <th data-field="l2">二级分类</th>
             <th data-field="uc">UC</th>
             <th data-field="short">Use case</th>
-            <th data-field="cost_w">三天消耗</th>
-            <th data-field="rate" class="num">次留率（三天）</th>
-            <th data-field="cpr" class="num">次留成本（三天）</th>
-            <th data-field="cost27" class="num">昨天消耗</th>
+            <th data-field="cost_w">消耗<span class="th-sub">10/24–10/26（和次留同一批人，按这列排）</span></th>
+            <th data-field="rate" class="num">次留率<span class="th-sub">10/24–10/26 激活（10/27 的次留还没出全）</span></th>
+            <th data-field="cpr" class="num">次留成本<span class="th-sub">10/24–10/26</span></th>
+            <th data-field="cost27" class="num">消耗<span class="th-sub">10/27（看有没有接上量）</span></th>
             <th data-field="link_type">链接</th>
           </tr>
         </thead>
@@ -225,15 +229,15 @@
       <table class="lx-table" data-source="cohort" data-row-key="batch">
         <thead>
           <tr>
-            <th data-field="batch">上线日</th>
-            <th data-field="n27" class="num">昨天在跑素材</th>
-            <th data-field="cost27">昨天消耗</th>
-            <th data-field="share27" class="num">昨天占比</th>
-            <th data-field="share26" class="num">10/26 占比</th>
-            <th data-field="share25" class="num">10/25 占比</th>
-            <th data-field="share24" class="num">10/24 占比</th>
-            <th data-field="rate" class="num">次留率</th>
-            <th data-field="cpr" class="num">次留成本</th>
+            <th data-field="batch">上线日<span class="th-sub">第一天有消耗</span></th>
+            <th data-field="n27" class="num">在跑素材<span class="th-sub">10/27</span></th>
+            <th data-field="cost27">消耗<span class="th-sub">10/27</span></th>
+            <th data-field="share27" class="num">消耗占比<span class="th-sub">10/27</span></th>
+            <th data-field="share26" class="num">消耗占比<span class="th-sub">10/26</span></th>
+            <th data-field="share25" class="num">消耗占比<span class="th-sub">10/25</span></th>
+            <th data-field="share24" class="num">消耗占比<span class="th-sub">10/24</span></th>
+            <th data-field="rate" class="num">次留率<span class="th-sub">10/26 激活（10/26 上线那批只有这一天，统一用这天比）</span></th>
+            <th data-field="cpr" class="num">次留成本<span class="th-sub">10/26</span></th>
           </tr>
         </thead>
         <tbody data-draw="cohortrows"></tbody>
