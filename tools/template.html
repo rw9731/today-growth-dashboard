@@ -177,7 +177,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好但三天消耗没到这个数，可以试着加量。“好素材”是这个 use case 下次留好的素材条数（见三）。</p>
+    <p class="lx-note">按昨天消耗排。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好但三天消耗没到这个数，可以试着加量。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -203,8 +203,36 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="kind">
+    <h2 class="lx-h2">三、按素材类型：消耗和次留</h2>
+    <p class="lx-note">按昨天消耗排。名字里有“扩量”的单列一行。标签口径同二；“好素材”是这类里次留好的素材条数（见四）。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>素材类型</th>
+            <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
+            <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗<span class="th-sub">{{D1}}（对比）</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{W}}</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th class="num">好素材<span class="th-sub">条数</span></th>
+            <th>标签<span class="th-sub">按 {{W}}</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="kindrows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="good">
-    <h2 class="lx-h2">三、能放量 + 次留好的素材</h2>
+    <h2 class="lx-h2">四、能放量 + 次留好的素材</h2>
     <p class="lx-note"><b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -238,7 +266,7 @@
   </section>
 
   <section class="lx-sec" id="bad">
-    <h2 class="lx-h2">四、拖后腿的素材</h2>
+    <h2 class="lx-h2">五、拖后腿的素材</h2>
     <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留好但贵</b> = 次留率够、次留成本太高。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -267,7 +295,7 @@
   </section>
 
   <section class="lx-sec" id="cohort">
-    <h2 class="lx-h2">五、昨天的钱花在哪批素材上</h2>
+    <h2 class="lx-h2">六、昨天的钱花在哪批素材上</h2>
     <p class="lx-note">按素材第一天花钱的日期分批，一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没上线。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -403,6 +431,28 @@
       td('num muted').textContent = fmtN(r.act_w);
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
+      pill(td(), r.status, statusCls[r.status]);
+      tb.appendChild(tr);
+    }
+  });
+
+  fill('kindrows', (tb) => {
+    const rows = data('kind_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td('short').textContent = r.kind;
+      const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
+      barCell(td(), r.cost27, max, 80);
+      td('num').textContent = fmtP0(r.share27);
+      td('num muted').textContent = fmtY(r.cost26);
+      td('num').textContent = fmtN(r.act27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+      td('num muted').textContent = fmtY(r.cost_w);
+      td('num muted').textContent = fmtN(r.act_w);
+      td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
       pill(td(), r.status, statusCls[r.status]);

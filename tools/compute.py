@@ -272,6 +272,28 @@ def main():
                     'rate': rate, 'cpr': cpr, 'cost27': c27, 'act27': S(rs, D[3], 'act'), 'n_good': sum(1 for m in good if m['uc'] == uc)})
     uct.sort(key=lambda x: -x['cost27'])
 
+    # 素材类型
+    kind_id = {}
+    for r in R:
+        kind_id.setdefault(r['id'], kind_of(r['src'], r['track'], names.get(r['id'], r['id'])))
+    by_k = defaultdict(list)
+    for r in R:
+        by_k[kind_id[r['id']]].append(r)
+    kt = []
+    for k, rs in by_k.items():
+        c, a_, rt = win(rs)
+        c27 = S(rs, D[3], 'cost')
+        if not (c > 0 or c27 > 0):
+            continue
+        ok = a_ >= th['act']
+        rate = rt / a_ if ok else None
+        cpr = (c / rt) if ok and rt else None
+        st = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小') if ok else '激活太少'
+        kt.append({'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
+                   'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
+                   'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if m['kind'] == k)})
+    kt.sort(key=lambda x: -x['cost27'])
+
     # 单日上线批次
     tot = {d: S(R, d, 'cost') for d in D}
     coh = []
@@ -326,7 +348,7 @@ def main():
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般'], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
