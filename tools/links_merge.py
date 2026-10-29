@@ -9,7 +9,7 @@ Also reads jl.json (a list of {id, u, exp, ...} from tools/jl_js.py, straight fr
 those go to "jl"/"jl_exp"; and jl_status.json (what __jlWait() returned) to keep
 tools/jl_hubs.json pointed at the accounts that hold the most videos.
 """
-import json, os, sys
+import hashlib, json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -44,11 +44,17 @@ def main():
         found = json.load(open(f))
         if isinstance(found, str):
             found = json.loads(found)
+        bad = 0
         for e in found:
+            if e.get('h') and hashlib.sha1(str(e.get('u', '')).encode()).hexdigest()[:len(e['h'])] != e['h']:
+                bad += 1
+                continue
             if str(e.get('u', '')).startswith('http'):
                 cur = links.setdefault(e['id'], {})
                 cur['jl'], cur['jl_exp'] = e['u'], int(e.get('exp') or 0)
                 added['巨量'] = added.get('巨量', 0) + 1
+        if bad:
+            added['巨量链接校验不过、没用'] = bad
     f = os.path.join(folder, 'jl_status.json')
     if os.path.exists(f):
         st = json.load(open(f))

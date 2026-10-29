@@ -3,10 +3,12 @@
 Usage:
   python3 tools/jl_js.py /tmp/results.json --out /tmp/linkjs
 
-Writes jl.js. Run it with the built-in browser's javascript_tool on any
+Writes jl.js for the materials 唯西日报 has no video for (run it after yulan.json is saved). Run it with the built-in browser's javascript_tool on any
 https://ad.oceanengine.com page (Reina has to be logged in to 巨量 there). It starts a
 background job and returns at once; then run `await __jlWait()` until it says done, and
-`__jlGet(0)`, `__jlGet(1)`, ... (8 videos per call) until it returns []. Save the
+`await __jlGet(0)`, `await __jlGet(1)`, ... (8 videos per call) until it returns [].
+Each entry carries h, a hash of its link, so links_merge.py drops any link that got
+mangled on the way. Save the
 concatenated objects as /tmp/linkjs/jl.json and run tools/links_merge.py.
 
 How it finds a video: the same 素材 ID is pushed to many ad accounts, and a few accounts
@@ -39,7 +41,7 @@ const take = (adv, m) => { if (!need.has(m.material_id) || __jl.res[m.material_i
   __jl.miss = NEED.filter((i) => !__jl.res[i]); __jl.st = 'done';
 } catch (e) { __jl.st = 'error'; __jl.err = String(e); } })();
 window.__jlWait = async () => { for (let i = 0; i < 40 && __jl.st === 'run'; i++) await new Promise((r) => setTimeout(r, 1000)); return JSON.stringify({st: __jl.st, err: __jl.err, found: Object.keys(__jl.res).length, need: NEED.length, miss: (__jl.miss || []).length, requests: __jl.n, hits: __jl.hits}); };
-window.__jlGet = (k) => JSON.stringify(Object.entries(__jl.res).slice(k * 8, k * 8 + 8).map(([id, v]) => ({id, ...v})));
+window.__jlGet = async (k) => { const out = []; for (const [id, v] of Object.entries(__jl.res).slice(k * 8, k * 8 + 8)) { const b = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(v.u)); out.push({id, ...v, h: [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('').slice(0, 12)}); } return JSON.stringify(out); };
 }
 'jl started'"""
 
@@ -56,7 +58,12 @@ def main():
     ids = {m['id'] for m in res['mat']} | {i for k in res.get('kl', []) for i in k.get('src_ids', [])}
     # 往期页面上还在用巨量链接的也一起刷新（巨量链接 2 天过期）
     ids |= {i for i, lk in links.items() if lk.get('jl') and not lk.get('video')}
-    need = sorted(ids)[:400]
+    # 唯西日报已经有永久链接的不用再拿（含这次刚从唯西日报找到的 yulan.json）
+    yl = os.path.join(a.out, 'yulan.json')
+    got = json.load(open(yl)) if os.path.exists(yl) else {}
+    if isinstance(got, str):
+        got = json.loads(got)
+    need = sorted(i for i in ids if not links.get(i, {}).get('video') and i not in got)[:400]
     start = time.strftime('%Y-%m-%d', time.gmtime(now - 60 * 86400))
     os.makedirs(a.out, exist_ok=True)
     js = JS % (json.dumps(need), json.dumps(hubs), json.dumps(start))
