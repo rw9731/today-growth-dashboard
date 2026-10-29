@@ -208,7 +208,8 @@ def main():
         mat.append({'id': i, 'group': g, 'name': names.get(i, i), 'first': f, 'is_new': f >= th['week'], 'l1': rs[0]['l1'],
                     'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i)),
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
-                    'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'link': link, 'link_type': ltype if link else '', 'video': video})
+                    'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'act27': S(rs, D[3], 'act'),
+                    'link': link, 'link_type': ltype if link else '', 'video': video})
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量 + 次留好', '次留好、量还小')]
 
@@ -268,7 +269,7 @@ def main():
         st = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小') if ok else '激活太少'
         uct.append({'uc': uc, 'status': st, 'short': ucs.get(uc, {}).get('short', ''), 'l1': rs[0]['l1'],
                     'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}), 'cost_w': c, 'act_w': a_,
-                    'rate': rate, 'cpr': cpr, 'cost27': c27, 'n_good': sum(1 for m in good if m['uc'] == uc)})
+                    'rate': rate, 'cpr': cpr, 'cost27': c27, 'act27': S(rs, D[3], 'act'), 'n_good': sum(1 for m in good if m['uc'] == uc)})
     uct.sort(key=lambda x: -x['cost27'])
 
     # 单日上线批次

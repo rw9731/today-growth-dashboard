@@ -63,15 +63,15 @@
   .lx-scroll { padding: 0 var(--pad-sm) var(--pad-xs); overflow: auto; max-height: 80vh; }
   @media (min-width: 1100px) { .lx-scroll { overflow: visible; max-height: none; } }
   .lx-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-caption); font-variant-numeric: tabular-nums; }
-  .lx-table th { position: sticky; top: 0; z-index: 2; background: var(--color-panel); text-align: left; vertical-align: bottom; font-weight: var(--fw-medium); color: var(--color-fg-muted); padding: 8px 6px 5px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
-  .lx-table td { padding: 4px 6px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+  .lx-table th { position: sticky; top: 0; z-index: 2; background: var(--color-panel); text-align: left; vertical-align: bottom; font-weight: var(--fw-medium); color: var(--color-fg-muted); padding: 8px 5px 5px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .lx-table td { padding: 4px 5px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
   .lx-table tbody tr:last-child td { border-bottom: 0; }
   .lx-table svg { display: block; }
   .lx-table .num { text-align: right; white-space: nowrap; }
   .lx-table td:first-child { white-space: nowrap; }
   .lx-table .th-sub { display: block; font-weight: 400; font-size: 11px; line-height: 1.35; color: var(--color-fg-muted); white-space: normal; max-width: 9.5rem; }
   .lx-table th.num .th-sub { margin-left: auto; }
-  .lx-table .name { min-width: 10rem; max-width: 17rem; word-break: break-all; line-height: 1.45; }
+  .lx-table .name { min-width: 8rem; max-width: 16rem; word-break: break-all; line-height: 1.45; }
   .lx-table .uc { white-space: nowrap; font-weight: 600; }
   .lx-table .short { white-space: nowrap; }
   .lx-table .muted { color: var(--color-fg-muted); }
@@ -186,8 +186,11 @@
             <th>Use case</th>
             <th>一级分类</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
@@ -213,7 +216,10 @@
             <th>一级 / 二级分类</th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th>链接</th>
@@ -243,7 +249,10 @@
             <th>一级 / 二级分类</th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th>链接</th>
@@ -383,8 +392,11 @@
       td('short').textContent = r.short;
       td('short muted').textContent = r.l1;
       barCell(td(), r.cost27, max, 80);
+      td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num').textContent = fmtN(r.n27);
       td('num muted').textContent = fmtY(r.cost_w);
+      td('num muted').textContent = fmtN(r.act_w);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
@@ -407,7 +419,10 @@
       stack(td(), r.uc, r.short);
       const lab = barCell(td(), r.cost27, max, 80);
       const f = flag(r); if (f) lab.className = f;
+      td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num muted').textContent = fmtY(r.cost_w);
+      td('num muted').textContent = fmtN(r.act_w);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       const lc = td('short lx-links');
