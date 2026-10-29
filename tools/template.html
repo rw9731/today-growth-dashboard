@@ -93,6 +93,16 @@
   .g-bad { color: var(--color-bad); }
   .g-mid { color: var(--color-fg-muted); }
   .lx a { color: inherit; }
+  .lx-h3 { font-size: 16px; font-weight: 700; margin: 6px 0 0; }
+  .lx-kl-wrap { display: grid; gap: var(--gap-sm); }
+  .lx-kl-wrap[hidden] { display: none; }
+  .lx-kl { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); }
+  .lx-kl-item { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; line-height: 1.6; display: grid; gap: 4px; }
+  .lx-kl-item h4 { margin: 0; font-size: 14px; font-weight: 700; }
+  .lx-kl-item .nums { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .lx-kl-item .nums b { color: var(--color-fg); }
+  .lx-kl-item .k { font-weight: 700; }
+  .lx-links a + a { margin-left: 6px; }
   .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
 </style>
 </head>
@@ -191,13 +201,14 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">三、能放量 + 次留好的素材</h2>
-    <p class="lx-note"><b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：成片 = 唯西表里的成片，原片 = 博主原帖，预览 = 巨量素材视频。</p>
+    <p class="lx-note"><b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th>标签</th>
             <th>素材</th>
+            <th>素材类型</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
             <th>Use case</th>
@@ -211,6 +222,11 @@
         <tbody data-draw="goodrows"></tbody>
       </table>
     </div>
+    <div class="lx-kl-wrap" data-draw="klwrap" hidden>
+      <h3 class="lx-h3">扩量素材为什么跑上来了</h3>
+      <p class="lx-note">只看昨天花了 ¥500 以上的扩量素材，按原素材归在一起。扩量多数只跑了一两天，样本小，先看方向；原素材按它投放以来的全部激活算，和同期全盘比。</p>
+      <div class="lx-kl" data-draw="klrows"></div>
+    </div>
   </section>
 
   <section class="lx-sec" id="bad">
@@ -222,6 +238,7 @@
           <tr>
             <th>标签</th>
             <th>素材</th>
+            <th>素材类型</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
             <th>Use case</th>
@@ -384,6 +401,7 @@
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
       td('name').textContent = r.name;
+      td('short').textContent = r.kind || '';
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.l1, r.l2);
       stack(td(), r.uc, r.short);
@@ -392,13 +410,40 @@
       td('num muted').textContent = fmtY(r.cost_w);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
-      const lc = td('short');
-      if (r.link) { const a = document.createElement('a'); a.href = r.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.link_type; lc.appendChild(a); }
+      const lc = td('short lx-links');
+      const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
+      const vid = r.video || (r.link_type === '预览' ? r.link : '');
+      if (vid) addLink(vid, '视频');
+      if (r.link && r.link_type !== '预览') addLink(r.link, r.link_type === '原片' ? '原帖' : r.link_type);
       tb.appendChild(tr);
     }
   });
   matTable('goodrows', ['能放量 + 次留好', '次留好、量还小'], (r) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
   matTable('badrows', ['拖后腿', '次留好但贵'], (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+
+  // 扩量素材和原素材比
+  fill('klrows', (box) => {
+    const notes = one('notes') || {};
+    const fam = new Map();
+    for (const k of data('kl')) { if (!fam.has(k.src_name)) fam.set(k.src_name, []); fam.get(k.src_name).push(k); }
+    const list = [...fam.entries()].filter(([, ks]) => d3.max(ks, (k) => k.cost27) >= t.min)
+      .sort((a, b) => d3.sum(b[1], (k) => k.cost27) - d3.sum(a[1], (k) => k.cost27)).slice(0, 4);
+    if (!list.length) return;
+    document.querySelector('[data-draw="klwrap"]').hidden = false;
+    const tag = (n) => { const m = n.match(/(扩量\d+)(?!.*扩量\d+)/); return m ? m[1] : '扩量'; };
+    for (const [src, ks0] of list) {
+      const ks = ks0.filter((k) => k.cost27 >= t.min).sort((a, b) => b.cost27 - a.cost27);
+      const s0 = ks[0], note = notes[src] || {};
+      const div = document.createElement('div'); div.className = 'lx-kl-item';
+      const h = document.createElement('h4'); h.textContent = (note.title || src) + '：' + ks.map((k) => tag(k.name)).join('、'); div.appendChild(h);
+      const nums = document.createElement('div'); nums.className = 'nums';
+      const srcPart = s0.src_rate === null ? '原素材没跑出 ' + t.act + ' 个激活，没法比' : '原素材 <b>' + fmtP0(s0.src_rate) + '</b>（同期全盘 ' + fmtP0(s0.src_base) + '），次留成本 ' + fmtY(s0.src_cpr);
+      nums.innerHTML = '次留 <b>' + ks.map((k) => fmtP0(k.rate)).join('、') + '</b>（三天全盘 ' + fmtP0(o.rate_w) + '），次留成本 ' + ks.map((k) => fmtY(k.cpr)).join('、') + '；' + srcPart + '。昨天消耗 ' + ks.map((k) => fmtY(k.cost27)).join('、') + '。';
+      div.appendChild(nums);
+      for (const [lab, txt] of [['改了：', note.changed], ['为什么：', note.why]]) { if (!txt) continue; const p = document.createElement('div'); const b = document.createElement('span'); b.className = 'k'; b.textContent = lab; p.append(b, document.createTextNode(txt)); div.appendChild(p); }
+      box.appendChild(div);
+    }
+  });
 
   fill('cohortrows', (tb) => {
     const rows = data('cohort'); const max = d3.max(rows, (r) => r.cost27) || 1;

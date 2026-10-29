@@ -11,7 +11,7 @@ Windows (D = the report day, usually yesterday):
 - 次留率 / 次留成本 use activations on D-3..D-1 with their next-day 次留
   (巨量 books 次留 on the callback day, so D's own activations are not complete yet).
 """
-import argparse, datetime as dt, json, os, sys
+import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -37,6 +37,34 @@ def num(s):
         return 0.0
 
 
+def kind_of(src, track, name):
+    """素材类型：AI 短剧、KOC/KOL 原片、KOC/KOL 二剪、星广、自建号、客供；名字里有「扩量」再加「· 扩量」。"""
+    src, track = (src or '').strip(), (track or '').strip()
+    if src == 'AIGC' or 'AI短剧' in track:
+        k = 'AI 短剧'
+    elif src in ('KOC', 'KOL'):
+        k = src + (' 二剪' if ('二创' in track or '二创' in name) else ' 原片')
+    elif src:
+        k = src
+    else:
+        k = '未标'
+    return k + (' · 扩量' if '扩量' in name else '')
+
+
+def base_name(n):
+    n = re.sub(r'^推送视频_', '', n.strip())
+    n = re.sub(r'\s*\(\d+\)$', '', n)
+    n = re.sub(r'[_-]合规修改$', '', n)
+    n = re.sub(r'_20\d{6}$', '', n)
+    return n
+
+
+def parent_of(n):
+    b = base_name(n)
+    i = b.rfind('_扩量')
+    return b[:i].rstrip('_') if i > 0 else ''
+
+
 def load_rows(path):
     vals = json.load(open(path))['values']
     head = vals[0]
@@ -51,9 +79,10 @@ def load_rows(path):
         if not r or not r[0]:
             continue
         g = lambda k: r[col[need[k]]] if col[need[k]] < len(r) else ''
+        opt = lambda h: r[col[h]] if h in col and col[h] < len(r) else ''
         out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name'),
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
-                    'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc')})
+                    'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型')})
     return out
 
 
@@ -77,8 +106,9 @@ def main():
     links = json.load(open(os.path.join(HERE, 'links.json')))
     if a.linklib:
         for r in json.load(open(a.linklib))['values'][1:]:
-            if len(r) > 1 and r[0] and r[1].startswith('http') and r[0] not in links:
-                links[r[0]] = {'link': r[1], 'type': '预览'}
+            if len(r) > 1 and r[0] and r[1].startswith('http'):
+                e = links.setdefault(r[0], {})
+                e.setdefault('video', r[1])
     allrows = load_rows(a.sheet)
     have = {r['date'] for r in allrows}
     if D[3] not in have:
@@ -160,11 +190,53 @@ def main():
         f = first.get(i, '')
         uc = rs[0]['uc']
         lk = links.get(i, {})
+        ltype = lk.get('type', '')
+        video = lk.get('video') or (lk.get('link', '') if ltype == '预览' else '')
+        link = '' if ltype == '预览' else lk.get('link', '')
         mat.append({'id': i, 'group': g, 'name': names.get(i, i), 'first': f, 'is_new': f >= th['week'], 'l1': rs[0]['l1'],
+                    'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i)),
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
-                    'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'link': lk.get('link', ''), 'link_type': lk.get('type', '')})
+                    'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'link': link, 'link_type': ltype if link else '', 'video': video})
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量 + 次留好', '次留好、量还小')]
+
+    # 扩量素材和它的原素材比：原素材按截至 D-1 激活的全部 cohort 算
+    by_base = defaultdict(set)
+    for i, n in names.items():
+        by_base[base_name(n)].add(i)
+    hist = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0]))
+    for r in allrows:
+        if r['date'] <= D[3]:
+            x = hist[r['id']][r['date']]
+            x[0] += r['cost']; x[1] += r['act']; x[2] += r['ret']
+    # 全盘每天的次留率（按激活日），用来给原素材算「同期全盘」
+    day_act, day_ret = defaultdict(float), defaultdict(float)
+    for r in allrows:
+        day_act[r['date']] += r['act']; day_ret[r['date']] += r['ret']
+    nxt = lambda d: (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
+    day_rate = {d: day_ret[nxt(d)] / a for d, a in day_act.items() if a and nxt(d) <= D[3]}
+    def cohort(ids):
+        c = a_ = rt = base = 0.0
+        for i in ids:
+            for d, x in hist[i].items():
+                nd = nxt(d)
+                if nd <= D[3]:
+                    c += x[0]; a_ += x[1]; rt += hist[i][nd][2] if nd in hist[i] else 0
+                    base += x[1] * day_rate.get(d, 0)
+        return c, a_, rt, (base / a_ if a_ else None)
+    kl = []
+    for m in good:
+        par = parent_of(m['name'])
+        if not par:
+            continue
+        src_ids = by_base.get(par, set()) - {m['id']}
+        c, a_, rt, base = cohort(src_ids)
+        kl.append({'id': m['id'], 'name': m['name'], 'kind': m['kind'], 'uc': m['uc'], 'short': m['short'], 'group': m['group'],
+                   'rate': m['rate'], 'cpr': m['cpr'], 'cost_w': m['cost_w'], 'act_w': m['act_w'], 'cost27': m['cost27'],
+                   'src_name': par, 'src_ids': sorted(src_ids), 'src_n': len(src_ids), 'src_cost': c, 'src_act': a_,
+                   'src_rate': rt / a_ if a_ >= th['act'] else None, 'src_cpr': c / rt if a_ >= th['act'] and rt else None,
+                   'src_base': base, 'src_first': min((first[i] for i in src_ids if i in first), default='')})
+    kl.sort(key=lambda x: -x['cost27'])
     gs = {'n_scale': sum(m['group'] == '能放量 + 次留好' for m in mat), 'n_pot': sum(m['group'] == '次留好、量还小' for m in mat),
           'n_drop': sum(m['cost27'] < th['drop'] for m in good)}
 
@@ -240,12 +312,12 @@ def main():
             'W': f'{lab(days[0])}–{days[2].day}' if days[0].month == days[2].month else f'{lab(days[0])}–{lab(days[2])}',
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般'], 'goodstats': [gs],
+    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般'], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
-                      'pot': gs['n_pot'], 'unknown_uc': unknown, 'no_link_good': sum(1 for m in good if not m['link'])}, ensure_ascii=False))
+                      'pot': gs['n_pot'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl)}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

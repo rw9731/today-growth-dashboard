@@ -4,7 +4,7 @@ Usage:
   python3 tools/links_merge.py /tmp/linkjs
 
 Reads yuanpian.json (原片), chengpian.json (成片) and yulan.json (预览) from the folder,
-whichever exist. 原片 and 成片 replace a 预览; a 预览 never replaces 原片 or 成片.
+whichever exist. 原片/成片 go to "link"/"type"; 预览 (the ad video itself) goes to "video".
 """
 import json, os, sys
 
@@ -26,12 +26,15 @@ def main():
         for i, url in found.items():
             if not str(url).startswith('http'):
                 continue
-            cur = links.get(i)
-            if cur and cur.get('type') in ('原片', '成片') and kind == '预览':
-                continue
-            if cur and cur.get('link') == url:
-                continue
-            links[i] = {'link': url, 'type': kind}
+            cur = links.setdefault(i, {})
+            if kind == '预览':
+                if cur.get('video') == url:
+                    continue
+                cur['video'] = url
+            else:
+                if cur.get('link') == url and cur.get('type') == kind:
+                    continue
+                cur['link'], cur['type'] = url, kind
             added[kind] = added.get(kind, 0) + 1
     json.dump(links, open(path, 'w'), ensure_ascii=False, indent=1)
     print(json.dumps({'added': added, 'total': len(links)}, ensure_ascii=False))

@@ -27,6 +27,8 @@ def render(tpl, res, meta, rel):
 def main():
     res = json.load(open(sys.argv[1]))
     meta = res['meta'][0]
+    notes_path = os.path.join(ROOT, 'notes', meta['date'] + '.json')
+    res['notes'] = [json.load(open(notes_path))] if os.path.exists(notes_path) else [{}]
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)

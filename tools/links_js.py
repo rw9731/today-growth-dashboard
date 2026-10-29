@@ -7,7 +7,7 @@ Writes up to three files, each a JavaScript snippet to run with the built-in bro
 (javascript_tool) on the page named in its first comment line:
   yuanpian.js  -> 唯西表「today ai koc kol 真人原素材」 (?sheet=6AHEfW): KOC/KOL 原片 = 博主原帖
   chengpian.js -> 唯西表「脚本及成片」 (?sheet=f18d7b): AI 短剧 成片 = 表格里那一格
-  yulan.js     -> 唯西「Today-日报」「每日素材数据」 (?sheet=jPPl6w): 巨量素材预览视频
+  yulan.js     -> 唯西「Today-日报」「每日素材数据」 (?sheet=jPPl6w): 巨量里投的那条视频（每条素材都要，扩量的原素材也要）
 Each snippet returns a JSON object {素材ID: 链接}. Save each result as <name>.json next to
 the snippet, then run tools/links_merge.py.
 Prints how many materials need a link; 0 means nothing to do.
@@ -50,7 +50,7 @@ def main():
     a = ap.parse_args()
     res = json.load(open(a.results))
     mats = {m['id']: m for m in res['mat']}
-    need = [m for m in mats.values() if m.get('link_type') in ('', None, '预览')]
+    need = [m for m in mats.values() if m.get('link_type') not in ('原片', '成片')]
     os.makedirs(a.out, exist_ok=True)
     koc = [[m['id'], m['name']] for m in need if 'today koc' in m['name'] or 'today kol' in m['name'] or 'todaykoc' in m['name']]
     aigc = [[m['id'], m['name']] for m in need if [m['id'], m['name']] not in koc]
@@ -59,12 +59,15 @@ def main():
         files['yuanpian'] = WAIT % ("'真人原素材'", 3, "'真人原素材'") + YUANPIAN % json.dumps(koc, ensure_ascii=False)
     if aigc:
         files['chengpian'] = WAIT % ("'脚本及成片'", 1, "'脚本及成片'") + CHENGPIAN % json.dumps(aigc, ensure_ascii=False)
-    nolink = [m['id'] for m in need if not m.get('link')]
+    links = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'links.json')))
+    nolink = [m['id'] for m in mats.values() if not m.get('video')]
+    # 扩量分析要对照原素材，原素材不一定在看板里，也一起找视频
+    nolink += sorted({i for k in res.get('kl', []) for i in k.get('src_ids', []) if i not in mats and not links.get(i, {}).get('video')})
     if nolink:
         files['yulan'] = WAIT % ("'每日素材数据'", 0, "'每日素材数据'") + YULAN % json.dumps(nolink)
     for k, js in files.items():
         open(os.path.join(a.out, k + '.js'), 'w').write(f'// 在这个页面跑：{PAGES[k]}\n' + js)
-    print(json.dumps({'need': len(need), 'koc': len(koc), 'aigc': len(aigc), 'no_link_at_all': len(nolink),
+    print(json.dumps({'need': len(need), 'koc': len(koc), 'aigc': len(aigc), 'no_video': len(nolink),
                       'snippets': {k: PAGES[k] for k in files}}, ensure_ascii=False))
 
 
