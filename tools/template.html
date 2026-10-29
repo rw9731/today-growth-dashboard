@@ -93,6 +93,7 @@
   .g-pricey { color: var(--color-warn); }
   .g-bad { color: var(--color-bad); }
   .g-mid { color: var(--color-fg-muted); }
+  .g-new { color: var(--bar); }
   .lx a { color: inherit; }
   .lx-h3 { font-size: 16px; font-weight: 700; margin: 6px 0 0; }
   .lx-kl-wrap { display: grid; gap: var(--gap-sm); }
@@ -230,33 +231,11 @@
         <tbody data-draw="kindrows"></tbody>
       </table>
     </div>
-    <h3 class="lx-h3">扩量迭代效率</h3>
-    <p class="lx-note">名字里有“扩量”的素材，按第一天花钱的日期分批。<b>跑出量</b> = 上线到昨天累计花过 <b data-draw="th-min">—</b>；次留率按这批上线以来的全部激活算，和同一天的全盘比。</p>
-    <div class="lx-card lx-scroll">
-      <table class="lx-table">
-        <thead>
-          <tr>
-            <th>上线日<span class="th-sub">第一天有消耗</span></th>
-            <th class="num">上线条数</th>
-            <th class="num">在花<span class="th-sub">{{D}}</span></th>
-            <th class="num">跑出量<span class="th-sub">条数</span></th>
-            <th class="num">命中率</th>
-            <th>消耗<span class="th-sub">{{D}}</span></th>
-            <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
-            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
-            <th class="num">次留率<span class="th-sub">上线以来</span></th>
-            <th class="num">同期全盘<span class="th-sub">次留率</span></th>
-            <th class="num">次留成本<span class="th-sub">上线以来</span></th>
-          </tr>
-        </thead>
-        <tbody data-draw="klerows"></tbody>
-      </table>
-    </div>
   </section>
 
   <section class="lx-sec" id="good">
-    <h2 class="lx-h2">四、能放量 + 次留好的素材</h2>
-    <p class="lx-note"><b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗在 <b data-draw="th-min">—</b> 到这个数之间。按昨天消耗排，昨天消耗黄色 = 花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
+    <p class="lx-note">按昨天消耗排：昨天花了 <b data-draw="th-top">—</b> 以上的素材都在这里，另外加上次留好、但昨天没怎么花的。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗不到这个数；<b>新上线</b> = 前天或昨天才开始花，次留还没出，次留两格先空着；<b>激活太少</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。昨天消耗黄色 = 次留好的素材昨天花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -409,7 +388,7 @@
   tile('k-rate', 'overview', 'rate26', fmtP); tile('k-rate25', 'overview', 'rate25', fmtP0); tile('k-rate24', 'overview', 'rate24', fmtP0);
   tile('k-cpr', 'overview', 'cpr26', fmtY); tile('k-cpr25', 'overview', 'cpr25', fmtY);
   tile('k-ratew', 'overview', 'rate_w', fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
-  tile('th-scale', 'th', 'scale', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
+  tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
 
   fill('l1rows', (tb) => {
@@ -438,7 +417,7 @@
     }
   });
 
-  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '次留好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid'};
+  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '次留好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -483,29 +462,9 @@
     }
   });
 
-  fill('klerows', (tb) => {
-    const rows = data('kl_eff'); const max = d3.max(rows, (r) => r.cost27) || 1;
-    for (const r of rows) {
-      const tr = document.createElement('tr'); const td = cellMaker(tr);
-      td().textContent = r.batch;
-      td('num').textContent = fmtN(r.n);
-      td('num').textContent = fmtN(r.n_run);
-      const h = td('num'); h.textContent = fmtN(r.n_hit); h.style.fontWeight = '600';
-      td('num').textContent = r.n ? fmtP0(r.n_hit / r.n) : '—';
-      barCell(td(), r.cost27, max, 80);
-      td('num').textContent = fmtP0(r.share27);
-      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
-      const cr = td(r.rate === null ? 'num muted' : (r.base !== null && r.rate >= r.base ? 'num lx-good' : 'num'));
-      cr.textContent = r.rate === null ? (r.first === META.date ? '明天看' : '激活太少') : fmtP0(r.rate);
-      td('num muted').textContent = r.base === null ? '—' : fmtP0(r.base);
-      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
-      tb.appendChild(tr);
-    }
-  });
-
   const groupCls = statusCls;
-  const matTable = (name, groups, flag) => fill(name, (tb) => {
-    const rows = data('mat').filter((v) => groups.includes(v.group)); const max = d3.max(rows, (r) => r.cost27) || 1;
+  const matTable = (name, keep, flag) => fill(name, (tb) => {
+    const rows = data('mat').filter(keep); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
       const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
       const td = cellMaker(tr);
@@ -522,8 +481,8 @@
       td('num muted').textContent = fmtY(r.cost_w);
       td('num muted').textContent = fmtN(r.act_w);
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
-      const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
-      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null || r.rate === undefined ? (r.group === '新上线' ? '还没次留' : '激活太少') : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = r.rate === null || r.rate === undefined ? '' : fmtY(r.cpr);
       const lc = td('short lx-links');
       const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
       const vid = r.video || (r.link_type === '预览' ? r.link : '');
@@ -532,8 +491,9 @@
       tb.appendChild(tr);
     }
   });
-  matTable('goodrows', ['能放量 + 次留好', '次留好、量还小'], (r) => (r.cost27 < t.drop ? 'lx-warnv' : ''));
-  matTable('badrows', ['拖后腿', '次留好但贵'], (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+  const GOOD = ['能放量 + 次留好', '次留好、量还小'];
+  matTable('goodrows', (v) => v.cost27 >= t.top || GOOD.includes(v.group), (r) => (GOOD.includes(r.group) && r.cost27 < t.drop ? 'lx-warnv' : ''));
+  matTable('badrows', (v) => ['拖后腿', '次留好但贵'].includes(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
 
   // 扩量素材和原素材比
   fill('klrows', (box) => {

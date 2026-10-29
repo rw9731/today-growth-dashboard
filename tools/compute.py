@@ -15,7 +15,7 @@ import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'low': 0.8, 'high': 1.25}
+TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'low': 0.8, 'high': 1.25}
 L1_SHORT = {'AI 个人助理综述': 'AI 综述', '工作沟通与协作': '工作', '个人日程与事务助理': '日程', '学习与成长': '学习',
             '购物与生活服务': '购物', '健康与运动': '健康', '信息检索与追踪': '信息追踪', '出行与旅行': '出行',
             '财务与投资': '理财', '随身记事与个人资料管理': '记事'}
@@ -201,12 +201,18 @@ def main():
     mat = []
     for i, rs in by_id.items():
         c, a_, rt = win(rs)
-        if not (c >= th['min'] and a_ >= th['act']):
-            continue
-        rate = rt / a_
-        cpr = c / rt if rt else None
-        g = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小')
+        c27 = S(rs, D[3], 'cost')
         f = first.get(i, '')
+        # 三天花够、激活够的打标签；昨天花了 ¥500 以上但还没次留的也放进来（新上线 / 激活太少）
+        if a_ >= th['act'] and (c >= th['min'] or c27 >= th['top']):
+            rate = rt / a_
+            cpr = c / rt if rt else None
+            g = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小')
+        elif c27 >= th['top']:
+            rate = cpr = None
+            g = '新上线' if f >= D[2] else '激活太少'
+        else:
+            continue
         uc = rs[0]['uc']
         lk = links.get(i, {})
         ltype = lk.get('type', '')
@@ -258,20 +264,6 @@ def main():
                    'src_base': base, 'src_first': min((first[i] for i in src_ids if i in first), default='')})
     kl.sort(key=lambda x: -x['cost27'])
 
-    # 扩量迭代效率：名字里有「扩量」的素材按上线日（第一天有消耗）分批
-    tD = S(R, D[3], 'cost') or 1
-    kl_ids = [i for i, n in names.items() if '扩量' in n and i in first]
-    ke = []
-    for bd in sorted({first[i] for i in kl_ids}, reverse=True)[:7]:
-        ids = [i for i in kl_ids if first[i] == bd]
-        c, a_, rt, base = cohort(ids)
-        ok = a_ >= th['act']
-        day = lambda i: hist[i].get(D[3]) or [0.0, 0.0, 0.0]
-        c27 = sum(day(i)[0] for i in ids)
-        ke.append({'batch': lab(dt.date.fromisoformat(bd)), 'first': bd, 'n': len(ids), 'n_run': sum(1 for i in ids if day(i)[0] > 0),
-                   'n_hit': sum(1 for i in ids if sum(x[0] for x in hist[i].values()) >= th['min']),
-                   'cost27': c27, 'share27': c27 / tD, 'act27': sum(day(i)[1] for i in ids),
-                   'rate': rt / a_ if ok else None, 'cpr': c / rt if ok and rt else None, 'base': base if ok else None})
     gs = {'n_scale': sum(m['group'] == '能放量 + 次留好' for m in mat), 'n_pot': sum(m['group'] == '次留好、量还小' for m in mat),
           'n_drop': sum(m['cost27'] < th['drop'] for m in good)}
 
@@ -369,8 +361,8 @@ def main():
             'W': f'{lab(days[0])}–{days[2].day}' if days[0].month == days[2].month else f'{lab(days[0])}–{lab(days[2])}',
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般'], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'kl_eff': ke, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
+    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般' or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
