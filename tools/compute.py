@@ -37,6 +37,18 @@ def num(s):
         return 0.0
 
 
+def pick_video(lk, now=None):
+    """投放视频：唯西日报的永久链接优先；没有就用巨量的（签名链接，过期前 1 小时就不用）。"""
+    import time
+    if lk.get('video'):
+        return lk['video']
+    if lk.get('type') == '预览' and lk.get('link'):
+        return lk['link']
+    if lk.get('jl') and int(lk.get('jl_exp', 0)) > (now or time.time()) + 3600:
+        return lk['jl']
+    return ''
+
+
 def kind_of(src, track, name):
     """素材类型：AI 短剧、KOC/KOL 原片、KOC/KOL 二剪、星广、自建号、客供；名字里有「扩量」再加「· 扩量」。"""
     src, track = (src or '').strip(), (track or '').strip()
@@ -191,7 +203,7 @@ def main():
         uc = rs[0]['uc']
         lk = links.get(i, {})
         ltype = lk.get('type', '')
-        video = lk.get('video') or (lk.get('link', '') if ltype == '预览' else '')
+        video = pick_video(lk)
         link = '' if ltype == '预览' else lk.get('link', '')
         mat.append({'id': i, 'group': g, 'name': names.get(i, i), 'first': f, 'is_new': f >= th['week'], 'l1': rs[0]['l1'],
                     'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i)),

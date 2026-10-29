@@ -22,18 +22,19 @@ def main():
     res = json.loads(blob.replace('<\\/', '</'))
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json')))
     n = 0
+    sys.path.insert(0, os.path.join(ROOT, 'tools'))
     if sheet:
-        sys.path.insert(0, os.path.join(ROOT, 'tools'))
         from compute import load_rows, kind_of
         info = {r['id']: r for r in load_rows(sheet)}
         for m in res['mat']:
             if not m.get('kind') and m['id'] in info:
                 r = info[m['id']]
                 m['kind'] = kind_of(r['src'], r['track'], m['name'])
+    from compute import pick_video
     for m in res['mat']:
         lk = links.get(m['id'], {})
         ltype = lk.get('type', '')
-        video = lk.get('video') or (lk.get('link', '') if ltype == '预览' else '')
+        video = pick_video(lk)
         link = '' if ltype == '预览' else lk.get('link', '')
         new = (link, ltype if link else '', video)
         if new != (m.get('link', ''), m.get('link_type', ''), m.get('video', '')):
