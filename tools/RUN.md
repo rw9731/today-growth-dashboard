@@ -11,6 +11,7 @@ D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素
 4. 扩量分析（也要用内置浏览器，连不上就跳过，看板只显示数字）：`python3 tools/kl_list.py /tmp/results.json --sheet <分日文件>` 列出 D 消耗 ≥ ¥500、notes/D.json 里还没写的扩量家族（最多 4 个），带扩量版和原素材的视频链接。
    - 在内置浏览器开 https://rw9731.github.io/today-growth-dashboard/reports.json ，把 tools/frames.js 全文用 javascript_tool 跑一次；`__v.start('thumbs', 视频, [0.5,2,4,7,10,14,18,24,30], '扩')` → `await __v.wait()` → 截图，看结构、时长、Today 第几秒出现；`__v.start('bands', [...], 0.7, 0.86)` 读开头 0–6 秒字幕。原素材和扩量版各看一遍。
    - 对照唯西「扩量素材迭代排期」(?sheet=kMJdAv) 里这条的「怎么改」。
+   - 开头先对原素材的字幕：新开头那句原素材里没有，就是「换了配音 hook」（新写台词、重新配音盖字幕，画面用原片镜头）；原素材里有、只是挪到前面，写「原片台词挪到开头」；只删减、调顺序，写「只剪辑」。changed 第一句就写是哪种。
    - 写进 notes/D.json：`{原素材名: {"title": "UC 简称 + 类型（UC 编号）", "changed": "改了什么", "why": "为什么跑上来"}}`。一句话一件事，要具体（时长、开头那句、Today 出现时间），不写套话；样本小就直说。
 5. `python3 tools/build.py /tmp/results.json`：写 D/index.html，更新 reports.json；D 是最新一天时同时改 index.html。
 6. 提交 D/、index.html、reports.json、tools/links.json、notes/（和改过的 tools/ucs.json），push 到 main。
