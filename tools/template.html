@@ -71,7 +71,7 @@
   .lx-table td:first-child { white-space: nowrap; }
   .lx-table .th-sub { display: block; font-weight: 400; font-size: 11px; line-height: 1.35; color: var(--color-fg-muted); white-space: normal; max-width: 9.5rem; }
   .lx-table th.num .th-sub { margin-left: auto; }
-  .lx-table .name { min-width: 8rem; max-width: 16rem; word-break: break-all; line-height: 1.45; }
+  .lx-table .name { min-width: 7.5rem; max-width: 16rem; word-break: break-all; line-height: 1.45; }
   .lx-table .uc { white-space: nowrap; font-weight: 600; }
   .lx-table .short { white-space: nowrap; }
   .lx-table .muted { color: var(--color-fg-muted); }
@@ -191,6 +191,7 @@
             <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
             <th class="num">激活<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
@@ -220,6 +221,7 @@
             <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
             <th class="num">激活<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th>链接</th>
@@ -253,6 +255,7 @@
             <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
             <th class="num">激活<span class="th-sub">{{W}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{W}}</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
             <th>链接</th>
@@ -273,6 +276,7 @@
             <th>上线日<span class="th-sub">第一天有消耗</span></th>
             <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
             <th>消耗<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗占比<span class="th-sub">{{D1}}</span></th>
             <th class="num">消耗占比<span class="th-sub">{{D2}}</span></th>
@@ -397,6 +401,7 @@
       td('num').textContent = fmtN(r.n27);
       td('num muted').textContent = fmtY(r.cost_w);
       td('num muted').textContent = fmtN(r.act_w);
+      td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
@@ -417,12 +422,13 @@
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.l1, r.l2);
       stack(td(), r.uc, r.short);
-      const lab = barCell(td(), r.cost27, max, 80);
+      const lab = barCell(td(), r.cost27, max, 50);
       const f = flag(r); if (f) lab.className = f;
       td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num muted').textContent = fmtY(r.cost_w);
       td('num muted').textContent = fmtN(r.act_w);
+      td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       const lc = td('short lx-links');
@@ -453,7 +459,7 @@
       const h = document.createElement('h4'); h.textContent = (note.title || src) + '：' + ks.map((k) => tag(k.name)).join('、'); div.appendChild(h);
       const nums = document.createElement('div'); nums.className = 'nums';
       const srcPart = s0.src_rate === null ? '原素材没跑出 ' + t.act + ' 个激活，没法比' : '原素材 <b>' + fmtP0(s0.src_rate) + '</b>（同期全盘 ' + fmtP0(s0.src_base) + '），次留成本 ' + fmtY(s0.src_cpr);
-      nums.innerHTML = '次留 <b>' + ks.map((k) => fmtP0(k.rate)).join('、') + '</b>（三天全盘 ' + fmtP0(o.rate_w) + '），次留成本 ' + ks.map((k) => fmtY(k.cpr)).join('、') + '；' + srcPart + '。昨天消耗 ' + ks.map((k) => fmtY(k.cost27)).join('、') + '。';
+      nums.innerHTML = '次留 <b>' + ks.map((k) => fmtP0(k.rate)).join('、') + '</b>（三天全盘 ' + fmtP0(o.rate_w) + '），次留成本 ' + ks.map((k) => fmtY(k.cpr)).join('、') + '；' + srcPart + '。昨天消耗 ' + ks.map((k) => fmtY(k.cost27)).join('、') + '，激活成本 ' + ks.map((k) => (k.act27 ? fmtY(k.cost27 / k.act27) : '—')).join('、') + '。';
       div.appendChild(nums);
       for (const [lab, txt] of [['改了：', note.changed], ['为什么：', note.why]]) { if (!txt) continue; const p = document.createElement('div'); const b = document.createElement('span'); b.className = 'k'; b.textContent = lab; p.append(b, document.createTextNode(txt)); div.appendChild(p); }
       box.appendChild(div);
@@ -467,6 +473,7 @@
       td().textContent = r.batch;
       td('num').textContent = fmtN(r.n27);
       barCell(td(), r.cost27, max, 90);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       const s = td('num'); s.textContent = fmtP0(r.share27); s.style.fontWeight = '600';
       for (const v of [r.share26, r.share25, r.share24]) td('num muted').textContent = fmtP0(v);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? (r.first === META.date ? '明天看' : '激活太少') : fmtP0(r.rate);

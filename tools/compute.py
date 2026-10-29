@@ -245,7 +245,7 @@ def main():
         src_ids = by_base.get(par, set()) - {m['id']}
         c, a_, rt, base = cohort(src_ids)
         kl.append({'id': m['id'], 'name': m['name'], 'kind': m['kind'], 'uc': m['uc'], 'short': m['short'], 'group': m['group'],
-                   'rate': m['rate'], 'cpr': m['cpr'], 'cost_w': m['cost_w'], 'act_w': m['act_w'], 'cost27': m['cost27'],
+                   'rate': m['rate'], 'cpr': m['cpr'], 'cost_w': m['cost_w'], 'act_w': m['act_w'], 'cost27': m['cost27'], 'act27': m['act27'],
                    'src_name': par, 'src_ids': sorted(src_ids), 'src_n': len(src_ids), 'src_cost': c, 'src_act': a_,
                    'src_rate': rt / a_ if a_ >= th['act'] else None, 'src_cpr': c / rt if a_ >= th['act'] and rt else None,
                    'src_base': base, 'src_first': min((first[i] for i in src_ids if i in first), default='')})
@@ -282,7 +282,7 @@ def main():
         a26, r27 = S(rs, D[2], 'act'), S(rs, D[3], 'ret')
         ok = a26 >= th['act']
         row = {'batch': lab(dt.date.fromisoformat(bd)), 'first': bd, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
-               'cost27': S(rs, D[3], 'cost'), 'rate': r27 / a26 if ok else None, 'cpr': (S(rs, D[2], 'cost') / r27) if ok and r27 else None}
+               'cost27': S(rs, D[3], 'cost'), 'act27': S(rs, D[3], 'act'), 'rate': r27 / a26 if ok else None, 'cpr': (S(rs, D[2], 'cost') / r27) if ok and r27 else None}
         for d, k in zip(D, ['share24', 'share25', 'share26', 'share27']):
             row[k] = None if bd > d else (S(rs, d, 'cost') / tot[d] if tot[d] else None)
         coh.append(row)
