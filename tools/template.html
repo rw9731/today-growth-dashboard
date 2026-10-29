@@ -78,6 +78,7 @@
   .lx-table .stack { white-space: nowrap; line-height: 1.4; }
   .lx-table .stack b { display: block; font-weight: 600; }
   .lx-table .stack span { display: block; color: var(--color-fg-muted); }
+  .lx-table .stack.wrap { white-space: normal; max-width: 6.5rem; }
   .lx-table .date { white-space: nowrap; }
   .lx-table .date.new { font-weight: 600; color: var(--color-ok); }
   .lx-table tr.is-new td { background: color-mix(in srgb, var(--color-ok) 8%, transparent); }
@@ -205,7 +206,7 @@
 
   <section class="lx-sec" id="kind">
     <h2 class="lx-h2">三、按素材类型：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。名字里有“扩量”的单列一行。标签口径同二；“好素材”是这类里次留好的素材条数（见四）。</p>
+    <p class="lx-note">按昨天消耗排。素材类型 = 来源 · 改法：<b>只剪辑</b> = 没新写台词，只删减、调顺序、把原句挪到开头；<b>换开头</b> = 只有开头几句新写、新配音；<b>全片重配</b> = 整段口播重写、重新配音；<b>AI 重拍</b> = AI 照一条跑得好的素材重新生成；<b>二剪（未核对）</b> = 还没对过字幕。标签口径同二；“好素材”是这类里次留好的素材条数（见四）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -227,6 +228,28 @@
           </tr>
         </thead>
         <tbody data-draw="kindrows"></tbody>
+      </table>
+    </div>
+    <h3 class="lx-h3">扩量迭代效率</h3>
+    <p class="lx-note">名字里有“扩量”的素材，按第一天花钱的日期分批。<b>跑出量</b> = 上线到昨天累计花过 <b data-draw="th-min">—</b>；次留率按这批上线以来的全部激活算，和同一天的全盘比。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>上线日<span class="th-sub">第一天有消耗</span></th>
+            <th class="num">上线条数</th>
+            <th class="num">在花<span class="th-sub">{{D}}</span></th>
+            <th class="num">跑出量<span class="th-sub">条数</span></th>
+            <th class="num">命中率</th>
+            <th>消耗<span class="th-sub">{{D}}</span></th>
+            <th class="num">消耗占比<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
+            <th class="num">次留率<span class="th-sub">上线以来</span></th>
+            <th class="num">同期全盘<span class="th-sub">次留率</span></th>
+            <th class="num">次留成本<span class="th-sub">上线以来</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="klerows"></tbody>
       </table>
     </div>
   </section>
@@ -460,6 +483,26 @@
     }
   });
 
+  fill('klerows', (tb) => {
+    const rows = data('kl_eff'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td().textContent = r.batch;
+      td('num').textContent = fmtN(r.n);
+      td('num').textContent = fmtN(r.n_run);
+      const h = td('num'); h.textContent = fmtN(r.n_hit); h.style.fontWeight = '600';
+      td('num').textContent = r.n ? fmtP0(r.n_hit / r.n) : '—';
+      barCell(td(), r.cost27, max, 80);
+      td('num').textContent = fmtP0(r.share27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+      const cr = td(r.rate === null ? 'num muted' : (r.base !== null && r.rate >= r.base ? 'num lx-good' : 'num'));
+      cr.textContent = r.rate === null ? (r.first === META.date ? '明天看' : '激活太少') : fmtP0(r.rate);
+      td('num muted').textContent = r.base === null ? '—' : fmtP0(r.base);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      tb.appendChild(tr);
+    }
+  });
+
   const groupCls = statusCls;
   const matTable = (name, groups, flag) => fill(name, (tb) => {
     const rows = data('mat').filter((v) => groups.includes(v.group)); const max = d3.max(rows, (r) => r.cost27) || 1;
@@ -468,7 +511,7 @@
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
       td('name').textContent = r.name;
-      td('short').textContent = r.kind || '';
+      { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.l1, r.l2);
       stack(td(), r.uc, r.short);

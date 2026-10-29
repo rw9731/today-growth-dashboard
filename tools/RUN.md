@@ -11,10 +11,11 @@ D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素
 4. 扩量分析（也要用内置浏览器，连不上就跳过，看板只显示数字）：`python3 tools/kl_list.py /tmp/results.json --sheet <分日文件>` 列出 D 消耗 ≥ ¥500、notes/D.json 里还没写的扩量家族（最多 4 个），带扩量版和原素材的视频链接。
    - 在内置浏览器开 https://rw9731.github.io/today-growth-dashboard/reports.json ，把 tools/frames.js 全文用 javascript_tool 跑一次；`__v.start('thumbs', 视频, [0.5,2,4,7,10,14,18,24,30], '扩')` → `await __v.wait()` → 截图，看结构、时长、Today 第几秒出现；`__v.start('bands', [...], 0.7, 0.86)` 读开头 0–6 秒字幕。原素材和扩量版各看一遍。
    - 对照唯西「扩量素材迭代排期」(?sheet=kMJdAv) 里这条的「怎么改」。
-   - 对原素材的字幕，开头和后面都要对（后面至少对 3 句）：开头和后面的口播都和原素材不一样，写「全片重新配音」（画面用原片镜头）；只有开头那句是新的、后面照原片，写「换了配音 hook」；原素材里有、只是挪到前面，写「原片台词挪到开头」；只删减、调顺序，写「只剪辑」。changed 第一句就写是哪种。
+   - 对原素材的字幕，开头和后面都要对（后面至少对 3 句），按改法写：开头和后面的口播都和原素材不一样，写「全片重配」（画面用原片镜头）；只有开头几句是新写新配的、后面照原片，写「换开头」；没新写台词，只删减、调顺序、把原句挪到开头，写「只剪辑」；AI 照一条素材重新生成，写「AI 重拍」。changed 第一句就写是哪种。
+   - 改法写进 tools/gaifa.json：`{素材ID: {"gaifa": "原片/只剪辑/换开头/全片重配/AI 重拍", "checked": "对的日期", "note": "一句依据"}}`。D 消耗 ≥ ¥500、gaifa.json 里还没有的二剪（扩量和第一次二剪都算）都要对，不只是 kl_list 列出的家族；父素材或原片在巨量投过才能对（视频用 jl.js 拿），没投过的跳过，看板上显示「二剪（未核对）」。写完再跑一次第 2 步。
    - 写进 notes/D.json：`{原素材名: {"title": "UC 简称 + 类型（UC 编号）", "changed": "改了什么", "why": "为什么跑上来"}}`。一句话一件事，要具体（时长、开头那句、Today 出现时间），不写套话；样本小就直说。
 5. `python3 tools/build.py /tmp/results.json`：写 D/index.html，更新 reports.json；D 是最新一天时同时改 index.html。
-6. 提交 D/、index.html、reports.json、tools/links.json、notes/（和改过的 tools/ucs.json），push 到 main。
+6. 提交 D/、index.html、reports.json、tools/links.json、tools/gaifa.json、notes/（和改过的 tools/ucs.json），push 到 main。
 
 已经发布的日子只补链接、不重算：`python3 tools/relink.py YYYY-MM-DD [--sheet <分日文件>]`（带 --sheet 会补素材类型）。
 

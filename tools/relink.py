@@ -29,7 +29,7 @@ def main():
         for m in res['mat']:
             if not m.get('kind') and m['id'] in info:
                 r = info[m['id']]
-                m['kind'] = kind_of(r['src'], r['track'], m['name'])
+                m['kind'] = kind_of(r['src'], r['track'], m['name'], m['id'])
     from compute import pick_video
     for m in res['mat']:
         lk = links.get(m['id'], {})

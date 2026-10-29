@@ -49,18 +49,25 @@ def pick_video(lk, now=None):
     return ''
 
 
-def kind_of(src, track, name):
-    """素材类型：AI 短剧、KOC/KOL 原片、KOC/KOL 二剪、星广、自建号、客供；名字里有「扩量」再加「· 扩量」。"""
-    src, track = (src or '').strip(), (track or '').strip()
+GAIFA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gaifa.json')
+GAIFA = json.load(open(GAIFA_PATH)) if os.path.exists(GAIFA_PATH) else {}
+
+
+def kind_of(src, track, name, mid=None, kl=True):
+    """素材类型 = 来源 · 改法（原片 / 只剪辑 / 换开头 / 全片重配 / AI 重拍）。
+    改法以 tools/gaifa.json（对过字幕的）为准；没对过的二剪写「二剪（未核对）」。kl=True 时名字里有「扩量」再加「· 扩量」。"""
+    src, track, name = (src or '').strip(), (track or '').strip(), name or ''
     if src == 'AIGC' or 'AI短剧' in track:
-        k = 'AI 短剧'
+        base = 'AI 短剧'
+        dft = 'AI 重拍' if '照真人' in name else ('改法未核对' if '扩量' in name else '原片')
     elif src in ('KOC', 'KOL'):
-        k = src + (' 二剪' if ('二创' in track or '二创' in name) else ' 原片')
-    elif src:
-        k = src
+        base = src
+        dft = '二剪（未核对）' if ('二创' in track or '二创' in name or '扩量' in name) else '原片'
     else:
-        k = '未标'
-    return k + (' · 扩量' if '扩量' in name else '')
+        base, dft = (src or '未标'), ''
+    g = (GAIFA.get(mid) or {}).get('gaifa') if mid else None
+    k = base + (' · ' + (g or dft) if (g or dft) else '')
+    return k + (' · 扩量' if kl and '扩量' in name else '')
 
 
 def base_name(n):
@@ -206,7 +213,7 @@ def main():
         video = pick_video(lk)
         link = '' if ltype == '预览' else lk.get('link', '')
         mat.append({'id': i, 'group': g, 'name': names.get(i, i), 'first': f, 'is_new': f >= th['week'], 'l1': rs[0]['l1'],
-                    'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i)),
+                    'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i), i),
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
                     'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'act27': S(rs, D[3], 'act'),
                     'link': link, 'link_type': ltype if link else '', 'video': video})
@@ -250,6 +257,21 @@ def main():
                    'src_rate': rt / a_ if a_ >= th['act'] else None, 'src_cpr': c / rt if a_ >= th['act'] and rt else None,
                    'src_base': base, 'src_first': min((first[i] for i in src_ids if i in first), default='')})
     kl.sort(key=lambda x: -x['cost27'])
+
+    # 扩量迭代效率：名字里有「扩量」的素材按上线日（第一天有消耗）分批
+    tD = S(R, D[3], 'cost') or 1
+    kl_ids = [i for i, n in names.items() if '扩量' in n and i in first]
+    ke = []
+    for bd in sorted({first[i] for i in kl_ids}, reverse=True)[:7]:
+        ids = [i for i in kl_ids if first[i] == bd]
+        c, a_, rt, base = cohort(ids)
+        ok = a_ >= th['act']
+        day = lambda i: hist[i].get(D[3]) or [0.0, 0.0, 0.0]
+        c27 = sum(day(i)[0] for i in ids)
+        ke.append({'batch': lab(dt.date.fromisoformat(bd)), 'first': bd, 'n': len(ids), 'n_run': sum(1 for i in ids if day(i)[0] > 0),
+                   'n_hit': sum(1 for i in ids if sum(x[0] for x in hist[i].values()) >= th['min']),
+                   'cost27': c27, 'share27': c27 / tD, 'act27': sum(day(i)[1] for i in ids),
+                   'rate': rt / a_ if ok else None, 'cpr': c / rt if ok and rt else None, 'base': base if ok else None})
     gs = {'n_scale': sum(m['group'] == '能放量 + 次留好' for m in mat), 'n_pot': sum(m['group'] == '次留好、量还小' for m in mat),
           'n_drop': sum(m['cost27'] < th['drop'] for m in good)}
 
@@ -275,7 +297,7 @@ def main():
     # 素材类型
     kind_id = {}
     for r in R:
-        kind_id.setdefault(r['id'], kind_of(r['src'], r['track'], names.get(r['id'], r['id'])))
+        kind_id.setdefault(r['id'], kind_of(r['src'], r['track'], names.get(r['id'], r['id']), r['id'], kl=False))
     by_k = defaultdict(list)
     for r in R:
         by_k[kind_id[r['id']]].append(r)
@@ -291,7 +313,7 @@ def main():
         st = label(rate, cpr, c, '能放量 + 次留好', '次留好、量还小') if ok else '激活太少'
         kt.append({'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
                    'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
-                   'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if m['kind'] == k)})
+                   'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if kind_id.get(m['id']) == k)})
     kt.sort(key=lambda x: -x['cost27'])
 
     # 单日上线批次
@@ -348,7 +370,7 @@ def main():
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般'], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
+           'uc_tbl': uct, 'kind_tbl': kt, 'kl_eff': ke, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
