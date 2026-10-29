@@ -50,6 +50,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('results')
     ap.add_argument('--out', required=True)
+    ap.add_argument('--sheet', help='分日文件；给了就把要对改法的二剪和它们的原素材也加进来（tools/gaifa_list.py）')
     a = ap.parse_args()
     res = json.load(open(a.results))
     links = json.load(open(os.path.join(HERE, 'links.json')))
@@ -58,6 +59,11 @@ def main():
     ids = {m['id'] for m in res['mat']} | {i for k in res.get('kl', []) for i in k.get('src_ids', [])}
     # 往期页面上还在用巨量链接的也一起刷新（巨量链接 2 天过期）
     ids |= {i for i, lk in links.items() if lk.get('jl') and not lk.get('video')}
+    if a.sheet:
+        import sys
+        sys.path.insert(0, HERE)
+        from gaifa_list import todo
+        ids |= set(todo(res, a.sheet)[1])
     # 唯西日报已经有永久链接的不用再拿（含这次刚从唯西日报找到的 yulan.json）
     yl = os.path.join(a.out, 'yulan.json')
     got = json.load(open(yl)) if os.path.exists(yl) else {}
