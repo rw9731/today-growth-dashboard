@@ -105,14 +105,13 @@ def load_rows(path):
     return out
 
 
-# 下一步迭代：use case 分层 + 每周内容供给（Reina 10/31 定的逻辑）
-# T1 能放量 + 次留好 → 主攻，至少一半产能；T2 中等量 + 次留好 → 次优先；T3 能放量但次留成本偏高 → 做变式 + 推产品承接；
-# 其余放「测新」。产能：维系每周 120 条 AI 素材、100 条 KOC/KOL 二创或重配；外部 agency 每周 50 条以上真人原片。
-CAP = {'ai': 120, 'ec': 100, 'yp': 50}
-CH_NAME = {'ai': 'AI 素材', 'ec': '二创 / 重配', 'yp': '真人原片'}
-TIER_SHARE = {'T1': 0.55, 'T2': 0.20, 'T3': 0.20, 'T0': 0.05}
-PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.10}
+# 七、核心 insight 和下一步：use case 分层（Reina 10/31 定的逻辑）
+# T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
+# T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
+# 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
+PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.10, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
+CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
 
 
 def chan_of(src, track, name):
@@ -124,10 +123,15 @@ def chan_of(src, track, name):
     return ''
 
 
-def build_plan(R, D, W, NEXT, o, ucs, kt, th):
+def tiers_for(allrows, ucs, Dd, th):
+    """报告日 Dd 的 use case 分层：消耗看 Dd-3..Dd 四天，次留看 Dd-3..Dd-1 激活。数据不够返回 None。"""
+    D = [(Dd - dt.timedelta(days=k)).isoformat() for k in (3, 2, 1, 0)]
+    W = D[:3]
+    NEXT = {D[i]: D[i + 1] for i in range(3)}
+    R = [r for r in allrows if r['date'] in D]
+    if not any(r['date'] == D[0] for r in R) or not any(r['date'] == D[3] for r in R):
+        return None
     S = lambda rows, d, k: sum(r[k] for r in rows if r['date'] == d)
-    rate_w, cpr_w = o['rate_w'] or 0, o['cpr_w'] or 1e9
-    tot4 = sum(r['cost'] for r in R) or 1
 
     def stats(rows):
         c = sum(S(rows, d, 'cost') for d in W)
@@ -137,25 +141,22 @@ def build_plan(R, D, W, NEXT, o, ucs, kt, th):
         return {'spend4': sum(r['cost'] for r in rows), 'cost_w': c, 'act_w': a,
                 'rate': rt / a if ok else None, 'cpr': c / rt if ok and rt else None}
 
+    g = stats(R)
+    rate_w, cpr_w = g['rate'] or 0, g['cpr'] or 1e9
+    tot4 = g['spend4'] or 1
     by_uc = defaultdict(list)
     for r in R:
         if r['uc'] in NO_PLAN or r['uc'] not in ucs or '旧编号' in ucs[r['uc']].get('short', ''):
             continue
         by_uc[r['uc']].append(r)
-    rows = []
-    gch = defaultdict(float)
+    out = {}
     for uc, rs in by_uc.items():
         s = stats(rs)
         if s['spend4'] <= 0:
             continue
         s.update({'uc': uc, 'short': ucs[uc]['short'], 'l1': ucs[uc]['l1'], 'share4': s['spend4'] / tot4,
                   'cost27': S(rs, D[3], 'cost'), 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0})})
-        ch = {}
-        for c in CAP:
-            sub = [r for r in rs if chan_of(r['src'], r['track'], r['name']) == c]
-            ch[c] = stats(sub) if sub else {'spend4': 0, 'cost_w': 0, 'act_w': 0, 'rate': None, 'cpr': None}
-            gch[c] += ch[c]['spend4']
-        s['ch'] = ch
+        s['ch'] = {c: stats([r for r in rs if chan_of(r['src'], r['track'], r['name']) == c]) for c in CH_NAME}
         rate, cpr = s['rate'], s['cpr']
         good = rate is not None and cpr is not None and rate >= rate_w and cpr <= cpr_w
         nice = rate is not None and cpr is not None and rate >= rate_w and cpr <= PLAN_TH['nice'] * cpr_w
@@ -171,59 +172,49 @@ def build_plan(R, D, W, NEXT, o, ucs, kt, th):
             else:
                 flag = '次留成本偏高'
         s['flag'] = flag
-        rows.append(s)
+        out[uc] = s
+    return {'uc': out, 'rate_w': rate_w, 'cpr_w': cpr_w, 'tot4': tot4, 'date': D[3]}
 
-    # 每个 tier 的产能按 use case 体量（四天消耗开根号）分；再按各渠道产能约束配到 AI / 二创 / 原片
-    total = sum(CAP.values())
-    gs = sum(gch.values()) or 1
-    gshare = {c: gch[c] / gs for c in CAP}
-    planned = [r for r in rows if r['tier'] != 'T0']
-    tw = defaultdict(float)
-    for r in planned:
-        tw[r['tier']] += r['spend4'] ** 0.5
-    share_used = sum(TIER_SHARE[t] for t in TIER_SHARE if t != 'T0' and tw[t])
-    for r in planned:
-        r['target'] = total * (1 - TIER_SHARE['T0']) * TIER_SHARE[r['tier']] / share_used * r['spend4'] ** 0.5 / tw[r['tier']]
-    seed = {}
-    for r in planned:
-        for c in CAP:
-            x = r['ch'][c]
-            own = x['spend4'] / r['spend4'] if r['spend4'] else 0
-            a = 0.6 * own + 0.4 * gshare[c]
-            if x['cpr'] and r['cpr'] and x['act_w'] >= th['act']:
-                a *= min(1.5, max(0.6, r['cpr'] / x['cpr']))  # 这个渠道在这个 UC 里次留更便宜就多给
-            seed[(r['uc'], c)] = max(a, 0.02)
-    col = {c: CAP[c] * (1 - TIER_SHARE['T0']) for c in CAP}
-    m = dict(seed)
-    for _ in range(50):
-        for r in planned:
-            s_ = sum(m[(r['uc'], c)] for c in CAP)
-            for c in CAP:
-                m[(r['uc'], c)] *= r['target'] / s_
-        for c in CAP:
-            s_ = sum(m[(r['uc'], c)] for r in planned) or 1
-            for r in planned:
-                m[(r['uc'], c)] *= col[c] / s_
-    # 取整：每个渠道按最大余数法，保证列和是整数
-    t0 = {c: CAP[c] - round(col[c]) for c in CAP}
-    for c in CAP:
-        want = round(col[c])
-        base = {r['uc']: int(m[(r['uc'], c)]) for r in planned}
-        rest = sorted(planned, key=lambda r: -(m[(r['uc'], c)] - int(m[(r['uc'], c)])))
-        for r in rest[:max(0, want - sum(base.values()))]:
-            base[r['uc']] += 1
-        for r in planned:
-            r.setdefault('n', {})[c] = base[r['uc']]
-    for r in rows:
-        r.setdefault('n', {c: 0 for c in CAP})
-        r['n_tot'] = sum(r['n'].values())
-        r.pop('target', None)
+
+def build_plan(allrows, ucs, Dd, kt, th):
+    n = PLAN_TH['days']
+    hist = [tiers_for(allrows, ucs, Dd - dt.timedelta(days=k), th) for k in range(n - 1, -1, -1)]  # 最早到今天
+    days = [h['date'] for h in hist if h]
+    hist = [h for h in hist if h]
+    cur = hist[-1]
+    rows = []
+    for uc, s in cur['uc'].items():
+        seq = [h['uc'][uc]['tier'] if uc in h['uc'] else '' for h in hist]
+        streak = 0
+        for t in reversed(seq):
+            if t == seq[-1]:
+                streak += 1
+            else:
+                break
+        prev = seq[-2] if len(seq) > 1 else ''
+        s['hist'] = seq
+        s['streak'] = streak
+        s['prev'] = prev
+        s['change'] = '' if not prev or prev == s['tier'] else prev + ' → ' + s['tier']
+        if not prev and len(seq) > 1:
+            s['change'] = '新出现'
+        if len(hist) > 1 and uc in hist[-2]['uc']:
+            p = hist[-2]['uc'][uc]
+            s['d_rate'] = (s['rate'] - p['rate']) if s['rate'] is not None and p['rate'] is not None else None
+            s['d_cpr'] = (s['cpr'] - p['cpr']) if s['cpr'] is not None and p['cpr'] is not None else None
+        else:
+            s['d_rate'] = s['d_cpr'] = None
+        rows.append(s)
+    # 前一天在层里、今天不见了的（四天消耗归零）
+    gone = []
+    if len(hist) > 1:
+        for uc, p in hist[-2]['uc'].items():
+            if uc not in cur['uc'] and p['tier'] != 'T0':
+                gone.append({'uc': uc, 'short': p['short'], 'prev': p['tier']})
     order = {'T1': 0, 'T2': 1, 'T3': 2, 'T0': 3}
     rows.sort(key=lambda r: (order[r['tier']], -r['spend4']))
-    by_tier = {t: {c: sum(r['n'][c] for r in rows if r['tier'] == t) for c in CAP} for t in ('T1', 'T2', 'T3')}
-    by_tier['T0'] = t0
-    cap = {'cap': CAP, 'names': CH_NAME, 'share': TIER_SHARE, 'by_tier': by_tier, 'th': PLAN_TH, 'gshare': gshare,
-           'total': total, 'rate_w': rate_w, 'cpr_w': cpr_w}
+    meta = {'th': PLAN_TH, 'rate_w': cur['rate_w'], 'cpr_w': cur['cpr_w'], 'tot4': cur['tot4'], 'days': days, 'gone': gone,
+            'ch_names': CH_NAME}
 
     # 剪辑手法：按改法合并（不分 KOC / KOL）
     agg = defaultdict(lambda: [0.0, 0.0, 0.0, 0.0, 0])
@@ -239,12 +230,12 @@ def build_plan(R, D, W, NEXT, o, ucs, kt, th):
         x[0] += k['cost_w']; x[1] += k['act_w']; x[2] += (k['rate'] or 0) * k['act_w'] if k['rate'] is not None else 0
         x[3] += k['cost27']; x[4] += k['n27']
     method = []
-    for key, (c, a, rt, c27, n) in agg.items():
+    for key, (c, a, rt, c27, n_) in agg.items():
         ok = a >= th['act'] and rt
         method.append({'method': key, 'cost_w': c, 'act_w': a, 'rate': rt / a if ok else None, 'cpr': c / rt if ok else None,
-                       'cost27': c27, 'n27': n})
+                       'cost27': c27, 'n27': n_})
     method.sort(key=lambda x: -x['cost_w'])
-    return {'uc': rows, 'cap': cap, 'method': method}
+    return {'uc': rows, 'meta': meta, 'method': method}
 
 
 def main():
@@ -470,7 +461,7 @@ def main():
     shift = {'week27': sum(nz(x['share27']) for x in wk), 'week26': sum(nz(x['share26']) for x in wk) if D[2] >= th['week'] else None,
              'rate_new': gb(D[2]).get('rate'), 'new_share26': gb(D[2]).get('share26'), 'new_share27': gb(D[2]).get('share27')}
 
-    plan = build_plan(R, D, W, NEXT, o, ucs, kt, th)
+    plan = build_plan(allrows, ucs, Dd, kt, th)
 
     # 文字结论（按数据自动写，只陈述事实）
     P0 = lambda v: '—' if v is None else f'{v * 100:.0f}%'
@@ -507,7 +498,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般' or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
-           'plan_uc': plan['uc'], 'plan_cap': [plan['cap']], 'plan_method': plan['method']}
+           'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method']}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
