@@ -29,6 +29,8 @@ def main():
     meta = res['meta'][0]
     notes_path = os.path.join(ROOT, 'notes', meta['date'] + '.json')
     res['notes'] = [json.load(open(notes_path))] if os.path.exists(notes_path) else [{}]
+    plan_path = os.path.join(ROOT, 'notes', meta['date'] + '-plan.json')
+    res['plan'] = [json.load(open(plan_path))] if os.path.exists(plan_path) else [{}]
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)

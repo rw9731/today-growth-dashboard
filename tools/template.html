@@ -106,6 +106,60 @@
   .lx-kl-item .k { font-weight: 700; }
   .lx-links a + a { margin-left: 6px; }
   .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
+  /* 七、核心 insight 和下一步 */
+  :root { --t1: var(--color-ok); --t2: var(--bar); --t3: var(--color-warn); --t0: var(--cds-chart-reference); }
+  .lx-jump { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--bar); text-decoration: none; }
+  .lx-jump:hover { text-decoration: underline; }
+  #plan[hidden] { display: none; }
+  #plan { margin-top: 28px; padding-top: 20px; border-top: 2px solid var(--color-fg); }
+  #plan .lx-h2 { font-size: 24px; border-left-width: 6px; }
+  .pl-headline { font-family: var(--font-serif); font-size: 21px; line-height: 1.45; margin: 4px 0 2px; font-weight: 600; }
+  .pl-ins { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); counter-reset: ins; }
+  .pl-ins-item { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: 12px 14px 12px 46px; position: relative; font-size: 13px; line-height: 1.6; }
+  .pl-ins-item::before { counter-increment: ins; content: counter(ins); position: absolute; left: 14px; top: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--color-fg); color: var(--color-bg); font-weight: 700; font-size: 12px; display: grid; place-items: center; }
+  .pl-ins-item b.t { display: block; font-size: 14.5px; line-height: 1.45; margin-bottom: 4px; }
+  .pl-ins-item .act { display: block; margin-top: 6px; font-weight: 600; }
+  .pl-ins-item .act::before { content: '→ '; color: var(--bar); }
+  .pl-grid { display: grid; gap: 8px; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  @media (max-width: 900px) { .pl-grid { grid-template-columns: minmax(0, 1fr); } }
+  .pl-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; min-width: 0; align-content: start; }
+  .pl-card h3 { margin: 0; font-size: 15px; font-weight: 700; }
+  .pl-card .lx-note { margin-top: -4px; }
+  .pl-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .pl-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--color-fg-muted); }
+  .pl-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .pl-legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .pl-cap-row { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 3rem; align-items: center; gap: 8px; font-size: 13px; }
+  .pl-cap-row .lab { font-weight: 600; white-space: nowrap; }
+  .pl-cap-row .lab span { display: block; font-weight: 400; font-size: 11px; color: var(--color-fg-muted); }
+  .pl-cap-row .tot { text-align: right; font-variant-numeric: tabular-nums; color: var(--color-fg-muted); }
+  .pl-stack { display: flex; height: 26px; border-radius: 5px; overflow: hidden; background: var(--cds-chart-muted); }
+  .pl-stack div { display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .pl-tierbar { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pl-tierbox { flex: 1 1 8rem; border-radius: var(--radius); padding: 8px 10px; border: 1px solid var(--color-border-line); border-top: 4px solid; display: grid; gap: 1px; }
+  .pl-tierbox .n { font-family: var(--font-serif); font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .pl-tierbox .n small { font-family: var(--font-sans); font-size: 12px; color: var(--color-fg-muted); margin-left: 4px; }
+  .pl-tierbox .k { font-size: 12px; font-weight: 700; }
+  .pl-tierbox .d { font-size: 11.5px; color: var(--color-fg-muted); line-height: 1.4; }
+  .pl-table td.dir { min-width: 16rem; max-width: 30rem; white-space: normal; line-height: 1.5; font-size: 12.5px; }
+  .pl-table tr.tier-head td { background: color-mix(in srgb, var(--tc) 10%, var(--color-panel)); font-weight: 700; font-size: 13px; border-bottom: 1px solid color-mix(in srgb, var(--tc) 35%, transparent); padding: 7px 6px; white-space: normal; }
+  .pl-table tr.tier-head td span { font-weight: 400; color: var(--color-fg-muted); margin-left: 8px; }
+  .pl-table td.uccell { border-left: 4px solid var(--tc); }
+  .pl-n { display: inline-flex; gap: 3px; }
+  .pl-n b { display: inline-block; min-width: 26px; text-align: center; padding: 1px 4px; border-radius: 4px; font-weight: 600; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--tc) 14%, transparent); }
+  .pl-n b.z { background: none; color: var(--color-fg-muted); font-weight: 400; }
+  .pl-chan { font-size: 12px; white-space: nowrap; line-height: 1.5; font-variant-numeric: tabular-nums; }
+  .pl-chan .best { color: var(--color-ok); font-weight: 700; }
+  .pl-flag { display: inline-block; margin-top: 2px; font-size: 11px; padding: 0 6px; border-radius: 999px; border: 1px solid var(--color-warn); color: var(--color-warn); white-space: nowrap; }
+  .pl-method { display: grid; gap: 6px; }
+  .pl-mrow { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr) 6.5rem; gap: 8px; align-items: center; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .pl-mrow .bar { position: relative; height: 16px; background: var(--cds-chart-muted); border-radius: 3px; }
+  .pl-mrow .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+  .pl-mrow .bar u { position: absolute; top: -3px; bottom: -3px; width: 0; border-left: 2px dashed var(--color-fg); }
+  .pl-mrow .r { color: var(--color-fg-muted); text-align: right; white-space: nowrap; }
+  .pl-mrow .r b { color: var(--color-fg); }
+  .pl-say { font-size: 13px; line-height: 1.6; margin: 0; padding: 8px 10px; border-radius: 6px; background: color-mix(in srgb, var(--bar) 8%, transparent); }
+  .pl-say b { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -121,6 +175,7 @@
     </nav>
     </div>
     <p class="lx-take" data-draw="take"></p>
+    <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步怎么排产</a>
     <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。</p>
   </header>
 
@@ -316,6 +371,47 @@
           </tr>
         </thead>
         <tbody data-draw="cohortrows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="plan" hidden>
+    <h2 class="lx-h2">七、核心 insight 和下一步迭代</h2>
+    <p class="pl-headline" data-draw="pl-headline" hidden></p>
+    <div class="pl-ins" data-draw="pl-ins"></div>
+    <div class="pl-grid">
+      <div class="pl-card">
+        <h3>Use case 分在哪一层</h3>
+        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>；<b>T1</b> 还要次留率不低于、次留成本不高于全盘；<b>T2</b> = 四天消耗占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>T3</b> = 过了放量线但次留不达标。</p>
+        <div class="pl-chart" data-draw="pl-quad"></div>
+        <div class="pl-legend" data-draw="pl-legend"></div>
+      </div>
+      <div class="pl-card">
+        <h3>每周 <span data-draw="pl-total">—</span> 条产能怎么分</h3>
+        <p class="lx-note">T1 55%、T2 20%、T3 20%、测新 5%。层内按 use case 体量分（四天消耗开根号，小的也有份）；再按这个 use case 里哪种供给次留更便宜，分到 AI / 二创 / 原片，三种产能都不超。</p>
+        <div class="pl-tierbar" data-draw="pl-tiers"></div>
+        <div style="display:grid;gap:8px" data-draw="pl-cap"></div>
+        <p class="pl-say" data-draw="pl-supply"></p>
+        <h3 style="margin-top:6px">剪辑手法：哪种改法次留便宜</h3>
+        <p class="lx-note">按改法合并（不分 KOC / KOL），{{W}} 激活；条形 = 次留成本，虚线 = 全盘 <b data-draw="k-cprw">—</b>；右边是次留成本 · 次留率 · {{D}} 在跑条数。「二剪（未核对）」是还没对过字幕的二创。</p>
+        <div class="pl-method" data-draw="pl-method"></div>
+        <p class="pl-say" data-draw="pl-method-say"></p>
+      </div>
+    </div>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table pl-table">
+        <thead>
+          <tr>
+            <th>Use case</th>
+            <th>消耗<span class="th-sub">{{D3}}–{{D}} 四天</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活</span></th>
+            <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th>各供给表现<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 这个 UC 里最便宜</span></th>
+            <th>本周排产<span class="th-sub">AI · 二创 · 原片（条）</span></th>
+            <th>下一步具体做什么</th>
+          </tr>
+        </thead>
+        <tbody data-draw="pl-rows"></tbody>
       </table>
     </div>
   </section>
@@ -518,6 +614,192 @@
       box.appendChild(div);
     }
   });
+
+  // 七、核心 insight 和下一步
+  (() => {
+    const ucs = data('plan_uc'), cap = one('plan_cap');
+    if (!ucs.length || !cap) return;
+    const P = one('plan') || {};
+    document.getElementById('plan').hidden = false;
+    fill('jump', (el) => { el.hidden = false; });
+    const TC = {T1: 'var(--t1)', T2: 'var(--t2)', T3: 'var(--t3)', T0: 'var(--t0)'};
+    const TN = {T1: 'T1 主攻', T2: 'T2 次优先', T3: 'T3 放量但贵', T0: '测新 / 观察'};
+    const TD = {
+      T1: '能放量 + 次留好：围绕它多做变式，产能至少一半',
+      T2: '量中等但次留好：小步加量，找能放大的角度',
+      T3: '能放量但次留成本偏高：做变式压成本，同时推产品承接',
+      T0: '量小或次留差：只留少量产能测新角度',
+    };
+    const cw = cap.cpr_w, rw = cap.rate_w;
+    const CH = ['ai', 'ec', 'yp'];
+    const tierOf = (u) => u.tier;
+
+    // 一句话 + 3–5 条 insight（每天由日报流程写进 notes/日期-plan.json；没有就按数据自动写）
+    fill('pl-headline', (el) => { el.textContent = P.headline || ''; el.hidden = !P.headline; });
+    fill('pl-ins', (box) => {
+      let pts = P.points || [];
+      if (!pts.length) {
+        const t1 = ucs.filter((u) => u.tier === 'T1'), t3 = ucs.filter((u) => u.tier === 'T3');
+        if (t1.length) pts.push({t: 'T1 主攻 ' + t1.map((u) => u.short).join('、'), d: '四天消耗合计 ' + fmtY(d3.sum(t1, (u) => u.spend4)) + '，次留率和次留成本都好于全盘。'});
+        if (t3.length) pts.push({t: '能放量但贵：' + t3.slice(0, 3).map((u) => u.short).join('、'), d: '次留成本 ' + t3.slice(0, 3).map((u) => fmtY(u.cpr)).join('、') + '，全盘 ' + fmtY(cw) + '。'});
+      }
+      for (const p of pts) {
+        const d = document.createElement('div'); d.className = 'pl-ins-item';
+        const b = document.createElement('b'); b.className = 't'; b.textContent = p.t; d.appendChild(b);
+        if (p.d) d.appendChild(document.createTextNode(p.d));
+        if (p.a) { const a = document.createElement('span'); a.className = 'act'; a.textContent = p.a; d.appendChild(a); }
+        box.appendChild(d);
+      }
+    });
+
+    // 象限图：横轴四天消耗，纵轴次留成本（越往上越便宜）
+    fill('pl-quad', (box) => {
+      const pts = ucs.filter((u) => u.cpr !== null && u.spend4 > 0);
+      const W = 640, H = 380, m = {l: 52, r: 18, t: 18, b: 40};
+      const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'use case 分层象限图');
+      const tot4 = d3.sum(ucs, (u) => u.spend4) / (d3.sum(ucs, (u) => u.share4) || 1);
+      const x = d3.scaleSqrt([0, d3.max(pts, (u) => u.spend4) * 1.08], [m.l, W - m.r]);
+      const ys = pts.map((u) => u.cpr);
+      const y = d3.scaleLinear([Math.min(d3.min(ys), cw * 0.6) - 4, Math.max(d3.max(ys), cw * 1.45) + 4], [m.t, H - m.b]);
+      const xs = cap.th.big * tot4;
+      // 象限底色
+      svg.append('rect').attr('x', x(xs)).attr('y', m.t).attr('width', W - m.r - x(xs)).attr('height', y(cw) - m.t).style('fill', 'var(--t1)').style('opacity', 0.07);
+      svg.append('rect').attr('x', x(xs)).attr('y', y(cw)).attr('width', W - m.r - x(xs)).attr('height', H - m.b - y(cw)).style('fill', 'var(--t3)').style('opacity', 0.07);
+      svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', x(xs) - m.l).attr('height', y(cw) - m.t).style('fill', 'var(--t2)').style('opacity', 0.05);
+      const qlab = (tx, ty, s, c, anchor) => svg.append('text').attr('x', tx).attr('y', ty).attr('text-anchor', anchor).attr('font-size', 12).attr('font-weight', 700).style('fill', c).text(s);
+      qlab(W - m.r - 6, m.t + 15, 'T1 主攻：能放量 + 次留便宜', 'var(--t1)', 'end');
+      qlab(W - m.r - 6, H - m.b - 8, 'T3：能放量但次留贵', 'var(--t3)', 'end');
+      qlab(x(xs) - 6, m.t + 15, 'T2：量中等、次留好', 'var(--t2)', 'end');
+      // 轴
+      const ax = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(6).tickFormat((v) => (v >= 1000 ? '¥' + v / 1000 + 'k' : '¥' + v)));
+      const ay = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat((v) => '¥' + v));
+      [ax, ay].forEach((g) => { g.selectAll('text').style('fill', 'var(--color-fg-muted)').attr('font-size', 11); g.selectAll('line,path').style('stroke', 'var(--color-border-line)'); });
+      svg.append('text').attr('x', W - m.r).attr('y', H - 6).attr('text-anchor', 'end').attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text('四天消耗（' + META.D3 + '–' + META.D + '）→ 越往右量越大');
+      svg.append('text').attr('transform', `translate(12,${m.t}) rotate(90)`).attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text('次留成本（' + META.W + '）↓ 越往上越便宜');
+      // 参考线
+      svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(cw)).attr('y2', y(cw)).style('stroke', 'var(--color-fg)').attr('stroke-dasharray', '4 3').style('opacity', 0.55);
+      svg.append('text').attr('x', m.l + 4).attr('y', y(cw) - 4).attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text('全盘 ' + fmtY(cw));
+      svg.append('line').attr('x1', x(xs)).attr('x2', x(xs)).attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--color-fg)').attr('stroke-dasharray', '4 3').style('opacity', 0.55);
+      svg.append('text').attr('x', x(xs) + 4).attr('y', m.t + 30).attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text('放量线：占 ' + fmtP0(cap.th.big) + ' 消耗');
+      // 点：大小 = 次留率
+      const r = d3.scaleSqrt([0.15, 0.45], [4, 11]).clamp(true);
+      const g = svg.append('g');
+      const lab = [];
+      for (const u of pts) {
+        const cx = x(u.spend4), cy = y(u.cpr);
+        g.append('circle').attr('cx', cx).attr('cy', cy).attr('r', r(u.rate || 0.2)).style('fill', TC[u.tier]).style('opacity', u.tier === 'T0' ? 0.45 : 0.85).style('stroke', 'var(--color-panel)').attr('stroke-width', 1.5)
+          .append('title').text(`${u.uc} ${u.short}\n四天消耗 ${fmtY(u.spend4)}\n次留率 ${fmtP0(u.rate)} · 次留成本 ${fmtY(u.cpr)}`);
+        if (u.tier !== 'T0' || u.spend4 > xs * 0.5) lab.push({u, cx, cy, rr: r(u.rate || 0.2)});
+      }
+      // 标签防重叠：先放右边，挤了换左边，再不行往下挪，挪过的画一根引线
+      const placed = [];
+      const hit = (bx) => placed.some((p) => bx.x0 < p.x1 && bx.x1 > p.x0 && bx.y0 < p.y1 && bx.y1 > p.y0) || bx.x0 < m.l || bx.x1 > W - 2;
+      lab.sort((a, b) => b.u.spend4 - a.u.spend4);
+      for (const l of lab) {
+        const w = l.u.short.length * 11.5 + 2; let best = null;
+        for (let k = 0; k < 14 && !best; k++) {
+          const dy = (k >> 1) * 13 * (k % 4 < 2 ? 1 : -1);
+          for (const side of [1, -1]) {
+            const x0 = side > 0 ? l.cx + l.rr + 3 : l.cx - l.rr - 3 - w;
+            const bx = {x0, x1: x0 + w, y0: l.cy - 8 + dy, y1: l.cy + 5 + dy};
+            if (!hit(bx)) { best = {bx, side, dy}; break; }
+          }
+        }
+        if (!best) continue;
+        placed.push(best.bx);
+        if (best.dy) svg.append('line').attr('x1', l.cx).attr('y1', l.cy).attr('x2', best.side > 0 ? best.bx.x0 : best.bx.x1).attr('y2', best.bx.y0 + 8).style('stroke', 'var(--color-fg-muted)').attr('stroke-width', 0.6);
+        svg.append('text').attr('x', best.bx.x0 + 1).attr('y', best.bx.y0 + 12).attr('font-size', 11.5).attr('font-weight', l.u.tier === 'T0' ? 400 : 600)
+          .style('fill', l.u.tier === 'T0' ? 'var(--color-fg-muted)' : 'var(--color-fg)').text(l.u.short);
+      }
+    });
+    fill('pl-legend', (el) => {
+      for (const t of ['T1', 'T2', 'T3', 'T0']) { const s = document.createElement('span'); const i = document.createElement('i'); i.style.background = TC[t]; s.append(i, document.createTextNode(TN[t])); el.appendChild(s); }
+      const s = document.createElement('span'); s.textContent = '点越大 = 次留率越高'; el.appendChild(s);
+    });
+
+    // 产能分配
+    fill('pl-tiers', (box) => {
+      const tot = cap.total;
+      for (const t of ['T1', 'T2', 'T3', 'T0']) {
+        const n = d3.sum(CH, (c) => cap.by_tier[t][c]);
+        const d = document.createElement('div'); d.className = 'pl-tierbox'; d.style.borderTopColor = TC[t];
+        const ucn = ucs.filter((u) => u.tier === t && u.n_tot > 0).length;
+        d.innerHTML = `<span class="k" style="color:${TC[t]}">${TN[t]}</span><span class="n">${n}<small>条 · ${fmtP0(n / tot)}</small></span><span class="d">${t === 'T0' ? '不分到具体 use case' : ucn + ' 个 use case'}</span>`;
+        box.appendChild(d);
+      }
+    });
+    fill('pl-cap', (box) => {
+      for (const c of CH) {
+        const row = document.createElement('div'); row.className = 'pl-cap-row';
+        const lab = document.createElement('div'); lab.className = 'lab'; lab.innerHTML = cap.names[c] + '<span>' + (c === 'yp' ? '外部 agency，≥ ' + cap.cap[c] + ' 条/周' : '维系，' + cap.cap[c] + ' 条/周') + '</span>';
+        const st = document.createElement('div'); st.className = 'pl-stack';
+        for (const t of ['T1', 'T2', 'T3', 'T0']) {
+          const n = cap.by_tier[t][c]; if (!n) continue;
+          const s = document.createElement('div'); s.style.flex = n; s.style.background = TC[t]; s.textContent = n; s.title = TN[t] + ' ' + n + ' 条'; st.appendChild(s);
+        }
+        const tt = document.createElement('div'); tt.className = 'tot'; tt.textContent = cap.cap[c];
+        row.append(lab, st, tt); box.appendChild(row);
+      }
+    });
+    fill('pl-big', (el) => { el.textContent = fmtP0(cap.th.big); }); fill('pl-mid', (el) => { el.textContent = d3.format('.1~%')(cap.th.mid); }); fill('pl-total', (el) => { el.textContent = cap.total; });
+  fill('pl-supply', (el) => { if (P.supply) el.innerHTML = P.supply; else el.hidden = true; });
+
+    // 每个 use case 的排产和下一步
+    fill('pl-rows', (tb) => {
+      const max = d3.max(ucs, (u) => u.spend4) || 1;
+      const dirs = P.uc || {};
+      for (const tier of ['T1', 'T2', 'T3', 'T0']) {
+        const rows = ucs.filter((u) => u.tier === tier && (tier !== 'T0' || u.spend4 >= 2000 || dirs[u.uc]));
+        if (!rows.length) continue;
+        const h = document.createElement('tr'); h.className = 'tier-head'; h.style.setProperty('--tc', TC[tier]);
+        const hn = d3.sum(CH, (c) => cap.by_tier[tier][c]);
+        const hd = document.createElement('td'); hd.colSpan = 7; hd.innerHTML = `<span style="margin:0;color:${TC[tier]};font-weight:700">${TN[tier]}</span>　${hn} 条/周<span>${TD[tier]}</span>`;
+        h.appendChild(hd); tb.appendChild(h);
+        for (const u of rows) {
+          const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
+          const c0 = td('uccell'); stack(c0, u.uc + ' ' + u.short, u.l1); c0.classList.add('uccell');
+          if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = u.flag; c0.appendChild(f); }
+          barCell(td(), u.spend4, max, 70);
+          const cr = td(rateCls(u.rate, o, t)); cr.textContent = fmtP0(u.rate);
+          const cc = td(cprCls(u.cpr, o, t)); cc.textContent = fmtY(u.cpr);
+          // 渠道：哪个渠道在这个 UC 里次留最便宜
+          const ch = td('pl-chan');
+          const okc = CH.filter((c) => u.ch[c].cpr !== null && u.ch[c].act_w >= 30);
+          const best = okc.length > 1 ? okc.reduce((a, b) => (u.ch[a].cpr <= u.ch[b].cpr ? a : b)) : null;
+          for (const c of CH) {
+            const x = u.ch[c]; if (x.spend4 < 0.01 * u.spend4) continue;
+            const line = document.createElement('div');
+            const nm = {ai: 'AI', ec: '二创', yp: '原片'}[c];
+            line.innerHTML = (c === best ? '<span class="best">' : '<span>') + nm + ' ' + (x.cpr !== null && x.act_w >= 30 ? fmtY(x.cpr) + ' · ' + fmtP0(x.rate) : '量小') + '</span> <span class="muted">' + fmtP0(x.spend4 / u.spend4) + '</span>';
+            ch.appendChild(line);
+          }
+          const nc = td(); const box = document.createElement('span'); box.className = 'pl-n';
+          for (const c of CH) { const b = document.createElement('b'); b.textContent = u.n[c]; if (!u.n[c]) b.className = 'z'; b.title = cap.names[c]; box.appendChild(b); }
+          nc.appendChild(box);
+          const dc = td('dir'); dc.textContent = dirs[u.uc] || '';
+          tb.appendChild(tr);
+        }
+      }
+    });
+
+    // 剪辑手法
+    fill('pl-method', (box) => {
+      const rows = data('plan_method').filter((m) => m.cpr !== null);
+      const max = Math.max(d3.max(rows, (m) => m.cpr), cw) * 1.1;
+      rows.sort((a, b) => a.cpr - b.cpr);
+      for (const m of rows) {
+        const row = document.createElement('div'); row.className = 'pl-mrow';
+        const lab = document.createElement('div'); lab.textContent = m.method;
+        const bar = document.createElement('div'); bar.className = 'bar';
+        const i = document.createElement('i'); i.style.width = (m.cpr / max * 100) + '%'; i.style.background = m.cpr <= cw ? 'var(--color-ok)' : m.cpr > cw * 1.15 ? 'var(--color-bad)' : 'var(--color-warn)';
+        const u_ = document.createElement('u'); u_.style.left = (cw / max * 100) + '%'; u_.title = '全盘 ' + fmtY(cw);
+        bar.append(i, u_);
+        const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · ' + fmtN(m.n27) + ' 条';
+        row.append(lab, bar, r); box.appendChild(row);
+      }
+    });
+    fill('pl-method-say', (el) => { if (P.method) el.innerHTML = P.method; else el.hidden = true; });
+  })();
 
   fill('cohortrows', (tb) => {
     const rows = data('cohort'); const max = d3.max(rows, (r) => r.cost27) || 1;
