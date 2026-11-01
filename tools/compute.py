@@ -16,6 +16,9 @@ Windows (D = the report day, usually yesterday):
 import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import scripts_lib  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'rank': 1000, 'low': 0.8, 'high': 1.25}
 L1_SHORT = {'AI 个人助理综述': 'AI 综述', '工作沟通与协作': '工作', '个人日程与事务助理': '日程', '学习与成长': '学习',
@@ -363,6 +366,13 @@ def main():
     order = ['能放量 + 次留好', '次留好、量还小', '次留好但贵', '拖后腿', '一般']
     mat = []
     id_3 = group3(lambda r: r['id'])
+    SCRIPTS = scripts_lib.load()
+    # 脚本规律：三天激活够的素材，按脚本特征分组
+    pat_items = []
+    for i, rs in by_id.items():
+        c_, a__, rt_ = win(rs)
+        pat_items.append({'id': i, 'cost': c_, 'act': a__, 'ret': rt_})
+    patterns = scripts_lib.patterns(pat_items, SCRIPTS, th['act'])
     for i, rs in by_id.items():
         c, a_, rt = win(rs)
         c27 = S(rs, D[3], 'cost')
@@ -388,6 +398,7 @@ def main():
                     'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'act27': S(rs, D[3], 'act'),
                     'link': link, 'link_type': ltype if link else '', 'video': video})
         mat[-1].update(id_3.get(i, NO3))
+        mat[-1]['script'] = scripts_lib.summary(SCRIPTS.get(i))
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量 + 次留好', '次留好、量还小')]
 
@@ -537,12 +548,12 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般' or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
-           'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method']}
+           'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
-                      'pot': gs['n_pot'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl)}, ensure_ascii=False))
+                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl)}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

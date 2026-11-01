@@ -45,8 +45,8 @@ compute.py 自动算：
 M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10:13 左右）。
 
 1. 读 `'投放数据_分日'!A1:AB`（存成文件），`python3 tools/week.py --sheet <分日文件> --week M --out /tmp/week.json`。输出 `NO_DATA` 就是周日还没出。
-2. 看视频（Reina 11/1：必须用她电脑上的内置浏览器真看，不看不写分析）：`python3 tools/week_jl.py /tmp/week.json --out /tmp/wk` 生成 jl.js 和 watch.json。在巨量素材页跑 jl.js、`await __jlWait()` 到 done，再在同一个页面跑 tools/frames.js，用 `__jl.res[素材ID].u` 当视频链接。watch.json 里 level=full 的全片字幕都读（每 1.5 到 2 秒一帧，分几批画，读成脚本记进 /tmp/wk/scripts/<素材ID>.txt：每句字幕、Today 第几秒出现、录屏几秒到几秒、总时长）；level=structure 的看缩略图和开头 0 到 6 秒字幕。AI 短剧的成片链接（唯西表「脚本及成片」那一行）也用 get_page_text 读脚本对照。
-3. 看 /tmp/week.json 和 /tmp/wk/scripts 写 `notes/week-M.json`：
+2. 读全片脚本（见下面「读全片脚本」）：`python3 tools/script_todo.py --week /tmp/week.json --out /tmp/sc`，范围是周消耗 ≥ ¥2,000 的所有素材，脚本库里没有的都要读。
+3. 看 /tmp/week.json 和 scripts/ 写 `notes/week-M.json`：
 ```
 {"headline": "一句话结论",
  "insight": [{"t": "结论", "d": "证据（可用 <b>）"}],                       // 核心 insight 3 到 5 条
@@ -61,3 +61,14 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10
 5. 提交 week/、weeks.json、notes/week-M.json，push。
 
 口径：消耗看整周；次留看周一到周六激活（周日的次留下周才出）；3 留看周一到周四激活。门槛在 week.py 的 WTH：能放量的 use case = 周消耗 ≥ 全盘 3% 且 ≥ ¥20,000；头部素材 = 周消耗 ≥ 全盘 1%（最少 ¥5,000）、激活 ≥ 100、次留率和次留成本都好于全盘，最多 10 条；拖后腿 = 过头部线但次留率 < 全盘 85% 或次留成本 > 1.2 倍，按多花的钱排，最多 8 条。pick = 次留率高全盘 5% 以上、次留成本低 10% 以上、3 留不低于全盘。
+
+## 读全片脚本（日报、周报都要做，Reina 11/1 定）
+
+每条投放素材读一次全片字幕，存成 scripts/<素材ID>.json（格式见 tools/scripts_lib.py），以后日报、周报都直接用。compute.py 和 week.py 会把脚本挂到素材上（页面「脚本」那一列），并按 Today 第几秒出现、开头怎么钩、形式、时长分组算次留（patterns，页面「脚本规律」）。
+
+- 要读哪些：日报 `python3 tools/script_todo.py --daily /tmp/results.json --out /tmp/sc`（「四、昨天消耗排行」全部、拖后腿和次留好但贵的、扩量和它们的原素材）；周报 `--week /tmp/week.json`（周消耗 ≥ ¥2,000 的全部）。已经读过的不重读。写 /tmp/sc/todo.json 和 /tmp/sc/jl.js。
+- 必须用 Reina 电脑上的内置浏览器读，不读不写分析。todo 超过 12 条就拆成 2 到 4 批，用 Agent 工具并行跑，每个 agent 用自己开的 tab（tabs_create，第一个没面板就 preview_start），只写 scripts/ 下自己那批的文件。
+- 每个 tab：navigate 到巨量素材页 https://ad.oceanengine.com/material_center/management/video?aadvid=1878223927194825 （网址里有 login 就停，不输入账号密码）；resize_window 1000x2000；跑这一批的 jl.js（`python3 tools/script_todo.py ... --out` 生成后可以按批拆：同一段 JS 只换 NEED 列表），`await __jlWait()` 到 done；再跑 tools/frames.js 全文。
+- 每条：先 `__v.start('thumbs', 链接, [0.5,3,6,10,15,20,30,40,50], '标签')` 看整画面（字幕在多高、形式、Today 第几秒出现）；再 `__v.start('script', 链接, '标签', step, y0, y1, 3)` 读全片字幕，y0、y1 按字幕高度取，字幕一秒一换的 step 用 1；截图只有约 750 像素高，画布更高就 `__v.page(1)`、`__v.page(2)` 每次下翻 700 像素再截。链接用 `__jl.res[ID].u`，没有就用 todo.json 的 video_permanent。
+- note 里写看到的问题：字幕打码、「审核」「DEMO」「样片」或平台水印（第几秒）、Today 界面露出 bug 或内部字样、App 名不是 Today、隐私露出、素材名和内容对不上、活动口径（永久免费、送 Token、Pro 权益）。
+- 做完 resize_window preset desktop，关掉自己的 tab。

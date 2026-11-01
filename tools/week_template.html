@@ -30,6 +30,18 @@
   .wk-legend span { display: inline-flex; align-items: center; gap: 5px; }
   .wk-legend i { width: 12px; height: 8px; border-radius: 2px; display: inline-block; }
   .wk-legend i.ln { height: 2px; }
+
+
+  .sc-cell { min-width: 13rem; max-width: 20rem; white-space: normal; line-height: 1.45; font-size: 12.5px; }
+  .sc-cell b { font-weight: 600; }
+  .sc-cell .sub { display: block; color: var(--color-fg-muted); font-size: 11.5px; }
+  .sc-cell.none { color: var(--color-fg-muted); font-size: 12px; }
+  .sc-pat { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .sc-pat h4 { margin: 0 0 4px; font-size: 13px; }
+  .sc-pat table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .sc-pat td { padding: 3px 4px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sc-pat td.num { text-align: right; }
+  .sc-pat .small td { color: var(--color-fg-muted); }
   details.wk-more summary { cursor: pointer; font-size: 13px; color: var(--color-fg-muted); padding: 4px 2px; }
 </style>
 </head>
@@ -100,6 +112,7 @@
           <tr>
             <th></th>
             <th>素材</th>
+            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
@@ -120,6 +133,7 @@
         <thead>
           <tr>
             <th>素材</th>
+            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
@@ -148,6 +162,10 @@
         <p class="lx-note">按改法合并（不分 KOC / KOL）；条形 = 次留成本，虚线 = 全盘；右边是次留成本 · 次留率 · 3 留率。</p>
         <div class="pl-method" data-draw="method"></div>
       </div>
+    </div>
+    <div class="pl-card">
+      <h3>脚本规律（{{WRET}} 激活）</h3>
+      <div data-draw="patterns"></div>
     </div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -315,6 +333,7 @@
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       td('wk-rank').textContent = i + 1;
       const n = td(); nameCell(n, m); if (remix[m.id]) { n.append(document.createElement('br')); const p = document.createElement('span'); p.className = 'wk-pick'; p.textContent = '二创'; n.appendChild(p); }
+      scriptCell(td(), m.script);
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
       td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
@@ -326,10 +345,11 @@
   });
   fill('bad-rows', (tb) => {
     const rows = data('bad'); const max = d3.max(rows, (m) => m.spend) || 1;
-    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 8; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
+    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 9; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
     for (const m of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       nameCell(td(), m);
+      scriptCell(td(), m.script);
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
       td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
@@ -340,6 +360,38 @@
     }
   });
 
+
+  // 脚本：开头原话 + 结构（scripts/<ID>.json 读过的才有）
+  const scriptCell = (td, sc) => {
+    if (!sc) { td.className = 'sc-cell none'; td.textContent = '还没读脚本'; return; }
+    td.className = 'sc-cell';
+    const b = document.createElement('b'); b.textContent = '「' + (sc.hook || '') + '」'; td.appendChild(b);
+    const s = document.createElement('span'); s.className = 'sub';
+    s.textContent = [sc.today_at == null ? 'Today 没出现' : 'Today 第 ' + sc.today_at + ' 秒', sc.dur ? Math.round(sc.dur) + ' 秒' : '', sc.form, sc.hook_type ? '开头：' + sc.hook_type : ''].filter(Boolean).join(' · ');
+    td.appendChild(s);
+    if (sc.demo) { const d = document.createElement('span'); d.className = 'sub'; d.textContent = '演示：' + sc.demo; td.appendChild(d); }
+  };
+  // 脚本规律：按 Today 出场时间、开头、形式、时长分组的次留
+  const drawPatterns = (box, pat, rw, cw) => {
+    if (!pat || !pat.n) { box.innerHTML = '<p class="lx-note">脚本库里还没有够多读过的素材。</p>'; return; }
+    const head = document.createElement('p'); head.className = 'lx-note';
+    head.innerHTML = '读过全片脚本、激活够的素材 <b>' + pat.n + '</b> 条，占这段消耗的 <b>' + d3.format('.0%')(pat.coverage) + '</b>。绿 = 次留率不低于、次留成本不高于全盘；少于 5 条的灰掉，只看方向。';
+    box.appendChild(head);
+    const grid = document.createElement('div'); grid.className = 'sc-pat';
+    for (const dm of pat.dims) {
+      if (!dm.groups.length) continue;
+      const card = document.createElement('div'); const h = document.createElement('h4'); h.textContent = dm.label; card.appendChild(h);
+      const t = document.createElement('table');
+      for (const g of dm.groups) {
+        const tr = document.createElement('tr'); if (g.n < 5) tr.className = 'small';
+        const good = g.rate != null && g.cpr != null && g.rate >= rw && g.cpr <= cw;
+        tr.innerHTML = '<td>' + g.v + '</td><td class="num">' + g.n + ' 条</td><td class="num">' + (g.cost >= 10000 ? '¥' + d3.format('.1f')(g.cost / 10000) + ' 万' : '¥' + d3.format(',.0f')(g.cost)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.rate == null ? '—' : d3.format('.1%')(g.rate)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.cpr == null ? '—' : '¥' + d3.format(',.0f')(g.cpr)) + '</td>';
+        t.appendChild(tr);
+      }
+      card.appendChild(t); grid.appendChild(card);
+    }
+    box.appendChild(grid);
+  };
   // 四、产出和类型
   const PC = {ai: COLOR, ec: css('--color-ok'), yp: css('--color-warn'), other: css('--cds-chart-reference')};
   const PN = {ai: 'AI 短剧', ec: '二创', yp: '真人原片', other: '其他'};
@@ -387,6 +439,7 @@
     }
   });
 
+  fill('patterns', (box) => drawPatterns(box, one('patterns'), rw, cw));
   // 五、总结和 to-do（notes/week-<周一>.json）
   const list = (name, items, who) => fill(name, (ol) => {
     if (!items || !items.length) { const li = document.createElement('li'); li.className = 'muted'; li.textContent = '这周没有。'; ol.appendChild(li); return; }

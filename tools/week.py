@@ -16,6 +16,7 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import compute as C  # noqa: E402
+import scripts_lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # 周报门槛（Reina 11/1：好的 use case、头部素材的消耗门槛比日报高）
@@ -27,7 +28,8 @@ WTH = {
     'top_act': 100,                               # 头部素材至少 100 个激活才判断次留
     'top_cap': 10, 'bad_cap': 8,                  # 每张表最多几条
     'bad_rate': 0.85, 'bad_cpr': 1.20,            # 表现差：次留率 < 全盘 85% 或 次留成本 > 全盘 1.2 倍
-    'run': 1000,                                  # 新素材「跑起来」= 本周消耗 ≥ ¥1,000
+    'run': 1000,
+    'scope': 2000,                                # 周报要读全片脚本的范围：周消耗 ≥ ¥2,000                                  # 新素材「跑起来」= 本周消耗 ≥ ¥1,000
     'act': 30,
 }
 CH = {'ai': 'AI 短剧', 'ec': '二创', 'yp': '真人原片'}
@@ -175,6 +177,15 @@ def main():
     for r in RW:
         by_id[r['id']].append(r)
     top_bar = max(WTH['top_min'], WTH['top_share'] * tot)
+    SCRIPTS = scripts_lib.load()
+    scope, pat_items = [], []
+    for i, rs in by_id.items():
+        s = stats(rs, W)
+        if s['spend'] >= WTH['scope']:
+            scope.append({'id': i, 'name': names.get(i, i), 'spend': round(s['spend'])})
+        pat_items.append({'id': i, 'cost': s['cost_r'], 'act': s['act_r'], 'ret': (s['cost_r'] / s['cpr']) if s['cpr'] else (s['rate'] or 0) * s['act_r']})
+    scope.sort(key=lambda x: -x['spend'])
+    patterns = scripts_lib.patterns(pat_items, SCRIPTS, WTH['act'])
     mats = []
     for i, rs in by_id.items():
         s = stats(rs, W)
@@ -193,7 +204,8 @@ def main():
                      'first': first.get(i, ''), 'is_new': first.get(i, '') >= W[0],
                      **{k: s[k] for k in ('spend', 'act', 'act_r', 'rate', 'cpr', 'act3', 'rate3', 'cpr3', 'days')},
                      'share': s['spend'] / tot, 'good': good, 'bad': bad, 'excess': excess,
-                     'video': C.pick_video(lk), 'link': link, 'link_type': ltype if link else ''})
+                     'video': C.pick_video(lk), 'link': link, 'link_type': ltype if link else '',
+                     'script': scripts_lib.summary(SCRIPTS.get(i))})
     good_all = sorted([m for m in mats if m['good']], key=lambda m: -m['spend'])
     top = good_all[:WTH['top_cap']]
     for m in top:
@@ -256,12 +268,12 @@ def main():
             'w_ret': f'{lab(W[0])}–{lab(W[5])}', 'w_ret3': f'{lab(W[0])}–{lab(W[3])}', 'built': dt.date.today().isoformat(),
             'top_bar': top_bar, 'uc_bar': max(WTH['uc_big_min'], WTH['uc_big_share'] * tot), 'n_good_all': len(good_all)}
     out = {'meta': [meta], 'th': [WTH], 'overview': [o], 'daily': daily, 'uc': uct, 'top': top, 'bad': bad, 'kind': kt,
-           'prod': prod, 'method': method}
+           'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'week': meta['label'], 'spend': round(o['spend']), 'p_spend': round(o['p_spend']),
                       'rate': o['rate'] and round(o['rate'], 4), 'cpr': o['cpr'] and round(o['cpr'], 1),
                       'rate3': r3w and round(r3w, 4), 'n_new': o['n_new'], 'T1': [u['uc'] for u in uct if u['tier'] == 'T1'],
-                      'top': len(top), 'good_all': len(good_all), 'bad': len(bad), 'top_bar': round(top_bar),
+                      'top': len(top), 'good_all': len(good_all), 'scope': len(scope), 'scripted': sum(1 for x in scope if x['id'] in SCRIPTS), 'bad': len(bad), 'top_bar': round(top_bar),
                       'no_video': sum(1 for m in top + bad if not m['video'])}, ensure_ascii=False))
 
 
