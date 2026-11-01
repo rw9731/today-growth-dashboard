@@ -45,7 +45,8 @@ compute.py 自动算：
 M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10:13 左右）。
 
 1. 读 `'投放数据_分日'!A1:AB`（存成文件），`python3 tools/week.py --sheet <分日文件> --week M --out /tmp/week.json`。输出 `NO_DATA` 就是周日还没出。
-2. 看 /tmp/week.json 写 `notes/week-M.json`：
+2. 看视频（Reina 11/1：必须用她电脑上的内置浏览器真看，不看不写分析）：`python3 tools/week_jl.py /tmp/week.json --out /tmp/wk` 生成 jl.js 和 watch.json。在巨量素材页跑 jl.js、`await __jlWait()` 到 done，再在同一个页面跑 tools/frames.js，用 `__jl.res[素材ID].u` 当视频链接。watch.json 里 level=full 的全片字幕都读（每 1.5 到 2 秒一帧，分几批画，读成脚本记进 /tmp/wk/scripts/<素材ID>.txt：每句字幕、Today 第几秒出现、录屏几秒到几秒、总时长）；level=structure 的看缩略图和开头 0 到 6 秒字幕。AI 短剧的成片链接（唯西表「脚本及成片」那一行）也用 get_page_text 读脚本对照。
+3. 看 /tmp/week.json 和 /tmp/wk/scripts 写 `notes/week-M.json`：
 ```
 {"headline": "一句话结论",
  "insight": [{"t": "结论", "d": "证据（可用 <b>）"}],                       // 核心 insight 3 到 5 条
@@ -54,9 +55,9 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10
  "stop":   [{"t": "动作", "d": "依据"}],                                    // 停掉或降预算，2 到 4 条，优先 bad 里多花的钱最多的
  "other":  [{"t": "动作", "d": "依据"}],                                    // 产能、口径、要谁跟进，1 到 3 条
  "uc": {"UC_ID": "这个 use case 下周做什么"},                               // 表里 T1、T2、T3 每个一句
- "top_note": {"素材ID": "一句为什么好（看过视频的写看到的）"}}              // top 里没进 remix 的每条一句
+ "top_note": {"素材ID": "开头原话 + 结构一句 + 为什么好"}}                 // top 里没进 remix 的每条，按看到的写
 ```
-3. `python3 tools/build_week.py /tmp/week.json`：写 week/M/index.html、week/index.html（最新一周）、weeks.json。
-4. 提交 week/、weeks.json、notes/week-M.json，push。
+4. `python3 tools/build_week.py /tmp/week.json`：写 week/M/index.html、week/index.html（最新一周）、weeks.json。
+5. 提交 week/、weeks.json、notes/week-M.json，push。
 
 口径：消耗看整周；次留看周一到周六激活（周日的次留下周才出）；3 留看周一到周四激活。门槛在 week.py 的 WTH：能放量的 use case = 周消耗 ≥ 全盘 3% 且 ≥ ¥20,000；头部素材 = 周消耗 ≥ 全盘 1%（最少 ¥5,000）、激活 ≥ 100、次留率和次留成本都好于全盘，最多 10 条；拖后腿 = 过头部线但次留率 < 全盘 85% 或次留成本 > 1.2 倍，按多花的钱排，最多 8 条。pick = 次留率高全盘 5% 以上、次留成本低 10% 以上、3 留不低于全盘。
