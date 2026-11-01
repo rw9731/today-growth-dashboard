@@ -13,7 +13,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def render(tpl, res, meta, rel):
     blob = json.dumps(res, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
-    rep = {'{{D}}': meta['D'], '{{D1}}': meta['D1'], '{{D2}}': meta['D2'], '{{D3}}': meta['D3'], '{{W}}': meta['W'],
+    rep = {'{{D}}': meta['D'], '{{D1}}': meta['D1'], '{{D2}}': meta['D2'], '{{D3}}': meta['D3'], '{{W}}': meta['W'], '{{W3}}': meta.get('W3', '—'),
            '{{T}}': meta['T'], '{{WEEK}}': meta['week'], '{{WEEKDAY}}': meta['weekday'], '{{BUILT}}': meta['built'],
            '{{REL}}': rel, '{{DATE}}': meta['date'], '{{DCN}}': f"{int(meta['date'][5:7])}月{int(meta['date'][8:10])}日",
            '{{RESULTS}}': blob}

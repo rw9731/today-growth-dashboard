@@ -3,13 +3,15 @@
 Usage:
   python3 tools/compute.py --sheet <投放数据_分日 dump.json> --date YYYY-MM-DD --out results.json
 
-<dump.json> is the Google Sheets get_values result for '投放数据_分日'!A1:AA
+<dump.json> is the Google Sheets get_values result for '投放数据_分日'!A1:AB
 ({"values": [[header...], [row...], ...]}). Columns are found by header name.
 
 Windows (D = the report day, usually yesterday):
 - spend columns use D itself;
 - 次留率 / 次留成本 use activations on D-3..D-1 with their next-day 次留
   (巨量 books 次留 on the callback day, so D's own activations are not complete yet).
+- 3 留率 / 3 留成本 use activations on D-5..D-3: the「3日留存」column (AB, from 10/16) is booked
+  on the activation day and needs about 3 days to settle, so D-2..D are left out.
 """
 import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict
@@ -101,7 +103,8 @@ def load_rows(path):
         opt = lambda h: r[col[h]] if h in col and col[h] < len(r) else ''
         out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name'),
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
-                    'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型')})
+                    'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
+                    'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != ''})
     return out
 
 
@@ -218,6 +221,7 @@ def build_plan(allrows, ucs, Dd, kt, th):
 
     # 剪辑手法：按改法合并（不分 KOC / KOL）
     agg = defaultdict(lambda: [0.0, 0.0, 0.0, 0.0, 0])
+    agg3 = defaultdict(lambda: [0.0, 0.0, 0.0])
     for k in kt:
         ps = k['kind'].split(' · ')
         if ps[0] == 'AI 短剧':
@@ -229,11 +233,14 @@ def build_plan(allrows, ucs, Dd, kt, th):
         x = agg[key]
         x[0] += k['cost_w']; x[1] += k['act_w']; x[2] += (k['rate'] or 0) * k['act_w'] if k['rate'] is not None else 0
         x[3] += k['cost27']; x[4] += k['n27']
+        y = agg3[key]; y[0] += k.get('cost3', 0); y[1] += k.get('act3', 0); y[2] += k.get('ret3', 0)
     method = []
     for key, (c, a, rt, c27, n_) in agg.items():
         ok = a >= th['act'] and rt
+        c3, a3, r3 = agg3[key]
+        ok3 = a3 >= th['act'] and r3
         method.append({'method': key, 'cost_w': c, 'act_w': a, 'rate': rt / a if ok else None, 'cpr': c / rt if ok else None,
-                       'cost27': c27, 'n27': n_})
+                       'cost27': c27, 'n27': n_, 'act3': a3, 'rate3': r3 / a3 if ok3 else None, 'cpr3': c3 / r3 if ok3 else None})
     method.sort(key=lambda x: -x['cost_w'])
     return {'uc': rows, 'meta': meta, 'method': method}
 
@@ -251,6 +258,8 @@ def main():
     D = [d.isoformat() for d in days]
     W = D[:3]
     NEXT = {D[i]: D[i + 1] for i in range(3)}
+    days3 = [Dd - dt.timedelta(days=k) for k in (5, 4, 3)]
+    W3 = [d.isoformat() for d in days3]
     monday = (Dd - dt.timedelta(days=Dd.weekday())).isoformat()
     th = dict(TH, week=monday)
 
@@ -273,7 +282,8 @@ def main():
         if r['name']:
             names[r['id']] = r['name']
     R = [r for r in allrows if r['date'] in D]
-    for r in R:
+    R3 = [r for r in allrows if r['date'] in W3]
+    for r in R + R3:
         r['fuzzy'] = False
         if r['uc'] == '库外':
             for key, uc in FUZZY:
@@ -281,6 +291,21 @@ def main():
                     r['uc'], r['l1'], r['l2'], r['fuzzy'] = uc, ucs[uc]['l1'], ucs[uc]['l2'], True
                     break
     unknown = sorted({r['uc'] for r in R if r['uc'] not in ucs})
+    have3 = {d for d in W3 if any(r['has3'] for r in R3 if r['date'] == d)}
+
+    def w3(rows):
+        """3 留：D-5..D-3 激活的人，消耗 / 激活 / 3日留存都按激活日。三天里有没出数的天就不算。"""
+        rows = [r for r in rows if r['date'] in have3]
+        c, a_, r3 = sum(r['cost'] for r in rows), sum(r['act'] for r in rows), sum(r['r3'] for r in rows)
+        ok = len(have3) == 3 and a_ >= th['act']
+        return {'cost3': c, 'act3': a_, 'ret3': r3, 'rate3': r3 / a_ if ok else None, 'cpr3': c / r3 if ok and r3 else None}
+
+    def group3(key):
+        g = defaultdict(list)
+        for r in R3:
+            g[key(r)].append(r)
+        return {k: w3(v) for k, v in g.items()}
+    NO3 = {'cost3': 0, 'act3': 0, 'ret3': 0, 'rate3': None, 'cpr3': None}
 
     S = lambda rows, d, k, p=None: sum(r[k] for r in rows if r['date'] == d and (p is None or r['platform'] == p))
 
@@ -300,6 +325,9 @@ def main():
         o[n] = S(R, D[i + 1], 'ret') / a_ if a_ else None
     o['cpr25'] = S(R, D[1], 'cost') / S(R, D[2], 'ret') if S(R, D[2], 'ret') else None
     o['cpr26'] = S(R, D[2], 'cost') / S(R, D[3], 'ret') if S(R, D[3], 'ret') else None
+    g3 = w3(R3)
+    o['rate3_w'], o['cpr3_w'], o['act3'] = g3['rate3'], g3['cpr3'], g3['act3']
+    o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def label(rate, cpr, cost, big, small):
         pricey = cpr is None or cpr > th['high'] * o['cpr_w']
@@ -314,6 +342,7 @@ def main():
     # 一级
     t27 = S(R, D[3], 'cost') or 1
     bl = []
+    l1_3 = group3(lambda r: r['l1'])
     for l1 in dict.fromkeys(r['l1'] for r in R):
         rs = [r for r in R if r['l1'] == l1]
         run = lambda d: len({r['id'] for r in rs if r['date'] == d and r['cost'] > 0})
@@ -324,6 +353,7 @@ def main():
                    'act27': S(rs, D[3], 'act'), 'cpa27': (S(rs, D[3], 'cost') / S(rs, D[3], 'act')) if S(rs, D[3], 'act') else None,
                    'cost26': S(rs, D[2], 'cost'), 'rate': rt / a_ if ok else None, 'cpr': (c / rt) if ok and rt else None,
                    'rate24': day_rate(0), 'rate25': day_rate(1), 'rate26': day_rate(2)})
+        bl[-1].update(l1_3.get(l1, NO3))
     bl.sort(key=lambda x: -x['cost27'])
 
     # 素材
@@ -332,6 +362,7 @@ def main():
         by_id[r['id']].append(r)
     order = ['能放量 + 次留好', '次留好、量还小', '次留好但贵', '拖后腿', '一般']
     mat = []
+    id_3 = group3(lambda r: r['id'])
     for i, rs in by_id.items():
         c, a_, rt = win(rs)
         c27 = S(rs, D[3], 'cost')
@@ -356,6 +387,7 @@ def main():
                     'l2': rs[0]['l2'], 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'cost_w': c, 'act_w': a_,
                     'rate': rate, 'cpr': cpr, 'cost27': S(rs, D[3], 'cost'), 'act27': S(rs, D[3], 'act'),
                     'link': link, 'link_type': ltype if link else '', 'video': video})
+        mat[-1].update(id_3.get(i, NO3))
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量 + 次留好', '次留好、量还小')]
 
@@ -405,6 +437,7 @@ def main():
     for r in R:
         by_uc[r['uc']].append(r)
     uct = []
+    uc_3 = group3(lambda r: r['uc'])
     for uc, rs in by_uc.items():
         c, a_, rt = win(rs)
         c27 = S(rs, D[3], 'cost')
@@ -417,12 +450,14 @@ def main():
         uct.append({'uc': uc, 'status': st, 'short': ucs.get(uc, {}).get('short', ''), 'l1': rs[0]['l1'],
                     'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}), 'cost_w': c, 'act_w': a_,
                     'rate': rate, 'cpr': cpr, 'cost27': c27, 'act27': S(rs, D[3], 'act'), 'n_good': sum(1 for m in good if m['uc'] == uc)})
+        uct[-1].update(uc_3.get(uc, NO3))
     uct.sort(key=lambda x: -x['cost27'])
 
     # 素材类型
     kind_id = {}
-    for r in R:
+    for r in R + R3:
         kind_id.setdefault(r['id'], kind_of(r['src'], r['track'], names.get(r['id'], r['id']), r['id'], kl=False))
+    kind_3 = group3(lambda r: kind_id[r['id']])
     by_k = defaultdict(list)
     for r in R:
         by_k[kind_id[r['id']]].append(r)
@@ -439,6 +474,7 @@ def main():
         kt.append({'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
                    'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
                    'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if kind_id.get(m['id']) == k)})
+        kt[-1].update(kind_3.get(k, NO3))
     kt.sort(key=lambda x: -x['cost27'])
 
     # 单日上线批次
@@ -462,6 +498,8 @@ def main():
              'rate_new': gb(D[2]).get('rate'), 'new_share26': gb(D[2]).get('share26'), 'new_share27': gb(D[2]).get('share27')}
 
     plan = build_plan(allrows, ucs, Dd, kt, th)
+    for x in plan['uc']:
+        x.update({k: v for k, v in uc_3.get(x['uc'], NO3).items() if k in ('act3', 'rate3', 'cpr3')})
 
     # 文字结论（按数据自动写，只陈述事实）
     P0 = lambda v: '—' if v is None else f'{v * 100:.0f}%'
@@ -495,13 +533,15 @@ def main():
     meta = {'date': D[3], 'D': lab(days[3]), 'D1': lab(days[2]), 'D2': lab(days[1]), 'D3': lab(days[0]),
             'W': f'{lab(days[0])}–{days[2].day}' if days[0].month == days[2].month else f'{lab(days[0])}–{lab(days[2])}',
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
+            'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般' or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method']}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
-                      'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
+                      'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
+                      'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
                       'pot': gs['n_pot'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl)}, ensure_ascii=False))
 
 
