@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{LABEL}} 投放素材周报</title>
+<style>
+{{STYLE}}
+  /* 周报 */
+  .wk-delta { font-size: 12px; font-variant-numeric: tabular-nums; }
+  .wk-delta.up { color: var(--color-ok); } .wk-delta.down { color: var(--color-bad); } .wk-delta.flat { color: var(--color-fg-muted); }
+  .wk-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .wk-chart text { font-size: 11px; fill: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .wk-two { display: grid; gap: 8px; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  @media (max-width: 900px) { .wk-two { grid-template-columns: minmax(0, 1fr); } }
+    .lx-table td.wk-name { min-width: 12rem; max-width: 22rem; white-space: normal; line-height: 1.45; word-break: break-all; }
+  .lx-table .stack span.pl-flag { display: inline-block; width: auto; }
+  .wk-name { min-width: 12rem; max-width: 22rem; white-space: normal; line-height: 1.45; word-break: break-all; }
+  .wk-name .sub { display: block; color: var(--color-fg-muted); font-size: 12px; }
+  .wk-rank { color: var(--color-fg-muted); font-weight: 700; width: 1.5rem; }
+  .wk-pick { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; background: var(--color-ok); color: #fff; }
+  .wk-why { min-width: 14rem; max-width: 26rem; white-space: normal; line-height: 1.5; font-size: 12.5px; }
+  .wk-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 18px; vertical-align: middle; }
+  .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
+  .wk-todo { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .wk-todo { grid-template-columns: minmax(0, 1fr); } }
+  .wk-todo .pl-blk li .who { display: inline-block; font-size: 11px; font-weight: 700; padding: 0 6px; margin-right: 4px; border-radius: 4px; background: color-mix(in srgb, var(--bc) 14%, transparent); color: var(--bc); }
+  .wk-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--color-fg-muted); }
+  .wk-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .wk-legend i { width: 12px; height: 8px; border-radius: 2px; display: inline-block; }
+  .wk-legend i.ln { height: 2px; }
+  details.wk-more summary { cursor: pointer; font-size: 13px; color: var(--color-fg-muted); padding: 4px 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="lx">
+  <header class="lx-head">
+    <div class="lx-topline">
+    <h1 class="lx-title" id="top"><span class="d">{{LABEL}}</span> 投放素材周报</h1>
+    <nav class="lx-nav" aria-label="往期周报">
+      <span class="lx-nav-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>往期周报</span>
+      <span class="lx-chips" id="nav-chips"><a class="lx-chip" aria-current="page" href="{{REL}}week/{{WEEK}}/">{{LABEL}}</a></span>
+      <a class="lx-chip" href="{{REL}}">日报 →</a>
+    </nav>
+    </div>
+    <p class="pl-headline" data-draw="headline" hidden></p>
+    <a class="lx-jump" href="#todo">↓ 直接看总结和 to-do</a>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{LABEL}} 整周；次留率、次留成本看 {{WRET}} 激活的人（周日激活的次留下周一才出）；3 留率、3 留成本看 {{WRET3}} 激活的人。比的是上一周 {{PLABEL}}，口径相同。周报门槛比日报高：<b>能放量的 use case</b> = 周消耗过全盘 3% 且 ≥ <b data-draw="uc-bar">—</b>；<b>头部素材</b> = 周消耗 ≥ <b data-draw="top-bar">—</b>（全盘 1%，最少 ¥5,000），至少 100 个激活，次留率不低于、次留成本不高于全盘。</p>
+  </header>
+
+  <section class="lx-kpis">
+    <div class="lx-card"><span class="lx-label">周消耗</span><span class="lx-big" data-draw="k-spend">—</span><span class="lx-cmp" data-draw="d-spend"></span></div>
+    <div class="lx-card"><span class="lx-label">周激活 · 激活成本</span><span class="lx-big" data-draw="k-act">—</span><span class="lx-cmp" data-draw="d-act"></span></div>
+    <div class="lx-card"><span class="lx-label">次留率（{{WRET}} 激活）</span><span class="lx-big" data-draw="k-rate">—</span><span class="lx-cmp" data-draw="d-rate"></span></div>
+    <div class="lx-card"><span class="lx-label">次留成本</span><span class="lx-big" data-draw="k-cpr">—</span><span class="lx-cmp" data-draw="d-cpr"></span></div>
+    <div class="lx-card"><span class="lx-label">3 留率 · 3 留成本（{{WRET3}} 激活）</span><span class="lx-big" data-draw="k-rate3">—</span><span class="lx-cmp" data-draw="d-rate3"></span></div>
+    <div class="lx-card"><span class="lx-label">在跑素材 · 本周新上</span><span class="lx-big" data-draw="k-n">—</span><span class="lx-cmp" data-draw="d-n"></span></div>
+  </section>
+
+  <section class="lx-sec" id="trend">
+    <h2 class="lx-h2">一、两周走势</h2>
+    <p class="lx-note">柱 = 每天消耗（浅色是上一周）；实线 = 当天激活的人的次留率；虚线 = 3 留率（激活后满 3 天才画）。</p>
+    <div class="lx-card">
+      <div class="wk-legend" data-draw="trend-legend"></div>
+      <div class="wk-chart" data-draw="trend"></div>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="uc">
+    <h2 class="lx-h2">二、Use case：哪些能放量、留得住</h2>
+    <p class="lx-note"><b>T1 主攻</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>T2 次优先</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>T3 放量但贵</b> = 能放量但次留不达标。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1% 的不列。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table pl-table">
+        <thead>
+          <tr>
+            <th>Use case</th>
+            <th>周消耗<span class="th-sub">占全盘；右边是每天</span></th>
+            <th class="num">次留率<span class="th-sub">下面是比上周</span></th>
+            <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
+            <th class="num">3 留率</th>
+            <th class="num">3 留成本</th>
+            <th class="num">素材<span class="th-sub">在跑 · 本周新上</span></th>
+            <th>各供给<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 最便宜</span></th>
+            <th>下一步</th>
+          </tr>
+        </thead>
+        <tbody data-draw="uc-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="top-mats">
+    <h2 class="lx-h2">三、头部素材和拖后腿的素材</h2>
+    <p class="lx-note">头部素材按周消耗排，最多 <b data-draw="top-cap">—</b> 条，这周过线的一共 <b data-draw="n-good">—</b> 条。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>素材</th>
+            <th>素材类型 · Use case</th>
+            <th>周消耗<span class="th-sub">每天</span></th>
+            <th class="num">次留率</th>
+            <th class="num">次留成本</th>
+            <th class="num">3 留率</th>
+            <th class="num">3 留成本</th>
+            <th>为什么好 · 怎么用</th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="top-rows"></tbody>
+      </table>
+    </div>
+    <h3 class="lx-h3">拖后腿的素材</h3>
+    <p class="lx-note">周消耗过头部线，但次留率低于全盘 85% 或次留成本超过全盘 1.2 倍。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>素材</th>
+            <th>素材类型 · Use case</th>
+            <th>周消耗<span class="th-sub">每天</span></th>
+            <th class="num">次留率</th>
+            <th class="num">次留成本</th>
+            <th class="num">3 留率</th>
+            <th class="num">多花的钱</th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="bad-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="kind">
+    <h2 class="lx-h2">四、素材类型和本周产出</h2>
+    <div class="wk-two">
+      <div class="pl-card">
+        <h3>每天上新多少条</h3>
+        <p class="lx-note">按第一天有消耗算上线日。本周新上 <b data-draw="n-new">—</b> 条，上一周 <b data-draw="p-new">—</b> 条。</p>
+        <div class="wk-legend" data-draw="prod-legend"></div>
+        <div class="wk-chart" data-draw="prod"></div>
+      </div>
+      <div class="pl-card">
+        <h3>哪种改法次留便宜</h3>
+        <p class="lx-note">按改法合并（不分 KOC / KOL）；条形 = 次留成本，虚线 = 全盘；右边是次留成本 · 次留率 · 3 留率。</p>
+        <div class="pl-method" data-draw="method"></div>
+      </div>
+    </div>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>素材类型</th>
+            <th class="num">本周新上<span class="th-sub">条</span></th>
+            <th class="num">上周新上<span class="th-sub">条</span></th>
+            <th class="num">跑起来<span class="th-sub">新上里周消耗 ≥ ¥1,000</span></th>
+            <th class="num">进头部<span class="th-sub">新上里</span></th>
+            <th class="num">在跑<span class="th-sub">条</span></th>
+            <th>周消耗<span class="th-sub">占全盘</span></th>
+            <th class="num">次留率</th>
+            <th class="num">次留成本</th>
+            <th class="num">3 留率</th>
+            <th class="num">3 留成本</th>
+          </tr>
+        </thead>
+        <tbody data-draw="kind-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lx-sec" id="todo" hidden>
+    <h2 class="lx-h2">五、总结和 to-do</h2>
+    <div class="pl-blk" style="--bc:var(--color-fg)"><h3>核心 insight<span>这周整盘看到的</span></h3><ol data-draw="insight"></ol></div>
+    <div class="wk-todo">
+      <div class="pl-blk" style="--bc:var(--color-ok)"><h3>继续扩量的 use case<span>能放量、留存也好</span></h3><ol data-draw="scale"></ol></div>
+      <div class="pl-blk" style="--bc:var(--bar)"><h3>拿去二创的素材<span>从头部素材里挑</span></h3><ol data-draw="remix"></ol></div>
+      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>停掉或降预算<span>钱花得不值</span></h3><ol data-draw="stop"></ol></div>
+      <div class="pl-blk" style="--bc:var(--color-warn)"><h3>其他要做的<span>产能、口径、要谁跟进</span></h3><ol data-draw="other"></ol></div>
+    </div>
+  </section>
+
+  <p class="lx-foot">生成于 {{BUILT}}。数据：Google 表「国区投放素材」·「投放数据_分日」。</p>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script type="application/json" id="results">{{RESULTS}}</script>
+<script>
+  const REL = '{{REL}}';
+  const R = JSON.parse(document.getElementById('results').textContent);
+  const data = (id) => R[id] || [];
+  const one = (id) => (R[id] && R[id].length ? R[id][0] : null);
+  const META = one('meta'), o = one('overview'), TH = one('th'), N = one('notes') || {};
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const COLOR = css('--bar') || '#3d6fd8';
+  const fmtY = (v) => (v === null || v === undefined || isNaN(v) ? '—' : '¥' + d3.format(',.0f')(v));
+  const fmtW = (v) => (v === null || v === undefined || isNaN(v) ? '—' : v >= 10000 ? '¥' + d3.format('.1f')(v / 10000) + ' 万' : fmtY(v));
+  const fmtP = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.1%')(v));
+  const fmtP0 = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.0%')(v));
+  const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
+  const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
+  const fill = (name, fn) => document.querySelectorAll('[data-draw="' + name + '"]').forEach(fn);
+  const cellMaker = (tr) => (cls) => { const c = document.createElement('td'); if (cls) c.className = cls; tr.appendChild(c); return c; };
+  const rw = o.rate, cw = o.cpr, r3w = o.rate3, c3w = o.cpr3;
+  const rateCls = (v) => (v == null ? 'num muted' : v >= rw ? 'num lx-good' : v < TH.bad_rate * rw ? 'num lx-badv' : 'num');
+  const cprCls = (v) => (v == null ? 'num muted' : v <= cw ? 'num lx-good' : v > TH.bad_cpr * cw ? 'num lx-badv' : 'num');
+  const r3Cls = (v) => (v == null || r3w == null ? 'num muted' : v >= r3w ? 'num lx-good' : v < 0.8 * r3w ? 'num lx-badv' : 'num');
+  const c3Cls = (v) => (v == null || c3w == null ? 'num muted' : v <= c3w ? 'num lx-good' : v > 1.25 * c3w ? 'num lx-badv' : 'num');
+  // 比上周：pct 是相对变化，pts 是百分点；good = 往好的方向
+  const delta = (el, cur, prev, kind, higherBetter) => {
+    if (cur == null || prev == null || !prev) { el.textContent = '上周 —'; return; }
+    const d = kind === 'pts' ? (cur - prev) * 100 : (cur / prev - 1) * 100;
+    const txt = kind === 'pts' ? (d >= 0 ? '+' : '') + d3.format('.1f')(d) + ' 点' : (d >= 0 ? '+' : '') + d3.format('.0f')(d) + '%';
+    const s = document.createElement('span'); s.className = 'wk-delta ' + (Math.abs(d) < (kind === 'pts' ? 0.5 : 2) || higherBetter === null ? 'flat' : (d > 0) === higherBetter ? 'up' : 'down');
+    s.textContent = txt; el.append('比上周 ', s);
+  };
+  const spark = (td, days) => { const m = d3.max(days) || 1; const w = document.createElement('span'); w.className = 'wk-spark'; w.title = days.map((v, i) => '周' + '一二三四五六日'[i] + ' ' + fmtY(v)).join('\n'); for (const v of days) { const i = document.createElement('i'); i.style.height = Math.max(1, v / m * 18) + 'px'; w.appendChild(i); } td.appendChild(w); };
+  const barCell = (td, v, max, px, label) => { const wrap = document.createElement('div'); wrap.className = 'lx-bar'; const bar = document.createElement('i'); bar.style.width = Math.max(2, (v / max) * px) + 'px'; bar.style.background = COLOR; const lab = document.createElement('span'); lab.textContent = label || fmtY(v); wrap.append(bar, lab); td.appendChild(wrap); return wrap; };
+  const links = (td, m) => { td.className = 'short lx-links'; const add = (h, t) => { const a = document.createElement('a'); a.href = h; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; td.appendChild(a); }; if (m.video) add(m.video, '视频'); if (m.link) add(m.link, m.link_type === '原片' ? '原帖' : m.link_type || '链接'); };
+  const nameCell = (td, m) => { td.className = 'wk-name'; td.append(m.name); const s = document.createElement('span'); s.className = 'sub'; s.textContent = '上线 ' + fmtD(m.first) + (m.is_new ? '（本周新上）' : '') + ' · ID ' + m.id; td.appendChild(s); };
+
+  // 往期周报
+  (async () => {
+    let list = [];
+    try { list = await (await fetch(REL + 'weeks.json', {cache: 'no-store'})).json(); } catch (e) { return; }
+    if (!Array.isArray(list) || !list.length) return;
+    list.sort((a, b) => (a.week < b.week ? 1 : -1));
+    document.getElementById('nav-chips').replaceChildren(...list.slice(0, 8).map((r) => {
+      const a = document.createElement('a'); a.className = 'lx-chip'; a.href = REL + 'week/' + r.week + '/'; a.textContent = r.label;
+      if (r.week === META.week) a.setAttribute('aria-current', 'page');
+      return a;
+    }));
+  })();
+
+  fill('uc-bar', (el) => { el.textContent = fmtY(META.uc_bar); });
+  fill('top-bar', (el) => { el.textContent = fmtY(META.top_bar); });
+  fill('top-cap', (el) => { el.textContent = TH.top_cap; });
+  fill('n-good', (el) => { el.textContent = META.n_good_all; });
+  fill('n-new', (el) => { el.textContent = fmtN(o.n_new); });
+  fill('p-new', (el) => { el.textContent = fmtN(o.p_n_new); });
+  fill('headline', (el) => { if (N.headline) { el.textContent = N.headline; el.hidden = false; } });
+
+  fill('k-spend', (el) => { el.textContent = fmtY(o.spend); }); fill('d-spend', (el) => delta(el, o.spend, o.p_spend, 'pct', null));
+  fill('k-act', (el) => { el.textContent = fmtN(o.act) + ' · ' + fmtY(o.cpa); }); fill('d-act', (el) => { el.append('激活成本'); delta(el, o.cpa, o.p_cpa, 'pct', false); });
+  fill('k-rate', (el) => { el.textContent = fmtP(o.rate); }); fill('d-rate', (el) => delta(el, o.rate, o.p_rate, 'pts', true));
+  fill('k-cpr', (el) => { el.textContent = fmtY(o.cpr); }); fill('d-cpr', (el) => delta(el, o.cpr, o.p_cpr, 'pct', false));
+  fill('k-rate3', (el) => { el.textContent = fmtP(o.rate3) + ' · ' + fmtY(o.cpr3); }); fill('d-rate3', (el) => delta(el, o.rate3, o.p_rate3, 'pts', true));
+  fill('k-n', (el) => { el.textContent = fmtN(o.n_run) + ' · ' + fmtN(o.n_new); }); fill('d-n', (el) => { el.textContent = '上周 ' + fmtN(o.p_n_run) + ' · ' + fmtN(o.p_n_new); });
+
+  // 一、两周走势
+  fill('trend-legend', (el) => { el.innerHTML = `<span><i style="background:${COLOR};opacity:.35"></i>上周消耗</span><span><i style="background:${COLOR}"></i>本周消耗</span><span><i class="ln" style="background:${css('--color-ok')}"></i>次留率</span><span><i class="ln" style="background:${css('--color-warn')}"></i>3 留率（虚线）</span>`; });
+  fill('trend', (box) => {
+    const ds = data('daily'); const W = 1240, H = 300, m = {l: 48, r: 44, t: 18, b: 26};
+    const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const x = d3.scaleBand(ds.map((d) => d.date), [m.l, W - m.r]).padding(0.25);
+    const y = d3.scaleLinear([0, d3.max(ds, (d) => d.spend) * 1.12 || 1], [H - m.b, m.t]);
+    const y2 = d3.scaleLinear([0, 0.5], [H - m.b, m.t]);
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).style('stroke', 'var(--color-border-line)');
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', m.l - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').text((v) => (v >= 10000 ? v / 10000 + '万' : v));
+    svg.append('g').selectAll('text').data(y2.ticks(5)).join('text').attr('x', W - m.r + 6).attr('y', (v) => y2(v) + 4).text(d3.format('.0%'));
+    svg.append('line').attr('x1', (x(ds[7].date) + x(ds[6].date) + x.bandwidth()) / 2).attr('x2', (x(ds[7].date) + x(ds[6].date) + x.bandwidth()) / 2).attr('y1', m.t - 6).attr('y2', H - m.b).style('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '3 3');
+    svg.append('g').selectAll('rect').data(ds).join('rect').attr('x', (d) => x(d.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d.spend)).attr('height', (d) => y(0) - y(d.spend)).attr('rx', 2).style('fill', COLOR).style('opacity', (d) => (d.week === 'this' ? 1 : 0.35)).append('title').text((d) => fmtD(d.date) + ' 消耗 ' + fmtY(d.spend) + '，激活 ' + fmtN(d.act) + '，次留率 ' + fmtP(d.rate) + '，3 留率 ' + fmtP(d.rate3));
+    svg.append('g').selectAll('text').data(ds.filter((d) => d.week === 'this')).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', (d) => y(d.spend) - 4).attr('text-anchor', 'middle').text((d) => fmtW(d.spend).replace('¥', ''));
+    svg.append('g').selectAll('text').data(ds).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle').text((d) => fmtD(d.date));
+    const cx = (d) => x(d.date) + x.bandwidth() / 2;
+    for (const [k, c, dash] of [['rate', '--color-ok', null], ['rate3', '--color-warn', '4 3']]) {
+      const pts = ds.filter((d) => d[k] != null);
+      const p = svg.append('path').attr('d', d3.line(cx, (d) => y2(d[k])).defined((d) => d[k] != null)(ds)).style('fill', 'none').style('stroke', css(c)).attr('stroke-width', 2);
+      if (dash) p.attr('stroke-dasharray', dash);
+      svg.append('g').selectAll('circle').data(pts).join('circle').attr('cx', cx).attr('cy', (d) => y2(d[k])).attr('r', 2.6).style('fill', css(c));
+    }
+  });
+
+  // 二、use case
+  const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), T0: css('--cds-chart-reference')};
+  const TN = {T1: 'T1 主攻', T2: 'T2 次优先', T3: 'T3 放量但贵', T0: '观察'};
+  const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般'};
+  const CHN = {ai: 'AI', ec: '二创', yp: '原片'};
+  fill('uc-rows', (tb) => {
+    const us = data('uc').filter((u) => u.share >= 0.01 || u.tier !== 'T0');
+    const max = d3.max(us, (u) => u.spend) || 1; const dirs = N.uc || {};
+    for (const tier of ['T1', 'T2', 'T3', 'T0']) {
+      const rows = us.filter((u) => u.tier === tier); if (!rows.length) continue;
+      const h = document.createElement('tr'); h.className = 'tier-head'; h.style.setProperty('--tc', TC[tier]);
+      const hd = document.createElement('td'); hd.colSpan = 9; hd.innerHTML = `<span style="margin:0;color:${TC[tier]};font-weight:700">${TN[tier]}</span>　${rows.length} 个<span>${TD[tier]}</span>`; h.appendChild(hd); tb.appendChild(h);
+      for (const u of rows) {
+        const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
+        const c0 = td('stack uccell'); const b = document.createElement('b'); b.textContent = u.uc + ' ' + u.short; const s = document.createElement('span'); s.textContent = u.l1; c0.append(b, s);
+        if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = u.flag; c0.appendChild(f); }
+        const cs = td(); const w = barCell(cs, u.spend, max, 70, fmtW(u.spend) + ' · ' + fmtP0(u.share)); w.append(' '); spark(w, u.days);
+        const cr = td(rateCls(u.rate)); cr.textContent = fmtP(u.rate);
+        if (u.rate != null && u.p_rate != null) { const d = document.createElement('span'); const v = (u.rate - u.p_rate) * 100; d.className = 'pl-delta ' + (v > 0 ? 'lx-good' : 'lx-badv'); d.textContent = (v > 0 ? '+' : '') + d3.format('.1f')(v) + ' 点'; cr.appendChild(d); }
+        const cc = td(cprCls(u.cpr)); cc.textContent = fmtY(u.cpr);
+        if (u.cpr != null && u.p_cpr != null) { const d = document.createElement('span'); const v = u.cpr - u.p_cpr; d.className = 'pl-delta ' + (v < 0 ? 'lx-good' : 'lx-badv'); d.textContent = (v > 0 ? '+¥' : '-¥') + Math.round(Math.abs(v)); cc.appendChild(d); }
+        td(r3Cls(u.rate3)).textContent = fmtP(u.rate3);
+        td(c3Cls(u.cpr3)).textContent = fmtY(u.cpr3);
+        td('num').textContent = fmtN(u.n_run) + ' · ' + fmtN(u.n_new);
+        const ch = td('pl-chan'); const ok = Object.keys(u.ch).filter((c) => u.ch[c].cpr != null && u.ch[c].act_r >= 50);
+        const best = ok.length > 1 ? ok.reduce((a, b2) => (u.ch[a].cpr <= u.ch[b2].cpr ? a : b2)) : null;
+        for (const c of ['ai', 'ec', 'yp']) { const x = u.ch[c]; if (!x || x.share < 0.02) continue; const line = document.createElement('div'); line.innerHTML = (c === best ? '<span class="best">' : '<span>') + CHN[c] + ' ' + (x.cpr != null && x.act_r >= 50 ? fmtY(x.cpr) + ' · ' + fmtP0(x.rate) : '样本小') + '</span> <span class="muted">' + fmtP0(x.share) + '</span>'; ch.appendChild(line); }
+        td('dir').textContent = dirs[u.uc] || '';
+        tb.appendChild(tr);
+      }
+    }
+  });
+
+  // 三、素材
+  const remix = {}; for (const x of N.remix || []) if (x.id) remix[x.id] = x;
+  const why = N.top_note || {};
+  fill('top-rows', (tb) => {
+    const rows = data('top'); const max = d3.max(rows, (m) => m.spend) || 1;
+    rows.forEach((m, i) => {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td('wk-rank').textContent = i + 1;
+      const n = td(); nameCell(n, m); if (remix[m.id]) { n.append(document.createElement('br')); const p = document.createElement('span'); p.className = 'wk-pick'; p.textContent = '二创'; n.appendChild(p); }
+      const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
+      const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
+      td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
+      td(r3Cls(m.rate3)).textContent = fmtP(m.rate3); td(c3Cls(m.cpr3)).textContent = fmtY(m.cpr3);
+      td('wk-why').textContent = (remix[m.id] && remix[m.id].how) || why[m.id] || '';
+      links(td(), m);
+      tb.appendChild(tr);
+    });
+  });
+  fill('bad-rows', (tb) => {
+    const rows = data('bad'); const max = d3.max(rows, (m) => m.spend) || 1;
+    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 8; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
+    for (const m of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      nameCell(td(), m);
+      const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
+      const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
+      td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
+      td(r3Cls(m.rate3)).textContent = fmtP(m.rate3);
+      td('num lx-badv').textContent = fmtY(m.excess);
+      links(td(), m);
+      tb.appendChild(tr);
+    }
+  });
+
+  // 四、产出和类型
+  const PC = {ai: COLOR, ec: css('--color-ok'), yp: css('--color-warn'), other: css('--cds-chart-reference')};
+  const PN = {ai: 'AI 短剧', ec: '二创', yp: '真人原片', other: '其他'};
+  fill('prod-legend', (el) => { el.innerHTML = Object.keys(PN).map((k) => `<span><i style="background:${PC[k]}"></i>${PN[k]}</span>`).join(''); });
+  fill('prod', (box) => {
+    const ps = data('prod'); const keys = ['ai', 'ec', 'yp', 'other']; const W = 700, H = 260, m = {l: 30, r: 8, t: 18, b: 24};
+    const st = d3.stack().keys(keys)(ps);
+    const x = d3.scaleBand(ps.map((d) => d.date), [m.l, W - m.r]).padding(0.3);
+    const tot = (d) => keys.reduce((s, k) => s + d[k], 0);
+    const y = d3.scaleLinear([0, (d3.max(ps, tot) || 1) * 1.15], [H - m.b, m.t]);
+    const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).style('stroke', 'var(--color-border-line)');
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', m.l - 4).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').text((v) => v);
+    for (const s of st) svg.append('g').selectAll('rect').data(s).join('rect').attr('x', (d) => x(d.data.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d[1])).attr('height', (d) => y(d[0]) - y(d[1])).style('fill', PC[s.key]).append('title').text((d) => fmtD(d.data.date) + ' ' + PN[s.key] + ' ' + d.data[s.key] + ' 条');
+    svg.append('g').selectAll('text').data(ps).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', (d) => y(tot(d)) - 4).attr('text-anchor', 'middle').style('fill', 'var(--color-fg)').style('font-weight', 600).text((d) => tot(d) || '');
+    svg.append('g').selectAll('text').data(ps).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', H - 7).attr('text-anchor', 'middle').text((d) => '周' + '一二三四五六日'[ps.indexOf(d)]);
+  });
+  fill('method', (box) => {
+    const rows = data('method').filter((m) => m.cpr != null); const max = Math.max(d3.max(rows, (m) => m.cpr), cw) * 1.1;
+    rows.sort((a, b) => a.cpr - b.cpr);
+    for (const m of rows) {
+      const row = document.createElement('div'); row.className = 'pl-mrow'; row.style.gridTemplateColumns = '7.5rem minmax(0, 1fr) 9rem';
+      const lab = document.createElement('div'); lab.textContent = m.method;
+      const bar = document.createElement('div'); bar.className = 'bar';
+      const i = document.createElement('i'); i.style.width = (m.cpr / max * 100) + '%'; i.style.background = m.cpr <= cw ? 'var(--color-ok)' : m.cpr > cw * 1.15 ? 'var(--color-bad)' : 'var(--color-warn)';
+      const u_ = document.createElement('u'); u_.style.left = (cw / max * 100) + '%'; u_.title = '全盘 ' + fmtY(cw); bar.append(i, u_);
+      const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · 3 留 ' + fmtP(m.rate3);
+      row.append(lab, bar, r); box.appendChild(row);
+    }
+  });
+  fill('kind-rows', (tb) => {
+    const rows = data('kind'); const max = d3.max(rows, (k) => k.spend) || 1;
+    for (const k of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td().textContent = k.kind;
+      const nn = td('num'); nn.textContent = fmtN(k.n_new); nn.style.fontWeight = '700';
+      td('num muted').textContent = fmtN(k.p_n_new);
+      td('num').textContent = k.n_new ? fmtN(k.n_new_run) + '（' + fmtP0(k.n_new_run / k.n_new) + '）' : '—';
+      td('num').textContent = k.n_new_top ? fmtN(k.n_new_top) : '';
+      td('num muted').textContent = fmtN(k.n_run);
+      barCell(td(), k.spend, max, 70, fmtW(k.spend) + ' · ' + fmtP0(k.share));
+      td(rateCls(k.rate)).textContent = fmtP(k.rate); td(cprCls(k.cpr)).textContent = fmtY(k.cpr);
+      td(r3Cls(k.rate3)).textContent = fmtP(k.rate3); td(c3Cls(k.cpr3)).textContent = fmtY(k.cpr3);
+      tb.appendChild(tr);
+    }
+  });
+
+  // 五、总结和 to-do（notes/week-<周一>.json）
+  const list = (name, items, who) => fill(name, (ol) => {
+    if (!items || !items.length) { const li = document.createElement('li'); li.className = 'muted'; li.textContent = '这周没有。'; ol.appendChild(li); return; }
+    for (const it of items) {
+      const li = document.createElement('li'); const t = document.createElement('b'); t.className = 't';
+      if (who && it[who]) { const w = document.createElement('span'); w.className = 'who'; w.textContent = it[who]; t.appendChild(w); }
+      t.append(it.t || ''); const d = document.createElement('span'); d.className = 'd'; d.innerHTML = it.d || ''; li.append(t, d); ol.appendChild(li);
+    }
+  });
+  if (N.insight || N.scale) {
+    document.getElementById('todo').hidden = false;
+    list('insight', N.insight); list('scale', N.scale, 'uc'); list('remix', N.remix, 'tag'); list('stop', N.stop); list('other', N.other);
+  }
+</script>
+</body>
+</html>

@@ -171,6 +171,7 @@
       <span class="lx-nav-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>往期日报</span>
       <span class="lx-chips" id="nav-chips"><a class="lx-chip" aria-current="page" href="../2026-10-31/">10/31 周六</a></span>
       <select id="nav-more" aria-label="更早的日报" hidden></select>
+      <a class="lx-chip" id="nav-week" href="../week/" hidden>周报 →</a>
     </nav>
     </div>
     <p class="lx-take" data-draw="take"></p>
@@ -445,6 +446,8 @@
   const META = one('meta');
   const COLOR = getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8';
 
+  // 有周报就显示「周报」入口
+  (async () => { try { const w = await (await fetch(REL + 'weeks.json', {cache: 'no-store'})).json(); if (Array.isArray(w) && w.length) document.getElementById('nav-week').hidden = false; } catch (e) {} })();
   // 往期日报：reports.json 在根目录，旧页面也会读到最新的列表。最近 7 天做成按钮，更早的放下拉。
   (async () => {
     let list = [];
