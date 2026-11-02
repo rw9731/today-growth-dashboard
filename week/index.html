@@ -254,7 +254,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、Use case：哪些能放量、留得住</h2>
-    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1% 的不列。</p>
+    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差，不要再加</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差，不要再加」里的不列。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -503,16 +503,17 @@
   });
 
   // 二、use case
-  const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), T0: css('--cds-chart-reference')};
-  const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察'};
+  const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), DROP: css('--color-bad'), T0: css('--cds-chart-reference')};
+  const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察', DROP: '留存差，不要再加'};
     const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');
-  const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般'};
+  const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般', DROP: '留存最差，或量小留不住，或 Use case 库里已暂停'};
   const CHN = {ai: 'AI', ec: '二创', yp: '原片'};
   fill('uc-rows', (tb) => {
-    const us = data('uc').filter((u) => u.share >= 0.01 || u.tier !== 'T0');
+    const dropN = {}; for (const x of N.drop || []) if (x.uc) dropN[x.uc] = x;
+    const us = data('uc').filter((u) => u.share >= 0.01 || u.tier !== 'T0' || dropN[u.uc]);
     const max = d3.max(us, (u) => u.spend) || 1; const dirs = N.uc || {};
-    for (const tier of ['T1', 'T2', 'T3', 'T0']) {
-      const rows = us.filter((u) => u.tier === tier); if (!rows.length) continue;
+    for (const tier of ['T1', 'T2', 'T3', 'DROP', 'T0']) {
+      const rows = us.filter((u) => (dropN[u.uc] ? 'DROP' : u.tier) === tier); if (!rows.length) continue;
       const h = document.createElement('tr'); h.className = 'tier-head'; h.style.setProperty('--tc', TC[tier]);
       const hd = document.createElement('td'); hd.colSpan = 9; hd.innerHTML = `<span style="margin:0;color:${TC[tier]};font-weight:700">${TN[tier]}</span>　${rows.length} 个<span>${TD[tier]}</span>`; h.appendChild(hd); tb.appendChild(h);
       for (const u of rows) {
@@ -530,7 +531,7 @@
         const ch = td('pl-chan'); const ok = Object.keys(u.ch).filter((c) => u.ch[c].cpr != null && u.ch[c].act_r >= 50);
         const best = ok.length > 1 ? ok.reduce((a, b2) => (u.ch[a].cpr <= u.ch[b2].cpr ? a : b2)) : null;
         for (const c of ['ai', 'ec', 'yp']) { const x = u.ch[c]; if (!x || x.share < 0.02) continue; const line = document.createElement('div'); line.innerHTML = (c === best ? '<span class="best">' : '<span>') + CHN[c] + ' ' + (x.cpr != null && x.act_r >= 50 ? fmtY(x.cpr) + ' · ' + fmtP0(x.rate) : '样本小') + '</span> <span class="muted">' + fmtP0(x.share) + '</span>'; ch.appendChild(line); }
-        td('dir').textContent = dirs[u.uc] || '';
+        td('dir').textContent = dirs[u.uc] || (dropN[u.uc] && dropN[u.uc].t) || '';
         tb.appendChild(tr);
       }
     }
