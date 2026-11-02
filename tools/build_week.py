@@ -62,11 +62,30 @@ def render(tpl, style, res, meta, rel):
     return out
 
 
+def lint_notes(n):
+    """Reina 定的写法，写错就不生成页面，免得发出去才发现。"""
+    bad = []
+    txt = json.dumps(n, ensure_ascii=False)
+    if '不要再加' in txt:
+        bad.append('不写「不要再加」，写「差」或「留存差」（公司战略可能还要继续试）')
+    if '放量造成' in txt:
+        bad.append('写「放量造成」要有同批素材加量才跌的证据，默认不写')
+    for k in ('wk_market', 'wk_top', 'insight', 'rules'):
+        for it in n.get(k) or []:
+            if len(it.get('t', '')) < 8:
+                bad.append(f'{k} 的小标题要是一句结论：{it.get("t")}')
+    return bad
+
+
 def main():
     res = json.load(open(sys.argv[1]))
     meta = res['meta'][0]
     notes_path = os.path.join(ROOT, 'notes', 'week-' + meta['week'] + '.json')
     names = {u['uc']: u['short'] for u in res.get('uc', [])}
+    if os.path.exists(notes_path):
+        bad = lint_notes(json.load(open(notes_path)))
+        if bad:
+            sys.exit('notes 不合格：\n' + '\n'.join(bad))
     res['notes'] = [uc_names(plain(json.load(open(notes_path))), names)] if os.path.exists(notes_path) else [{}]
     daily = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     style = re.search(r'<style>\n(.*?)</style>', daily, re.S).group(1)
