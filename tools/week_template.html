@@ -28,6 +28,7 @@
   .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
   .wk-todo { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @media (max-width: 900px) { .wk-todo { grid-template-columns: minmax(0, 1fr); } }
+  .wk-todo .wk-full { grid-column: 1 / -1; }
   .wk-todo .pl-blk li .who { display: inline-block; font-size: 11px; font-weight: 700; padding: 0 6px; margin-right: 4px; border-radius: 4px; background: color-mix(in srgb, var(--bc) 14%, transparent); color: var(--bc); }
   .wk-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--color-fg-muted); }
   .wk-legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -221,9 +222,10 @@
     <div class="pl-blk" style="--bc:var(--color-fg)"><h3>核心 insight<span>这周整盘看到的</span></h3><ol data-draw="insight"></ol></div>
     <div class="wk-todo">
       <div class="pl-blk" style="--bc:var(--color-ok)"><h3>继续扩量的 use case<span>能放量、留存也好</span></h3><ol data-draw="scale"></ol></div>
+      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>不要再加的 use case<span>留存不达标，或库里已暂停</span></h3><ol data-draw="drop"></ol></div>
       <div class="pl-blk" style="--bc:var(--bar)"><h3>拿去二创的素材<span>从头部素材里挑</span></h3><ol data-draw="remix"></ol></div>
-      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>停掉或降预算<span>钱花得不值</span></h3><ol data-draw="stop"></ol></div>
-      <div class="pl-blk" style="--bc:var(--color-warn)"><h3>其他要做的<span>产能、口径、要谁跟进</span></h3><ol data-draw="other"></ol></div>
+      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>停掉或降预算的素材<span>钱花得不值</span></h3><ol data-draw="stop"></ol></div>
+      <div class="pl-blk wk-full" style="--bc:var(--color-warn)"><h3>其他要做的<span>产能、口径、要谁跟进</span></h3><ol data-draw="other"></ol></div>
     </div>
   </section>
 
@@ -496,7 +498,7 @@
   if (N.insight || N.scale) {
     document.getElementById('todo').hidden = false;
     if (N.rules && N.rules.length) { fill('rules-card', (el) => { el.hidden = false; }); fill('rules-note', (el) => { el.textContent = N.rules_note || ''; }); list('rules', N.rules); }
-    list('insight', N.insight); list('scale', N.scale, 'uc'); list('remix', (N.remix || []).map((x) => ({...x, d: x.d + '<br>' + (x.how || '').replace(/</g, '&lt;')})), 'tag'); list('stop', N.stop); list('other', N.other);
+    list('insight', N.insight); list('scale', N.scale, 'uc'); list('drop', N.drop, 'uc'); list('remix', (N.remix || []).map((x) => ({...x, d: x.d + '<br>' + (x.how || '').replace(/</g, '&lt;')})), 'tag'); list('stop', N.stop); list('other', N.other);
   }
 </script>
 <script>addEventListener('load', () => document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); }));</script>
