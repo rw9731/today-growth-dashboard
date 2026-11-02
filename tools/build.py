@@ -13,6 +13,20 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小，先观察'}
 
 
+def c3(s):
+    """notes 里写的「3 留」统一显示成「连续 3 留」：巨量回传的是 D1、D2、D3 每天都打开，不是第 3 天当天回来。"""
+    out, i = [], 0
+    for m in re.finditer(r'( ?)3 ?留', s):
+        st, sp = m.start(), m.group(1)
+        if s[:st].endswith('连续') or (st > 0 and s[st - 1].isdigit() and not sp):
+            continue
+        prev = s[st - 1] if st > 0 else ''
+        out += [s[i:st], ('' if ('\u4e00' <= prev <= '\u9fff' or not sp) else sp) + '连续 3 留']
+        i = m.end()
+    out.append(s[i:])
+    return ''.join(out)
+
+
 def plain(x):
     """页面上不显示 T1、T2、T3 这些代号，notes 里写了也换成大白话。"""
     if isinstance(x, dict):
@@ -20,7 +34,7 @@ def plain(x):
     if isinstance(x, list):
         return [plain(v) for v in x]
     if isinstance(x, str):
-        return re.sub(r'(?<![A-Za-z0-9])T[0-3](?![0-9A-Za-z])', lambda m: '「' + LABELS[m.group(0)] + '」', x)
+        return c3(re.sub(r'(?<![A-Za-z0-9])T[0-3](?![0-9A-Za-z])', lambda m: '「' + LABELS[m.group(0)] + '」', x))
     return x
 
 

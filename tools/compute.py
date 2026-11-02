@@ -10,8 +10,10 @@ Windows (D = the report day, usually yesterday):
 - spend columns use D itself;
 - 次留率 / 次留成本 use activations on D-3..D-1 with their next-day 次留
   (巨量 books 次留 on the callback day, so D's own activations are not complete yet).
-- 3 留率 / 3 留成本 use activations on D-5..D-3: the「3日留存」column (AB, from 10/16) is booked
-  on the activation day and needs about 3 days to settle, so D-2..D are left out.
+- 连续 3 留率 / 成本 use activations on D-5..D-3: the「3日留存」column (AB, from 10/16) is booked
+  on the activation day and needs about 3 days to settle, so D-2..D are left out. It is 巨量's
+  retention_3d, which we report only when D1, D2 and D3 are all opened. It is not the exact-day
+  D3 in the Daily Insight report.
 """
 import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict
@@ -297,7 +299,7 @@ def main():
     have3 = {d for d in W3 if any(r['has3'] for r in R3 if r['date'] == d)}
 
     def w3(rows):
-        """3 留：D-5..D-3 激活的人，消耗 / 激活 / 3日留存都按激活日。三天里有没出数的天就不算。"""
+        """连续 3 留：D-5..D-3 激活的人，消耗 / 激活 / 3日留存都按激活日。三天里有没出数的天就不算。"""
         rows = [r for r in rows if r['date'] in have3]
         c, a_, r3 = sum(r['cost'] for r in rows), sum(r['act'] for r in rows), sum(r['r3'] for r in rows)
         ok = len(have3) == 3 and a_ >= th['act']

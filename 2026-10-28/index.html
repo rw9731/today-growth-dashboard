@@ -190,7 +190,7 @@
     </div>
     <p class="lx-take" data-draw="take"></p>
     <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 10/28；次留率、次留成本看 10/25–27 激活的人（10/28 激活的次留 10/29 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。3 留率、3 留成本看 — 激活的人（3日留存按激活日记，约 3 天才稳），先作参考，不进标签和分层。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 10/28；次留率、次留成本看 10/25–27 激活的人（10/28 激活的次留 10/29 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 — 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
@@ -220,9 +220,9 @@
       <span class="lx-cmp">10/26 <span data-draw="k-cpr25">—</span> · 三天 <b data-draw="k-cprw">—</b></span>
     </div>
     <div class="lx-card">
-      <span class="lx-label">全盘 3 留率（— 激活）</span>
+      <span class="lx-label">全盘连续 3 留率（— 激活）</span>
       <span class="lx-big" data-draw="k-rate3">—</span>
-      <span class="lx-cmp">3 留成本 <b data-draw="k-cpr3">—</b> · 分天 <span data-draw="k-rate3d">—</span></span>
+      <span class="lx-cmp">连续 3 留成本 <b data-draw="k-cpr3">—</b> · 分天 <span data-draw="k-rate3d">—</span></span>
     </div>
   </section>
 
@@ -243,8 +243,8 @@
             <th class="num">消耗<span class="th-sub">10/27（对比）</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活（10/28 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th>分天次留率<span class="th-sub">10/25、10/26、10/27 激活</span></th>
           </tr>
         </thead>
@@ -272,8 +272,8 @@
             <th class="num">激活成本<span class="th-sub">10/25–27</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活（10/28 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
             <th>标签<span class="th-sub">按 10/25–27</span></th>
           </tr>
@@ -302,8 +302,8 @@
             <th class="num">激活成本<span class="th-sub">10/25–27</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活（10/28 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
             <th>标签<span class="th-sub">按 10/25–27</span></th>
           </tr>
@@ -333,8 +333,8 @@
             <th class="num">激活成本<span class="th-sub">10/25–27</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th>链接</th>
           </tr>
         </thead>
@@ -368,8 +368,8 @@
             <th class="num">激活成本<span class="th-sub">10/25–27</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th>链接</th>
           </tr>
         </thead>
@@ -438,8 +438,8 @@
             <th>消耗<span class="th-sub">10/25–10/28 四天</span></th>
             <th class="num">次留率<span class="th-sub">10/25–27 激活；下面是和 10/27 报告比的变化</span></th>
             <th class="num">次留成本<span class="th-sub">10/25–27；下面是变化</span></th>
-            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
-            <th class="num">3 留成本<span class="th-sub">—</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">连续 3 留成本<span class="th-sub">—</span></th>
             <th>各供给表现<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 这个 UC 里最便宜</span></th>
             <th>下一步</th>
           </tr>
@@ -842,7 +842,7 @@
         const i = document.createElement('i'); i.style.width = (m.cpr / max * 100) + '%'; i.style.background = m.cpr <= cw ? 'var(--color-ok)' : m.cpr > cw * 1.15 ? 'var(--color-bad)' : 'var(--color-warn)';
         const u_ = document.createElement('u'); u_.style.left = (cw / max * 100) + '%'; u_.title = '全盘 ' + fmtY(cw);
         bar.append(i, u_);
-        const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · ' + fmtN(m.n27) + ' 条' + (m.rate3 != null ? '<br><span class="muted">3 留 ' + fmtP(m.rate3) + ' · ' + fmtY(m.cpr3) + '</span>' : '');
+        const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · ' + fmtN(m.n27) + ' 条' + (m.rate3 != null ? '<br><span class="muted">连续 3 留 ' + fmtP(m.rate3) + ' · ' + fmtY(m.cpr3) + '</span>' : '');
         row.append(lab, bar, r); box.appendChild(row);
       }
     });

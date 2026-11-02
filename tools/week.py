@@ -8,7 +8,7 @@ Usage:
 Windows (W0 = Monday … W6 = Sunday):
 - 消耗、在跑条数、新上素材：W0..W6；
 - 次留率 / 次留成本：W0..W5 激活的人，次留记在回访那天（W1..W6），成本也只算 W0..W5；
-- 3 留率 / 3 留成本：W0..W3 激活的人（3日留存按激活日记，约 3 天才稳）。
+- 连续 3 留率 / 成本：W0..W3 激活的人（AB 列「3日留存」按激活日记，是巨量回传的 D1、D2、D3 每天都打开，不是第 3 天当天回来）。
 上一周用同样的口径算，用来比。
 """
 import argparse, datetime as dt, json, os, sys
@@ -226,10 +226,9 @@ def main():
     good_all = sorted([m for m in mats if m['good']], key=lambda m: -m['spend'])
     top = good_all
     for m in top:
-        # 二创候选（给写周报的人参考，最后挑哪几条以 notes 为准）：次留率高全盘 5% 以上、次留成本低 10% 以上，3 留不低于全盘
-        better = m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw
-        keep3 = m['rate3'] is None or r3w is None or m['rate3'] >= r3w
-        m['pick'] = bool(better and keep3)
+        # 二创候选（给写周报的人参考，最后挑哪几条以 notes 为准）：次留率高全盘 5% 以上、次留成本低 10% 以上。
+        # 连续 3 留不进这条规则：它对不是天天用的 use case 偏低。
+        m['pick'] = bool(m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw)
     bad = sorted([m for m in mats if m['bad']], key=lambda m: -(m['excess'] or 0))[:WTH['bad_cap']]
 
     # 素材类型 + 本周产出
