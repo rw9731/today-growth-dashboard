@@ -279,12 +279,22 @@ def main():
                        'n_new': sum(1 for i in new_w if any(r['id'] == i for r in rs))})
     method.sort(key=lambda x: -x['spend'])
 
+    # 周中和周末（周一到周五 / 周六周日）。次留要等回访日，所以周日激活的不算；3 留周末激活的还没满 3 天。
+    pick = lambda st: {x: st[x] for x in ('spend', 'act', 'cpa', 'act_r', 'rate', 'cpr', 'act3', 'rate3')}
+    WD, WE = W[:5], W[5:]
+    def split(rs):
+        return {'wd': pick(stats(rs, WD)), 'we': pick(stats(rs, WE))}
+    wk = {'w': split(RW), 'p': {'wd': pick(stats(RP, P[:5])), 'we': pick(stats(RP, P[5:]))},
+          'fri': pick(stats(RW, [W[4]])), 'sat': pick(stats(RW, [W[5]])),
+          'l1': [{'l1': k, 'share': x['share'], **split(by_l1[k]), 'p_wd': pick(stats(by_l1[k], P[:5])), 'p_we': pick(stats(by_l1[k], P[5:]))} for k, x in ((y['l1'], y) for y in l1t) if x['share'] >= 0.005],
+          'top': [{'id': m['id'], 'name': m['name'], 'uc': m['uc'], 'short': m['short'], **split(by_id[m['id']])} for m in top]}
+
     lab = lambda s: f'{int(s[5:7])}/{int(s[8:10])}'
     meta = {'week': W[0], 'end': W[6], 'label': f'{lab(W[0])}–{lab(W[6])}', 'p_label': f'{lab(P[0])}–{lab(P[6])}',
             'w_ret': f'{lab(W[0])}–{lab(W[5])}', 'w_ret3': f'{lab(W[0])}–{lab(W[3])}', 'built': dt.date.today().isoformat(),
             'top_bar': top_bar, 'uc_bar': max(WTH['uc_big_min'], WTH['uc_big_share'] * tot), 'n_good_all': len(good_all)}
     out = {'meta': [meta], 'th': [WTH], 'overview': [o], 'daily': daily, 'uc': uct, 'l1': l1t, 'top': top, 'bad': bad, 'kind': kt,
-           'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns]}
+           'wk': [wk], 'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'week': meta['label'], 'spend': round(o['spend']), 'p_spend': round(o['p_spend']),
                       'rate': o['rate'] and round(o['rate'], 4), 'cpr': o['cpr'] and round(o['cpr'], 1),

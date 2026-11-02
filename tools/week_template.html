@@ -81,6 +81,11 @@
       <div class="wk-legend" data-draw="trend-legend"></div>
       <div class="wk-chart" data-draw="trend"></div>
     </div>
+    <h3 class="lx-h3">周中和周末</h3>
+    <p class="lx-note">周中 = 周一到周五，周末 = 周六周日。消耗和激活成本看整段；次留率和次留成本看激活的人，周日激活的次留下周一才出，所以这周的周末其实只有周六。周末激活的人连续 3 留还没出。次留样本不到 50 个写「样本小」。</p>
+    <div class="pl-blk" style="--bc:var(--color-fg)"><ol data-draw="wk-notes"></ol></div>
+      <div class="lx-card lx-scroll"><table class="lx-table"><thead><tr><th>一级分类</th><th class="num">周中消耗</th><th class="num">周中次留率</th><th class="num">周中次留成本</th><th class="num">周末消耗</th><th class="num">周末次留率</th><th class="num">周末次留成本</th></tr></thead><tbody data-draw="wk-l1"></tbody></table></div>
+      <div class="lx-card lx-scroll"><table class="lx-table"><thead><tr><th>头部素材</th><th class="num">周中消耗</th><th class="num">周中次留率</th><th class="num">周中次留成本</th><th class="num">周末消耗</th><th class="num">周末次留率</th><th class="num">周末次留成本</th></tr></thead><tbody data-draw="wk-top"></tbody></table></div>
   </section>
 
   <section class="lx-sec" id="l1">
@@ -356,6 +361,24 @@
     }
   });
 
+  // 周中和周末
+  const WK = (data('wk') || [])[0];
+  if (WK) {
+    const wkRow = (tb, label, sub, x) => {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      const c = td('wk-name'); c.textContent = label; if (sub) { const s = document.createElement('span'); s.className = 'sub'; s.textContent = sub; c.appendChild(s); }
+      for (const v of [x.wd, x.we]) {
+        td('num').textContent = fmtY(v.spend);
+        const small = v.act_r < 50;
+        const r = td(small ? 'num muted' : rateCls(v.rate)); r.textContent = small ? '样本小' : fmtP(v.rate);
+        const k = td(small ? 'num muted' : cprCls(v.cpr)); k.textContent = small ? '—' : fmtY(v.cpr);
+      }
+      tb.appendChild(tr);
+    };
+    fill('wk-l1', (tb) => { wkRow(tb, '全盘', '', WK.w); for (const x of WK.l1) wkRow(tb, x.l1, '', x); });
+    fill('wk-top', (tb) => { for (const x of WK.top) wkRow(tb, x.name, x.uc + ' ' + x.short, x); });
+  }
+
   // 二、use case
   fill('l1-rows', (tb) => {
     const rows = data('l1').filter((x) => x.share >= 0.005); const max = d3.max(rows, (x) => x.spend) || 1;
@@ -546,6 +569,7 @@
   if (N.insight || N.scale) {
     document.getElementById('todo').hidden = false;
     if (N.rules && N.rules.length) { fill('rules-card', (el) => { el.hidden = false; }); fill('rules-note', (el) => { el.textContent = N.rules_note || ''; }); list('rules', N.rules); }
+    list('wk-notes', N.wk);
     list('insight', N.insight); list('scale', N.scale, 'uc'); list('drop', N.drop, 'uc'); list('remix', (N.remix || []).map((x) => ({...x, d: x.d + '<br>' + (x.how || '').replace(/</g, '&lt;')})), 'tag'); list('stop', N.stop); list('other', N.other);
   }
 </script>
