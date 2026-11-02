@@ -69,7 +69,7 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10
 
 ## 读全片脚本（日报、周报都要做，Reina 11/1 定）
 
-每条投放素材读一次全片字幕，存成 scripts/<素材ID>.json（格式见 tools/scripts_lib.py），以后日报、周报都直接用。compute.py 和 week.py 会把脚本挂到素材上（页面「脚本」那一列），并按 Today 第几秒出现、开头怎么钩、形式、时长分组算次留（patterns，页面「脚本规律」）。
+每条投放素材读一次全片字幕，存成 scripts/<素材ID>.json（格式见 tools/scripts_lib.py），以后日报、周报都直接用。日报、周报的素材表都不放脚本（Reina 11/2 定），脚本只用在后面的分析里：notes 里引用开头原话和结构，compute.py 和 week.py 按 Today 第几秒出现、开头怎么钩、形式、时长分组算次留（patterns，页面「脚本规律」）。
 
 - 要读哪些：日报 `python3 tools/script_todo.py --daily /tmp/results.json --out /tmp/sc`（「四、昨天消耗排行」全部、拖后腿和次留好但贵的、扩量和它们的原素材）；周报 `--week /tmp/week.json`（周消耗 ≥ ¥2,000 的全部）。已经读过的不重读。写 /tmp/sc/todo.json 和 /tmp/sc/jl.js。
 - 必须用 Reina 电脑上的内置浏览器读，不读不写分析。todo 超过 12 条就拆成 2 到 4 批，用 Agent 工具并行跑，每个 agent 用自己开的 tab（tabs_create，第一个没面板就 preview_start），只写 scripts/ 下自己那批的文件。
