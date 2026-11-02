@@ -159,6 +159,17 @@
   .pl-mrow .r b { color: var(--color-fg); }
   .pl-say { font-size: 13px; line-height: 1.6; margin: 0; padding: 8px 10px; border-radius: 6px; background: color-mix(in srgb, var(--bar) 8%, transparent); }
   .pl-say b { font-weight: 700; }
+
+  .sc-cell { min-width: 13rem; max-width: 20rem; white-space: normal; line-height: 1.45; font-size: 12.5px; }
+  .sc-cell b { font-weight: 600; }
+  .sc-cell .sub { display: block; color: var(--color-fg-muted); font-size: 11.5px; }
+  .sc-cell.none { color: var(--color-fg-muted); font-size: 12px; }
+  .sc-pat { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .sc-pat h4 { margin: 0 0 4px; font-size: 13px; }
+  .sc-pat table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .sc-pat td { padding: 3px 4px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sc-pat td.num { text-align: right; }
+  .sc-pat .small td { color: var(--color-fg-muted); }
 </style>
 </head>
 <body>
@@ -171,11 +182,12 @@
       <span class="lx-nav-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>往期日报</span>
       <span class="lx-chips" id="nav-chips"><a class="lx-chip" aria-current="page" href="../2026-10-27/">10/27 周二</a></span>
       <select id="nav-more" aria-label="更早的日报" hidden></select>
+      <a class="lx-chip" id="nav-week" href="../week/" hidden>周报 →</a>
     </nav>
     </div>
     <p class="lx-take" data-draw="take"></p>
     <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 10/27；次留率、次留成本看 10/24–26 激活的人（10/27 激活的次留 10/28 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 10/27；次留率、次留成本看 10/24–26 激活的人（10/27 激活的次留 10/28 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。3 留率、3 留成本看 — 激活的人（3日留存按激活日记，约 3 天才稳），先作参考，不进标签和分层。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
@@ -204,6 +216,11 @@
       <span class="lx-big" data-draw="k-cpr">—</span>
       <span class="lx-cmp">10/25 <span data-draw="k-cpr25">—</span> · 三天 <b data-draw="k-cprw">—</b></span>
     </div>
+    <div class="lx-card">
+      <span class="lx-label">全盘 3 留率（— 激活）</span>
+      <span class="lx-big" data-draw="k-rate3">—</span>
+      <span class="lx-cmp">3 留成本 <b data-draw="k-cpr3">—</b> · 分天 <span data-draw="k-rate3d">—</span></span>
+    </div>
   </section>
 
   <section class="lx-sec" id="by-l1">
@@ -223,6 +240,8 @@
             <th class="num">消耗<span class="th-sub">10/26（对比）</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活（10/27 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th>分天次留率<span class="th-sub">10/24、10/25、10/26 激活</span></th>
           </tr>
         </thead>
@@ -250,6 +269,8 @@
             <th class="num">激活成本<span class="th-sub">10/24–26</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活（10/27 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
             <th>标签<span class="th-sub">按 10/24–26</span></th>
           </tr>
@@ -278,6 +299,8 @@
             <th class="num">激活成本<span class="th-sub">10/24–26</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活（10/27 次留未出全）</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
             <th>标签<span class="th-sub">按 10/24–26</span></th>
           </tr>
@@ -289,13 +312,14 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：昨天花了 <b data-draw="th-top">—</b> 以上的素材都在这里，另外加上次留好、但昨天没怎么花的。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗不到这个数；<b>新上线</b> = 前天或昨天才开始花，次留还没出，次留两格先空着；<b>激活太少</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。昨天消耗黄色 = 次留好的素材昨天花不到 <b data-draw="th-drop">—</b>，没接上量。绿底 = 本周（10/26 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗不到这个数；<b>新上线</b> = 前天或昨天才开始花，次留还没出，次留两格先空着；<b>激活太少</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。绿底 = 本周（10/26 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th>标签</th>
             <th>素材</th>
+            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
@@ -308,6 +332,8 @@
             <th class="num">激活成本<span class="th-sub">10/24–26</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th>链接</th>
           </tr>
         </thead>
@@ -330,6 +356,7 @@
           <tr>
             <th>标签</th>
             <th>素材</th>
+            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>一级 / 二级分类</th>
@@ -342,6 +369,8 @@
             <th class="num">激活成本<span class="th-sub">10/24–26</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th>链接</th>
           </tr>
         </thead>
@@ -397,6 +426,10 @@
         <p class="pl-say" data-draw="pl-method-say"></p>
       </div>
     </div>
+    <div class="pl-card">
+      <h3>脚本规律（10/24–26 激活）</h3>
+      <div data-draw="patterns"></div>
+    </div>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -406,6 +439,8 @@
             <th>消耗<span class="th-sub">10/24–10/27 四天</span></th>
             <th class="num">次留率<span class="th-sub">10/24–26 激活；下面是和 10/26 报告比的变化</span></th>
             <th class="num">次留成本<span class="th-sub">10/24–26；下面是变化</span></th>
+            <th class="num">3 留率<span class="th-sub">— 激活</span></th>
+            <th class="num">3 留成本<span class="th-sub">—</span></th>
             <th>各供给表现<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 这个 UC 里最便宜</span></th>
             <th>下一步</th>
           </tr>
@@ -428,6 +463,8 @@
   const META = one('meta');
   const COLOR = getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8';
 
+  // 有周报就显示「周报」入口
+  (async () => { try { const w = await (await fetch(REL + 'weeks.json', {cache: 'no-store'})).json(); if (Array.isArray(w) && w.length) document.getElementById('nav-week').hidden = false; } catch (e) {} })();
   // 往期日报：reports.json 在根目录，旧页面也会读到最新的列表。最近 7 天做成按钮，更早的放下拉。
   (async () => {
     let list = [];
@@ -460,6 +497,9 @@
   const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
   const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
   const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate_w ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
+  const r3Cls = (v, o) => (v === null || v === undefined || o.rate3_w == null ? 'num muted' : v >= o.rate3_w ? 'num lx-good' : v < 0.8 * o.rate3_w ? 'num lx-badv' : 'num');
+  const c3Cls = (v, o) => (v === null || v === undefined || o.cpr3_w == null ? 'num muted' : v <= o.cpr3_w ? 'num lx-good' : v > 1.25 * o.cpr3_w ? 'num lx-badv' : 'num');
+  const ret3 = (td, r, o) => { td(r3Cls(r.rate3, o)).textContent = fmtP(r.rate3); td(c3Cls(r.cpr3, o)).textContent = fmtY(r.cpr3); };
   const cprCls = (v, o, t) => (v === null ? 'num muted' : v <= o.cpr_w ? 'num lx-good' : v > t.high * o.cpr_w ? 'num lx-badv' : 'num');
   const barCell = (td, v, max, px) => {
     const wrap = document.createElement('div'); wrap.className = 'lx-bar';
@@ -482,8 +522,10 @@
   tile('k-cpa', 'overview', 'cpa27', fmtY); tile('k-cpa26', 'overview', 'cpa26', fmtY); tile('k-cpa25', 'overview', 'cpa25', fmtY);
   tile('k-rate', 'overview', 'rate26', fmtP); tile('k-rate25', 'overview', 'rate25', fmtP0); tile('k-rate24', 'overview', 'rate24', fmtP0);
   tile('k-cpr', 'overview', 'cpr26', fmtY); tile('k-cpr25', 'overview', 'cpr25', fmtY);
+  tile('k-rate3', 'overview', 'rate3_w', fmtP); tile('k-cpr3', 'overview', 'cpr3_w', fmtY);
+  fill('k-rate3d', (el) => { const v = data('overview')[0].rate3_days; el.textContent = v ? v.map(fmtP).join('、') : '—'; });
   tile('k-ratew', 'overview', 'rate_w', fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
-  tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
+  tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-rank', 'th', 'rank', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
 
   fill('l1rows', (tb) => {
@@ -500,6 +542,7 @@
       td('num muted').textContent = fmtY(r.cost26);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      ret3(td, r, o);
       const sp = td(); const w = 96, h = 18;
       const svg = d3.select(sp).append('svg').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
       const y = d3.scaleLinear([0.1, 0.5], [h - 3, 3]).clamp(true), x = d3.scaleLinear([0, 2], [4, 60]);
@@ -529,6 +572,7 @@
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      ret3(td, r, o);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
       pill(td(), r.status, statusCls[r.status]);
       tb.appendChild(tr);
@@ -551,12 +595,45 @@
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      ret3(td, r, o);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
       pill(td(), r.status, statusCls[r.status]);
       tb.appendChild(tr);
     }
   });
 
+
+  // 脚本：开头原话 + 结构（scripts/<ID>.json 读过的才有）
+  const scriptCell = (td, sc) => {
+    if (!sc) { td.className = 'sc-cell none'; td.textContent = '还没读脚本'; return; }
+    td.className = 'sc-cell';
+    const b = document.createElement('b'); b.textContent = '「' + (sc.hook || '') + '」'; td.appendChild(b);
+    const s = document.createElement('span'); s.className = 'sub';
+    s.textContent = [sc.today_at == null ? 'Today 没出现' : 'Today 第 ' + sc.today_at + ' 秒', sc.dur ? Math.round(sc.dur) + ' 秒' : '', sc.form, sc.hook_type ? '开头：' + sc.hook_type : ''].filter(Boolean).join(' · ');
+    td.appendChild(s);
+    if (sc.demo) { const d = document.createElement('span'); d.className = 'sub'; d.textContent = '演示：' + sc.demo; td.appendChild(d); }
+  };
+  // 脚本规律：按 Today 出场时间、开头、形式、时长分组的次留
+  const drawPatterns = (box, pat, rw, cw) => {
+    if (!pat || !pat.n) { box.innerHTML = '<p class="lx-note">脚本库里还没有够多读过的素材。</p>'; return; }
+    const head = document.createElement('p'); head.className = 'lx-note';
+    head.innerHTML = '读过全片脚本、激活够的素材 <b>' + pat.n + '</b> 条，占这段消耗的 <b>' + d3.format('.0%')(pat.coverage) + '</b>。绿 = 次留率不低于、次留成本不高于全盘；少于 5 条的灰掉，只看方向。';
+    box.appendChild(head);
+    const grid = document.createElement('div'); grid.className = 'sc-pat';
+    for (const dm of pat.dims) {
+      if (!dm.groups.length) continue;
+      const card = document.createElement('div'); const h = document.createElement('h4'); h.textContent = dm.label; card.appendChild(h);
+      const t = document.createElement('table');
+      for (const g of dm.groups) {
+        const tr = document.createElement('tr'); if (g.n < 5) tr.className = 'small';
+        const good = g.rate != null && g.cpr != null && g.rate >= rw && g.cpr <= cw;
+        tr.innerHTML = '<td>' + g.v + '</td><td class="num">' + g.n + ' 条</td><td class="num">' + (g.cost >= 10000 ? '¥' + d3.format('.1f')(g.cost / 10000) + ' 万' : '¥' + d3.format(',.0f')(g.cost)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.rate == null ? '—' : d3.format('.1%')(g.rate)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.cpr == null ? '—' : '¥' + d3.format(',.0f')(g.cpr)) + '</td>';
+        t.appendChild(tr);
+      }
+      card.appendChild(t); grid.appendChild(card);
+    }
+    box.appendChild(grid);
+  };
   const groupCls = statusCls;
   const matTable = (name, keep, flag) => fill(name, (tb) => {
     const rows = data('mat').filter(keep); const max = d3.max(rows, (r) => r.cost27) || 1;
@@ -565,6 +642,7 @@
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
       td('name').textContent = r.name;
+      scriptCell(td(), r.script);
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.l1, r.l2);
@@ -578,6 +656,7 @@
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null || r.rate === undefined ? (r.group === '新上线' ? '还没次留' : '激活太少') : fmtP0(r.rate);
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = r.rate === null || r.rate === undefined ? '' : fmtY(r.cpr);
+      ret3(td, r, o);
       const lc = td('short lx-links');
       const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
       const vid = r.video || (r.link_type === '预览' ? r.link : '');
@@ -587,7 +666,7 @@
     }
   });
   const GOOD = ['能放量 + 次留好', '次留好、量还小'];
-  matTable('goodrows', (v) => v.cost27 >= t.top || GOOD.includes(v.group), (r) => (GOOD.includes(r.group) && r.cost27 < t.drop ? 'lx-warnv' : ''));
+  matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '');
   matTable('badrows', (v) => ['拖后腿', '次留好但贵'].includes(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
 
   // 扩量素材和原素材比
@@ -722,7 +801,7 @@
         const rows = ucs.filter((u) => u.tier === tier && (tier !== 'T0' || u.spend4 >= 3000 || dirs[u.uc] || (u.prev && u.prev !== 'T0')));
         if (!rows.length) continue;
         const h = document.createElement('tr'); h.className = 'tier-head'; h.style.setProperty('--tc', TC[tier]);
-        const hd = document.createElement('td'); hd.colSpan = 7; hd.innerHTML = `<span style="margin:0;color:${TC[tier]};font-weight:700">${TN[tier]}</span>　${rows.length} 个<span>${TD[tier]}</span>`;
+        const hd = document.createElement('td'); hd.colSpan = 9; hd.innerHTML = `<span style="margin:0;color:${TC[tier]};font-weight:700">${TN[tier]}</span>　${rows.length} 个<span>${TD[tier]}</span>`;
         h.appendChild(hd); tb.appendChild(h);
         for (const u of rows) {
           const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
@@ -737,6 +816,7 @@
           if (u.d_rate !== null && Math.abs(u.d_rate) >= 0.005) { const d = document.createElement('span'); d.className = 'pl-delta ' + (u.d_rate > 0 ? 'lx-good' : 'lx-badv'); d.textContent = (u.d_rate > 0 ? '+' : '') + d3.format('.1f')(u.d_rate * 100) + ' 点'; cr.appendChild(d); }
           const cc = td(cprCls(u.cpr, o, t)); cc.textContent = fmtY(u.cpr);
           if (u.d_cpr !== null && Math.abs(u.d_cpr) >= 1) { const d = document.createElement('span'); d.className = 'pl-delta ' + (u.d_cpr < 0 ? 'lx-good' : 'lx-badv'); d.textContent = (u.d_cpr > 0 ? '+¥' : '-¥') + Math.round(Math.abs(u.d_cpr)); cc.appendChild(d); }
+          ret3(td, u, o);
           const ch = td('pl-chan');
           const okc = CH.filter((c) => u.ch[c].cpr !== null && u.ch[c].act_w >= 50);
           const best = okc.length > 1 ? okc.reduce((a, b) => (u.ch[a].cpr <= u.ch[b].cpr ? a : b)) : null;
@@ -764,13 +844,14 @@
         const i = document.createElement('i'); i.style.width = (m.cpr / max * 100) + '%'; i.style.background = m.cpr <= cw ? 'var(--color-ok)' : m.cpr > cw * 1.15 ? 'var(--color-bad)' : 'var(--color-warn)';
         const u_ = document.createElement('u'); u_.style.left = (cw / max * 100) + '%'; u_.title = '全盘 ' + fmtY(cw);
         bar.append(i, u_);
-        const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · ' + fmtN(m.n27) + ' 条';
+        const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · ' + fmtN(m.n27) + ' 条' + (m.rate3 != null ? '<br><span class="muted">3 留 ' + fmtP(m.rate3) + ' · ' + fmtY(m.cpr3) + '</span>' : '');
         row.append(lab, bar, r); box.appendChild(row);
       }
     });
     fill('pl-method-say', (el) => { if (P.method) el.innerHTML = P.method; else el.hidden = true; });
   })();
 
+  fill('patterns', (box) => drawPatterns(box, one('patterns'), o.rate_w, o.cpr_w));
   fill('cohortrows', (tb) => {
     const rows = data('cohort'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
