@@ -289,6 +289,34 @@ def main():
           'l1': [{'l1': k, 'share': x['share'], **split(by_l1[k]), 'p_wd': pick(stats(by_l1[k], P[:5])), 'p_we': pick(stats(by_l1[k], P[5:]))} for k, x in ((y['l1'], y) for y in l1t) if x['share'] >= 0.005],
           'top': [{'id': m['id'], 'name': m['name'], 'uc': m['uc'], 'short': m['short'], **split(by_id[m['id']])} for m in top]}
 
+    # 按素材上线天数拆（Reina 11/2：查周末为什么差）。次留的回访行按前一天的上线天数归。
+    def age_of(i, d):
+        return (dt.date.fromisoformat(d) - dt.date.fromisoformat(first[i])).days if i in first else None
+    def band_rows(lo, hi, rows):
+        out = []
+        for r in rows:
+            a0 = age_of(r['id'], r['date'])
+            if a0 is not None and lo <= a0 <= hi:
+                out.append({**r, 'ret': 0, 'r3': 0})
+            a1 = a0 - 1 if a0 is not None else None
+            if a1 is not None and lo <= a1 <= hi:
+                out.append({**r, 'cost': 0, 'act': 0, 'r3': 0})
+        return out
+    wk['age'] = [{'label': lb, **split(band_rows(lo, hi, RW))} for lb, lo, hi in (('上线 3 天内', 0, 3), ('上线 4 到 7 天', 4, 7), ('上线 8 天以上', 8, 9999))]
+    # 同一批素材过周末：按首投日分批，留存只看当天激活的人
+    def batch(a, b):
+        ids = {i for i, f in first.items() if a <= f <= b}
+        return ids, [r for r in allrows if r['id'] in ids]
+    days = W[:7]
+    wk['batch'] = []
+    for f in days:
+        ids, rs = batch(f, f)
+        wk['batch'].append({'first': f, 'n': len(ids), 'by_day': {d: pick(stats(rs, [d])) for d in days if d >= f}})
+    ids0, rs0 = batch(W[0], W[2])
+    ids1, rs1 = batch(P[0], P[4])
+    wk['carry'] = {'this': {'n': len(ids0), 'thu': pick(stats(rs0, [W[3]])), 'fri': pick(stats(rs0, [W[4]])), 'sat': pick(stats(rs0, [W[5]]))},
+                   'last': {'n': len(ids1), 'before': pick(stats(rs1, P[3:5])), 'weekend': pick(stats(rs1, P[5:7])), 'after': pick(stats(rs1, W[:2]))}}
+
     lab = lambda s: f'{int(s[5:7])}/{int(s[8:10])}'
     meta = {'week': W[0], 'end': W[6], 'label': f'{lab(W[0])}–{lab(W[6])}', 'p_label': f'{lab(P[0])}–{lab(P[6])}',
             'w_ret': f'{lab(W[0])}–{lab(W[5])}', 'w_ret3': f'{lab(W[0])}–{lab(W[3])}', 'built': dt.date.today().isoformat(),

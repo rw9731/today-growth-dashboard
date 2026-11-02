@@ -396,7 +396,7 @@
     const draw = (box, rows, lo, hi) => {
       const pos = (v) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
       rows.forEach((x) => { x.a = rateOf(x.wd); x.b = rateOf(x.we); x.d = x.a != null && x.b != null ? x.b - x.a : null; });
-      rows.sort((p, q) => (p.fix ? -1 : q.fix ? 1 : (q.d == null ? -9 : q.d) - (p.d == null ? -9 : p.d)));
+      rows.sort((p, q) => (p.fix && q.fix ? 0 : p.fix ? -1 : q.fix ? 1 : (q.d == null ? -9 : q.d) - (p.d == null ? -9 : p.d)));
       const hd = document.createElement('div'); hd.className = 'wk-dbr h'; hd.innerHTML = '<span></span><span></span><span class="v">次留率 周中→周末</span><span class="c">次留成本</span><span class="g">结论</span>'; box.appendChild(hd);
       for (const x of rows) {
         const row = document.createElement('div'); row.className = 'wk-dbr' + (x.fix ? ' fix' : '');
@@ -408,14 +408,14 @@
         row.appendChild(t);
         const v = document.createElement('span'); v.className = 'v'; v.textContent = (x.a != null ? fmtP0(x.a) : '样本小') + ' → ' + (x.b != null ? fmtP0(x.b) : '样本小'); row.appendChild(v);
         const c = document.createElement('span'); c.className = 'c'; c.textContent = cost(x.wd) + ' → ' + cost(x.we); row.appendChild(c);
-        const tg = document.createElement('span'); const tx = (N.wk_tags || {})[x.key] || ''; tg.className = 'g ' + (tx === '周末多投' ? 'up' : tx === '周末压' ? 'dn' : ''); tg.textContent = tx; row.appendChild(tg);
+        const tg = document.createElement('span'); const tx = (N.wk_tags || {})[x.key] || ''; tg.className = 'g ' + (/多投|好|涨|拉高/.test(tx) ? 'up' : /压|跌/.test(tx) ? 'dn' : ''); tg.textContent = tx; row.appendChild(tg);
         box.appendChild(row);
       }
     };
     const para = (el, items) => { for (const it of items || []) { const p = document.createElement('p'); p.className = 'wk-dbn'; const b = document.createElement('b'); b.textContent = it.t; const sp = document.createElement('span'); sp.innerHTML = it.d || ''; p.append(b, sp); el.appendChild(p); } };
     fill('wk-market-note', (el) => para(el, N.wk_market));
     fill('wk-top-note', (el) => para(el, N.wk_top));
-    fill('wk-l1', (box) => draw(box, [{label: '全盘', fix: true, wd: WK.w.wd, we: WK.w.we}, ...WK.l1.map((x) => ({label: x.l1, key: x.l1, wd: x.wd, we: x.we}))], 0.15, 0.5));
+    fill('wk-l1', (box) => draw(box, [{label: '全盘', fix: true, wd: WK.w.wd, we: WK.w.we}, ...(WK.age || []).map((x) => ({label: x.label, key: x.label, fix: true, wd: x.wd, we: x.we})), ...WK.l1.map((x) => ({label: x.l1, key: x.l1, wd: x.wd, we: x.we}))], 0.15, 0.5));
     const names = N.wk_names || {};
     fill('wk-top', (box) => draw(box, WK.top.map((x) => ({label: names[x.id] || x.short, key: x.id, title: x.name, wd: x.wd, we: x.we})), 0.15, 0.5));
   }
