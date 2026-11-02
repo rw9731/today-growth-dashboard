@@ -324,6 +324,17 @@
     }
   });
 
+  // 脚本：开头原话 + 结构（scripts/<ID>.json 读过的才有）
+  const scriptCell = (td, sc) => {
+    if (!sc) { td.className = 'sc-cell none'; td.textContent = '还没读脚本'; return; }
+    td.className = 'sc-cell';
+    const b = document.createElement('b'); b.textContent = '「' + (sc.hook || '') + '」'; td.appendChild(b);
+    const s = document.createElement('span'); s.className = 'sub';
+    s.textContent = [sc.today_at == null ? 'Today 没出现' : 'Today 第 ' + sc.today_at + ' 秒', sc.dur ? Math.round(sc.dur) + ' 秒' : '', sc.form, sc.hook_type ? '开头：' + sc.hook_type : ''].filter(Boolean).join(' · ');
+    td.appendChild(s);
+    if (sc.demo) { const d = document.createElement('span'); d.className = 'sub'; d.textContent = '演示：' + sc.demo; td.appendChild(d); }
+  };
+
   // 三、素材
   const remix = {}; for (const x of N.remix || []) if (x.id) remix[x.id] = x;
   const why = N.top_note || {};
@@ -361,16 +372,6 @@
   });
 
 
-  // 脚本：开头原话 + 结构（scripts/<ID>.json 读过的才有）
-  const scriptCell = (td, sc) => {
-    if (!sc) { td.className = 'sc-cell none'; td.textContent = '还没读脚本'; return; }
-    td.className = 'sc-cell';
-    const b = document.createElement('b'); b.textContent = '「' + (sc.hook || '') + '」'; td.appendChild(b);
-    const s = document.createElement('span'); s.className = 'sub';
-    s.textContent = [sc.today_at == null ? 'Today 没出现' : 'Today 第 ' + sc.today_at + ' 秒', sc.dur ? Math.round(sc.dur) + ' 秒' : '', sc.form, sc.hook_type ? '开头：' + sc.hook_type : ''].filter(Boolean).join(' · ');
-    td.appendChild(s);
-    if (sc.demo) { const d = document.createElement('span'); d.className = 'sub'; d.textContent = '演示：' + sc.demo; td.appendChild(d); }
-  };
   // 脚本规律：按 Today 出场时间、开头、形式、时长分组的次留
   const drawPatterns = (box, pat, rw, cw) => {
     if (!pat || !pat.n) { box.innerHTML = '<p class="lx-note">脚本库里还没有够多读过的素材。</p>'; return; }
