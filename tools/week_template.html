@@ -117,7 +117,7 @@
 
   <section class="lx-sec" id="l1">
     <h2 class="lx-h2">二、一级分类：钱花在哪、留得住吗</h2>
-    <p class="lx-note">绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里能放量且留存好的 use case，和留存差不要再加的 use case。</p>
+    <p class="lx-note">绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里能放量且留存好的 use case，和留存差的 use case。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -140,7 +140,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">三、Use case：哪些能放量、留得住</h2>
-    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差，不要再加</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差，不要再加」里的不列。</p>
+    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差」里的不列。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -277,7 +277,7 @@
     <div class="pl-blk" style="--bc:var(--color-fg)"><h3>核心 insight<span>这周整盘看到的</span></h3><ol data-draw="insight"></ol></div>
     <div class="wk-todo">
       <div class="pl-blk" style="--bc:var(--color-ok)"><h3>继续扩量的 use case<span>能放量、留存也好</span></h3><ol data-draw="scale"></ol></div>
-      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>不要再加的 use case<span>留存不达标，或库里已暂停</span></h3><ol data-draw="drop"></ol></div>
+      <div class="pl-blk" style="--bc:var(--color-bad)"><h3>留存差的 use case<span>留存不达标，或库里已暂停；是否继续看公司战略</span></h3><ol data-draw="drop"></ol></div>
       <div class="pl-blk" style="--bc:var(--bar)"><h3>拿去二创的素材<span>从头部素材里挑</span></h3><ol data-draw="remix"></ol></div>
       <div class="pl-blk" style="--bc:var(--color-bad)"><h3>停掉或降预算的素材<span>钱花得不值</span></h3><ol data-draw="stop"></ol></div>
       <div class="pl-blk wk-full" style="--bc:var(--color-warn)"><h3>其他要做的<span>产能、口径、要谁跟进</span></h3><ol data-draw="other"></ol></div>
@@ -440,13 +440,13 @@
       const bad = us.filter((u) => dn.includes(u.uc)).map((u) => u.short);
       const ci = td('dir');
       if (good.length) { const g = document.createElement('div'); g.className = 'lx-good'; g.textContent = '好：' + good.join('、'); ci.appendChild(g); }
-      if (bad.length) { const g = document.createElement('div'); g.className = 'lx-badv'; g.textContent = '不要再加：' + bad.join('、'); ci.appendChild(g); }
+      if (bad.length) { const g = document.createElement('div'); g.className = 'lx-badv'; g.textContent = '差：' + bad.join('、'); ci.appendChild(g); }
       td('dir').textContent = notes[x.l1] || '';
       tb.appendChild(tr);
     }
   });
   const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), DROP: css('--color-bad'), T0: css('--cds-chart-reference')};
-  const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察', DROP: '留存差，不要再加'};
+  const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察', DROP: '留存差'};
     const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');
   const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般', DROP: '留存最差，或量小留不住，或 Use case 库里已暂停'};
   const CHN = {ai: 'AI', ec: '二创', yp: '原片'};
