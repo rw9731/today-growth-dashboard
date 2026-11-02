@@ -28,6 +28,29 @@
   .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
   .wk-todo { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @media (max-width: 900px) { .wk-todo { grid-template-columns: minmax(0, 1fr); } }
+  .wk-wk .pl-card { min-width: 0; }
+  .wk-wk { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .wk-wk { grid-template-columns: minmax(0, 1fr); } }
+  .wk-dbn { margin: 0 0 6px; font-size: 12.5px; line-height: 1.5; color: var(--color-fg-muted); }
+  .wk-dbn b { display: block; color: var(--color-fg); font-weight: 600; }
+  .wk-db { margin-top: 8px; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .wk-dbr { display: grid; grid-template-columns: 8.5rem minmax(50px, 1fr) 6.8rem 5.6rem; align-items: center; gap: 8px; height: 26px; border-top: 1px solid var(--color-border-line); }
+  .wk-dbr.fix { font-weight: 600; }
+  .wk-dbr.h { height: auto; border-top: 0; padding-bottom: 3px; font-size: 11px; color: var(--color-fg-muted); }
+  .wk-dbr.h .v { white-space: nowrap; }
+  @media (max-width: 600px) { .wk-dbr { grid-template-columns: 6.5rem minmax(30px, 1fr) 6rem; } .wk-dbr .c { display: none; } .wk-dbr.h .v { font-size: 10px; } }
+  .wk-dbr .l { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .wk-dbr .v, .wk-dbr .c { text-align: right; white-space: nowrap; }
+  .wk-dbr .c { color: var(--color-fg-muted); }
+  .wk-dbr .t { position: relative; height: 12px; }
+  .wk-dbr .t i { position: absolute; top: 50%; }
+  .wk-dbr .t .b { height: 3px; margin-top: -1.5px; }
+  .wk-dbr .t .b.up { background: color-mix(in srgb, var(--color-ok) 45%, transparent); }
+  .wk-dbr .t .b.dn { background: color-mix(in srgb, var(--color-bad) 45%, transparent); }
+  .wk-dbr .t .o, .wk-dbr .t .f { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; }
+  .wk-dbr .t .o { background: var(--color-panel); border: 1.5px solid var(--color-fg-muted); box-sizing: border-box; }
+  .wk-dbr .t .f.up { background: var(--color-ok); }
+  .wk-dbr .t .f.dn { background: var(--color-bad); }
   .wk-todo .wk-full { grid-column: 1 / -1; }
   .wk-todo .pl-blk li .who { display: inline-block; font-size: 11px; font-weight: 700; padding: 0 6px; margin-right: 4px; border-radius: 4px; background: color-mix(in srgb, var(--bc) 14%, transparent); color: var(--bc); }
   .wk-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--color-fg-muted); }
@@ -82,10 +105,11 @@
       <div class="wk-chart" data-draw="trend"></div>
     </div>
     <h3 class="lx-h3">周中和周末</h3>
-    <p class="lx-note">周中 = 周一到周五，周末 = 周六周日。消耗和激活成本看整段；次留率和次留成本看激活的人，周日激活的次留下周一才出，所以这周的周末其实只有周六。周末激活的人连续 3 留还没出。次留样本不到 50 个写「样本小」。</p>
-    <div class="pl-blk" style="--bc:var(--color-fg)"><ol data-draw="wk-notes"></ol></div>
-      <div class="lx-card lx-scroll"><table class="lx-table"><thead><tr><th>一级分类</th><th class="num">周中消耗</th><th class="num">周中次留率</th><th class="num">周中次留成本</th><th class="num">周末消耗</th><th class="num">周末次留率</th><th class="num">周末次留成本</th></tr></thead><tbody data-draw="wk-l1"></tbody></table></div>
-      <div class="lx-card lx-scroll"><table class="lx-table"><thead><tr><th>头部素材</th><th class="num">周中消耗</th><th class="num">周中次留率</th><th class="num">周中次留成本</th><th class="num">周末消耗</th><th class="num">周末次留率</th><th class="num">周末次留成本</th></tr></thead><tbody data-draw="wk-top"></tbody></table></div>
+    <p class="lx-note">周一到周五 vs 周六周日。○ 周中，● 周末，横轴是次留率，按周末比周中涨跌排。周日激活的次留下周一才出，这周的周末只有周六。样本不到 50 个的写「样本小」。</p>
+    <div class="wk-two wk-wk">
+      <div class="pl-card"><h3>大盘</h3><div data-draw="wk-market-note"></div><div class="wk-db" data-draw="wk-l1"></div></div>
+      <div class="pl-card"><h3>头部素材</h3><div data-draw="wk-top-note"></div><div class="wk-db" data-draw="wk-top"></div></div>
+    </div>
   </section>
 
   <section class="lx-sec" id="l1">
@@ -364,19 +388,32 @@
   // 周中和周末
   const WK = (data('wk') || [])[0];
   if (WK) {
-    const wkRow = (tb, label, sub, x) => {
-      const tr = document.createElement('tr'); const td = cellMaker(tr);
-      const c = td('wk-name'); c.textContent = label; if (sub) { const s = document.createElement('span'); s.className = 'sub'; s.textContent = sub; c.appendChild(s); }
-      for (const v of [x.wd, x.we]) {
-        td('num').textContent = fmtY(v.spend);
-        const small = v.act_r < 50;
-        const r = td(small ? 'num muted' : rateCls(v.rate)); r.textContent = small ? '样本小' : fmtP(v.rate);
-        const k = td(small ? 'num muted' : cprCls(v.cpr)); k.textContent = small ? '—' : fmtY(v.cpr);
+    const rateOf = (v) => (v.act_r >= 50 ? v.rate : null);
+    const cost = (v) => (v.act_r >= 50 ? fmtY(v.cpr) : '—');
+    const draw = (box, rows, lo, hi) => {
+      const pos = (v) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+      rows.forEach((x) => { x.a = rateOf(x.wd); x.b = rateOf(x.we); x.d = x.a != null && x.b != null ? x.b - x.a : null; });
+      rows.sort((p, q) => (p.fix ? -1 : q.fix ? 1 : (q.d == null ? -9 : q.d) - (p.d == null ? -9 : p.d)));
+      const hd = document.createElement('div'); hd.className = 'wk-dbr h'; hd.innerHTML = '<span></span><span></span><span class="v">次留率 周中→周末</span><span class="c">次留成本</span>'; box.appendChild(hd);
+      for (const x of rows) {
+        const row = document.createElement('div'); row.className = 'wk-dbr' + (x.fix ? ' fix' : '');
+        const l = document.createElement('span'); l.className = 'l'; l.textContent = x.label; l.title = x.title || x.label; row.appendChild(l);
+        const t = document.createElement('span'); t.className = 't';
+        if (x.a != null && x.b != null) { const bar = document.createElement('i'); bar.className = 'b ' + (x.d >= 0 ? 'up' : 'dn'); bar.style.left = Math.min(pos(x.a), pos(x.b)) + '%'; bar.style.width = Math.abs(pos(x.b) - pos(x.a)) + '%'; t.appendChild(bar); }
+        if (x.a != null) { const d = document.createElement('i'); d.className = 'o'; d.style.left = pos(x.a) + '%'; t.appendChild(d); }
+        if (x.b != null) { const d = document.createElement('i'); d.className = 'f ' + (x.d != null && x.d < 0 ? 'dn' : 'up'); d.style.left = pos(x.b) + '%'; t.appendChild(d); }
+        row.appendChild(t);
+        const v = document.createElement('span'); v.className = 'v'; v.textContent = (x.a != null ? fmtP0(x.a) : '样本小') + ' → ' + (x.b != null ? fmtP0(x.b) : '样本小'); row.appendChild(v);
+        const c = document.createElement('span'); c.className = 'c'; c.textContent = cost(x.wd) + ' → ' + cost(x.we); row.appendChild(c);
+        box.appendChild(row);
       }
-      tb.appendChild(tr);
     };
-    fill('wk-l1', (tb) => { wkRow(tb, '全盘', '', WK.w); for (const x of WK.l1) wkRow(tb, x.l1, '', x); });
-    fill('wk-top', (tb) => { for (const x of WK.top) wkRow(tb, x.name, x.uc + ' ' + x.short, x); });
+    const para = (el, items) => { for (const it of items || []) { const p = document.createElement('p'); p.className = 'wk-dbn'; const b = document.createElement('b'); b.textContent = it.t; const sp = document.createElement('span'); sp.innerHTML = it.d || ''; p.append(b, sp); el.appendChild(p); } };
+    fill('wk-market-note', (el) => para(el, N.wk_market));
+    fill('wk-top-note', (el) => para(el, N.wk_top));
+    fill('wk-l1', (box) => draw(box, [{label: '全盘', fix: true, wd: WK.w.wd, we: WK.w.we}, ...WK.l1.map((x) => ({label: x.l1, wd: x.wd, we: x.we}))], 0.15, 0.5));
+    const names = N.wk_names || {};
+    fill('wk-top', (box) => draw(box, WK.top.map((x) => ({label: names[x.id] || x.short, title: x.name, wd: x.wd, we: x.we})), 0.15, 0.5));
   }
 
   // 二、use case
@@ -569,7 +606,6 @@
   if (N.insight || N.scale) {
     document.getElementById('todo').hidden = false;
     if (N.rules && N.rules.length) { fill('rules-card', (el) => { el.hidden = false; }); fill('rules-note', (el) => { el.textContent = N.rules_note || ''; }); list('rules', N.rules); }
-    list('wk-notes', N.wk);
     list('insight', N.insight); list('scale', N.scale, 'uc'); list('drop', N.drop, 'uc'); list('remix', (N.remix || []).map((x) => ({...x, d: x.d + '<br>' + (x.how || '').replace(/</g, '&lt;')})), 'tag'); list('stop', N.stop); list('other', N.other);
   }
 </script>
