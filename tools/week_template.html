@@ -150,6 +150,24 @@
 
   <section class="lx-sec" id="kind">
     <h2 class="lx-h2">四、素材类型和本周产出</h2>
+    <div class="pl-card" data-draw="output-card" hidden>
+      <h3>素材产出数量</h3>
+      <p class="lx-note" data-draw="output-note"></p>
+      <div class="lx-scroll">
+        <table class="lx-table">
+          <thead>
+            <tr>
+              <th>类型</th>
+              <th class="num">产出<span class="th-sub">条</span></th>
+              <th class="num">计划<span class="th-sub">条</span></th>
+              <th class="num">完成</th>
+              <th class="num">上线投放<span class="th-sub">本周首次有消耗</span></th>
+            </tr>
+          </thead>
+          <tbody data-draw="output-rows"></tbody>
+        </table>
+      </div>
+    </div>
     <div class="wk-two">
       <div class="pl-card">
         <h3>每天上新多少条</h3>
@@ -433,6 +451,21 @@
     box.appendChild(grid);
   };
   // 四、产出和类型
+  if (N.output && (N.output.rows || []).length) {
+    fill('output-card', (el) => { el.hidden = false; });
+    fill('output-note', (el) => { el.textContent = N.output.note || ''; });
+    fill('output-rows', (tb) => {
+      for (const x of N.output.rows) {
+        const tr = document.createElement('tr'); const td = cellMaker(tr);
+        td().textContent = x.t;
+        td('num').textContent = x.n == null ? '—' : fmtN(x.n);
+        td('num').textContent = x.plan == null ? '—' : fmtN(x.plan);
+        td('num').textContent = x.n == null || !x.plan ? '—' : d3.format('.0%')(x.n / x.plan);
+        td('num').textContent = x.live == null ? '—' : fmtN(x.live);
+        tb.appendChild(tr);
+      }
+    });
+  }
   const PC = {ai: COLOR, ec: css('--color-ok'), yp: css('--color-warn'), other: css('--cds-chart-reference')};
   const PN = {ai: 'AI 短剧', ec: '二创', yp: '真人原片', other: '其他'};
   fill('prod-legend', (el) => { el.innerHTML = Object.keys(PN).map((k) => `<span><i style="background:${PC[k]}"></i>${PN[k]}</span>`).join(''); });
