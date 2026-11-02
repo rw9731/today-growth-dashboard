@@ -11,6 +11,30 @@ import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小，先观察'}
+
+
+def plain(x):
+    """页面上不显示 T1、T2、T3 这些代号，notes 里写了也换成大白话。"""
+    if isinstance(x, dict):
+        return {k: plain(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [plain(v) for v in x]
+    if isinstance(x, str):
+        return re.sub(r'(?<![A-Za-z0-9])T[0-3](?![0-9A-Za-z])', lambda m: '「' + LABELS[m.group(0)] + '」', x)
+    return x
+
+
+def uc_names(x, names, key=''):
+    """notes 正文里的 use case 编号换成名字，第一次看的人才看得懂。uc、tag、id 这几个字段留编号给页面查。"""
+    if isinstance(x, dict):
+        return {k: uc_names(v, names, k) for k, v in x.items()}
+    if isinstance(x, list):
+        return [uc_names(v, names) for v in x]
+    if isinstance(x, str) and key not in ('uc', 'tag', 'id'):
+        return re.sub(r' ?(?<![A-Za-z0-9_])[A-Z]{2}\d{2}(?![0-9A-Za-z]) ?', lambda m: names.get(m.group(0).strip(), m.group(0)), x)
+    return x
+
 
 def render(tpl, style, res, meta, rel):
     blob = json.dumps(res, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
@@ -28,7 +52,8 @@ def main():
     res = json.load(open(sys.argv[1]))
     meta = res['meta'][0]
     notes_path = os.path.join(ROOT, 'notes', 'week-' + meta['week'] + '.json')
-    res['notes'] = [json.load(open(notes_path))] if os.path.exists(notes_path) else [{}]
+    names = {u['uc']: u['short'] for u in res.get('uc', [])}
+    res['notes'] = [uc_names(plain(json.load(open(notes_path))), names)] if os.path.exists(notes_path) else [{}]
     daily = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     style = re.search(r'<style>\n(.*?)</style>', daily, re.S).group(1)
     tpl = open(os.path.join(ROOT, 'tools', 'week_template.html')).read()

@@ -20,7 +20,10 @@
   .wk-name .sub { display: block; color: var(--color-fg-muted); font-size: 12px; }
   .wk-rank { color: var(--color-fg-muted); font-weight: 700; width: 1.5rem; }
   .wk-pick { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; background: var(--color-ok); color: #fff; }
-  .wk-why { min-width: 14rem; max-width: 26rem; white-space: normal; line-height: 1.5; font-size: 12.5px; }
+  .lx-table td.wk-why { min-width: 14rem; white-space: normal; line-height: 1.5; font-size: 12.5px; }
+  .lx-table td.wk-use { min-width: 8rem; max-width: 14rem; white-space: normal; line-height: 1.45; font-size: 12.5px; }
+  .wk-pick.bad { background: var(--color-bad); }
+  .wk-scripts .sc-cell { max-width: 26rem; }
   .wk-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 18px; vertical-align: middle; }
   .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
   .wk-todo { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -51,15 +54,14 @@
   <header class="lx-head">
     <div class="lx-topline">
     <h1 class="lx-title" id="top"><span class="d">{{LABEL}}</span> 投放素材周报</h1>
-    <nav class="lx-nav" aria-label="往期周报">
-      <span class="lx-nav-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>往期周报</span>
-      <span class="lx-chips" id="nav-chips"><a class="lx-chip" aria-current="page" href="{{REL}}week/{{WEEK}}/">{{LABEL}}</a></span>
-      <a class="lx-chip" href="{{REL}}">日报 →</a>
+    <nav class="lx-nav" aria-label="日报和周报">
+      <div class="lx-navrow" id="nav-day-row" hidden><span class="lx-nav-label">日报</span><span class="lx-chips" id="nav-day-chips"></span><select id="nav-day-more" aria-label="更早的日报" hidden></select></div>
+      <div class="lx-navrow" id="nav-week-row"><span class="lx-nav-label">周报</span><span class="lx-chips" id="nav-week-chips"><a class="lx-chip" aria-current="page" href="{{REL}}week/{{WEEK}}/">{{LABEL}}</a></span><select id="nav-week-more" aria-label="更早的周报" hidden></select></div>
     </nav>
     </div>
     <p class="pl-headline" data-draw="headline" hidden></p>
     <a class="lx-jump" href="#todo">↓ 直接看总结和 to-do</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{LABEL}} 整周；次留率、次留成本看 {{WRET}} 激活的人（周日激活的次留下周一才出）；3 留率、3 留成本看 {{WRET3}} 激活的人。比的是上一周 {{PLABEL}}，口径相同。周报门槛比日报高：<b>能放量的 use case</b> = 周消耗过全盘 3% 且 ≥ <b data-draw="uc-bar">—</b>；<b>头部素材</b> = 周消耗 ≥ <b data-draw="top-bar">—</b>（全盘 1%，最少 ¥5,000），至少 100 个激活，次留率不低于、次留成本不高于全盘。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{LABEL}} 整周；次留率、次留成本看 {{WRET}} 激活的人（周日激活的次留下周一才出）；3 留率、3 留成本看 {{WRET3}} 激活的人。比的是上一周 {{PLABEL}}，口径相同。周报门槛比日报高：<b>能放量的 use case</b> = 周消耗过全盘 3% 且 ≥ <b data-draw="uc-bar">—</b>；<b>头部素材</b> = 这周有一天消耗 ≥ ¥2,000，至少 100 个激活，次留率不低于、次留成本不高于全盘。</p>
   </header>
 
   <section class="lx-kpis">
@@ -82,7 +84,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、Use case：哪些能放量、留得住</h2>
-    <p class="lx-note"><b>T1 主攻</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>T2 次优先</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>T3 放量但贵</b> = 能放量但次留不达标。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1% 的不列。</p>
+    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1% 的不列。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -105,21 +107,20 @@
 
   <section class="lx-sec" id="top-mats">
     <h2 class="lx-h2">三、头部素材和拖后腿的素材</h2>
-    <p class="lx-note">头部素材按周消耗排，最多 <b data-draw="top-cap">—</b> 条，这周过线的一共 <b data-draw="n-good">—</b> 条。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
+    <p class="lx-note">头部素材按周消耗排，这周有一天消耗到 ¥2,000 以上、至少 100 个激活、次留率不低于、次留成本不高于全盘，不限条数，这周一共 <b data-draw="n-good">—</b> 条。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th></th>
             <th>素材</th>
-            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
             <th class="num">次留成本</th>
             <th class="num">3 留率</th>
             <th class="num">3 留成本</th>
-            <th>为什么好 · 怎么用</th>
+            <th>怎么用<span class="th-sub">脚本和分析在第五部分</span></th>
             <th>链接</th>
           </tr>
         </thead>
@@ -127,13 +128,12 @@
       </table>
     </div>
     <h3 class="lx-h3">拖后腿的素材</h3>
-    <p class="lx-note">周消耗过头部线，但次留率低于全盘 85% 或次留成本超过全盘 1.2 倍。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
+    <p class="lx-note">周消耗过 <b data-draw="top-bar">—</b>（全盘 1%，最少 ¥5,000），但次留率低于全盘 85% 或次留成本超过全盘 1.2 倍。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th>素材</th>
-            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式</span></th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
@@ -163,10 +163,6 @@
         <div class="pl-method" data-draw="method"></div>
       </div>
     </div>
-    <div class="pl-card">
-      <h3>脚本规律（{{WRET}} 激活）</h3>
-      <div data-draw="patterns"></div>
-    </div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -189,8 +185,29 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="scripts">
+    <h2 class="lx-h2">五、脚本分析</h2>
+    <div class="pl-card">
+      <h3>脚本规律（{{WRET}} 激活）</h3>
+      <div data-draw="patterns"></div>
+    </div>
+    <h3 class="lx-h3">头部和拖后腿素材的脚本</h3>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table wk-scripts">
+        <thead>
+          <tr>
+            <th>素材</th>
+            <th>脚本<span class="th-sub">开头原话 · Today 第几秒 · 时长 · 形式 · 演示</span></th>
+            <th>分析</th>
+          </tr>
+        </thead>
+        <tbody data-draw="script-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="todo" hidden>
-    <h2 class="lx-h2">五、总结和 to-do</h2>
+    <h2 class="lx-h2">六、总结和 to-do</h2>
     <div class="pl-blk" style="--bc:var(--color-fg)"><h3>核心 insight<span>这周整盘看到的</span></h3><ol data-draw="insight"></ol></div>
     <div class="wk-todo">
       <div class="pl-blk" style="--bc:var(--color-ok)"><h3>继续扩量的 use case<span>能放量、留存也好</span></h3><ol data-draw="scale"></ol></div>
@@ -239,22 +256,35 @@
   const links = (td, m) => { td.className = 'short lx-links'; const add = (h, t) => { const a = document.createElement('a'); a.href = h; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; td.appendChild(a); }; if (m.video) add(m.video, '视频'); if (m.link) add(m.link, m.link_type === '原片' ? '原帖' : m.link_type || '链接'); };
   const nameCell = (td, m) => { td.className = 'wk-name'; td.append(m.name); const s = document.createElement('span'); s.className = 'sub'; s.textContent = '上线 ' + fmtD(m.first) + (m.is_new ? '（本周新上）' : '') + ' · ID ' + m.id; td.appendChild(s); };
 
-  // 往期周报
-  (async () => {
+  // 顶部导航：日报一行、周报一行。列表都从根目录读，旧页面也会看到最新的。
+  const navRow = async (file, key, cur, hrefOf, id, n, unit) => {
     let list = [];
-    try { list = await (await fetch(REL + 'weeks.json', {cache: 'no-store'})).json(); } catch (e) { return; }
+    try { list = await (await fetch(REL + file, {cache: 'no-store'})).json(); } catch (e) { return; }
     if (!Array.isArray(list) || !list.length) return;
-    list.sort((a, b) => (a.week < b.week ? 1 : -1));
-    document.getElementById('nav-chips').replaceChildren(...list.slice(0, 8).map((r) => {
-      const a = document.createElement('a'); a.className = 'lx-chip'; a.href = REL + 'week/' + r.week + '/'; a.textContent = r.label;
-      if (r.week === META.week) a.setAttribute('aria-current', 'page');
+    list.sort((a, b) => (a[key] < b[key] ? 1 : -1));
+    const shown = list.slice(0, n);
+    if (cur && !shown.some((r) => r[key] === cur)) { const c = list.find((r) => r[key] === cur); if (c) shown.push(c); }
+    document.getElementById('nav-' + id + '-chips').replaceChildren(...shown.map((r) => {
+      const a = document.createElement('a'); a.className = 'lx-chip'; a.href = hrefOf(r); a.textContent = r.label;
+      if (r[key] === cur) a.setAttribute('aria-current', 'page');
+      if (r === list[0]) { const s = document.createElement('span'); s.className = 'new'; s.textContent = '最新'; a.appendChild(s); }
       return a;
     }));
-  })();
+    const rest = list.filter((r) => !shown.includes(r));
+    if (rest.length) {
+      const sel = document.getElementById('nav-' + id + '-more');
+      const head = document.createElement('option'); head.value = ''; head.textContent = '更早 ' + rest.length + ' ' + unit;
+      sel.replaceChildren(head, ...rest.map((r) => { const o = document.createElement('option'); o.value = hrefOf(r); o.textContent = r.label; return o; }));
+      sel.hidden = false;
+      sel.addEventListener('change', () => { if (sel.value) location.href = sel.value; });
+    }
+    document.getElementById('nav-' + id + '-row').hidden = false;
+  };
+  navRow('reports.json', 'date', null, (r) => REL + r.date + '/', 'day', 7, '天');
+  navRow('weeks.json', 'week', META.week, (r) => REL + 'week/' + r.week + '/', 'week', 8, '周');
 
   fill('uc-bar', (el) => { el.textContent = fmtY(META.uc_bar); });
   fill('top-bar', (el) => { el.textContent = fmtY(META.top_bar); });
-  fill('top-cap', (el) => { el.textContent = TH.top_cap; });
   fill('n-good', (el) => { el.textContent = META.n_good_all; });
   fill('n-new', (el) => { el.textContent = fmtN(o.n_new); });
   fill('p-new', (el) => { el.textContent = fmtN(o.p_n_new); });
@@ -293,7 +323,8 @@
 
   // 二、use case
   const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), T0: css('--cds-chart-reference')};
-  const TN = {T1: 'T1 主攻', T2: 'T2 次优先', T3: 'T3 放量但贵', T0: '观察'};
+  const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察'};
+    const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');
   const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般'};
   const CHN = {ai: 'AI', ec: '二创', yp: '原片'};
   fill('uc-rows', (tb) => {
@@ -306,7 +337,7 @@
       for (const u of rows) {
         const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
         const c0 = td('stack uccell'); const b = document.createElement('b'); b.textContent = u.uc + ' ' + u.short; const s = document.createElement('span'); s.textContent = u.l1; c0.append(b, s);
-        if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = u.flag; c0.appendChild(f); }
+        if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = plainT(u.flag); c0.appendChild(f); }
         const cs = td(); const w = barCell(cs, u.spend, max, 70, fmtW(u.spend) + ' · ' + fmtP0(u.share)); w.append(' '); spark(w, u.days);
         const cr = td(rateCls(u.rate)); cr.textContent = fmtP(u.rate);
         if (u.rate != null && u.p_rate != null) { const d = document.createElement('span'); const v = (u.rate - u.p_rate) * 100; d.className = 'pl-delta ' + (v > 0 ? 'lx-good' : 'lx-badv'); d.textContent = (v > 0 ? '+' : '') + d3.format('.1f')(v) + ' 点'; cr.appendChild(d); }
@@ -334,7 +365,6 @@
     td.appendChild(s);
     if (sc.demo) { const d = document.createElement('span'); d.className = 'sub'; d.textContent = '演示：' + sc.demo; td.appendChild(d); }
   };
-
   // 三、素材
   const remix = {}; for (const x of N.remix || []) if (x.id) remix[x.id] = x;
   const why = N.top_note || {};
@@ -344,23 +374,21 @@
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       td('wk-rank').textContent = i + 1;
       const n = td(); nameCell(n, m); if (remix[m.id]) { n.append(document.createElement('br')); const p = document.createElement('span'); p.className = 'wk-pick'; p.textContent = '二创'; n.appendChild(p); }
-      scriptCell(td(), m.script);
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
       td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
       td(r3Cls(m.rate3)).textContent = fmtP(m.rate3); td(c3Cls(m.cpr3)).textContent = fmtY(m.cpr3);
-      td('wk-why').textContent = (remix[m.id] && remix[m.id].how) || why[m.id] || '';
+      td('wk-use').textContent = remix[m.id] ? '拿去二创' : ((N.top_use || {})[m.id] || '');
       links(td(), m);
       tb.appendChild(tr);
     });
   });
   fill('bad-rows', (tb) => {
     const rows = data('bad'); const max = d3.max(rows, (m) => m.spend) || 1;
-    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 9; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
+    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 8; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
     for (const m of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       nameCell(td(), m);
-      scriptCell(td(), m.script);
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
       td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
@@ -372,6 +400,17 @@
   });
 
 
+  fill('script-rows', (tb) => {
+    const row = (m, label, cls, text) => {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      const n = td(); nameCell(n, m); n.append(document.createElement('br')); const p = document.createElement('span'); p.className = cls; p.textContent = label; n.appendChild(p);
+      scriptCell(td(), m.script);
+      td('wk-why').textContent = text || '';
+      tb.appendChild(tr);
+    };
+    for (const m of data('top')) row(m, remix[m.id] ? '头部 · 二创' : '头部', 'wk-pick', remix[m.id] ? '二创做法见第六部分「拿去二创的素材」。' : why[m.id]);
+    for (const m of data('bad')) row(m, '拖后腿', 'wk-pick bad', (N.bad_note || {})[m.id]);
+  });
   // 脚本规律：按 Today 出场时间、开头、形式、时长分组的次留
   const drawPatterns = (box, pat, rw, cw) => {
     if (!pat || !pat.n) { box.innerHTML = '<p class="lx-note">脚本库里还没有够多读过的素材。</p>'; return; }
@@ -446,14 +485,15 @@
     if (!items || !items.length) { const li = document.createElement('li'); li.className = 'muted'; li.textContent = '这周没有。'; ol.appendChild(li); return; }
     for (const it of items) {
       const li = document.createElement('li'); const t = document.createElement('b'); t.className = 't';
-      if (who && it[who]) { const w = document.createElement('span'); w.className = 'who'; w.textContent = it[who]; t.appendChild(w); }
+      if (who && it[who]) { const w = document.createElement('span'); w.className = 'who'; w.textContent = (data('uc').find((u) => u.uc === it[who]) || {}).short || it[who]; t.appendChild(w); }
       t.append(it.t || ''); const d = document.createElement('span'); d.className = 'd'; d.innerHTML = it.d || ''; li.append(t, d); ol.appendChild(li);
     }
   });
   if (N.insight || N.scale) {
     document.getElementById('todo').hidden = false;
-    list('insight', N.insight); list('scale', N.scale, 'uc'); list('remix', N.remix, 'tag'); list('stop', N.stop); list('other', N.other);
+    list('insight', N.insight); list('scale', N.scale, 'uc'); list('remix', (N.remix || []).map((x) => ({...x, d: x.d + '<br>' + (x.how || '').replace(/</g, '&lt;')})), 'tag'); list('stop', N.stop); list('other', N.other);
   }
 </script>
+<script>addEventListener('load', () => document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); }));</script>
 </body>
 </html>

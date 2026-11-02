@@ -6,9 +6,22 @@ Usage (from the repo root):
 Writes <date>/index.html, updates reports.json, and rewrites index.html when this
 date is the newest report (index.html always shows the latest day).
 """
-import json, os, sys
+import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小，先观察'}
+
+
+def plain(x):
+    """页面上不显示 T1、T2、T3 这些代号，notes 里写了也换成大白话。"""
+    if isinstance(x, dict):
+        return {k: plain(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [plain(v) for v in x]
+    if isinstance(x, str):
+        return re.sub(r'(?<![A-Za-z0-9])T[0-3](?![0-9A-Za-z])', lambda m: '「' + LABELS[m.group(0)] + '」', x)
+    return x
 
 
 def render(tpl, res, meta, rel):
@@ -28,9 +41,9 @@ def main():
     res = json.load(open(sys.argv[1]))
     meta = res['meta'][0]
     notes_path = os.path.join(ROOT, 'notes', meta['date'] + '.json')
-    res['notes'] = [json.load(open(notes_path))] if os.path.exists(notes_path) else [{}]
+    res['notes'] = [plain(json.load(open(notes_path)))] if os.path.exists(notes_path) else [{}]
     plan_path = os.path.join(ROOT, 'notes', meta['date'] + '-plan.json')
-    res['plan'] = [json.load(open(plan_path))] if os.path.exists(plan_path) else [{}]
+    res['plan'] = [plain(json.load(open(plan_path)))] if os.path.exists(plan_path) else [{}]
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)

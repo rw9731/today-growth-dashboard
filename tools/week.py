@@ -24,9 +24,10 @@ WTH = {
     'uc_big_share': 0.03, 'uc_big_min': 20000,   # 能放量：周消耗 ≥ 全盘 3% 且 ≥ ¥20,000
     'uc_mid_share': 0.01, 'uc_act': 150,          # 次优先：周消耗 ≥ 全盘 1%、周激活 ≥ 150
     'nice': 1.10,                                 # 次优先的次留成本可以到全盘 1.1 倍
-    'top_share': 0.01, 'top_min': 5000,           # 头部素材：周消耗 ≥ 全盘 1% 且 ≥ ¥5,000
+    'top_day': 2000,                              # 头部素材：这周有一天消耗 ≥ ¥2,000（Reina 11/2 定，不限条数）
+    'top_share': 0.01, 'top_min': 5000,           # 拖后腿的素材：周消耗 ≥ 全盘 1% 且 ≥ ¥5,000
     'top_act': 100,                               # 头部素材至少 100 个激活才判断次留
-    'top_cap': 10, 'bad_cap': 8,                  # 每张表最多几条
+    'bad_cap': 8,                                 # 拖后腿最多几条
     'bad_rate': 0.85, 'bad_cpr': 1.20,            # 表现差：次留率 < 全盘 85% 或 次留成本 > 全盘 1.2 倍
     'run': 1000,
     'scope': 2000,                                # 周报要读全片脚本的范围：周消耗 ≥ ¥2,000                                  # 新素材「跑起来」= 本周消耗 ≥ ¥1,000
@@ -136,7 +137,7 @@ def main():
 
     # use case
     by_uc = defaultdict(list)
-    for r in RW + RP:
+    for r in RW + [x for x in RP if x["date"] not in span(W)]:
         by_uc[r['uc']].append(r)
     uct = []
     for uc, rs in by_uc.items():
@@ -189,14 +190,14 @@ def main():
     mats = []
     for i, rs in by_id.items():
         s = stats(rs, W)
-        if s['spend'] < top_bar:
+        if s['spend'] < top_bar and max(s['days']) < WTH['top_day']:
             continue
         uc = rs[0]['uc']
         lk = links.get(i, {})
         ltype = lk.get('type', '')
         link = '' if ltype == '预览' else lk.get('link', '')
-        good = s['act_r'] >= WTH['top_act'] and s['rate'] is not None and s['cpr'] is not None and s['rate'] >= rw and s['cpr'] <= cw
-        bad = s['rate'] is not None and (s['rate'] < WTH['bad_rate'] * rw or (s['cpr'] or 1e9) > WTH['bad_cpr'] * cw)
+        good = max(s['days']) >= WTH['top_day'] and s['act_r'] >= WTH['top_act'] and s['rate'] is not None and s['cpr'] is not None and s['rate'] >= rw and s['cpr'] <= cw
+        bad = s['spend'] >= top_bar and s['rate'] is not None and (s['rate'] < WTH['bad_rate'] * rw or (s['cpr'] or 1e9) > WTH['bad_cpr'] * cw)
         # 比全盘多花的钱：这条的次留如果按全盘次留成本买，要花多少；多出来的就是浪费
         excess = s['cost_r'] - s['cost_r'] / s['cpr'] * cw if s['cpr'] else None
         mats.append({'id': i, 'name': names.get(i, i), 'kind': C.kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i), i),
@@ -207,7 +208,7 @@ def main():
                      'video': C.pick_video(lk), 'link': link, 'link_type': ltype if link else '',
                      'script': scripts_lib.summary(SCRIPTS.get(i))})
     good_all = sorted([m for m in mats if m['good']], key=lambda m: -m['spend'])
-    top = good_all[:WTH['top_cap']]
+    top = good_all
     for m in top:
         # 二创候选（给写周报的人参考，最后挑哪几条以 notes 为准）：次留率高全盘 5% 以上、次留成本低 10% 以上，3 留不低于全盘
         better = m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw
@@ -217,7 +218,7 @@ def main():
 
     # 素材类型 + 本周产出
     by_k = defaultdict(list)
-    for r in RW + RP:
+    for r in RW + [x for x in RP if x["date"] not in span(W)]:
         by_k[kind[r['id']]].append(r)
     good_ids = {m['id'] for m in good_all}
     week_spend = defaultdict(float)

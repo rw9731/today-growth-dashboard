@@ -44,6 +44,10 @@
   .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
   .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
   .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
   .lx-sub { color: var(--color-fg-muted); font-size: 12px; margin: 0; line-height: 1.5; }
   .lx-sub b { color: var(--color-fg); font-weight: 600; }
   .lx-take { font-size: 14px; margin: 0; line-height: 1.6; }
@@ -62,6 +66,7 @@
      Narrow screens: each table scrolls in its own box, headers stick to the box. */
   .lx-scroll { padding: 0 var(--pad-sm) var(--pad-xs); overflow: auto; max-height: 80vh; }
   @media (min-width: 1100px) { .lx-scroll { overflow: visible; max-height: none; } }
+  .lx-scroll.lx-wide { overflow-x: auto; }
   .lx-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-caption); font-variant-numeric: tabular-nums; }
   .lx-table th { position: sticky; top: 0; z-index: 2; background: var(--color-panel); text-align: left; vertical-align: bottom; font-weight: var(--fw-medium); color: var(--color-fg-muted); padding: 8px 5px 5px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
   .lx-table td { padding: 4px 5px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
@@ -178,11 +183,9 @@
   <header class="lx-head">
     <div class="lx-topline">
     <h1 class="lx-title" id="top"><span class="d">{{DCN}}</span> 投放素材数据分析</h1>
-    <nav class="lx-nav" aria-label="往期日报">
-      <span class="lx-nav-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>往期日报</span>
-      <span class="lx-chips" id="nav-chips"><a class="lx-chip" aria-current="page" href="{{REL}}{{DATE}}/">{{D}} {{WEEKDAY}}</a></span>
-      <select id="nav-more" aria-label="更早的日报" hidden></select>
-      <a class="lx-chip" id="nav-week" href="{{REL}}week/" hidden>周报 →</a>
+    <nav class="lx-nav" aria-label="日报和周报">
+      <div class="lx-navrow" id="nav-day-row"><span class="lx-nav-label">日报</span><span class="lx-chips" id="nav-day-chips"><a class="lx-chip" aria-current="page" href="{{REL}}{{DATE}}/">{{D}} {{WEEKDAY}}</a></span><select id="nav-day-more" aria-label="更早的日报" hidden></select></div>
+      <div class="lx-navrow" id="nav-week-row" hidden><span class="lx-nav-label">周报</span><span class="lx-chips" id="nav-week-chips"></span><select id="nav-week-more" aria-label="更早的周报" hidden></select></div>
     </nav>
     </div>
     <p class="lx-take" data-draw="take"></p>
@@ -415,7 +418,7 @@
     <div class="pl-grid">
       <div class="pl-card">
         <h3>Use case 分在哪一层（{{D}}）</h3>
-        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>T1 主攻</b> = 过放量线，次留率不低于、次留成本不高于全盘；<b>T2 次优先</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>T3 放量但贵</b> = 过放量线但次留不达标。</p>
+        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>能放量、留存好</b> = 过放量线，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 过放量线但次留不达标。</p>
         <div class="pl-chart" data-draw="pl-quad"></div>
         <div class="pl-legend" data-draw="pl-legend"></div>
       </div>
@@ -435,7 +438,7 @@
         <thead>
           <tr>
             <th>Use case</th>
-            <th>近 5 天分层<span class="th-sub">每格一个报告日，最右是 {{D}}</span></th>
+            <th>近 5 天分层<span class="th-sub">好 = 能放量、留存好；中 = 量中等、留存好；差 = 能放量、留存不达标；空白 = 先观察。每格一个报告日，最右是 {{D}}</span></th>
             <th>消耗<span class="th-sub">{{D3}}–{{D}} 四天</span></th>
             <th class="num">次留率<span class="th-sub">{{W}} 激活；下面是和 {{D1}} 报告比的变化</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}；下面是变化</span></th>
@@ -463,32 +466,32 @@
   const META = one('meta');
   const COLOR = getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8';
 
-  // 有周报就显示「周报」入口
-  (async () => { try { const w = await (await fetch(REL + 'weeks.json', {cache: 'no-store'})).json(); if (Array.isArray(w) && w.length) document.getElementById('nav-week').hidden = false; } catch (e) {} })();
-  // 往期日报：reports.json 在根目录，旧页面也会读到最新的列表。最近 7 天做成按钮，更早的放下拉。
-  (async () => {
+  // 顶部导航：日报一行、周报一行。列表都从根目录读，旧页面也会看到最新的。
+  const navRow = async (file, key, cur, hrefOf, id, n, unit) => {
     let list = [];
-    try { list = await (await fetch(REL + 'reports.json', {cache: 'no-store'})).json(); } catch (e) { return; }
+    try { list = await (await fetch(REL + file, {cache: 'no-store'})).json(); } catch (e) { return; }
     if (!Array.isArray(list) || !list.length) return;
-    list.sort((a, b) => (a.date < b.date ? 1 : -1));
-    const shown = list.slice(0, 7);
-    if (!shown.some((r) => r.date === META.date)) { const cur = list.find((r) => r.date === META.date); if (cur) shown.push(cur); }
-    const chips = document.getElementById('nav-chips');
-    chips.replaceChildren(...shown.map((r) => {
-      const a = document.createElement('a'); a.className = 'lx-chip'; a.href = REL + r.date + '/'; a.textContent = r.label;
-      if (r.date === META.date) a.setAttribute('aria-current', 'page');
-      if (r === list[0]) { const n = document.createElement('span'); n.className = 'new'; n.textContent = '最新'; a.appendChild(n); }
+    list.sort((a, b) => (a[key] < b[key] ? 1 : -1));
+    const shown = list.slice(0, n);
+    if (cur && !shown.some((r) => r[key] === cur)) { const c = list.find((r) => r[key] === cur); if (c) shown.push(c); }
+    document.getElementById('nav-' + id + '-chips').replaceChildren(...shown.map((r) => {
+      const a = document.createElement('a'); a.className = 'lx-chip'; a.href = hrefOf(r); a.textContent = r.label;
+      if (r[key] === cur) a.setAttribute('aria-current', 'page');
+      if (r === list[0]) { const s = document.createElement('span'); s.className = 'new'; s.textContent = '最新'; a.appendChild(s); }
       return a;
     }));
     const rest = list.filter((r) => !shown.includes(r));
     if (rest.length) {
-      const sel = document.getElementById('nav-more');
-      const head = document.createElement('option'); head.value = ''; head.textContent = '更早 ' + rest.length + ' 天';
-      sel.replaceChildren(head, ...rest.map((r) => { const o = document.createElement('option'); o.value = REL + r.date + '/'; o.textContent = r.label; return o; }));
+      const sel = document.getElementById('nav-' + id + '-more');
+      const head = document.createElement('option'); head.value = ''; head.textContent = '更早 ' + rest.length + ' ' + unit;
+      sel.replaceChildren(head, ...rest.map((r) => { const o = document.createElement('option'); o.value = hrefOf(r); o.textContent = r.label; return o; }));
       sel.hidden = false;
       sel.addEventListener('change', () => { if (sel.value) location.href = sel.value; });
     }
-  })();
+    document.getElementById('nav-' + id + '-row').hidden = false;
+  };
+  navRow('reports.json', 'date', META.date, (r) => REL + r.date + '/', 'day', 7, '天');
+  navRow('weeks.json', 'week', null, (r) => REL + 'week/' + r.week + '/', 'week', 8, '周');
 
   const fmtY = (v) => (v === null || v === undefined || isNaN(v) ? '—' : '¥' + d3.format(',.0f')(v));
   const fmtP = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format('.1%')(v));
@@ -701,7 +704,8 @@
     document.getElementById('plan').hidden = false;
     fill('jump', (el) => { el.hidden = false; });
     const TC = {T1: 'var(--t1)', T2: 'var(--t2)', T3: 'var(--t3)', T0: 'var(--t0)'};
-    const TN = {T1: 'T1 主攻', T2: 'T2 次优先', T3: 'T3 放量但贵', T0: '观察'};
+    const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察'};
+    const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');
     const TD = {T1: '能放量 + 次留好：围绕它多做变式', T2: '量中等但次留好：小步加量', T3: '能放量但次留不达标：变式压成本，次留率低的交产品看承接', T0: '量小或次留差：先不加'};
     const cw = pm.cpr_w, CH = ['ai', 'ec', 'yp'];
     fill('pl-big', (el) => { el.textContent = fmtP0(pm.th.big); });
@@ -746,9 +750,9 @@
       svg.append('rect').attr('x', x(xs)).attr('y', y(cw)).attr('width', W - m.r - x(xs)).attr('height', H - m.b - y(cw)).style('fill', 'var(--t3)').style('opacity', 0.07);
       svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', x(xs) - m.l).attr('height', y(cw) - m.t).style('fill', 'var(--t2)').style('opacity', 0.05);
       const qlab = (tx, ty, s, c, anchor) => svg.append('text').attr('x', tx).attr('y', ty).attr('text-anchor', anchor).attr('font-size', 12).attr('font-weight', 700).style('fill', c).text(s);
-      qlab(W - m.r - 6, m.t + 15, 'T1 主攻：能放量 + 次留便宜', 'var(--t1)', 'end');
-      qlab(W - m.r - 6, H - m.b - 8, 'T3：能放量但次留贵', 'var(--t3)', 'end');
-      qlab(x(xs) - 6, m.t + 15, 'T2：量中等、次留好', 'var(--t2)', 'end');
+      qlab(W - m.r - 6, m.t + 15, '能放量、留存好', 'var(--t1)', 'end');
+      qlab(W - m.r - 6, H - m.b - 8, '能放量、留存不达标', 'var(--t3)', 'end');
+      qlab(x(xs) - 6, m.t + 15, '量中等、留存好', 'var(--t2)', 'end');
       const ax = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(6).tickFormat((v) => (v >= 1000 ? '¥' + v / 1000 + 'k' : '¥' + v)));
       const ay = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat((v) => '¥' + v));
       [ax, ay].forEach((g) => { g.selectAll('text').style('fill', 'var(--color-fg-muted)').attr('font-size', 11); g.selectAll('line,path').style('stroke', 'var(--color-border-line)'); });
@@ -806,10 +810,10 @@
         for (const u of rows) {
           const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
           const c0 = td(); stack(c0, u.uc + ' ' + u.short, u.l1); c0.classList.add('uccell');
-          if (u.change) { const f = document.createElement('span'); f.className = 'pl-flag chg'; f.textContent = '今天 ' + u.change; c0.appendChild(f); c0.appendChild(document.createTextNode(' ')); }
-          if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = u.flag; c0.appendChild(f); }
+          if (u.change) { const f = document.createElement('span'); f.className = 'pl-flag chg'; f.textContent = '今天 ' + plainT(u.change); c0.appendChild(f); c0.appendChild(document.createTextNode(' ')); }
+          if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = plainT(u.flag); c0.appendChild(f); }
           const hc = td(); const hw = document.createElement('span'); hw.className = 'pl-hist';
-          u.hist.forEach((x, i) => { const b = document.createElement('i'); if (x) { b.style.background = TC[x]; b.textContent = x === 'T0' ? '' : x.slice(1); } else b.className = 'none'; if (i === u.hist.length - 1) b.classList.add('today'); b.title = fmtD(days[i]) + '：' + (x ? TN[x] : '没投'); hw.appendChild(b); });
+          u.hist.forEach((x, i) => { const b = document.createElement('i'); if (x) { b.style.background = TC[x]; b.textContent = {T1: '好', T2: '中', T3: '差'}[x] || ''; } else b.className = 'none'; if (i === u.hist.length - 1) b.classList.add('today'); b.title = fmtD(days[i]) + '：' + (x ? TN[x] : '没投'); hw.appendChild(b); });
           hc.appendChild(hw);
           barCell(td(), u.spend4, max, 70);
           const cr = td(rateCls(u.rate, o, t)); cr.textContent = fmtP0(u.rate);
@@ -868,5 +872,6 @@
     }
   });
 </script>
+<script>addEventListener('load', () => document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); }));</script>
 </body>
 </html>
