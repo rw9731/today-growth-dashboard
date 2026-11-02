@@ -34,6 +34,7 @@
   .wk-dbn { margin: 0 0 6px; font-size: 12.5px; line-height: 1.5; color: var(--color-fg-muted); }
   .wk-dbn b { display: block; color: var(--color-fg); font-weight: 600; }
   .wk-db { margin-top: 8px; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .lx-midv { color: var(--color-warn); font-weight: 600; }
   .wk-dbr { display: grid; grid-template-columns: 7.6rem minmax(40px, 1fr) 6.6rem 5.4rem 3.6rem; align-items: center; gap: 8px; height: 26px; border-top: 1px solid var(--color-border-line); }
   .wk-dbr.fix { font-weight: 600; }
   .wk-dbr.h { height: auto; border-top: 0; padding-bottom: 3px; font-size: 11px; color: var(--color-fg-muted); }
@@ -117,7 +118,7 @@
 
   <section class="lx-sec" id="l1">
     <h2 class="lx-h2">二、一级分类：钱花在哪、留得住吗</h2>
-    <p class="lx-note">绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里能放量且留存好的 use case，和留存差的 use case。</p>
+    <p class="lx-note">绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里留存好、能放量但留存不达标、留存差的 use case。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -438,8 +439,10 @@
       const us = data('uc').filter((u) => u.l1 === x.l1);
       const good = us.filter((u) => (u.tier === 'T1' || u.tier === 'T2') && !dn.includes(u.uc)).map((u) => u.short);
       const bad = us.filter((u) => dn.includes(u.uc)).map((u) => u.short);
+      const mid = us.filter((u) => u.tier === 'T3' && !dn.includes(u.uc)).map((u) => u.short);
       const ci = td('dir');
       if (good.length) { const g = document.createElement('div'); g.className = 'lx-good'; g.textContent = '好：' + good.join('、'); ci.appendChild(g); }
+      if (mid.length) { const g = document.createElement('div'); g.className = 'lx-midv'; g.textContent = '能放量、留存不达标：' + mid.join('、'); ci.appendChild(g); }
       if (bad.length) { const g = document.createElement('div'); g.className = 'lx-badv'; g.textContent = '差：' + bad.join('、'); ci.appendChild(g); }
       td('dir').textContent = notes[x.l1] || '';
       tb.appendChild(tr);
