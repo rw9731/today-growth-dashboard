@@ -84,7 +84,28 @@
   </section>
 
   <section class="lx-sec" id="uc">
-    <h2 class="lx-h2">二、Use case：哪些能放量、留得住</h2>
+    <h2 class="lx-h2">二、一级分类和 Use case：哪些能放量、留得住</h2>
+    <h3 class="lx-h3">先看一级分类</h3>
+    <p class="lx-note">绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里能放量且留存好的 use case，和留存差不要再加的 use case。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table pl-table">
+        <thead>
+          <tr>
+            <th>一级分类</th>
+            <th>周消耗<span class="th-sub">占全盘；右边是每天</span></th>
+            <th class="num">次留率<span class="th-sub">下面是比上周</span></th>
+            <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
+            <th class="num">3 留率</th>
+            <th class="num">3 留成本</th>
+            <th class="num">素材<span class="th-sub">在跑 · 本周新上</span></th>
+            <th>里面的 use case</th>
+            <th>下周</th>
+          </tr>
+        </thead>
+        <tbody data-draw="l1-rows"></tbody>
+      </table>
+    </div>
+    <h3 class="lx-h3">再看 Use case</h3>
     <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差，不要再加</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 好于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差，不要再加」里的不列。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
@@ -334,6 +355,30 @@
   });
 
   // 二、use case
+  fill('l1-rows', (tb) => {
+    const rows = data('l1').filter((x) => x.share >= 0.005); const max = d3.max(rows, (x) => x.spend) || 1;
+    const dn = (N.drop || []).map((x) => x.uc); const notes = N.l1 || {};
+    for (const x of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      const c0 = td('stack'); const b0 = document.createElement('b'); b0.textContent = x.l1; c0.appendChild(b0);
+      const cs = td(); const w = barCell(cs, x.spend, max, 70, fmtW(x.spend) + ' · ' + fmtP0(x.share)); w.append(' '); spark(w, x.days);
+      const cr = td(rateCls(x.rate)); cr.textContent = fmtP(x.rate);
+      if (x.rate != null && x.p_rate != null) { const d = document.createElement('span'); const v = (x.rate - x.p_rate) * 100; d.className = 'pl-delta ' + (v > 0 ? 'lx-good' : 'lx-badv'); d.textContent = (v > 0 ? '+' : '') + d3.format('.1f')(v) + ' 点'; cr.appendChild(d); }
+      const cc = td(cprCls(x.cpr)); cc.textContent = fmtY(x.cpr);
+      if (x.cpr != null && x.p_cpr != null) { const d = document.createElement('span'); const v = x.cpr - x.p_cpr; d.className = 'pl-delta ' + (v < 0 ? 'lx-good' : 'lx-badv'); d.textContent = (v > 0 ? '+¥' : '-¥') + Math.round(Math.abs(v)); cc.appendChild(d); }
+      td(r3Cls(x.rate3)).textContent = fmtP(x.rate3);
+      td(c3Cls(x.cpr3)).textContent = fmtY(x.cpr3);
+      td('num').textContent = fmtN(x.n_run) + ' · ' + fmtN(x.n_new);
+      const us = data('uc').filter((u) => u.l1 === x.l1);
+      const good = us.filter((u) => (u.tier === 'T1' || u.tier === 'T2') && !dn.includes(u.uc)).map((u) => u.short);
+      const bad = us.filter((u) => dn.includes(u.uc)).map((u) => u.short);
+      const ci = td('dir');
+      if (good.length) { const g = document.createElement('div'); g.className = 'lx-good'; g.textContent = '好：' + good.join('、'); ci.appendChild(g); }
+      if (bad.length) { const g = document.createElement('div'); g.className = 'lx-badv'; g.textContent = '不要再加：' + bad.join('、'); ci.appendChild(g); }
+      td('dir').textContent = notes[x.l1] || '';
+      tb.appendChild(tr);
+    }
+  });
   const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), DROP: css('--color-bad'), T0: css('--cds-chart-reference')};
   const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察', DROP: '留存差，不要再加'};
     const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');

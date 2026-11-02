@@ -173,6 +173,22 @@ def main():
     order = {'T1': 0, 'T2': 1, 'T3': 2, 'T0': 3}
     uct.sort(key=lambda u: (order[u['tier']], -u['spend']))
 
+    # 一级分类
+    by_l1 = defaultdict(list)
+    for r in RW + [x for x in RP if x["date"] not in span(W)]:
+        by_l1[r['l1'] or '未分类'].append(r)
+    l1t = []
+    for k, rs in by_l1.items():
+        s = stats(rs, W)
+        if s['spend'] <= 0:
+            continue
+        sp = stats(rs, P)
+        ids = {r['id'] for r in rs if r['date'] in W and r['cost'] > 0}
+        l1t.append({'l1': k, 'share': s['spend'] / tot, 'n_run': len(ids), 'n_new': len(ids & new_w),
+                    **{x: s[x] for x in ('spend', 'act_r', 'rate', 'cpr', 'act3', 'rate3', 'cpr3', 'days')},
+                    'p_spend': sp['spend'], 'p_rate': sp['rate'], 'p_cpr': sp['cpr']})
+    l1t.sort(key=lambda x: -x['spend'])
+
     # 素材
     by_id = defaultdict(list)
     for r in RW:
@@ -268,7 +284,7 @@ def main():
     meta = {'week': W[0], 'end': W[6], 'label': f'{lab(W[0])}–{lab(W[6])}', 'p_label': f'{lab(P[0])}–{lab(P[6])}',
             'w_ret': f'{lab(W[0])}–{lab(W[5])}', 'w_ret3': f'{lab(W[0])}–{lab(W[3])}', 'built': dt.date.today().isoformat(),
             'top_bar': top_bar, 'uc_bar': max(WTH['uc_big_min'], WTH['uc_big_share'] * tot), 'n_good_all': len(good_all)}
-    out = {'meta': [meta], 'th': [WTH], 'overview': [o], 'daily': daily, 'uc': uct, 'top': top, 'bad': bad, 'kind': kt,
+    out = {'meta': [meta], 'th': [WTH], 'overview': [o], 'daily': daily, 'uc': uct, 'l1': l1t, 'top': top, 'bad': bad, 'kind': kt,
            'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'week': meta['label'], 'spend': round(o['spend']), 'p_spend': round(o['p_spend']),
