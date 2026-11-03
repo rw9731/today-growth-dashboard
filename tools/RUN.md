@@ -29,6 +29,14 @@ D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素
 - 对不是天天用的 use case 偏低，不能单凭它停量、不加量或判好坏，要和次留、次留成本一起看。
 - 次留和日报定义相同，巨量回传会漏一部分，通常低几个百分点。团队看留存水平用 Daily Insight。
 
+## 简称和库对一遍（Reina 11/3 定，日报、周报都做）
+
+compute.py 输出里 `uc_lib_check` 不为空，或 `uc_banned` 不为空，就在写 notes 之前做这一步：
+- 读 `'✅ Use case 库'!D1:Q200`（Use case、UC_ID、状态、修改历史）。修改历史里日期晚于 tools/ucs.json `_meta.checked` 的 UC，把它的简称和现在的 Use case 对一遍。简称是 tools/ucs.json 的 short，页面和 notes 都用它。
+- 简称用了库已经去掉的说法、或不再符合库的：能确定怎么改就改 short，写进最后回复和推送（旧名 → 新名）；拿不准的不改，写进最后回复等 Reina 定。
+- 对完把 `_meta.checked` 改成 D。
+- `_meta.banned` 里的词（重排、重新排，Reina diss 过很多遍）不写进简称，也不写进 notes。素材原名和视频字幕原话照实留着，不改（素材名是跟巨量和飞书匹配用的，字幕是视频里真实的话）；字幕里有这个词的，脚本 note 里提一句。
+
 ## 七、核心 insight 和下一步（Reina 10/31 定，日报口径，不排每周产能）
 
 compute.py 自动算：

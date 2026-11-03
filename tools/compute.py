@@ -555,7 +555,9 @@ def main():
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
-                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl)}, ensure_ascii=False))
+                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl),
+                      'uc_lib_check': '要做：按 tools/RUN.md「简称和库对一遍」' if ucs.get('_meta', {}).get('checked', '') < D[3] else '',
+                      'uc_banned': [k for k, v in ucs.items() if any(w in v.get('short', '') for w in ucs.get('_meta', {}).get('banned', []))]}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

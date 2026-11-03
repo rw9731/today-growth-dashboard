@@ -58,6 +58,11 @@ def main():
     res['notes'] = [plain(json.load(open(notes_path)))] if os.path.exists(notes_path) else [{}]
     plan_path = os.path.join(ROOT, 'notes', meta['date'] + '-plan.json')
     res['plan'] = [plain(json.load(open(plan_path)))] if os.path.exists(plan_path) else [{}]
+    txt = json.dumps([res['notes'], res['plan']], ensure_ascii=False)
+    for name in ('爸妈按天气自己重排旅行行程', '计划替你重排', '计划变了就重排'):
+        txt = txt.replace(name, '')
+    if '重排' in txt:
+        print('WARNING notes 里有「重排」：除素材原名和字幕原话外不要写这个词（Reina 11/3）')
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)

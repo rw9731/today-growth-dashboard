@@ -68,6 +68,12 @@ def lint_notes(n):
     txt = json.dumps(n, ensure_ascii=False)
     if '不要再加' in txt:
         bad.append('不写「不要再加」，写「差」或「留存差」（公司战略可能还要继续试）')
+    # 素材原名照写，其他地方不写这个词（Reina 11/3）
+    clean = txt
+    for name in ('爸妈按天气自己重排旅行行程', '计划替你重排', '计划变了就重排'):
+        clean = clean.replace(name, '')
+    if '重排' in clean:
+        bad.append('不写「重排」，字幕原话要引用就放「」里并改写成别的说法核对；PS01 叫「早晚报和日程安排」')
     if '放量造成' in txt:
         bad.append('写「放量造成」要有同批素材加量才跌的证据，默认不写')
     for k in ('wk_market', 'wk_top', 'insight', 'rules'):
