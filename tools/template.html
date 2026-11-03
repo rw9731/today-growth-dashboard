@@ -722,7 +722,7 @@
       const h = document.createElement('h4'); h.textContent = a.uc + ' ' + (u.short || ''); div.appendChild(h);
       const nums = document.createElement('div'); nums.className = 'nums';
       const sup = Object.entries(u.ch || {}).filter(([, c]) => (c.act_w || 0) >= 100 && c.rate != null).map(([k, c]) => SUP[k] + ' ' + d3.format('.1%')(c.rate) + '、¥' + d3.format(',.0f')(c.cpr)).join('；');
-      nums.innerHTML = '占 <b>' + d3.format('.0%')((u.cost27 || 0) / o.cost27) + '</b>，次留率 <b>' + d3.format('.1%')(u.rate) + '</b>，次留成本 <b>¥' + d3.format(',.0f')(u.cpr) + '</b>' + (sup ? '。按供给：' + sup : '');
+      nums.innerHTML = '占 <b>' + d3.format('.0%')((u.cost27 || 0) / o.cost27) + '</b>，' + (u.rate == null ? '激活太少，次留还看不出' : '次留率 <b>' + d3.format('.1%')(u.rate) + '</b>，次留成本 <b>¥' + d3.format(',.0f')(u.cpr) + '</b>') + (sup ? '。按供给：' + sup : '');
       div.appendChild(nums);
       for (const [lab, txt] of [['判断：', a.why], ['已拍过：', a.shot]]) { if (!txt) continue; const p = document.createElement('div'); const b = document.createElement('span'); b.className = 'k'; b.textContent = lab; p.append(b, document.createTextNode(txt)); div.appendChild(p); }
       const ol = document.createElement('ol');
