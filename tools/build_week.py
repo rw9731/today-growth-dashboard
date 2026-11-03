@@ -73,7 +73,7 @@ def lint_notes(n):
     for name in ('爸妈按天气自己重排旅行行程', '计划替你重排', '计划变了就重排'):
         clean = clean.replace(name, '')
     if '重排' in clean:
-        bad.append('不写「重排」，字幕原话要引用就放「」里并改写成别的说法核对；PS01 叫「早晚报和日程安排」')
+        bad.append('不写「重排」，素材原名以外换别的说法；PS01 叫「早晚报和日程安排」')
     if '放量造成' in txt:
         bad.append('写「放量造成」要有同批素材加量才跌的证据，默认不写')
     for k in ('wk_market', 'wk_top', 'insight', 'rules'):
