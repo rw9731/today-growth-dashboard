@@ -5,7 +5,7 @@ Usage:
 
 Writes up to three files, each a JavaScript snippet to run with the built-in browser
 (javascript_tool) on the page named in its first comment line:
-  yuanpian.js  -> 唯西表「today ai koc kol 真人原素材」 (?sheet=6AHEfW): KOC/KOL 原片 = 博主原帖
+  yuanpian.js  -> Reina 新表「today ai koc kol 真人原素材」 (https://my.feishu.cn/wiki/Z85OwlT9iion1Xk2ASAc9xcGnTs): KOC/KOL 原片 = 博主原帖
   chengpian.js -> 唯西表「脚本及成片」 (?sheet=f18d7b): AI 短剧 成片 = 表格里那一格
   yulan.js     -> 唯西「Today-日报」「每日素材数据」 (?sheet=jPPl6w): 巨量里投的那条视频（每条素材都要，扩量的原素材也要）
 Each snippet returns a JSON object {素材ID: 链接}. Save each result as <name>.json next to
@@ -15,17 +15,19 @@ Prints how many materials need a link; 0 means nothing to do.
 import argparse, json, os
 
 PAGES = {
-    'yuanpian': 'https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=6AHEfW',
+    'yuanpian': 'https://my.feishu.cn/wiki/Z85OwlT9iion1Xk2ASAc9xcGnTs',
     'chengpian': 'https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b',
     'yulan': 'https://www.feishu.cn/wiki/MF08weqhAivx3SkRkeTck5R3nkc?sheet=jPPl6w',
 }
 
-WAIT = """let sh=null; for (let i=0;i<50;i++){ try { sh = window.spread && window.spread.getActiveSheet(); if (sh && sh.name().includes(%s) && sh.getText(1,%d)) break; } catch(e){} await new Promise(r=>setTimeout(r,500)); }
+WAIT = """let sh=null; for (let i=0;i<50;i++){ try { sh = window.spread && window.spread.getActiveSheet(); if (sh && sh.name().includes(%s) && sh.getText(%d,%d)) break; } catch(e){} await new Promise(r=>setTimeout(r,500)); }
 if (!sh || !sh.name().includes(%s)) throw new Error('sheet not loaded');
 """
 
 YUANPIAN = """const NEED = %s;
-const ys=[]; for (let r=1;r<sh.getRowCount();r++){ const n=(sh.getText(r,3)||'').trim(); if(!n || !n.includes('_today ')) continue; let link=''; try { const u=(sh.getSegmentArray(r,6)||[]).find(s=>s.link||s.type==='url'); link=u?(u.link||u.text):''; } catch(e){} if(!link) link=((sh.getText(r,6)||'').match(/https?:\\/\\/\\S+/)||[''])[0]; ys.push([n,link]); }
+let cn=-1, cl=-1; for (let c=0;c<sh.getColumnCount();c++){ const h=(sh.getText(0,c)||'').trim(); if(h==='素材命名') cn=c; if(h==='素材发布链接') cl=c; }
+if (cn<0 || cl<0) throw new Error('header not found');
+const ys=[]; for (let r=1;r<sh.getRowCount();r++){ const n=(sh.getText(r,cn)||'').trim(); if(!n || !n.includes('_today ')) continue; let link=''; try { const u=(sh.getSegmentArray(r,cl)||[]).find(s=>s.link||s.type==='url'); link=u?(u.link||u.text):''; } catch(e){} if(!link) link=((sh.getText(r,cl)||'').match(/https?:\\/\\/\\S+/)||[''])[0]; ys.push([n,link]); }
 const clean=s=>s.replace(/^推送视频_/,'').replace('todaykoc','today koc').replace('todaykol','today kol').trim();
 const out={}; for (const [id,name] of NEED){ const n=clean(name); let best=null; for (const [k,link] of ys){ if (n===k || (n.startsWith(k) && /[_\\-]/.test(n[k.length]))) { if (!best || k.length>best[0].length) best=[k,link]; } } if (best && /^https?:/.test(best[1])) out[id]=best[1]; }
 JSON.stringify(out)"""
@@ -56,15 +58,15 @@ def main():
     aigc = [[m['id'], m['name']] for m in need if [m['id'], m['name']] not in koc]
     files = {}
     if koc:
-        files['yuanpian'] = WAIT % ("'真人原素材'", 3, "'真人原素材'") + YUANPIAN % json.dumps(koc, ensure_ascii=False)
+        files['yuanpian'] = WAIT % ("'真人原素材'", 0, 0, "'真人原素材'") + YUANPIAN % json.dumps(koc, ensure_ascii=False)
     if aigc:
-        files['chengpian'] = WAIT % ("'脚本及成片'", 1, "'脚本及成片'") + CHENGPIAN % json.dumps(aigc, ensure_ascii=False)
+        files['chengpian'] = WAIT % ("'脚本及成片'", 1, 1, "'脚本及成片'") + CHENGPIAN % json.dumps(aigc, ensure_ascii=False)
     links = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'links.json')))
     nolink = [m['id'] for m in mats.values() if not m.get('video')]
     # 扩量分析要对照原素材，原素材不一定在看板里，也一起找视频
     nolink += sorted({i for k in res.get('kl', []) for i in k.get('src_ids', []) if i not in mats and not links.get(i, {}).get('video')})
     if nolink:
-        files['yulan'] = WAIT % ("'每日素材数据'", 0, "'每日素材数据'") + YULAN % json.dumps(nolink)
+        files['yulan'] = WAIT % ("'每日素材数据'", 1, 0, "'每日素材数据'") + YULAN % json.dumps(nolink)
     for k, js in files.items():
         open(os.path.join(a.out, k + '.js'), 'w').write(f'// 在这个页面跑：{PAGES[k]}\n' + js)
     print(json.dumps({'need': len(need), 'koc': len(koc), 'aigc': len(aigc), 'no_video': len(nolink),
