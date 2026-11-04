@@ -157,16 +157,10 @@ def main():
         tier = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
         # use case 标签 = 量 + 次留（Reina 11/4）
         if s['rate'] is None or s['act_r'] < WTH['tag_act']:
-            ret = '样本不够'
-        elif good:
-            ret = '次留好'
-        elif s['rate'] >= bar:
-            ret = '次留好但贵' if s['cpr'] is None or s['cpr'] > WTH['bad_cpr'] * cw else '成本略高'
-        elif s['rate'] < WTH['bad_rate'] * rw or s['cpr'] is None or s['cpr'] > WTH['bad_cpr'] * cw:
-            ret = '次留差'
+            tag = '样本不够'
         else:
-            ret = '次留一般'
-        tag = ('能放量' if big else '量中等' if share >= WTH['uc_mid_share'] else '量小') + ' + ' + ret
+            ret = '次留好' if good else '次留差' if s['rate'] < WTH['bad_rate'] * rw or s['cpr'] is None or s['cpr'] > WTH['bad_cpr'] * cw else '次留一般'
+            tag = ('能放量' if big else '量小') + ' + ' + ret
         flag = ''
         if tier == 'T3' and s['rate'] is not None:
             if s['rate'] >= 0.95 * bar and s['cpr'] is not None and s['cpr'] <= 1.05 * cw:
@@ -249,16 +243,14 @@ def main():
     # 第四部分（Reina 11/4）：这周有一天消耗到门槛或周消耗过线的全部列出，标签和日报、use case 的说法一致。
     # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率至少 30% 且不低于全盘，次留成本不高于全盘）；
     # 次留差（激活 ≥ 50，次留率低于全盘 85%，或次留率没到线且次留成本超过全盘 1.2 倍）；
-    # 次留好但贵（次留率不低于全盘，次留成本超过 1.2 倍）；其余按差在哪写次留一般、成本略高。
+    # 次留好要次留率和次留成本同时过线；其余写次留一般。
     def tag_of(m):
         r, c = m['rate'], m['cpr'] or 1e9
         if m['act_r'] < WTH['tag_act'] or r is None:
-            return '能放量 + 样本不够'
+            return '样本不够'
         bar = max(rw, C.GOOD_RATE)
         if r >= bar and c <= cw:
-            return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '能放量 + 样本不够'
-        if r >= bar:
-            return '能放量 + 次留好但贵' if c > WTH['bad_cpr'] * cw else '能放量 + 成本略高'
+            return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '样本不够'
         if r < WTH['bad_rate'] * rw or c > WTH['bad_cpr'] * cw:
             return '能放量 + 次留差'
         return '能放量 + 次留一般'

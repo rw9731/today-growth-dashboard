@@ -379,28 +379,27 @@ def main():
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def ret_word(rate, cpr):
-        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好至少 30%，全盘更高时要不低于全盘。
+        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好要次留率和次留成本同时过线；次留率至少 30%，全盘更高时不低于全盘。
         if rate is None:
-            return '样本不够'
-        pricey = cpr is None or cpr > th['high'] * o['cpr_w']
+            return None
         bar = max(o['rate_w'], GOOD_RATE)
         if rate >= bar and cpr is not None and cpr <= o['cpr_w']:
             return '次留好'
-        if rate >= bar:
-            return '次留好但贵' if pricey else '成本略高'
-        if rate < th['low'] * o['rate_w'] or pricey:
+        if rate < th['low'] * o['rate_w'] or cpr is None or cpr > th['high'] * o['cpr_w']:
             return '次留差'
         return '次留一般'
 
     def label(rate, cpr, cost):
         # 素材：三天消耗过 scale 算能放量
-        return ('能放量' if cost > th['scale'] else '量小') + ' + ' + ret_word(rate, cpr)
+        w = ret_word(rate, cpr)
+        return ('能放量' if cost > th['scale'] else '量小') + ' + ' + w if w else '样本不够'
 
     def share_label(rate, cpr, spend4):
-        # use case、素材类型：四天消耗占全盘算量，门槛和分层一样
-        share = spend4 / ((cw + o['cost27']) or 1)
-        scale = '能放量' if share >= PLAN_TH['big'] else '量中等' if share >= PLAN_TH['mid'] else '量小'
-        return scale + ' + ' + ret_word(rate, cpr)
+        # use case、素材类型：四天消耗占全盘 3% 以上算能放量
+        w = ret_word(rate, cpr)
+        if not w:
+            return '样本不够'
+        return ('能放量' if spend4 / ((cw + o['cost27']) or 1) >= PLAN_TH['big'] else '量小') + ' + ' + w
 
     # 一级
     t27 = S(R, D[3], 'cost') or 1
@@ -443,7 +442,7 @@ def main():
             g = label(rate, cpr, c)
         elif c27 >= th['top']:
             rate = cpr = None
-            g = '新上线 + 次留没出' if f >= D[2] else ('能放量' if max(c, c27) > th['scale'] else '量小') + ' + 样本不够'
+            g = '新上线' if f >= D[2] else '样本不够'
         else:
             continue
         uc = rs[0]['uc']
@@ -630,7 +629,7 @@ def main():
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('成本略高', '次留一般')) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
+    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
