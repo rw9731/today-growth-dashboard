@@ -486,6 +486,13 @@ def main():
         cost7[(uc, r['date'])] += r['cost']
     for u in uct:
         u['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7[(u['uc'], d)], 2)] for d in d7]
+    # 每条素材最近 7 天消耗（Reina 11/4 定，四、昨天消耗排行的柱状图）
+    cost7_m = defaultdict(float)
+    for r in allrows:
+        if r['date'] in d7:
+            cost7_m[(r['id'], r['date'])] += r['cost']
+    for m in mat:
+        m['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7_m[(m['id'], d)], 2)] for d in d7]
 
     # 素材类型
     kind_id = {}

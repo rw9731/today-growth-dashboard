@@ -339,6 +339,7 @@
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th>最近 7 天消耗<span class="th-sub">深色是 {{D}}，每行按自己最高那天</span></th>
             <th class="num">激活<span class="th-sub">{{D}}</span></th>
             <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
@@ -573,6 +574,10 @@
     }
   });
 
+  const spark7 = (cell, days) => { const sp = document.createElement('span'); sp.className = 'uc-spark'; const dmax = d3.max(days || [], (x) => x[1]) || 1;
+    sp.title = (days || []).map((x) => x[0] + ' ' + fmtY(x[1])).join('\n');
+    for (const x of days || []) { const b = document.createElement('i'); b.style.height = Math.max(1, x[1] / dmax * 26) + 'px'; b.title = x[0] + ' ' + fmtY(x[1]); sp.appendChild(b); }
+    cell.appendChild(sp); };
   const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '能放量 + 次留好但贵': 'g-pricey', '次留好但贵、量还小': 'g-pricey', '次留好但贵': 'g-pricey', '能放量 + 次留差': 'g-bad', '次留差、量还小': 'g-bad', '拖后腿': 'g-bad', '能放量 + 成本略高': 'g-mid', '成本略高、量还小': 'g-mid', '能放量 + 次留略低': 'g-mid', '次留略低、量还小': 'g-mid', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
@@ -582,10 +587,7 @@
       td('short').textContent = r.short;
       const l1c = td('short muted'); l1c.textContent = r.l1; l1c.style.whiteSpace = 'normal'; l1c.style.minWidth = '84px'; l1c.style.maxWidth = '84px';
       barCell(td(), r.cost27, max, 44);
-      const sp = document.createElement('span'); sp.className = 'uc-spark'; const dmax = d3.max(r.days7 || [], (x) => x[1]) || 1;
-      sp.title = (r.days7 || []).map((x) => x[0] + ' ' + fmtY(x[1])).join('\n');
-      for (const x of r.days7 || []) { const b = document.createElement('i'); b.style.height = Math.max(1, x[1] / dmax * 26) + 'px'; b.title = x[0] + ' ' + fmtY(x[1]); sp.appendChild(b); }
-      td().appendChild(sp);
+      spark7(td(), r.days7);
       td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num').textContent = fmtN(r.n27);
@@ -657,18 +659,19 @@
     box.appendChild(grid);
   };
   const groupCls = statusCls;
-  const matTable = (name, keep, flag) => fill(name, (tb) => {
+  const matTable = (name, keep, flag, days) => fill(name, (tb) => {
     const rows = data('mat').filter(keep); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
       const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
-      td('name').textContent = r.name;
+      { const nc = td('name'); nc.textContent = r.name; if (days) nc.style.minWidth = '8.5rem'; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.short || r.uc, r.l1);
-      const lab = barCell(td(), r.cost27, max, 50);
+      const lab = barCell(td(), r.cost27, max, days ? 24 : 50);
       const f = flag(r); if (f) lab.className = f;
+      if (days) spark7(td(), r.days7);
       td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num muted').textContent = fmtY(r.cost_w);
@@ -686,7 +689,7 @@
     }
   });
   const GOOD = ['能放量 + 次留好', '次留好、量还小'];
-  matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '');
+  matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
   matTable('badrows', (v) => /次留差|次留好但贵|拖后腿/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
 
   // 扩量素材和原素材比
