@@ -11,7 +11,7 @@
 import argparse, datetime as dt, html, json, os, re, sys
 from collections import defaultdict
 
-from schedule_data import STABLE, flow
+from schedule_data import STABLE, flow, total_warn
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -160,12 +160,14 @@ def rule_rows(RU, U, E, GL, W, T):
     for u, x in RU.items():
         if u not in U:
             continue
-        launches = defaultdict(int)
+        launches = {'AI': defaultdict(int), '二创': defaultdict(int)}
         for e in E:
             if e['uc'] == u and e['d'] in W and e['s'] in ('done', 'todo', 'add'):
                 m, d = e['d'].split('/')
-                launches[dt.date(T.year, int(m), int(d))] += e['n']
-        f = flow(x, GL['y'], GL['t0'], launches, days)
+                when = dt.date(T.year, int(m), int(d))
+                # 已交的今天算首花，待交的交付第二天算首花：产出到首花 48% 当天、32% 隔天（首花 10/28 起）
+                launches['AI' if e['t'] == 'AI' else '二创'][T if e['s'] == 'done' else max(T, when + dt.timedelta(days=1))] += e['n']
+        f = flow(x, GL['yt'], GL['t0'], launches, days)
         mult = x['y'] / GL['y'] if GL['y'] else 0
         mx = x['yx'] / GL['y'] if GL['y'] else 0
         dens = x['np'] / x['sh'] if x['sh'] else 0
@@ -182,8 +184,7 @@ def rule_rows(RU, U, E, GL, W, T):
             tag = '减'
         else:
             tag = '持平'
-        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'],
-                    lv='red' if f['cross'] else '', gap0=-f['worst'], **f)
+        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
     return X
 
 
@@ -251,6 +252,7 @@ def main():
     W = [md(d) for d in fut]
     E = view_entries(plan, U, days, D, T)
     X = rule_rows(RU, U, E, GL, W, T)
+    WT = total_warn(X, GL['t0'])
     in_week = plan.get('week') == (T - dt.timedelta(days=T.weekday())).isoformat()
     if not in_week:
         print(f"WARNING schedule_plan.json 的 week 是 {plan.get('week')}，这周的排期还没写进去：页面不显示产能条和结论，排期列是空的")
@@ -263,7 +265,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), REV=R.get('rev', dict(rows=[], peak=[], npeak=0)), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, REV=R.get('rev', dict(rows=[], peak=[], npeak=0)), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
@@ -290,8 +292,8 @@ def main():
     latest = lst[0]['date'] == T.isoformat()
     if latest:
         open(os.path.join(a.root, 'schedule', 'index.html'), 'w', encoding='utf-8').write(render(tpl, P, fields, '../', T))
-    red = [u for u, x in X.items() if x['lv'] == 'red' and any(u in g[1] for g in plan['GROUPS'][:2])]
-    print(json.dumps(dict(date=T.isoformat(), D=D.isoformat(), latest=latest, in_week=in_week, red={u: dict(cross=X[u]['cross'], gap=X[u]['gap0']) for u in red},
+    red = [u for u, x in X.items() if x['warn'] and any(u in g[1] for g in plan['GROUPS'][:2])]
+    print(json.dumps(dict(date=T.isoformat(), D=D.isoformat(), latest=latest, in_week=in_week, all=WT, red={u: X[u]['warn'] for u in red},
                           schedules=[r['date'] for r in lst][:5]), ensure_ascii=False))
 
 
