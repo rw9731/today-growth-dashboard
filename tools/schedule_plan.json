@@ -7,12 +7,12 @@
  "meters": [
   [
    "A 组 AI",
-   159,
+   150,
    150
   ],
   [
    "A 组二创",
-   103,
+   100,
    100
   ],
   [
@@ -261,6 +261,27 @@
    "PS07 3、SH05 2、SH02 2、WK06 3 顺延下周",
    "下周",
    "WK06 脚本还在需修改，每条产出 0.2 倍。探索本周只留 3 个方向：PS06、WK03、SH03。PS07 是你 11/2 定要加的，要留就换掉 SH03"
+  ],
+  [
+   "cut",
+   [
+    "LG02",
+    "AI00"
+   ],
+   "A 组扩量第 85、89、90、91 行",
+   "LG02 AI 7 顺延下周，AI00 AI 2 先不拍",
+   "",
+   "A 组 AI 排到 159，产能 150。LG02 这周上新远超维持的 12 条，AI00 次留偏低"
+  ],
+  [
+   "cut",
+   [
+    "PS01"
+   ],
+   "A 组扩量第 94 行",
+   "PS01 二创 3 顺延下周",
+   "",
+   "A 组二创排到 103，产能 100。PS01 这周上新远超维持的 27 条"
   ],
   [
    "chg",
@@ -798,51 +819,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 85 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "LG02",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "todo",
    "src": "A 组扩量第 86 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "AI00",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "todo",
-   "src": "A 组扩量第 89 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "LG02",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 3,
-   "s": "todo",
-   "src": "A 组扩量第 90 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "LG02",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "todo",
-   "src": "A 组扩量第 91 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -865,17 +842,6 @@
    "n": 3,
    "s": "todo",
    "src": "A 组扩量第 93 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "PS01",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "二创",
-   "n": 3,
-   "s": "todo",
-   "src": "A 组扩量第 94 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
