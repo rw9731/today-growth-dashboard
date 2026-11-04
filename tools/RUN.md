@@ -99,9 +99,12 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
 
 落下了怎么办：progress.json 的 groups.A.lag、groups.B.lag 是落下的行（行号、use case、差几条）。只推给 Reina，把 draft.A、draft.B 附上，这是可以直接发给唯西两个素材群的提醒草稿，发不发、怎么改她定。不自己发群，不改飞书，草稿不带看板链接。
 
+schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本及成片按 use case 和完成时间合起来（11/2 起 A 组这张表的 UC_ID 列没填，从素材命名或成片文件名里取 UC）。11/4 在 6 个 tab 上真跑过。
+
 排期内容只在 tools/schedule_plan.json，页面不手改：
 - E 是排期条目：d 交付日、g 组、t 类型、n 条数、s 状态（done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加）、src 和 link 是飞书位置、to 是拿掉后怎么办。已上线的条数从数据算，不写在这里。
 - Reina 确认调整、写进飞书之后，把对应条目改掉（add 改 todo，cut 删掉或换 uc），MOVES 也跟着改，asof 改成当天。
+- 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
 - 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
 - schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
 

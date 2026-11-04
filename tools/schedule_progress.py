@@ -11,7 +11,7 @@
   该交 = 条数，实交 = 扩量素材名按换行拆的条数。类型看「怎么改」里的【AI】或【二创/重配】。B 组这个 tab 是空的也能跑。
 - 新素材每周排期（A 组 nPw5Dc）：该交 = 注意事项里「拍 N 条」。实交 = 脚本及成片（f18d7b）里同 use case、成片不空、完成时间在这周到 T-1 的条数，按日期从早到晚分给各行。
 - 脚本&成片（B 组 c665d9）、真人素材和ai切片二剪（B 组 EnYgPG）：每行一条，产出日期到期算该交，成片或二创成片不空算实交。
-- tools/schedule_plan.json 里已经建议拿掉（s = cut）的行不算该交，算在 skipped。
+- tools/schedule_plan.json 里已经建议拿掉（s = cut）的行，和表里写了「先不拍」「顺延」还没交的行，不算该交，算在 skipped。
 输出 line（页面那一行）、draft（给唯西的提醒草稿，只推给 Reina，不自己发群）。
 """
 import argparse, datetime as dt, json, os, re
@@ -27,7 +27,7 @@ def parse_day(s, T):
     m = re.match(r'(\d{4})[/-](\d{1,2})[/-](\d{1,2})', s)
     if m:
         return dt.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
-    m = re.match(r'(\d{1,2})/(\d{1,2})', s)
+    m = re.match(r'(\d{1,2})[/月](\d{1,2})', s)
     if m:
         d = dt.date(T.year, int(m.group(1)), int(m.group(2)))
         if (d - T).days > 180:
@@ -47,7 +47,7 @@ def is_uc(s):
 
 
 def kind_of(how):
-    m = re.search(r'【(AI|二创[^】]*|重配[^】]*)】', how or '')
+    m = re.search(r'【(AI|AI 切片二剪|二创[^】]*|重配[^】]*)】', how or '')
     if not m:
         return ''
     return 'AI' if m.group(1) == 'AI' else '二创'
@@ -76,6 +76,8 @@ def load_cut(plan):
             out[(m.group(1), pat[m.group(2)], int(m.group(3)))] = e.get('uc')
         elif '新素材排期' in src:
             out[('A', 'new', e['d'], e.get('uc'))] = e.get('n')
+    for x in plan.get('skip_rows', []):  # 表里没有备注列、写不了「先不拍」的行
+        out[(x['g'], x['tab'], int(x['r']))] = x['uc']
     return out
 
 
@@ -96,8 +98,9 @@ def kx_rows(rows, group, T, since, upto, cut):
         if not when or when < since or when > upto:
             continue
         n = int(n_txt)
-        got = len(x.get('扩量素材名') or [])
-        if cut.get((group, 'kx', x['r'])) == uc and got == 0:
+        got = x.get('扩量素材名') or 0
+        got = len(got) if isinstance(got, list) else int(got)
+        if got == 0 and (cut.get((group, 'kx', x['r'])) == uc or '先不做' in how):
             skipped += n
             continue
         due.append(dict(tab='kx', r=x['r'], uc=uc, n=n, got=min(got, n), extra=max(0, got - n), due=when.isoformat(), kind=kind_of(how)))
@@ -112,9 +115,9 @@ def new_rows(rows, sc, T, since, upto, cut):
         uc = clean_uc(x.get('UC_ID'))
         when = parse_day(x.get('完成时间'), T)
         if is_uc(uc) and x.get('成片') and when:
-            done.setdefault(uc, []).append(when)
-            if '通过' not in (x.get('成片状态') or '') and when <= upto:
-                review += 1
+            done.setdefault(uc, []).extend([when] * int(x.get('n', 1)))
+            if when <= upto:
+                review += int(x['rv']) if 'rv' in x else (0 if '通过' in (x.get('成片状态') or '') else 1)
     for v in done.values():
         v.sort()
     due, skipped = [], 0
@@ -128,9 +131,17 @@ def new_rows(rows, sc, T, since, upto, cut):
         if not is_uc(uc) or not m or not day or day < since or day > upto:
             continue
         n = int(m.group(1))
+        note = x.get('注意事项', '')
         if cut.get(('A', 'new', day.isoformat(), uc)):
             skipped += n
             continue
+        if '先不做' in note:  # 「1 条照做，新写的 2 条顺延」只算照做的 1 条
+            keep = re.search(r'(\d+) ?条照做', note)
+            k = int(keep.group(1)) if keep else 0
+            skipped += n - k
+            n = k
+            if not n:
+                continue
         mon = day - dt.timedelta(days=day.weekday())
         pool = [w for w in done.get(uc, []) if mon <= w <= upto]
         got = min(n, len(pool))
@@ -151,7 +162,7 @@ def one_per_row(rows, group, tab, field, T, since, upto, cut):
         if not is_uc(uc) or not day or day < since or day > upto:
             continue
         got = 1 if x.get(field) else 0
-        if cut.get((group, tab, x['r'])) == uc and not got:
+        if not got and (cut.get((group, tab, x['r'])) == uc or x.get('脚本备注') == '先不做' or x.get('备注') == '先不做'):
             skipped += 1
             continue
         due.append(dict(tab=tab, r=x['r'], uc=uc, n=1, got=got, extra=0, due=day.isoformat(), kind='AI' if tab == 'sc' else '二创'))
