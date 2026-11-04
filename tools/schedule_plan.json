@@ -3,11 +3,11 @@
  "week": "2026-11-02",
  "asof": "2026-11-04",
  "bars": 14,
- "sub": "B 组这周能做 100 条（AI、二创各 50），只排了 22 条，下周起 200 条。本周能加的量在 B 组二创，还能加 40 条。AI 新脚本 4–5 天才出片，这周来不及换。",
+ "sub": "A、B 组的调整已写进飞书。B 组这周排了 82 条，到今天交 11 条，后面 4 天每天要做 18 条，是今天的 1.6 倍，要确认实际速度。AI 还留 16 条，按数据每天补。",
  "meters": [
   [
    "A 组 AI",
-   163,
+   159,
    150
   ],
   [
@@ -17,18 +17,18 @@
   ],
   [
    "B 组 AI",
-   12,
+   34,
    50
   ],
   [
    "B 组二创",
-   10,
+   48,
    50
   ]
  ],
  "foot_note": "PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。排期截至 11/4 19:40，新原片首剪 33 条进度在真人原素材表，没有上板。",
  "backtest": "用 10/28–10/31 四天分别往后看 3 天，共 63 个样本。接不上的中位掉 20%，23/31 个下跌；偏紧的中位掉 41%，11/17 个下跌；够的中位涨 4%，6/15 个下跌。样本重叠，只能说方向对。预测用中位数，约 3–4 成放量素材能撑到第 7–8 天。",
- "moves_head": "要改什么（等你确认后写进飞书）",
+ "moves_head": "11/4 改了什么（已写进飞书）",
  "ps03_note": "只加后两块，接娃和班级群不加",
  "GROUPS": [
   [
@@ -732,39 +732,6 @@
    "to": ""
   },
   {
-   "uc": "HL02",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "AI",
-   "n": 4,
-   "s": "cut",
-   "src": "A 组扩量第 77 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 LG01"
-  },
-  {
-   "uc": "HL02",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "cut",
-   "src": "A 组扩量第 78 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 LG01"
-  },
-  {
-   "uc": "PS03",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "AI",
-   "n": 4,
-   "s": "cut",
-   "src": "接娃和班级群：A 组扩量第 79 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成孩子的具体问题"
-  },
-  {
    "uc": "LG01",
    "d": "2026-11-06",
    "g": "A",
@@ -829,28 +796,6 @@
    "src": "A 组扩量第 86 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
-  },
-  {
-   "uc": "SH04",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 3,
-   "s": "cut",
-   "src": "A 组扩量第 87 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 LG01"
-  },
-  {
-   "uc": "SH01",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "cut",
-   "src": "A 组扩量第 88 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 NT01"
   },
   {
    "uc": "AI00",
@@ -941,28 +886,6 @@
    "to": ""
   },
   {
-   "uc": "WK01",
-   "d": "2026-11-08",
-   "g": "A",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "A 组扩量第 97 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 LG01"
-  },
-  {
-   "uc": "WK01",
-   "d": "2026-11-08",
-   "g": "A",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "A 组扩量第 98 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": "改成 LG01"
-  },
-  {
    "uc": "WK03",
    "d": "2026-11-04",
    "g": "A",
@@ -1018,28 +941,6 @@
    "to": ""
   },
   {
-   "uc": "WK06",
-   "d": "2026-11-05",
-   "g": "A",
-   "t": "AI",
-   "n": 3,
-   "s": "cut",
-   "src": "A 组新素材排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=nPw5Dc",
-   "to": "顺延下周"
-  },
-  {
-   "uc": "SH05",
-   "d": "2026-11-05",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "cut",
-   "src": "A 组新素材排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=nPw5Dc",
-   "to": "顺延下周"
-  },
-  {
    "uc": "SH03",
    "d": "2026-11-05",
    "g": "A",
@@ -1073,39 +974,6 @@
    "to": ""
   },
   {
-   "uc": "PS07",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "AI",
-   "n": 3,
-   "s": "cut",
-   "src": "A 组新素材排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=nPw5Dc",
-   "to": "顺延下周"
-  },
-  {
-   "uc": "SH02",
-   "d": "2026-11-07",
-   "g": "A",
-   "t": "AI",
-   "n": 2,
-   "s": "cut",
-   "src": "A 组新素材排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=nPw5Dc",
-   "to": "顺延下周"
-  },
-  {
-   "uc": "TR00",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 7 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不拍"
-  },
-  {
    "uc": "PS06",
    "d": "2026-11-05",
    "g": "B",
@@ -1115,61 +983,6 @@
    "src": "B 组脚本第 8 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
    "to": ""
-  },
-  {
-   "uc": "TR00",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 9 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不拍"
-  },
-  {
-   "uc": "TR00",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 10 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不拍"
-  },
-  {
-   "uc": "IN01",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 11 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不审"
-  },
-  {
-   "uc": "IN01",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 12 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不审"
-  },
-  {
-   "uc": "IN01",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组脚本第 13 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
-   "to": "先不审"
   },
   {
    "uc": "SH05",
@@ -1203,17 +1016,6 @@
    "src": "B 组脚本第 16 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
    "to": ""
-  },
-  {
-   "uc": "SH04",
-   "d": "2026-11-04",
-   "g": "B",
-   "t": "二创",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组二创第 2 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG",
-   "to": "先不剪"
   },
   {
    "uc": "PS01",
@@ -1258,17 +1060,6 @@
    "src": "B 组二创第 6 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG",
    "to": ""
-  },
-  {
-   "uc": "SH04",
-   "d": "2026-11-04",
-   "g": "B",
-   "t": "二创",
-   "n": 1,
-   "s": "cut",
-   "src": "B 组二创第 7 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG",
-   "to": "先不剪"
   },
   {
    "uc": "HL02",
@@ -1320,8 +1111,8 @@
    "g": "B",
    "t": "二创",
    "n": 7,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1331,8 +1122,8 @@
    "g": "B",
    "t": "二创",
    "n": 6,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1342,8 +1133,8 @@
    "g": "B",
    "t": "二创",
    "n": 4,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1353,8 +1144,8 @@
    "g": "B",
    "t": "二创",
    "n": 4,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1364,8 +1155,8 @@
    "g": "B",
    "t": "二创",
    "n": 3,
-   "s": "add",
-   "src": "消息排清单：写进 B 组扩量排期",
+   "s": "todo",
+   "src": "消息排清单：B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1375,8 +1166,8 @@
    "g": "B",
    "t": "二创",
    "n": 3,
-   "s": "add",
-   "src": "消息排清单：写进 B 组扩量排期",
+   "s": "todo",
+   "src": "消息排清单：B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1386,8 +1177,8 @@
    "g": "B",
    "t": "二创",
    "n": 1,
-   "s": "add",
-   "src": "消息排清单：写进 B 组扩量排期",
+   "s": "todo",
+   "src": "消息排清单：B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1397,8 +1188,8 @@
    "g": "B",
    "t": "二创",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1408,8 +1199,8 @@
    "g": "B",
    "t": "二创",
    "n": 2,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1419,8 +1210,8 @@
    "g": "B",
    "t": "二创",
    "n": 4,
-   "s": "add",
-   "src": "孩子的具体问题：写进 B 组扩量排期",
+   "s": "todo",
+   "src": "孩子的具体问题：B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1430,41 +1221,41 @@
    "g": "B",
    "t": "二创",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组扩量排期",
+   "s": "todo",
+   "src": "B 组扩量排期",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
   {
    "uc": "PS03",
-   "d": "2026-11-06",
+   "d": "2026-11-08",
    "g": "A",
    "t": "AI",
    "n": 4,
-   "s": "add",
-   "src": "孩子的具体问题：A 组扩量第 79 行改",
+   "s": "todo",
+   "src": "孩子的具体问题：A 组扩量第 79 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
   {
    "uc": "LG01",
-   "d": "2026-11-06",
+   "d": "2026-11-08",
    "g": "A",
    "t": "AI",
    "n": 6,
-   "s": "add",
-   "src": "A 组扩量第 77、78 行改，AI 二剪",
+   "s": "todo",
+   "src": "A 组扩量第 77、78 行，AI 照真人",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
   {
    "uc": "LG01",
-   "d": "2026-11-07",
+   "d": "2026-11-08",
    "g": "A",
    "t": "AI",
    "n": 3,
-   "s": "add",
-   "src": "A 组扩量第 87 行改，AI 二剪",
+   "s": "todo",
+   "src": "A 组扩量第 87 行，AI 照真人",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -1474,8 +1265,8 @@
    "g": "A",
    "t": "AI",
    "n": 2,
-   "s": "add",
-   "src": "A 组扩量第 88 行改，AI 二剪",
+   "s": "todo",
+   "src": "A 组扩量第 88 行，AI 二剪",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -1485,8 +1276,8 @@
    "g": "A",
    "t": "AI",
    "n": 2,
-   "s": "add",
-   "src": "A 组扩量第 97、98 行改，AI 二剪",
+   "s": "todo",
+   "src": "A 组扩量第 97、98 行，AI 照真人",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -1496,8 +1287,8 @@
    "g": "B",
    "t": "AI",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪，换掉脚本第 7、9、10 行",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪，换掉脚本第 7、9、10 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1507,8 +1298,8 @@
    "g": "B",
    "t": "AI",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪，换掉脚本第 11–13 行",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪，换掉脚本第 11–13 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1518,8 +1309,8 @@
    "g": "B",
    "t": "AI",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1529,8 +1320,8 @@
    "g": "B",
    "t": "AI",
    "n": 3,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1540,8 +1331,8 @@
    "g": "B",
    "t": "AI",
    "n": 2,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1551,8 +1342,8 @@
    "g": "B",
    "t": "AI",
    "n": 2,
-   "s": "add",
-   "src": "写进 B 组排期，AI 二剪",
+   "s": "todo",
+   "src": "B 组扩量排期，AI 二剪",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1562,8 +1353,8 @@
    "g": "B",
    "t": "AI",
    "n": 4,
-   "s": "add",
-   "src": "接娃和班级群：写进 B 组排期，AI 二剪，测「排好」",
+   "s": "todo",
+   "src": "接娃和班级群：B 组扩量排期，AI 二剪，测「排好」",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1573,7 +1364,7 @@
    "g": "B",
    "t": "AI",
    "n": 5,
-   "s": "add",
+   "s": "todo",
    "src": "A 组脚本第 493–497 行转 B 组",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b",
    "to": ""

@@ -199,7 +199,7 @@ const rtCls={'加':'up','减':'down','靠一条':'one','留存差':'lo','持平'
 const rtTxt={'加':'多加','减':'减少','靠一条':'小步复制','留存差':'留存差<br>不加','持平':'不变','不判':'条数少<br>不判'};
 function pill(id,gi){
   const x=P.X[id];if(!x)return '';
-  if(gi<2&&x.lv){const to=x.gap1===0?'调整后够':`调整后缺 ${x.gap1}`;return `<span class="pill ${x.lv}">▲ ${x.lv==='red'?'接不上':'偏紧'} 缺 ${x.gap0}</span><small class="q" style="margin-left:5px;font-size:11px">${to}</small>`}
+  if(gi<2&&x.lv){return `<span class="pill ${x.lv}">▲ ${x.lv==='red'?'接不上':'偏紧'} 缺 ${x.gap0}</span>`}
   if(gi===2&&x.R>=3000&&!DIR.has(id))return `<span class="pill gray">会掉，不补</span>`;
   return '';
 }
