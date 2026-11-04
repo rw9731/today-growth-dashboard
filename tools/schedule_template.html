@@ -135,14 +135,14 @@ a{color:var(--link)}
 <span class="it"><i class="sw" style="background:var(--b1)"></i>4–7 天</span>
 <span class="it"><i class="sw" style="background:var(--b2)"></i>8–14 天</span>
 <span class="it"><i class="sw" style="background:var(--b3)"></i>15 天以上</span>
-<span class="it" style="margin-left:8px">条数：</span>
-<span class="it"><b style="font-family:var(--mono)">7</b>已上线</span>
-<span class="it"><b class="t-done" style="font-family:var(--mono)">7</b>已交没花钱</span>
-<span class="it"><b class="t-todo" style="font-family:var(--mono)">7</b>待交</span>
-<span class="it"><b class="t-add" style="font-family:var(--mono)">+7</b>建议加</span>
-<span class="it"><b class="t-cut" style="font-family:var(--mono)">7</b>建议拿掉</span>
-<span class="it"><b class="t-due" style="font-family:var(--mono)">▼1.6万</b>这天到第 4 天的钱</span>
-<span class="it"><span class="pill red">▲ 缺 28</span>按现在的排期，到 {{T4}} 还差 28 条才接得上要掉的钱</span>
+<span class="it" style="margin-left:8px">数字的颜色：</span>
+<span class="it"><b>黑色</b>已上线的条数</span>
+<span class="it"><b class="t-done">绿色</b>已交没花钱的条数</span>
+<span class="it"><b class="t-todo">蓝色</b>待交的条数</span>
+<span class="it" id="lg-add" style="display:none"><b class="t-add">+数字</b>建议加的条数</span>
+<span class="it" id="lg-cut" style="display:none"><b class="t-cut">划线数字</b>建议拿掉的条数</span>
+<span class="it"><b class="t-due">▼金额</b>预计下降额：这天有素材跑到第 4 天，预计掉下去的钱</span>
+<span class="it"><span class="pill red">▲ 缺 N</span>按现在的排期，到 {{T4}} 还差 N 条才接得上要掉的钱</span>
 <span class="it"><b>条数建议</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
@@ -249,6 +249,7 @@ P.GROUPS.forEach(([title,list,target,note],gi)=>{
 });
 document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
+for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
 const listA=lv=>Object.entries(P.X).filter(([u,x])=>x.lv===lv&&[0,1].some(g=>P.GROUPS[g][1].includes(u))).sort((p,q)=>q[1].gap0-p[1].gap0);
 const fmt=([u,x])=>`${u==='PS03'?'PS03 工作和孩子':u} 缺 ${x.gap0}`;
