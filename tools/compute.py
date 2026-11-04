@@ -465,6 +465,21 @@ def main():
                     'rate': rate, 'cpr': cpr, 'cost27': c27, 'act27': S(rs, D[3], 'act'), 'n_good': sum(1 for m in good if m['uc'] == uc)})
         uct[-1].update(uc_3.get(uc, NO3))
     uct.sort(key=lambda x: -x['cost27'])
+    # 每个 use case 最近 7 天消耗（Reina 11/4 定，二、按 use case 的柱状图）
+    d7 = [(Dd - dt.timedelta(days=k)).isoformat() for k in range(6, -1, -1)]
+    cost7 = defaultdict(float)
+    for r in allrows:
+        if r['date'] not in d7:
+            continue
+        uc = r['uc']
+        if uc == '库外':
+            for key, u in FUZZY:
+                if key in r['name'] and u in ucs:
+                    uc = u
+                    break
+        cost7[(uc, r['date'])] += r['cost']
+    for u in uct:
+        u['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7[(u['uc'], d)], 2)] for d in d7]
 
     # 素材类型
     kind_id = {}

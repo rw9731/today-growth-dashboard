@@ -89,6 +89,9 @@
   .lx-table tr.is-new td { background: color-mix(in srgb, var(--color-ok) 8%, transparent); }
   .lx-bar { display: flex; align-items: center; gap: var(--gap-xs); white-space: nowrap; }
   .lx-bar i { display: block; height: 10px; border-radius: 2px; flex: none; }
+  .uc-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 26px; vertical-align: middle; }
+  .uc-spark i { display: block; width: 6px; min-height: 1px; background: var(--bar); opacity: .45; border-radius: 1px 1px 0 0; }
+  .uc-spark i:last-child { opacity: 1; }
   .lx-good { color: var(--color-ok); font-weight: 600; }
   .lx-badv { color: var(--color-bad); font-weight: 600; }
   .lx-warnv { color: var(--color-warn); font-weight: 600; }
@@ -273,6 +276,7 @@
             <th>Use case</th>
             <th>一级分类</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th>最近 7 天消耗<span class="th-sub">深色是 {{D}}，每行按自己最高那天</span></th>
             <th class="num">激活<span class="th-sub">{{D}}</span></th>
             <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
             <th class="num">在跑素材<span class="th-sub">{{D}}</span></th>
@@ -576,8 +580,12 @@
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       td('uc').textContent = r.uc;
       td('short').textContent = r.short;
-      td('short muted').textContent = r.l1;
-      barCell(td(), r.cost27, max, 80);
+      const l1c = td('short muted'); l1c.textContent = r.l1; l1c.style.whiteSpace = 'normal'; l1c.style.minWidth = '84px'; l1c.style.maxWidth = '84px';
+      barCell(td(), r.cost27, max, 44);
+      const sp = document.createElement('span'); sp.className = 'uc-spark'; const dmax = d3.max(r.days7 || [], (x) => x[1]) || 1;
+      sp.title = (r.days7 || []).map((x) => x[0] + ' ' + fmtY(x[1])).join('\n');
+      for (const x of r.days7 || []) { const b = document.createElement('i'); b.style.height = Math.max(1, x[1] / dmax * 26) + 'px'; b.title = x[0] + ' ' + fmtY(x[1]); sp.appendChild(b); }
+      td().appendChild(sp);
       td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
       td('num').textContent = fmtN(r.n27);
