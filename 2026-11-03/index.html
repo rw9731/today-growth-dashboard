@@ -391,6 +391,7 @@
             <th>上线<span class="th-sub">第一天有消耗</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">11/3（按这列排）</span></th>
+            <th>最近 7 天消耗<span class="th-sub">深色是 11/3，每行按自己最高那天</span></th>
             <th class="num">激活<span class="th-sub">11/3</span></th>
             <th class="num">激活成本<span class="th-sub">11/3</span></th>
             <th class="num">消耗<span class="th-sub">10/31–11/2</span></th>
@@ -676,7 +677,7 @@
       const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
-      if (days) judgeCell(td(), r);
+      if (days === true) judgeCell(td(), r);
       { const nc = td('name'); nc.textContent = r.name; if (days) nc.style.minWidth = '8.5rem'; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
@@ -702,7 +703,7 @@
   });
   const GOOD = ['能放量 + 次留好', '次留好、量还小'];
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
-  matTable('badrows', (v) => ['拖后腿', '次留好但贵'].includes(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+  matTable('badrows', (v) => ['拖后腿', '次留好但贵'].includes(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''), 'spark');
 
   // 判差 3 天还在花（Reina 11/4 定）
   fill('stuckrows', (tb) => {
