@@ -223,7 +223,7 @@ document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
 const totalChips={};Object.values(P.X).forEach(x=>Object.entries(x.chips).forEach(([c,v])=>totalChips[c]=(totalChips[c]||0)+v));
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),totalChips,false)}<td class="st"><span class="q">${a} → </span><b>${b}</b></td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),totalChips,false)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -243,8 +243,8 @@ P.GROUPS.forEach(([title,list,target,note],gi)=>{
   const c7=sum(rows.map(x=>x.r.c7)),mtS=sum(list.map(u=>P.MT[u]||0)),a=nowN(es),b=aftN(es);
   const heads=pastDays.map((d,i)=>`<td>${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></td>`).join('')+futDays.map(d=>`<td>${d===P.today?'今天':d}<i>周${wk(d)}</i></td>`).join('');
   body+=`<tr class="gap"><td colspan="${NC}"></td></tr>`;
-  body+=`<tr class="grp ${tc}"><td class="gl" colspan="3"><span class="ti">${title}</span>${note?note+'<br>':''}消耗占 ${(c7/P.T.c7*100).toFixed(0)}%；上新占 ${Math.round(a/S0*100)}% → ${Math.round(b/S1*100)}%，目标 ${target}%<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc"><small>本周上新</small><b>${a} → ${b}</b></td><td class="sumc"><small>维持</small><b>${mtS}</b></td><td class="sumc"><small>每条产出</small></td><td class="sumc"><small>条数建议</small></td></tr>`;
-  details+=`<tr class="u th ${tc}"><td colspan="6">${title}<small>上新占 ${Math.round(a/S0*100)}% → ${Math.round(b/S1*100)}%，目标 ${target}%</small></td></tr>`;
+  body+=`<tr class="grp ${tc}"><td class="gl" colspan="3"><span class="ti">${title}</span>${note?note+'<br>':''}消耗占 ${(c7/P.T.c7*100).toFixed(0)}%；上新占 ${Math.round(a/S0*100)===Math.round(b/S1*100)?Math.round(b/S1*100)+'%':Math.round(a/S0*100)+'% → '+Math.round(b/S1*100)+'%'}，目标 ${target}%<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc"><small>维持</small><b>${mtS}</b></td><td class="sumc"><small>每条产出</small></td><td class="sumc"><small>条数建议</small></td></tr>`;
+  details+=`<tr class="u th ${tc}"><td colspan="6">${title}<small>上新占 ${Math.round(a/S0*100)===Math.round(b/S1*100)?Math.round(b/S1*100)+'%':Math.round(a/S0*100)+'% → '+Math.round(b/S1*100)+'%'}，目标 ${target}%</small></td></tr>`;
   for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,tc,gi);details+=lines(x.id,x.code,x.label,x.us)}
 });
 document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
