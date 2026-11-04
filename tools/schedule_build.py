@@ -11,6 +11,8 @@
 import argparse, datetime as dt, html, json, os, re, sys
 from collections import defaultdict
 
+from schedule_data import STABLE, flow
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
 SUB_KEYS = [('接娃和班级群', 'PS03'), ('消息排清单', '微信'), ('孩子的具体问题', '孩子')]
@@ -151,23 +153,21 @@ def view_entries(plan, U, days, D, T):
     return out
 
 
-def rule_rows(RU, U, E, GL, W):
-    """每个 use case 的预警和条数建议。阈值是初值，Reina 11/4 定先跑 1–2 周。"""
+def rule_rows(RU, U, E, GL, W, T):
+    """每个 use case 的交界点和条数建议。条数建议的阈值是初值，Reina 11/4 定先跑 1–2 周。"""
+    days = [T + dt.timedelta(days=i) for i in range(len(W))]
     X = {}
     for u, x in RU.items():
         if u not in U:
             continue
-        d = [sum(v) for v in U[u]['s']]
-        prev = sum(d[7:11]) / 4
-        lost = max(0, prev - x['lvl'])
-        y = x['y'] if x['n'] >= 5 else GL['y']
-        per = y / 3
-        need = (x['R'] + lost) / per if per else 0
-        n01 = x.get('n01', 0)  # 第 0–1 天已上线、还在起量的，算供给
-        sup0 = n01 + sum(e['n'] for e in E if e['uc'] == u and e['d'] in W and e['s'] in ('done', 'todo', 'cut'))
-        sup1 = n01 + sum(e['n'] for e in E if e['uc'] == u and e['d'] in W and e['s'] in ('done', 'todo', 'add'))
-        mult = x['y'] / GL['y']
-        mx = x['yx'] / GL['y']
+        launches = defaultdict(int)
+        for e in E:
+            if e['uc'] == u and e['d'] in W and e['s'] in ('done', 'todo', 'add'):
+                m, d = e['d'].split('/')
+                launches[dt.date(T.year, int(m), int(d))] += e['n']
+        f = flow(x, GL['y'], GL['t0'], launches, days)
+        mult = x['y'] / GL['y'] if GL['y'] else 0
+        mx = x['yx'] / GL['y'] if GL['y'] else 0
         dens = x['np'] / x['sh'] if x['sh'] else 0
         both = (x['rate'] or 0) < GL['rate'] and (x['cpr'] or 999) > GL['cpr']
         if x['n'] < 5:
@@ -182,11 +182,8 @@ def rule_rows(RU, U, E, GL, W):
             tag = '减'
         else:
             tag = '持平'
-        cov = sup0 / need if need > .5 else 9
-        lv = 'red' if cov < .5 else 'amber' if cov < 1 else ''
-        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, need=round(need), sup0=sup0, sup1=sup1,
-                    gap0=max(0, round(need - sup0)), gap1=max(0, round(need - sup1)), lv=lv, R=x['R'], lost=round(lost), chips=x['chips'],
-                    top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'])
+        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'],
+                    lv='red' if f['cross'] else '', gap0=-f['worst'], **f)
     return X
 
 
@@ -253,7 +250,7 @@ def main():
     fut = [T + dt.timedelta(days=i) for i in range(5)]
     W = [md(d) for d in fut]
     E = view_entries(plan, U, days, D, T)
-    X = rule_rows(RU, U, E, GL, W)
+    X = rule_rows(RU, U, E, GL, W, T)
     in_week = plan.get('week') == (T - dt.timedelta(days=T.weekday())).isoformat()
     if not in_week:
         print(f"WARNING schedule_plan.json 的 week 是 {plan.get('week')}，这周的排期还没写进去：页面不显示产能条和结论，排期列是空的")
@@ -266,7 +263,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), REV=R.get('rev', dict(rows=[], peak=[], npeak=0)), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
@@ -276,7 +273,7 @@ def main():
         PROG=progress_html(prog, T),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
-        FIRST=short_range(D - dt.timedelta(days=7), D - dt.timedelta(days=2)), GY=f"{GL['y']:,}",
+        FIRST=short_range(max(D - dt.timedelta(days=7), STABLE), D - dt.timedelta(days=2)), GY=f"{GL['y']:,}",
         FOOT=plan.get('foot_note', ''), BACKTEST=plan.get('backtest', ''),
         MOVES_HEAD=plan.get('moves_head', '要改什么') if T == asof else f"{md(asof)} 提的改动，{plan.get('moves_head', '要改什么')}",
         MOVES_HIDE='' if P['MOVES'] else ' hidden')
@@ -294,8 +291,7 @@ def main():
     if latest:
         open(os.path.join(a.root, 'schedule', 'index.html'), 'w', encoding='utf-8').write(render(tpl, P, fields, '../', T))
     red = [u for u, x in X.items() if x['lv'] == 'red' and any(u in g[1] for g in plan['GROUPS'][:2])]
-    amber = [u for u, x in X.items() if x['lv'] == 'amber' and any(u in g[1] for g in plan['GROUPS'][:2])]
-    print(json.dumps(dict(date=T.isoformat(), D=D.isoformat(), latest=latest, in_week=in_week, red={u: X[u]['gap0'] for u in red}, amber={u: X[u]['gap0'] for u in amber},
+    print(json.dumps(dict(date=T.isoformat(), D=D.isoformat(), latest=latest, in_week=in_week, red={u: dict(cross=X[u]['cross'], gap=X[u]['gap0']) for u in red},
                           schedules=[r['date'] for r in lst][:5]), ensure_ascii=False))
 
 

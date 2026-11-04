@@ -18,6 +18,7 @@
 - roi：这批 = 首花在 D-7 到 D-2 的素材。y 每条产出 = 前 3 天消耗按全盘一天 ¥15 万折算后的条均。其余字段见 roi_row。
 """
 import argparse, datetime as dt, json, os, re, sys
+from math import comb
 from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +26,8 @@ ONE_DAY = 150000      # 每条产出按全盘一天 ¥15 万折算
 HIT = 2000            # 放量：单日 ≥ ¥2,000
 ALIVE = 100           # 最近 2 天还在花：日均 ≥ ¥100
 RAMP = 200            # 起量日：第一次单日 ≥ ¥200
+STABLE = dt.date(2026, 10, 28)  # 预算放开的那天。之前全盘一天只有几万，折算到 15 万会把每条放大几倍，不进每条能花多少的样本
+MIN_GAP = 500                   # 累计差不到这个数不算接不上
 DROP = 0.5            # 预计下降比例：到第 4 天的素材预计掉一半。10/22–11/1 回测，日均 ≥¥1,000 的到第 4 天那两天还剩 59%，除全盘后 40%（Reina 11/5 定，跑两周再校准）
 WX_NAME = '在微信里直接跟Today对话'
 KID_NAMES = ('给孩子的具体问题', 'F04')
@@ -321,14 +324,118 @@ def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total):
         if x:
             chips[x[1].strftime('%m-%d')] += x[0]
     R = sum(chips.values())
-    n01 = sum(1 for f in fs if f.first and f.first >= D - dt.timedelta(days=1) and f.c[D] + f.c[d1] > 0)  # 第 0–1 天已上线、还在起量
+    fresh = [f for f in fs if f.first and f.first >= D - dt.timedelta(days=1) and f.c[D] + f.c[d1] > 0]  # 第 0–1 天已上线、还在起量
+    n01 = len(fresh)
+    n01d = Counter(f.first.strftime('%m-%d') for f in fresh)
+    cur01 = sum((f.c[D] + f.c[d1]) / 2 for f in fresh)
     win = lambda a, b: sum(f.c[D - dt.timedelta(days=k)] for f in fs for k in range(a, b + 1))
     tw = lambda a, b: sum(tot.get(D - dt.timedelta(days=k), 0) for k in range(a, b + 1))
     mom = (win(0, 2) / tw(0, 2) - win(3, 5) / tw(3, 5)) * 100 if tw(0, 2) and tw(3, 5) else 0  # 最近 3 天占比减前 3 天占比
-    return dict(n14=new14, n=n, y=round(s / n), yx=round((s - ys[-1]) / (n - 1)) if n > 1 else 0, top=round(ys[-1] / s, 2) if s else 0,
+    return dict(n14=new14, n=n, y=round(s / n) if n else 0, yx=round((s - ys[-1]) / (n - 1)) if n > 1 else 0, top=round(ys[-1] / s, 2) if s else 0,
                 hit=sum(1 for f in batch_fs if max(f.c.values()) >= HIT), rate=rate, cpr=cpr,
                 sh=round(c7 / c7_total * 100, 1) if c7_total else 0, np=round(new14 / total_new * 100, 1) if total_new else 0,
-                mom=round(mom, 1), lvl=round(lvl), R=round(R), Dn=round(lvl) - round(R), n01=n01, chips={k: round(v) for k, v in sorted(chips.items())})
+                mom=round(mom, 1), lvl=round(lvl), R=round(R), Dn=round(lvl) - round(R), n01=n01, n01d=dict(n01d), cur01=round(cur01), chips={k: round(v) for k, v in sorted(chips.items())})
+
+
+def flow(x, gy, t0, launches, days):
+    """每天补上来多少、掉下去多少，累计第一次变负的那天就是交界点。
+    补：前一天上线的条数 × 这个方向每条每天能花的钱（单条跑量 ÷ 3，按现在全盘一天的钱折算；不足 5 条用全盘）。
+    掉：still_up 算的老素材，加上这周新上素材跑到第 4 天掉的那部分。"""
+    T = days[0]
+    one = dt.timedelta(days=1)
+    key = lambda d: d.strftime('%m-%d')
+    p = (x['y'] if x['n'] >= 5 else gy) / 3 * t0 / ONE_DAY
+    up, down = Counter(), Counter()
+    for k, v in x['chips'].items():
+        down[k] += v
+    up[key(T)] += max(0, x.get('n01', 0) * p - x.get('cur01', 0))
+    for s, n in x.get('n01d', {}).items():
+        down[key(dt.date(T.year, int(s[:2]), int(s[3:])) + one * 4)] += n * p * DROP
+    for d, n in launches.items():
+        live = max(d, T)
+        up[key(live + one)] += n * p
+        down[key(live + one * 4)] += n * p * DROP
+    cum, c, cross, back, worst = {}, 0.0, None, None, 0.0
+    for d in days:
+        k = key(d)
+        c += up[k] - down[k]
+        cum[k] = round(c)
+        if c < -MIN_GAP and cross is None:
+            cross = k
+        if cross and back is None and c >= -MIN_GAP:
+            back = k
+        worst = min(worst, c)
+    keys = {key(d) for d in days}
+    return dict(p=round(p), up={k: round(v) for k, v in up.items() if k in keys and v >= 1}, down={k: round(v) for k, v in down.items() if k in keys and v >= 1},
+                cum=cum, cross=cross, back=back, worst=round(worst))
+
+
+def recover(fams, tot, D):
+    """每天回收前 3 天放出去的素材。一条素材的钱很偏，几条素材的平均值高低多半是碰巧有没有爆款，所以看「跑起来几条」：
+    同样跑到第几天，花的钱不低于之前素材的中位数，算跑起来。预期 = 这个方向之前素材跑起来的比例（不足 5 条按一半）。
+    碰巧这么低、这么高的概率不到 10% 才标。"""
+    one = dt.timedelta(days=1)
+    norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
+    age = lambda f: min(3, (D - f.first).days)
+    upto = lambda f, A: sum(norm(f, f.first + one * a) for a in range(A + 1))
+    per_day = lambda f: upto(f, age(f)) / (age(f) + 1)
+    name = lambda f: min((n for n in f.names if not n.startswith('推送视频_')), key=len, default=next(iter(f.names)))
+    part = {v: k for k, v in SUB_KEY.items()}
+    lo = D - one * 3
+    prior = [f for f in fams if f.first and f.spent and max(STABLE, lo - one * 10) <= f.first < lo]
+    fresh = [f for f in fams if f.first and f.spent and lo <= f.first < D]
+    rows = []
+    if prior:
+        th = {}
+        for A in range(4):
+            v = sorted(upto(f, A) for f in prior)
+            th[A] = v[len(v) // 2]
+        up = lambda f: upto(f, age(f)) >= th[age(f)]
+        by = defaultdict(list)
+        for f in fresh:
+            by[f.sub].append(f)
+        win = lambda fs, a, b: sum(f.c[D - one * k] for f in fs for k in range(a, b + 1))
+        tw = lambda a, b: sum(tot.get(D - one * k, 0) for k in range(a, b + 1))
+        for u, fs in by.items():
+            if len(fs) < 3:
+                continue
+            old = [f for f in prior if f.sub == u]
+            ps = []
+            for f in fs:
+                A = age(f)
+                ps.append(sum(1 for o in old if upto(o, A) >= th[A]) / len(old) if len(old) >= 5 else .5)
+            n, k, p = len(fs), sum(1 for f in fs if up(f)), sum(ps) / len(ps)
+            cdf = lambda m: sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(m + 1))
+            tag = '符合'
+            if n >= 5 and cdf(k) < .1:
+                group = [f for f in fams if f.sub == u]
+                share = lambda a, b: win(group, a, b) / tw(a, b) if tw(a, b) else 0
+                n7 = sum(1 for f in group if f.first and f.first >= D - one * 6)
+                tag = '可能见顶' if share(0, 2) <= share(3, 5) and n7 >= 10 else '不及预期'
+            elif n >= 5 and k >= n / 2 and 1 - cdf(k - 1) < .1:
+                tag = '超预期'
+            elif n < 5:
+                tag = '样本少'
+            best = max(fs, key=per_day)
+            ra, cp = retention(fs, D - one)
+            act = sum(f.a[d] for f in fs for d in f.a if d <= D - one)
+            days = Counter(f.first.strftime('%m-%d') for f in fs)
+            rows.append(dict(u=u, part=part.get(u), n=n, k=k, e=round(n * p, 1), days=dict(sorted(days.items())), per=round(sum(per_day(f) for f in fs) / n), tag=tag,
+                             rate=ra if act >= 30 else None, cpr=cp if act >= 30 else None, best=name(best) if up(best) else None, best_v=round(per_day(best))))
+    order = {'可能见顶': 0, '不及预期': 1, '超预期': 2, '符合': 3, '样本少': 4}
+    rows.sort(key=lambda x: (order[x['tag']], -x['n']))
+    peak = []
+    for f in fams:
+        if not f.first or f.first < D - one * 14:
+            continue
+        days = [d for d, v in f.c.items() if d <= D and v > 0]
+        pk = max(days, key=lambda d: f.c[d])
+        top = f.c[pk]
+        last2 = (f.c[D] + f.c[D - one]) / 2
+        if top >= 1000 and pk <= D - one * 2 and last2 >= ALIVE and f.c[D] < top * .7 and f.c[D - one] < top * .7:
+            peak.append(dict(name=name(f), u=f.sub, part=part.get(f.sub), first=f.first.strftime('%m-%d'), pk=round(top), pkd=pk.strftime('%m-%d'), last2=round(last2), pct=round(last2 / top * 100)))
+    peak.sort(key=lambda x: -x['pk'])
+    return dict(rows=rows, peak=peak[:8], npeak=len(peak), nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
 
 
 def make_roi(rows, fams, spend, D, T):
@@ -336,23 +443,23 @@ def make_roi(rows, fams, spend, D, T):
     for r in rows:
         tot[r['d']] += r['c']
     lo, hi = D - dt.timedelta(days=7), D - dt.timedelta(days=2)
-    W = [f for f in fams if f.first and lo <= f.first <= hi]
+    W = [f for f in fams if f.first and max(lo, STABLE) <= f.first <= hi]
     n_lo, n_hi = D - dt.timedelta(days=14), D - dt.timedelta(days=1)
     new = [f for f in fams if f.spent and n_lo <= f.batch <= n_hi]
     ys = [first_three(f, tot) for f in W]
     rate, cpr = retention(W, D - dt.timedelta(days=1))
     g = dict(y=round(sum(ys) / len(ys)) if ys else 0, hit=round(sum(1 for f in W if max(f.c.values()) >= HIT) / len(W) * 100, 1) if W else 0,
-             rate=rate, cpr=cpr, nW=len(W), allN=len(new))
+             rate=rate, cpr=cpr, nW=len(W), allN=len(new), t0=round((tot[D] + tot[D - dt.timedelta(days=1)]) / 2))
     groups = defaultdict(list)
     for f in fams:
         groups[f.sub].append(f)
     U = {}
     for u, fs in groups.items():
         batch_fs = [f for f in fs if f in W]
-        if not batch_fs:
+        if not batch_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'])
-    out = dict(g=g, U=U)
+    out = dict(g=g, U=U, rev=recover(fams, tot, D))
     keys = list(SUB_KEY.values())
     fs = [f for k in keys for f in groups.get(k, [])]
     batch_fs = [f for f in fs if f in W]

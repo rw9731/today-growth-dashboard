@@ -94,6 +94,9 @@ a{color:var(--link)}
 .alerts{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
 .alerts b{font-weight:700}
 .t-due{color:var(--crit);font-weight:700;white-space:nowrap}.t-due.m{color:var(--mute);font-weight:400}
+.t-rise{color:var(--good);font-weight:700;white-space:nowrap}.t-rise.m{color:var(--mute);font-weight:400}
+#b td.d.f.neg{background:color-mix(in srgb,var(--crit) 30%,transparent)}#b td.d.f.turn{background:color-mix(in srgb,var(--add) 34%,transparent)}.sw-turn{display:inline-block;width:14px;height:10px;margin-right:4px;background:color-mix(in srgb,var(--add) 34%,transparent);box-shadow:inset 0 0 0 1px var(--add)}.sw-neg{display:inline-block;width:14px;height:10px;margin-right:4px;background:color-mix(in srgb,var(--crit) 30%,transparent);box-shadow:inset 0 0 0 1px var(--crit)}
+.rev-note{font-size:12px;color:var(--sub);margin:0 0 8px;max-width:920px;line-height:1.6}#pk td.nm,#rev td.nm{max-width:420px;overflow-wrap:anywhere}
 .rt{font-size:11px;font-weight:700;padding:0 5px;white-space:nowrap;display:inline-block}
 .rt.up{color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}.rt.down{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}.rt.one{color:var(--ink);box-shadow:inset 0 0 0 1px var(--base)}.rt.lo{color:var(--bad)}.rt.mu{color:var(--mute);font-weight:400}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
@@ -142,18 +145,26 @@ a{color:var(--link)}
 <span class="it"><b class="t-todo">蓝色</b>待交的条数</span>
 <span class="it" id="lg-add" style="display:none"><b class="t-add">+数字</b>建议加的条数</span>
 <span class="it" id="lg-cut" style="display:none"><b class="t-cut">划线数字</b>建议拿掉的条数</span>
-<span class="it help" data-help="drop" tabindex="0"><b class="t-due">▼金额</b>预计下降额：这天有素材跑到第 4 天，预计掉下去的钱</span>
-<span class="it"><span class="pill red">▲ 缺 N</span>按现在的排期，到 {{T4}} 还差 N 条才接得上要掉的钱</span>
+<span class="it help" data-help="rise" tabindex="0"><b class="t-rise">▲金额</b>新素材预计带来的钱</span>
+<span class="it help" data-help="drop" tabindex="0"><b class="t-due">▼金额</b>素材跑到第 4 天预计掉的钱</span>
+<span class="it help" data-help="neg" tabindex="0"><i class="sw-turn"></i>黄底：这天掉的比补的多，开始往下走</span>
+<span class="it help" data-help="neg" tabindex="0"><i class="sw-neg"></i>红底：从今天累加到这天，已经比今天低，接不上</span>
 <span class="it"><b>条数建议</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
 <p class="foot">消耗到 {{D}}，柱子下面的数字是当天上传且花过钱的条数。次留、成本是 {{RET}}，绿色两项都好于全盘，红色两项都差于全盘。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
+<h2>回收：<span id="rev-range"></span> 放出去的素材</h2>
+<p class="rev-note" id="rev-note"></p>
+<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>放出</th><th>跑起来</th><th>每条每天</th><th>次留、成本</th><th>标注</th><th>最好一条</th></tr></thead><tbody></tbody></table></div>
+<h3>可能开始见顶的素材</h3>
+<p class="rev-note" id="pk-note"></p>
+<div class="scroll"><table class="dt" id="pk"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>峰值</th><th>最近 2 天日均</th><th>占峰值</th></tr></thead><tbody></tbody></table></div>
 <h2>规则</h2>
 <div class="rules">
-<p><b>预警：</b>要接的钱 = 预计下降额 + 已经掉下去的钱（{{PREV}} 日均减 {{LAST2}} 日均）。要的条数 = 要接的钱 ÷ 这个 use case 每条的日均产出。到的条数 = 第 0–1 天已上线的 + {{TW}} 已交和待交。到的不到要的一半是接不上，不到要的是偏紧。预计下降额 = 第 2 天以上还在跑的素材最近 2 天日均 × 50%。探索这档会掉也不补，只标灰。</p>
+<p><b>交界点：</b>每天补上来多少、掉下去多少，从今天起累加，这天掉的比补的多就标黄，开始往下走；累计比今天低 ¥500 以上就标红，接不上。▲ = 前一天上线的条数 × 这个方向每条每天能花的钱（单条跑量 ÷ 3，按现在全盘一天的钱折算，不足 5 条按全盘）。▼ = 第 2 天以上还在跑的素材，最近 2 天日均 × 50%，算在第 4 天；这周新上的素材跑到第 4 天也掉一半。探索这档会掉也不补，只标灰。</p>
 <p><b>回测：</b>{{BACKTEST}}</p>
 <p id="ydef"><b>单条跑量：</b>首花 {{FIRST}} 的素材，前 3 天消耗按一天 ¥15 万折算，除以全盘条均 ¥{{GY}}。条数只算花过钱的，所以偏高。</p>
-<p><b>判定：</b>按顺序看，先中先停。不足 5 条：不判，按 30 套测完。新批次留和成本都差于全盘，或成本超全盘 1.1 倍：留存差，不按量加。单条跑量 ≥1.3 倍且去掉最大一条 ≥0.8 倍：加。单条跑量 ≥0.8 倍但去掉最大一条 &lt;0.6 倍，或最大一条占 60% 以上：靠一条，小步复制。单条跑量 &lt;0.6 倍且上新占比不低于消耗占比：减。其余持平。能放量 + 留存好这档，减也不低于维持条数。阈值是初值，先跑 1–2 周。</p>
+<p><b>判定：</b>按顺序看，先中先停。不足 5 条：不判，按 30 套测完。新批次留和成本都差于同批新素材平均，或成本超平均 1.1 倍：留存差，不按量加。单条跑量 ≥1.3 倍且去掉最大一条 ≥0.8 倍：加。单条跑量 ≥0.8 倍但去掉最大一条 &lt;0.6 倍，或最大一条占 60% 以上：靠一条，小步复制。单条跑量 &lt;0.6 倍且上新占比不低于消耗占比：减。其余持平。能放量 + 留存好这档，减也不低于维持条数。阈值是初值，先跑 1–2 周。</p>
 </div>
 <h2>执行细节</h2>
 <h3>每个 use case 的排期行</h3>
@@ -173,6 +184,7 @@ function wk(d){const [m,dd]=d.split('/').map(Number);const y=m-TM>6?YR-1:TM-m>6?
 const DIR=new Set(P.DIR);
 const k=v=>v>=10000?(v/10000).toFixed(1)+'万':v>=1000?(v/1000).toFixed(1)+'k':String(Math.round(v));
 const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
+const md=s=>{const[m,d]=s.split('-');return (+m)+'/'+(+d)};
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const sum=a=>a.reduce((x,y)=>x+y,0);
 const ent=u=>P.E.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
@@ -181,7 +193,8 @@ const aftN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','add'].includes(e
 const zero=()=>({c7:0,rate:null,cpr:null,n:P.days.map(()=>0),s:P.days.map(()=>[0,0,0,0])});
 const merged=us=>{const r=zero();us.forEach(u=>{const x=P.U[u];if(!x)return;r.c7+=x.c7;x.n.forEach((v,i)=>r.n[i]+=v);x.s.forEach((v,i)=>v.forEach((w,j)=>r.s[i][j]+=w))});return r};
 const chipOf=(id,gi)=>{const x=P.X[id];return x?x.chips:{}};
-function dayCells(r,es,max,chips,muted){
+function keyOf(d){const key=P.futKey[d];return key}
+function dayCells(r,es,max,fl,muted){
   let h='';
   pastDays.forEach((d,j)=>{
     const i=j+START,seg=r.s[i],tot=sum(seg);
@@ -189,10 +202,11 @@ function dayCells(r,es,max,chips,muted){
     h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-s="${seg.join(',')}" data-n="${r.n[i]}"><div class="bar">${bars}</div><div class="cnt">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
   });
   futDays.forEach(d=>{
-    const toks=[];const key=P.futKey[d];const due=chips&&chips[key];
-    if(due>=500)toks.push(`<span class="t-due${muted?' m':''}" data-due="${due}">▼${k(due)}</span>`);
+    const toks=[];const key=keyOf(d);const up=fl?fl.up[key]||0:0,dn=fl?fl.down[key]||0:0,cum=fl?fl.cum[key]:0;
+    if(up>=500)toks.push(`<span class="t-rise${muted?' m':''}" data-flow="1">▲${k(up)}</span>`);
+    if(dn>=500)toks.push(`<span class="t-due${muted?' m':''}" data-flow="1">▼${k(dn)}</span>`);
     ['done','todo','cut','add'].forEach(s=>{const n=sum(es.filter(e=>e.d===d&&e.s===s).map(e=>e.n));if(n)toks.push(`<span class="t-${s}">${s==='add'?'+':''}${n}</span>`)});
-    h+=`<td class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}" data-d="${d}"><div class="plan">${toks.join('')}</div></td>`;
+    h+=`<td class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}${fl&&!muted?(cum<-500?' neg':up-dn<-500?' turn':''):''}" data-d="${d}"${fl?` data-up="${up}" data-dn="${dn}" data-cum="${cum}"`:''}><div class="plan">${toks.join('')}</div></td>`;
   });
   return h;
 }
@@ -203,10 +217,12 @@ function rateCell(r){
 }
 const rtCls={'加':'up','减':'down','靠一条':'one','留存差':'lo','持平':'mu','不判':'mu'};
 const rtTxt={'加':'多加','减':'减少','靠一条':'小步复制','留存差':'留存差<br>不加','持平':'不变','不判':'条数少<br>不判'};
+const prevDay=s=>{const[m,d]=s.split('-').map(Number);const x=new Date(YR,m-1,d-1);return (x.getMonth()+1)+'/'+x.getDate()};
+const gapTxt=x=>{const c=md(x.cross),e=x.back?prevDay(x.back):'';return `${!e?c+' 起':e===c?c+' ':c+'–'+e+' '}接不上，差 ${money(-x.worst)}`};
 function pill(id,gi){
   const x=P.X[id];if(!x)return '';
-  if(gi<2&&x.lv){return `<span class="pill ${x.lv}">▲ ${x.lv==='red'?'接不上':'偏紧'} 缺 ${x.gap0}</span>`}
-  if(gi===2&&x.R>=1500&&!DIR.has(id))return `<span class="pill gray">会掉，不补</span>`;
+  if(x.cross&&(gi<2||DIR.has(id))){return `<span class="pill red">${gapTxt(x)}</span>`}
+  if(gi===2&&x.cross)return `<span class="pill gray">会掉，不补</span>`;
   return '';
 }
 function row(id,code,label,r,es,max,cls,gi){
@@ -214,15 +230,15 @@ function row(id,code,label,r,es,max,cls,gi){
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[x.tag]}">${DIR.has(id)&&x.tag==='留存差'?'留存差<br>按方向加':rtTxt[x.tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}"><td class="name"><button data-go="${esc(id)}"><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}</button>${pill(id,gi)}</td>
-  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r)}${dayCells(r,es,max,x?x.chips:null,gi===2)}
+  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r)}${dayCells(r,es,max,x||null,gi===2&&!DIR.has(id))}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
 const NC=3+all.length+4;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 use case</th><th>近 7 天</th><th>次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
-const totalChips={};Object.values(P.X).forEach(x=>Object.entries(x.chips).forEach(([c,v])=>totalChips[c]=(totalChips[c]||0)+v));
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),totalChips,false)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+const totalFlow=(()=>{const f={up:{},down:{},cum:{},cross:null,turn:null,worst:0};let c=0;futDays.forEach(d=>{const key=keyOf(d);const a=sum(Object.values(P.X).map(x=>x.up[key]||0)),b=sum(Object.values(P.X).map(x=>x.down[key]||0));f.up[key]=a;f.down[key]=b;c+=a-b;f.cum[key]=c;if(c<-500&&!f.cross)f.cross=key;if(a-b<-500&&!f.turn)f.turn=key;f.worst=Math.min(f.worst,c)});return f})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),totalFlow,false)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -250,10 +266,20 @@ document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col sty
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
-const listA=lv=>Object.entries(P.X).filter(([u,x])=>x.lv===lv&&[0,1].some(g=>P.GROUPS[g][1].includes(u))).sort((p,q)=>q[1].gap0-p[1].gap0);
-const fmt=([u,x])=>`${u==='PS03'?'PS03 工作和孩子':u} 缺 ${x.gap0}`;
-const reds=listA('red'),ambers=listA('amber');
-document.getElementById('alerts').innerHTML=(reds.length?`<span class="pill red">▲ 接不上</span><span>${reds.map(fmt).join('、')}</span>`:'')+(ambers.length?`<span class="pill amber" style="margin-left:8px">▲ 偏紧</span><span>${ambers.map(fmt).join('、')}</span>`:'');
+const ucName=x=>x.part?'PS03 '+x.part:x.u+' '+(P.UC[x.u]||'');
+const lineUp=Object.entries(P.X).filter(([u,x])=>x.cross&&(P.GROUPS.slice(0,2).some(g=>g[1].includes(u))||DIR.has(u))).sort((p,q)=>p[1].cross.localeCompare(q[1].cross)||p[1].worst-q[1].worst);
+const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
+document.getElementById('alerts').innerHTML=[
+  totalFlow.cross?`<span class="pill red">全盘接不上</span> <span>${md(totalFlow.cross)} 起，比今天低，差 ${money(-totalFlow.worst)}</span>`:totalFlow.turn?`<span class="pill amber">全盘往下走</span> <span>${md(totalFlow.turn)} 起掉的比补的多，累计还比今天高</span>`:'<span>全盘到这周末，补的都多于掉的</span>',
+  lineUp.length?`<span class="pill red">接不上</span> <span>${lineUp.map(([u,x])=>`${u==='PS03'?'PS03 工作和孩子':u} ${gapTxt(x).replace(' 接不上，','，').replace('接不上，','，')}`).join('、')}</span>`:'',
+  ...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span class="pill ${c}">${t}</span> <span>${revTags(t).join('、')}</span>`:''),
+].filter(Boolean).map(h=>`<div style="margin-top:3px">${h}</div>`).join('');
+const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
+document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
+document.getElementById('rev-note').textContent=`一共放出 ${P.REV.nfresh} 条，这里列 3 条以上的方向，当天才上的明天再看。跑起来：跑到同样的天数，花的钱不低于之前素材的中位数。预期：这个方向之前跑起来的比例 × 这批条数，之前不足 5 条按一半。不及预期、超预期要 5 条以上，而且碰巧这样的概率不到 10%。可能见顶：不及预期，这个方向最近 3 天占全盘的比例又没涨，7 天内还上了 10 条以上。先看片子有没有变差，片子没问题才是到上限。钱按全盘一天 ¥15 万折算。`;
+document.querySelector('#rev tbody').innerHTML=P.REV.rows.map(x=>`<tr><td class="n">${esc(ucName(x))}</td><td class="n">${x.n} 条<small class="q">（${Object.entries(x.days).map(([d,n])=>md(d)+' '+n).join('，')}）</small></td><td class="n">${x.k} 条，预期 ${x.e}</td><td class="num">${money(x.per)}</td><td class="n">${x.rate==null?'<span class="q">样本小</span>':x.rate.toFixed(1)+'%，¥'+x.cpr}</td><td class="n">${REVCLS[x.tag]}</td><td class="nm">${x.best?esc(x.best)+`<small class="q">（${money(x.best_v)}/天）</small>`:'<span class="q">没有跑起来的</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">这几天放出去的，每个方向都不到 3 条</td></tr>';
+document.getElementById('pk-note').textContent=`首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成的，一共 ${P.REV.npeak} 条，列峰值最高的 8 条。钱是当天实际花的。`;
+document.querySelector('#pk tbody').innerHTML=P.REV.peak.map(x=>`<tr><td class="nm">${esc(x.name)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="n">${money(x.pk)}（${md(x.pkd)}）</td><td class="num">${money(x.last2)}</td><td class="num">${x.pct}%</td></tr>`).join('')||'<tr><td colspan="6" class="q">没有</td></tr>';
 document.querySelector('#b').addEventListener('click',ev=>{
   const btn=ev.target.closest('button[data-go]');if(!btn)return;
   const t=document.querySelector(`#dt tr[data-u="${CSS.escape(btn.dataset.go)}"]`);if(!t)return;
@@ -273,8 +299,10 @@ function placeTip(x,y){
 }
 const HELP={y:yHelp,
  keep:()=>`<b>维持</b>：这个方向一周要上多少条新素材，才能接住现在的消耗。<br><br><b>怎么算</b>：近 7 天里，首花 7 天内的素材花的钱 ÷ 这个方向每条素材前 7 天平均花的钱。<br><br><b>怎么看</b>：「本周上新」比它少，这个数字会变红，说明这周上的接不住，消耗大概率往下走。多于它，才有机会往上涨。`,
- rule:()=>`<b>条数建议</b>：这个方向这周该多做还是少做，看最近新上素材的单条跑量和留存。按顺序看，先中先停：<br>· 条数少不判：不足 5 条，样本不够。<br>· 留存差不加：新批次留和成本都差于全盘，或成本超全盘 1.1 倍。<br>· 多加：单条跑量 ≥1.3 倍，去掉最大一条还有 ≥0.8 倍。<br>· 小步复制：单条跑量 ≥0.8 倍，但去掉最大一条 &lt;0.6 倍或最大一条占 60% 以上，靠一条撑着。<br>· 减少：单条跑量 &lt;0.6 倍，而且上新占比不低于消耗占比。<br>· 不变：其余。<br><br>这是算出来的初值，不是定论。标了「本周方向」的按定的方向加。`,
- drop:()=>`<b>预计下降额</b>：这天预计掉下去的钱，每天多少。<br><br><b>怎么算</b>：素材跑到首花后第 4 天，通常开始掉。把第 2 天以上、还在跑的素材，最近 2 天的日均 × 50%，算在它第 4 天那天。第 0–1 天的新素材还在起量，不算下降，算进预警的「到的条数」。<br><br><b>为什么是 50%</b>：10/22–11/1 回测，日均 ≥¥1,000 的素材到第 4 天那两天还剩 59%，除掉全盘后剩 40%，取中间。样本少，跑两周再校准。`};
+ rule:()=>`<b>条数建议</b>：这个方向这周该多做还是少做，看最近新上素材的单条跑量和留存。按顺序看，先中先停：<br>· 条数少不判：不足 5 条，样本不够。<br>· 留存差不加：新批次留和成本都差于同批新素材平均，或成本超平均 1.1 倍。<br>· 多加：单条跑量 ≥1.3 倍，去掉最大一条还有 ≥0.8 倍。<br>· 小步复制：单条跑量 ≥0.8 倍，但去掉最大一条 &lt;0.6 倍或最大一条占 60% 以上，靠一条撑着。<br>· 减少：单条跑量 &lt;0.6 倍，而且上新占比不低于消耗占比。<br>· 不变：其余。<br><br>这是算出来的初值，不是定论。标了「本周方向」的按定的方向加。`,
+ rise:()=>`<b>▲ 新素材预计带来</b>：这天预计多出来多少钱，每天。<br><br><b>怎么算</b>：前一天上线的条数 × 这个方向每条每天能花的钱。每条每天 = 单条跑量 ÷ 3，再按现在全盘一天的钱折算；不足 5 条按全盘平均。第 0–1 天已上线的，算还差多少钱才到这个数。<br><br><b>注意</b>：每条按平均算，实际常常靠一两条爆款，看方向不看准数。全盘这一行偏高，因为全盘还受预算限制，条数多了每条会被摊薄。`,
+ drop:()=>`<b>▼ 预计掉</b>：这天预计掉下去的钱，每天。<br><br><b>怎么算</b>：素材跑到首花后第 4 天，通常开始掉。第 2 天以上、还在跑的素材，最近 2 天日均 × 50%，算在它第 4 天那天。这周新上的素材，跑到第 4 天也按带来的钱掉一半。<br><br><b>为什么是 50%</b>：10/22–11/1 回测，日均 ≥¥1,000 的素材到第 4 天那两天还剩 59%，除掉全盘后剩 40%，取中间。样本少，跑两周再校准。`,
+ neg:()=>`<b>黄底</b>：这天 ▼ 比 ▲ 多 ¥500 以上，从这天开始往下走。<br><br><b>红底</b>：从今天起每天的 ▲ 减 ▼ 累加，到这天比今天低 ¥500 以上。<br><br>素材要在第一个黄底或红底之前一两天补上，正在涨的时候补很难带来额外的钱。`};
 function showHelp(el,x,y){tip.innerHTML=HELP[el.dataset.help]();tip.style.maxWidth='340px';tip.hidden=false;tip.dataset.h='1';placeTip(x,y)}
 document.addEventListener('mousemove',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp){showHelp(hp,ev.clientX,ev.clientY);return}if(tip.dataset.h==='1'){tip.dataset.h='';tip.hidden=true}});
 document.addEventListener('click',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp)showHelp(hp,ev.clientX,ev.clientY)});
@@ -286,7 +314,7 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
   const c=ev.target.closest('td.d');if(!c||!c.dataset.d){tip.hidden=true;return}
   let html=`<b>${c.dataset.d}</b>`;
   if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg);html+=` 消耗 ${money(t)}`;seg.forEach((v,j)=>{if(v>0)html+=`<br>${nm[j]}批次 ${money(v)}（${Math.round(v/t*100)}%）`});html+=`<br>上新 ${c.dataset.n} 条`}
-  else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].map(s=>s.dataset.due?`预计下降 ${money(+s.dataset.due)}/天`:lab[s.className]+' '+s.textContent.replace('+','')+' 条');html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
+  else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.cum!==undefined){const v=+c.dataset.cum;tx.unshift(`新素材预计带来 ${money(+c.dataset.up)}/天`,`预计掉 ${money(+c.dataset.dn)}/天`,`从今天累加到这天 ${v<0?'−':'+'}${money(Math.abs(v))}/天`)}html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
   placeTip(ev.clientX,ev.clientY);
 });
