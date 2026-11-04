@@ -334,6 +334,7 @@
         <thead>
           <tr>
             <th>标签</th>
+            <th>判差<span class="th-sub">连续第几天</span></th>
             <th>素材</th>
             <th>素材类型</th>
             <th>上线<span class="th-sub">第一天有消耗</span></th>
@@ -370,6 +371,15 @@
 
   <section class="lx-sec" id="bad">
     <h2 class="lx-h2">五、拖后腿的素材</h2>
+    <h3 class="lx-h3">判差 3 天以上还在花<span class="lx-note" style="margin-left:8px;font-weight:400" data-draw="stuck-sum"></span></h3>
+    <p class="lx-note">判差 = 最近 3 个激活日合计至少 50 人，且次留率低于同期全盘的 80%，或次留成本高于同期全盘的 1.25 倍。周一激活的人周三上午才看得到次留，所以第 1 天从看得到那天上午算；第 1、2 天常有翻回来的，不算拖，第 3 天起还花 ¥200 以上列在这里。判差后多花 = 第一次判差那天到昨天的消耗。这里只看消耗，看不到开关状态：掉量可能是关了，也可能是系统不跑了。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead><tr><th>素材</th><th>Use case</th><th>判差</th><th>第一次判差<span class="th-sub">当天上午</span></th><th>最近 7 天消耗<span class="th-sub">深色是报告日</span></th><th class="num">昨天消耗</th><th class="num">判差后多花</th><th class="num">次留率</th><th class="num">次留成本</th><th class="num">激活<span class="th-sub">同窗口</span></th><th></th><th>链接</th></tr></thead>
+        <tbody data-draw="stuckrows"></tbody>
+      </table>
+    </div>
+    <h3 class="lx-h3">拖后腿的素材</h3>
     <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留率没到 30% 且次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留好但贵</b> = 次留率够、次留成本超过这条线。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -659,12 +669,14 @@
     box.appendChild(grid);
   };
   const groupCls = statusCls;
+  const judgeCell = (cell, r) => { const n = r.bad_n || 0; if (!n) return; cell.textContent = '第 ' + n + ' 天'; cell.style.whiteSpace = 'nowrap'; if (n >= (t.stuck_n || 3)) { cell.style.color = 'var(--color-bad)'; cell.style.fontWeight = '600'; } else if (n === 2) cell.style.color = 'var(--color-warn)'; else cell.style.color = 'var(--color-fg-muted)'; };
   const matTable = (name, keep, flag, days) => fill(name, (tb) => {
     const rows = data('mat').filter(keep); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
       const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
       const td = cellMaker(tr);
       pill(td(), r.group, groupCls[r.group]);
+      if (days) judgeCell(td(), r);
       { const nc = td('name'); nc.textContent = r.name; if (days) nc.style.minWidth = '8.5rem'; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
@@ -691,6 +703,31 @@
   const GOOD = ['能放量 + 次留好', '次留好、量还小'];
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
   matTable('badrows', (v) => /次留差|次留好但贵|拖后腿/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+
+  // 判差 3 天还在花（Reina 11/4 定）
+  fill('stuckrows', (tb) => {
+    const rows = data('mat').filter((r) => (r.bad_n || 0) >= (t.stuck_n || 3) && r.cost27 >= (t.stuck_cost || 200)).sort((a, b) => b.bad_n - a.bad_n || b.cost27 - a.cost27);
+    const cnt = document.querySelector('[data-draw="stuck-sum"]');
+    if (cnt) cnt.textContent = rows.length ? rows.length + ' 条，昨天合计 ' + fmtY(rows.reduce((s, r) => s + r.cost27, 0)) : '今天没有';
+    if (!rows.length) { const wrap = tb.closest('.lx-card'); if (wrap) wrap.hidden = true; return; }
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      { const nc = td('name'); nc.textContent = r.name; nc.style.whiteSpace = 'normal'; }
+      stack(td(), r.short || r.uc, r.l1);
+      judgeCell(td(), r);
+      td('date').textContent = fmtD(r.bad_first);
+      spark7(td(), r.days7);
+      td('num').textContent = fmtY(r.cost27);
+      td('num').textContent = fmtY(r.bad_after);
+      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate == null ? '—' : fmtP0(r.rate);
+      const cc = td(cprCls(r.cpr, o, t)); cc.textContent = r.cpr == null ? '—' : fmtY(r.cpr);
+      td('num muted').textContent = fmtN(r.act_w);
+      const nt = td(); if (r.bad_up) { nt.textContent = '判差后放量'; nt.className = 'lx-badv'; nt.style.whiteSpace = 'nowrap'; }
+      const lc = td('short lx-links'); const vid = r.video || (r.link_type === '预览' ? r.link : '');
+      if (vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '视频'; lc.appendChild(a); }
+      tb.appendChild(tr);
+    }
+  });
 
   // 扩量素材和原素材比
   fill('klrows', (box) => {

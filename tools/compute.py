@@ -22,7 +22,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import scripts_lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'rank': 1000, 'low': 0.8, 'high': 1.25}
+TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'rank': 1000, 'low': 0.8, 'high': 1.25,
+      'judge_act': 50, 'stuck_n': 3, 'stuck_cost': 200}  # 判差和「判差还在花」的门槛（Reina 11/4 定）
 L1_SHORT = {'AI 个人助理综述': 'AI 综述', '工作沟通与协作': '工作', '个人日程与事务助理': '日程', '学习与成长': '学习',
             '购物与生活服务': '购物', '健康与运动': '健康', '信息检索与追踪': '信息追踪', '出行与旅行': '出行',
             '财务与投资': '理财', '随身记事与个人资料管理': '记事'}
@@ -121,6 +122,45 @@ GOOD_RATE = 0.30  # 次留好至少 30%（Reina 11/4 定），全盘更高时要
 PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.10, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
 CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
+
+
+def bad_streak(allrows, Dd, th):
+    """每条素材连续判差几天（Reina 11/4 定）。
+
+    D 激活的人 D+1 才有次留，表 D+2 上午才看得到，所以 x 这天上午能看的是 x-4 到 x-2 激活的人。
+    判差：这 3 天激活合计 >= judge_act，且次留率 < 同期全盘的 low 倍，或次留成本 > 同期全盘的 high 倍。
+    报告日 D 的页面在 D+1 上午看，从 D+1 上午往回数。返回 {素材ID: {bad_n, bad_first, bad_after, bad_up}}。
+    """
+    one = dt.timedelta(days=1)
+    cost, act, ret = defaultdict(float), defaultdict(float), defaultdict(float)
+    tc, ta, tr = defaultdict(float), defaultdict(float), defaultdict(float)
+    for r in allrows:
+        d = dt.date.fromisoformat(r['date'])
+        cost[r['id'], d] += r['cost']; act[r['id'], d] += r['act']; ret[r['id'], d] += r['ret']
+        tc[d] += r['cost']; ta[d] += r['act']; tr[d] += r['ret']
+
+    def is_bad(i, x):
+        ds = [x - one * k for k in (4, 3, 2)]
+        c = sum(cost[i, d] for d in ds); a = sum(act[i, d] for d in ds); rt = sum(ret[i, d + one] for d in ds)
+        C = sum(tc[d] for d in ds); A = sum(ta[d] for d in ds); R = sum(tr[d + one] for d in ds)
+        if a < th['judge_act'] or not A or not R:
+            return False
+        return rt / a < th['low'] * R / A or not rt or c / rt > th['high'] * C / R
+
+    out = {}
+    for i in {r['id'] for r in allrows}:
+        n, x = 0, Dd + one
+        while n < 60 and is_bad(i, x):
+            n += 1
+            x -= one
+        if not n:
+            continue
+        first = x + one  # 第一次判差那天上午
+        after = sum(cost[i, first + one * k] for k in range((Dd - first).days + 1))
+        on_first = cost[i, first]
+        out[i] = {'bad_n': n, 'bad_first': first.isoformat(), 'bad_after': round(after, 2),
+                  'bad_up': n >= 2 and cost[i, Dd] >= 500 and cost[i, Dd] >= 1.5 * on_first}
+    return out
 
 
 def chan_of(src, track, name):
@@ -493,6 +533,9 @@ def main():
             cost7_m[(r['id'], r['date'])] += r['cost']
     for m in mat:
         m['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7_m[(m['id'], d)], 2)] for d in d7]
+    streak = bad_streak(allrows, Dd, th)
+    for m in mat:
+        m.update(streak.get(m['id'], {}))
 
     # 素材类型
     kind_id = {}
