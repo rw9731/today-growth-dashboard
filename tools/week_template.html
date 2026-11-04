@@ -23,6 +23,8 @@
   .lx-table td.wk-why { min-width: 14rem; white-space: normal; line-height: 1.5; font-size: 12.5px; }
   .lx-table td.wk-use { min-width: 8rem; max-width: 14rem; white-space: normal; line-height: 1.45; font-size: 12.5px; }
   .wk-pick.bad { background: var(--color-bad); }
+  .wk-tag { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
+  .wk-pick { white-space: nowrap; }
   .wk-scripts .sc-cell { max-width: 26rem; }
   .wk-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 18px; vertical-align: middle; }
   .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
@@ -164,12 +166,13 @@
 
   <section class="lx-sec" id="top-mats">
     <h2 class="lx-h2">四、头部素材和拖后腿的素材</h2>
-    <p class="lx-note">头部素材按周消耗排，这周有一天消耗到 ¥2,000 以上、至少 100 个激活、次留率不低于、次留成本不高于全盘，不限条数，这周一共 <b data-draw="n-good">—</b> 条。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
+    <p class="lx-note">这周有一天消耗到 ¥2,000 以上，或周消耗过 <b data-draw="top-bar">—</b> 的素材全部列出，共 <b data-draw="n-heads">—</b> 条，占全盘消耗 <b data-draw="heads-share">—</b>。<span class="wk-pick">好</span> 激活 100 以上，次留率不低于、次留成本不高于全盘（<b data-draw="n-good">—</b> 条）；<span class="wk-pick bad">不好</span> 激活 50 以上，次留率低于全盘 85% 或次留成本超过全盘 1.2 倍（<b data-draw="n-bad">—</b> 条）；其余是一般，激活不够的写样本小。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th></th>
+            <th>标签</th>
             <th>素材</th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
@@ -177,7 +180,7 @@
             <th class="num">次留成本</th>
             <th class="num">连续 3 留率</th>
             <th class="num">连续 3 留成本</th>
-            <th>怎么用</th>
+            <th>说明</th>
             <th>链接</th>
           </tr>
         </thead>
@@ -191,11 +194,12 @@
       <div class="lx-ang" data-draw="angrows"></div>
     </div>
     <h3 class="lx-h3">拖后腿的素材</h3>
-    <p class="lx-note">周消耗过 <b data-draw="top-bar">—</b>（全盘 1%，最少 ¥5,000），但次留率低于全盘 85% 或次留成本超过全盘 1.2 倍。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
+    <p class="lx-note">上面范围里标不好的全部列出。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
+            <th>标签</th>
             <th>素材</th>
             <th>素材类型 · Use case</th>
             <th>周消耗<span class="th-sub">每天</span></th>
@@ -252,7 +256,7 @@
             <th class="num">本周新上<span class="th-sub">条</span></th>
             <th class="num">上周新上<span class="th-sub">条</span></th>
             <th class="num">跑起来<span class="th-sub">新上里周消耗 ≥ ¥1,000</span></th>
-            <th class="num">进头部<span class="th-sub">新上里</span></th>
+            <th class="num">标好的<span class="th-sub">新上里</span></th>
             <th class="num">在跑<span class="th-sub">条</span></th>
             <th>周消耗<span class="th-sub">占全盘</span></th>
             <th class="num">次留率</th>
@@ -285,7 +289,7 @@
     <div class="wk-todo">
       <div class="pl-blk" style="--bc:var(--color-ok)"><h3>继续扩量的 use case<span>能放量、留存也好</span></h3><ol data-draw="scale"></ol></div>
       <div class="pl-blk" style="--bc:var(--color-bad)"><h3>留存差的 use case<span>留存不达标，或库里已暂停；是否继续看公司战略</span></h3><ol data-draw="drop"></ol></div>
-      <div class="pl-blk" style="--bc:var(--bar)"><h3>拿去二创的素材<span>从头部素材里挑</span></h3><ol data-draw="remix"></ol></div>
+      <div class="pl-blk" style="--bc:var(--bar)"><h3>拿去二创的素材<span>从标好的素材里挑</span></h3><ol data-draw="remix"></ol></div>
       <div class="pl-blk" style="--bc:var(--color-bad)"><h3>停掉或降预算的素材<span>钱花得不值</span></h3><ol data-draw="stop"></ol></div>
       <div class="pl-blk wk-full" style="--bc:var(--color-warn)"><h3>其他要做的<span>产能、口径、要谁跟进</span></h3><ol data-draw="other"></ol></div>
     </div>
@@ -491,26 +495,39 @@
   // 三、素材
   const remix = {}; for (const x of N.remix || []) if (x.id) remix[x.id] = x;
   const why = N.top_note || {};
+  const heads = data('heads');
+  const tagCell = (c, t) => { const p = document.createElement('span'); p.className = t === '好' ? 'wk-pick' : t === '不好' ? 'wk-pick bad' : 'wk-tag'; p.textContent = t; c.appendChild(p); };
+  const tagWhy = (m) => {
+    if (m.tag === '样本小') return '激活不够，先不判断';
+    if (m.tag === '好') return '次留率和次留成本都好于全盘';
+    const a = m.rate < rw, b = m.cpr > cw;
+    return a && b ? '次留率、次留成本都差一点' : a ? '成本达标，次留率低于全盘' : '次留率达标，次留成本高于全盘';
+  };
+  fill('n-heads', (el) => { el.textContent = heads.length; });
+  fill('heads-share', (el) => { el.textContent = d3.format('.0%')(d3.sum(heads, (m) => m.share)); });
+  fill('n-bad', (el) => { el.textContent = heads.filter((m) => m.tag === '不好').length; });
   fill('top-rows', (tb) => {
-    const rows = data('top'); const max = d3.max(rows, (m) => m.spend) || 1;
+    const rows = heads.filter((m) => m.tag !== '不好'); const max = d3.max(rows, (m) => m.spend) || 1;
     rows.forEach((m, i) => {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
       td('wk-rank').textContent = i + 1;
+      tagCell(td(), m.tag);
       const n = td(); nameCell(n, m); if (remix[m.id]) { n.append(document.createElement('br')); const p = document.createElement('span'); p.className = 'wk-pick'; p.textContent = '二创'; n.appendChild(p); }
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
       td(rateCls(m.rate)).textContent = fmtP(m.rate); td(cprCls(m.cpr)).textContent = fmtY(m.cpr);
       td(r3Cls(m.rate3)).textContent = fmtP(m.rate3); td(c3Cls(m.cpr3)).textContent = fmtY(m.cpr3);
-      td('wk-use').textContent = remix[m.id] ? '拿去二创' : ((N.top_use || {})[m.id] || '');
+      td('wk-use').textContent = remix[m.id] ? '拿去二创' : ((N.top_use || {})[m.id] || tagWhy(m));
       links(td(), m);
       tb.appendChild(tr);
     });
   });
   fill('bad-rows', (tb) => {
-    const rows = data('bad'); const max = d3.max(rows, (m) => m.spend) || 1;
-    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 8; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
+    const rows = heads.filter((m) => m.tag === '不好').sort((p, q) => (q.excess || 0) - (p.excess || 0)); const max = d3.max(rows, (m) => m.spend) || 1;
+    if (!rows.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 9; c.className = 'muted'; c.textContent = '这周没有过线又明显拖后腿的素材。'; tr.appendChild(c); tb.appendChild(tr); return; }
     for (const m of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
+      tagCell(td(), m.tag);
       nameCell(td(), m);
       const k = td('stack'); const b = document.createElement('b'); b.textContent = m.kind; const s = document.createElement('span'); s.textContent = m.uc + ' ' + m.short; k.append(b, s);
       const cs = td(); const w = barCell(cs, m.spend, max, 60); w.append(' '); spark(w, m.days);
