@@ -213,7 +213,7 @@ function pill(id,gi){
 function row(id,code,label,r,es,max,cls,gi){
   const a=nowN(es),b=aftN(es),mt=P.MT[id],x=P.X[id];
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small></td>`:'<td class="st q"></td>';
-  const rCell=x?`<td class="st"><span class="rt ${rtCls[x.tag]}">${rtTxt[x.tag]}</span></td>`:'<td class="st"></td>';
+  const rCell=x?`<td class="st"><span class="rt ${rtCls[x.tag]}">${DIR.has(id)&&x.tag==='留存差'?'留存差<br>按方向加':rtTxt[x.tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}"><td class="name"><button data-go="${esc(id)}"><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}</button>${pill(id,gi)}</td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r)}${dayCells(r,es,max,x?x.chips:null,gi===2)}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
