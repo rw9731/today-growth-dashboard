@@ -207,7 +207,7 @@
     </div>
     <p class="lx-take" data-draw="take"></p>
     <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率至少 30% 且不低于三天全盘，次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于三天全盘，次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
@@ -272,7 +272,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本同时过线：次留率至少 30% 且不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
+    <p class="lx-note">按昨天消耗排。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
     <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留差,样本不够,新上线"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -451,7 +451,7 @@
     <div class="pl-grid">
       <div class="pl-card">
         <h3>Use case 分在哪一层（{{D}}）</h3>
-        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>能放量、留存好</b> = 过放量线，次留率至少 30% 且不低于全盘，次留成本不高于全盘；<b>量中等、留存好</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率至少 30% 且不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 过放量线但次留不达标。</p>
+        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>能放量、留存好</b> = 过放量线，次留率不低于全盘，次留成本不高于全盘；<b>量中等、留存好</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 过放量线但次留不达标。</p>
         <div class="pl-chart" data-draw="pl-quad"></div>
         <div class="pl-legend" data-draw="pl-legend"></div>
       </div>
@@ -532,7 +532,7 @@
   const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
   const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
   const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
-  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= Math.max(o.rate_w, 0.3) ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
+  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate_w ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
   const r3Cls = (v, o) => (v === null || v === undefined || o.rate3_w == null ? 'num muted' : v >= o.rate3_w ? 'num lx-good' : v < 0.8 * o.rate3_w ? 'num lx-badv' : 'num');
   const c3Cls = (v, o) => (v === null || v === undefined || o.cpr3_w == null ? 'num muted' : v <= o.cpr3_w ? 'num lx-good' : v > 1.25 * o.cpr3_w ? 'num lx-badv' : 'num');
   const ret3 = (td, r, o) => { td(r3Cls(r.rate3, o)).textContent = fmtP(r.rate3); td(c3Cls(r.cpr3, o)).textContent = fmtY(r.cpr3); };

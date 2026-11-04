@@ -168,7 +168,7 @@ def main():
             elif s['rate'] < 0.9 * rw:
                 flag = '次留率低'
             elif s['rate'] < bar:
-                flag = '次留率不到 30%'
+                flag = '次留率低于全盘'
             else:
                 flag = '次留成本偏高'
         ids = {r['id'] for r in rs if r['date'] in W and r['cost'] > 0}
@@ -241,7 +241,7 @@ def main():
         m['pick'] = bool(m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw)
     bad = sorted([m for m in mats if m['bad']], key=lambda m: -(m['excess'] or 0))[:WTH['bad_cap']]
     # 第四部分（Reina 11/4）：这周有一天消耗到门槛或周消耗过线的全部列出，标签和日报、use case 的说法一致。
-    # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率至少 30% 且不低于全盘，次留成本不高于全盘）；
+    # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率不低于全盘，次留成本不高于全盘）；
     # 次留差（激活 ≥ 50，次留率低于全盘 85%，或次留率没到线且次留成本超过全盘 1.2 倍）；
     # 次留好要次留率和次留成本同时过线；其余写次留一般。
     def tag_of(m):

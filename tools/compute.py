@@ -118,7 +118,7 @@ def load_rows(path):
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
-GOOD_RATE = 0.30  # 次留好至少 30%（Reina 11/4 定），全盘更高时要不低于全盘
+GOOD_RATE = 0  # 次留好 = 次留率和次留成本都比大盘均值好（Yitao、Reina 11/4 定）。之后要提高要求就把最低线写在这里
 PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.10, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
 CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
@@ -220,7 +220,7 @@ def tiers_for(allrows, ucs, Dd, th):
             elif rate < 0.9 * rate_w:
                 flag = '次留率低'
             elif rate < bar:
-                flag = '次留率不到 30%'
+                flag = '次留率低于全盘'
             else:
                 flag = '次留成本偏高'
         s['flag'] = flag
@@ -379,7 +379,7 @@ def main():
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def ret_word(rate, cpr):
-        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好要次留率和次留成本同时过线；次留率至少 30%，全盘更高时不低于全盘。
+        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好 = 次留率和次留成本都比大盘均值好。
         if rate is None:
             return None
         bar = max(o['rate_w'], GOOD_RATE)
