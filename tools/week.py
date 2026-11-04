@@ -26,7 +26,7 @@ WTH = {
     'nice': 1.10,                                 # 次优先的次留成本可以到全盘 1.1 倍
     'top_day': 2000,                              # 头部素材：这周有一天消耗 ≥ ¥2,000（Reina 11/2 定，不限条数）
     'top_share': 0.01, 'top_min': 5000,           # 拖后腿的素材：周消耗 ≥ 全盘 1% 且 ≥ ¥5,000
-    'tag_act': 50,                                # 第四部分标「不好」至少要 50 个激活
+    'tag_act': 50,                                # 第四部分判断次留差至少要 50 个激活
     'top_act': 100,                               # 头部素材至少 100 个激活才判断次留
     'bad_cap': 8,                                 # 拖后腿最多几条
     'bad_rate': 0.85, 'bad_cpr': 1.20,            # 表现差：次留率 < 全盘 85% 或 次留成本 > 全盘 1.2 倍
@@ -231,16 +231,21 @@ def main():
         # 连续 3 留不进这条规则：它对不是天天用的 use case 偏低。
         m['pick'] = bool(m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw)
     bad = sorted([m for m in mats if m['bad']], key=lambda m: -(m['excess'] or 0))[:WTH['bad_cap']]
-    # 第四部分（Reina 11/4：素材太少，要好和不好的标签）：这周有一天消耗到门槛或周消耗过线的全部列出，每条打标签。
-    # 好 = 激活 ≥ 100，次留率不低于、次留成本不高于全盘；不好 = 激活 ≥ 50，次留率低于全盘 85% 或次留成本超过全盘 1.2 倍。
+    # 第四部分（Reina 11/4）：这周有一天消耗到门槛或周消耗过线的全部列出，标签和日报、use case 的说法一致。
+    # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率不低于、次留成本不高于全盘）；
+    # 次留差（激活 ≥ 50，次留率低于全盘 85%，或次留率低于全盘且次留成本超过全盘 1.2 倍）；
+    # 次留好但贵（次留率不低于全盘，次留成本超过 1.2 倍）；其余按差在哪写次留略低、成本略高。
     def tag_of(m):
-        if m['act_r'] < WTH['tag_act'] or m['rate'] is None:
-            return '样本小'
-        if m['rate'] < WTH['bad_rate'] * rw or (m['cpr'] or 1e9) > WTH['bad_cpr'] * cw:
-            return '不好'
-        if m['rate'] >= rw and (m['cpr'] or 1e9) <= cw:
-            return '好' if m['act_r'] >= WTH['top_act'] else '样本小'
-        return '一般'
+        r, c = m['rate'], m['cpr'] or 1e9
+        if m['act_r'] < WTH['tag_act'] or r is None:
+            return '激活太少'
+        if r >= rw and c <= cw:
+            return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '激活太少'
+        if r >= rw:
+            return '能放量 + 次留好但贵' if c > WTH['bad_cpr'] * cw else '能放量 + 成本略高'
+        if r < WTH['bad_rate'] * rw or c > WTH['bad_cpr'] * cw:
+            return '能放量 + 次留差'
+        return '能放量 + 次留略低'
     for m in mats:
         m['tag'] = tag_of(m)
     heads = sorted(mats, key=lambda m: -m['spend'])
