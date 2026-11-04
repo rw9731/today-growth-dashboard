@@ -25,6 +25,7 @@ ONE_DAY = 150000      # 每条产出按全盘一天 ¥15 万折算
 HIT = 2000            # 放量：单日 ≥ ¥2,000
 ALIVE = 100           # 最近 2 天还在花：日均 ≥ ¥100
 RAMP = 200            # 起量日：第一次单日 ≥ ¥200
+DROP = 0.5            # 预计下降比例：到第 4 天的素材预计掉一半。10/22–11/1 回测，日均 ≥¥1,000 的到第 4 天那两天还剩 59%，除全盘后 40%（Reina 11/5 定，跑两周再校准）
 WX_NAME = '在微信里直接跟Today对话'
 KID_NAMES = ('给孩子的具体问题', 'F04')
 UNMARKED = []         # PS03 里花过钱、映射没标子方向的素材
@@ -291,10 +292,11 @@ def retention(fs, d1):
 
 
 def still_up(f, D, T):
-    """接下来到第 4 天还没掉的素材：起量（第一次单日 ≥ ¥200）在最近 6 天内、峰值在最近 2 天；或者首花到 T 还不满 4 天。
-    返回 (日均消耗, 到第 4 天的日期)，不算的返回 None。"""
+    """接下来到第 4 天预计会掉的素材：起量（第一次单日 ≥ ¥200）在最近 6 天内、峰值在最近 2 天；或者首花到 T 还不满 4 天。
+    D 时才第 0–1 天的还在起量，不算下降，算进供给（roi_row 的 n01）。
+    返回 (预计下降额 = 最近 2 天日均 × DROP, 到第 4 天的日期)，不算的返回 None。"""
     last2 = (f.c[D] + f.c[D - dt.timedelta(days=1)]) / 2
-    if last2 < ALIVE or not f.first:
+    if last2 < ALIVE or not f.first or f.first >= D - dt.timedelta(days=1):
         return None
     dates = sorted(d for d, v in f.c.items() if d <= D and v > 0)
     peak_day = max(dates, key=lambda d: f.c[d])
@@ -303,7 +305,7 @@ def still_up(f, D, T):
     new = f.first >= T - dt.timedelta(days=4)
     if not (rising or new):
         return None
-    return last2, max(T, f.first + dt.timedelta(days=4))
+    return last2 * DROP, max(T, f.first + dt.timedelta(days=4))
 
 
 def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total):
@@ -319,13 +321,14 @@ def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total):
         if x:
             chips[x[1].strftime('%m-%d')] += x[0]
     R = sum(chips.values())
+    n01 = sum(1 for f in fs if f.first and f.first >= D - dt.timedelta(days=1) and f.c[D] + f.c[d1] > 0)  # 第 0–1 天已上线、还在起量
     win = lambda a, b: sum(f.c[D - dt.timedelta(days=k)] for f in fs for k in range(a, b + 1))
     tw = lambda a, b: sum(tot.get(D - dt.timedelta(days=k), 0) for k in range(a, b + 1))
     mom = (win(0, 2) / tw(0, 2) - win(3, 5) / tw(3, 5)) * 100 if tw(0, 2) and tw(3, 5) else 0  # 最近 3 天占比减前 3 天占比
     return dict(n14=new14, n=n, y=round(s / n), yx=round((s - ys[-1]) / (n - 1)) if n > 1 else 0, top=round(ys[-1] / s, 2) if s else 0,
                 hit=sum(1 for f in batch_fs if max(f.c.values()) >= HIT), rate=rate, cpr=cpr,
                 sh=round(c7 / c7_total * 100, 1) if c7_total else 0, np=round(new14 / total_new * 100, 1) if total_new else 0,
-                mom=round(mom, 1), lvl=round(lvl), R=round(R), Dn=round(lvl) - round(R), chips={k: round(v) for k, v in sorted(chips.items())})
+                mom=round(mom, 1), lvl=round(lvl), R=round(R), Dn=round(lvl) - round(R), n01=n01, chips={k: round(v) for k, v in sorted(chips.items())})
 
 
 def make_roi(rows, fams, spend, D, T):
