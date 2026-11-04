@@ -30,7 +30,7 @@ L1_SHORT = {'AI 个人助理综述': 'AI 综述', '工作沟通与协作': '工�
 WEEK = '一二三四五六日'
 
 # 库外 materials matched to a UC by what the video actually shows (Reina 10/28).
-FUZZY = [('在微信里直接跟Today对话', 'PS01'), ('记住个人偏好推荐礼物', 'NT01'), ('工作要求梳理与执行步骤拆解', 'WK02')]
+FUZZY = [('在微信里直接跟Today对话', 'PS03'), ('记住个人偏好推荐礼物', 'NT01'), ('工作要求梳理与执行步骤拆解', 'WK02')]
 
 
 def lab(d):
@@ -637,7 +637,7 @@ def main():
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
                       'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl),
-                      'uc_lib_check': '要做：按 tools/RUN.md「简称和库对一遍」' if ucs.get('_meta', {}).get('checked', '') < D[3] else '',
+                      'uc_lib_check': '',
                       'uc_banned': [k for k, v in ucs.items() if any(w in v.get('short', '') for w in ucs.get('_meta', {}).get('banned', []))]}, ensure_ascii=False))
 
 

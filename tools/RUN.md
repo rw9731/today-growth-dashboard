@@ -2,10 +2,10 @@
 
 D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素材」(1LHsOHd5U7Ep0SHF-XQecIE-wj9FN2JireiPFhvp3t0Q)，「投放数据_分日」每天 10:13 左右更新到 D。
 
-1. 读 `'投放数据_分日'!A1:AB` 和 `'素材链接库'!A1:D`（get_values，结果存成文件）。
+1. 读 `'投放数据_分日'!A1:AB` 和 `'素材链接库'!A1:D`（get_values，结果存成文件）。再读 `'✅ Use case 库'!A1:G200` 存成文件，跑 `python3 tools/sync_ucs.py <库文件>` 同步简称（库里 Use case 写成「简称：描述」，第一个冒号前就是简称，Reina 11/4 定，不手改 ucs.json）。输出 changed 不为空要写进最后回复，no_colon 不为空说明库里有 Use case 没写简称，告诉 Reina。
 2. `python3 tools/compute.py --sheet <分日文件> --linklib <链接库文件> --date D --out /tmp/results.json`
    - 输出 `NO_DATA`：表里还没有 D，等 20 分钟再读。
-   - `unknown_uc` 不为空：在「✅ Use case 库」找到这些 UC，把 `{"short": 4–8 字简称, "l1": 一级分类, "l2": 二级分类}` 加进 tools/ucs.json，再跑一次。
+   - `unknown_uc` 不为空：先确认库里有这些 UC，再跑一次 sync_ucs.py；库里没有的告诉 Reina，不自己起名字。
 3. 补链接（要用 Reina 电脑上的内置浏览器，连不上就跳过）：`python3 tools/links_js.py /tmp/results.json --out /tmp/linkjs` 生成几段 JS，每段在它第一行写的飞书页面里用 javascript_tool 跑，返回的 JSON 存成同名 .json；然后 `python3 tools/links_merge.py /tmp/linkjs`，再跑一次第 2 步。原片 = Reina 新表「today ai koc kol 真人原素材」(https://my.feishu.cn/wiki/Z85OwlT9iion1Xk2ASAc9xcGnTs) 的「素材发布链接」，成片 = 唯西表「脚本及成片」里那一格，预览 = 唯西日报里的巨量素材视频（每条素材都要有，看板上的「视频」）。
    - 巨量直取（内置浏览器要已登录巨量；跳到登录页就跳过）：`python3 tools/jl_js.py /tmp/results.json --out /tmp/linkjs --sheet <分日文件>` 生成 jl.js（只找唯西日报没有视频的，所以要在 yulan.json 存好之后跑）；在 https://ad.oceanengine.com/material_center/management/video?aadvid=1878223927194825 用 javascript_tool 跑 jl.js 全文，再跑 `await __jlWait()`（没 done 就再跑一次），结果存成 /tmp/linkjs/jl_status.json；然后 `await __jlGet(0)`、`await __jlGet(1)`… 一直到返回 []，把每次返回的数组原样拼成一个，存成 /tmp/linkjs/jl.json（每条带 h 校验码，抄错的链接 links_merge.py 会丢掉）。再跑 links_merge.py。同一个素材 ID 会推到很多账户，tools/jl_hubs.json 里那几个账户基本都有，找不到的再逐个账户搜（最多 100 次）。巨量链接是签名的，2 天过期；唯西日报有永久链接就用唯西的，没有才用巨量的，所以往期页面每天要 `python3 tools/relink.py <日期>` 刷一遍。
 4. 扩量分析（也要用内置浏览器，连不上就跳过，看板只显示数字）：`python3 tools/kl_list.py /tmp/results.json --sheet <分日文件>` 列出 D 消耗 ≥ ¥500、notes/D.json 里还没写的扩量家族（最多 4 个），带扩量版和原素材的视频链接。
@@ -29,17 +29,12 @@ D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素
 - 对不是天天用的 use case 偏低，不能单凭它停量、不加量或判好坏，要和次留、次留成本一起看。
 - 次留和日报定义相同，巨量回传会漏一部分，通常低几个百分点。团队看留存水平用 Daily Insight。
 
-## 简称和库对一遍（Reina 11/3 定，日报、周报都做）
+## 简称（Reina 11/4 定，日报、周报、排期看板都一样）
 
-compute.py 输出里 `uc_lib_check` 不为空，或 `uc_banned` 不为空，就在写 notes 之前做这一步：
-- 读 `'✅ Use case 库'!D1:Q200`（Use case、UC_ID、状态、修改历史）。修改历史里日期晚于 tools/ucs.json `_meta.checked` 的 UC，把它的简称和现在的 Use case 对一遍。简称是 tools/ucs.json 的 short，页面和 notes 都用它。
-- 简称用了库已经去掉的说法、或不再符合库的：能确定怎么改就改 short，写进最后回复和推送（旧名 → 新名）；拿不准的不改，写进最后回复等 Reina 定。
-- 对完把 `_meta.checked` 改成 D。
-- `_meta.banned` 里的词（重排、重新排，Reina diss 过很多遍）不写进简称，也不写进 notes。素材原名和视频字幕原话照实留着，不改（素材名是跟巨量和飞书匹配用的，字幕是视频里真实的话）；字幕里有这个词的，脚本 note 里提一句。
+库里 Use case 列写成「简称：描述」，第一个冒号前就是简称。每次跑之前用 tools/sync_ucs.py 从库同步，页面和 notes 都用这个简称，不自己换说法。周报第 1 步同样先同步。
+`_meta.banned` 里的词（重排、重新排，Reina diss 过很多遍）不写进简称，也不写进 notes。素材原名和视频字幕原话照实留着，不改（素材名是跟巨量和飞书匹配用的，字幕是视频里真实的话）；字幕里有这个词的，脚本 note 里提一句。
 
-## 标签（Reina 11/4 定，日报周报的 use case、素材类型、素材都用这一套）
-
-只有 8 个标签：能放量 + 次留好、能放量 + 次留一般、能放量 + 次留差、量小 + 次留好、量小 + 次留一般、量小 + 次留差、样本不够、新上线。次留好要次留率和次留成本都比大盘均值好；次留差是次留率低于全盘的 80%（周报 85%）或次留成本超过全盘 1.25 倍（周报 1.2 倍）；其余是次留一般。能放量：use case 和素材类型看占全盘 3%（周报还要 ¥2 万），素材看三天消耗过 ¥1,000。不写次留好但贵、成本略高这些。页面颜色：绿、灰蓝、红看次留，实心是能放量，空心是量小。
+PS03 工作和孩子（Reina 11/4 定）：「在微信里直接跟Today对话」这条线并进 PS03，素材映射 I 列按内容标，只有工作的归 WK02，老板语音、合作方、一个人住归 PS01。PS03 按「子方向」看三部分：接娃和班级群、消息排清单、孩子的具体问题。新素材按字幕内容判，不按素材名继承。
 
 ## 判差第几天（Reina 11/4 定，日报第四节和第五节）
 
@@ -96,7 +91,7 @@ compute.py 自动算：
 
 M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10:13 左右）。
 
-1. 读 `'投放数据_分日'!A1:AB`（存成文件），`python3 tools/week.py --sheet <分日文件> --week M --out /tmp/week.json`。输出 `NO_DATA` 就是周日还没出。
+1. 读 `'投放数据_分日'!A1:AB`（存成文件），再读 `'✅ Use case 库'!A1:G200` 跑 `python3 tools/sync_ucs.py <库文件>` 同步简称，然后 `python3 tools/week.py --sheet <分日文件> --week M --out /tmp/week.json`。输出 `NO_DATA` 就是周日还没出。
 2. 读全片脚本（见下面「读全片脚本」）：`python3 tools/script_todo.py --week /tmp/week.json --out /tmp/sc`，范围是周消耗 ≥ ¥2,000 的所有素材，脚本库里没有的都要读。
 3. 看 /tmp/week.json 和 scripts/ 写 `notes/week-M.json`：
 ```
