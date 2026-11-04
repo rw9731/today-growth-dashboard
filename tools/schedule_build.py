@@ -171,11 +171,8 @@ def rule_rows(RU, U, E, GL, W, T):
         mult = x['y'] / GL['y'] if GL['y'] else 0
         mx = x['yx'] / GL['y'] if GL['y'] else 0
         dens = x['np'] / x['sh'] if x['sh'] else 0
-        both = (x['rate'] or 0) < GL['rate'] and (x['cpr'] or 999) > GL['cpr']
         if x['n'] < 5:
             tag = '不判'
-        elif both or (x['cpr'] or 999) > GL['cpr'] * 1.1:
-            tag = '留存差'
         elif mult >= 1.3 and mx >= .8:
             tag = '加'
         elif mult >= .8 and (mx < .6 or x['top'] >= .6):
@@ -186,6 +183,17 @@ def rule_rows(RU, U, E, GL, W, T):
             tag = '持平'
         X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
     return X
+
+
+def with_links(rev):
+    """回收表的素材配上能打开的片子链接。"""
+    links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    url = lambda i: (lambda x: x.get('link') or x.get('video') or x.get('jl') or '')(links.get(i, {}))
+    for x in rev.get('bad', []):
+        x['url'] = url(x['id'])
+        if x.get('base'):
+            x['base']['url'] = url(x['base']['id'])
+    return rev
 
 
 def uc_names(plan):
@@ -265,7 +273,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, REV=R.get('rev', dict(rows=[], peak=[], npeak=0)), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:

@@ -391,6 +391,35 @@ def total_warn(X, t0):
     return {k: round(v) for k, v in net.items() if v > max(MIN_GAP, WARN_ALL * t0)}
 
 
+def base_name(n):
+    n = re.sub(r'^推送视频_', '', n.strip())
+    n = re.sub(r'\s*\(\d+\)$', '', n)
+    n = re.sub(r'[_-]合规修改$', '', n)
+    return re.sub(r'_20\d{6}$', '', n)
+
+
+def base_of(f, by_base, stat):
+    """这条素材的底稿：扩量的上一版；二创的原片；都没有就用同一个脚本编号里激活够、次留最好的一条。"""
+    for n in sorted(f.names, key=len):
+        b = base_name(n)
+        for parent, how in ((b[:b.rfind('_扩量')].rstrip('_') if '_扩量' in b else '', '底稿'), (re.split(r'[_-]二创', b)[0] if '二创' in b else '', '原片')):
+            g = by_base.get(parent)
+            if g and g is not f:
+                return g, how
+    for n in sorted(f.names, key=len):
+        m = re.match(r'(.*-[A-Z]{1,2}\d{2})-', base_name(n))
+        if m:
+            same = [g for g in {id(x): x for k, x in by_base.items() if k.startswith(m.group(1) + '-')}.values() if g is not f and stat(g)[0] >= 50]
+            if same:
+                return max(same, key=lambda g: stat(g)[1] or 0), '同脚本'
+    for n in sorted(f.names, key=len):
+        stem = re.split(r'[_-](?:二创|扩量)', base_name(n))[0]
+        same = [g for g in {id(x): x for k, x in by_base.items() if k.startswith(stem)}.values() if g is not f and stat(g)[0] >= 50]
+        if same and stem != base_name(n):
+            return max(same, key=lambda g: stat(g)[1] or 0), '同原片'
+    return None, ''
+
+
 def recover(fams, tot, D):
     """每天回收前 3 天放出去的素材。一条素材的钱很偏，几条素材的平均值高低多半是碰巧有没有爆款，所以看「跑起来几条」。
     跑起来：首花第 0–1 天有一天按 ¥15 万折算花到 RAN。按方向和类型分开看，AI 和二创差很多。
@@ -435,6 +464,37 @@ def recover(fams, tot, D):
         days = Counter(f.first.strftime('%m-%d') for f in fs)
         rows.append(dict(u=u, part=part.get(u), t=t, n=n, k=k, e=round(n * p, 1), days=dict(sorted(days.items())), per=round(sum(per_day(f) for f in fs) / n), tag=tag,
                          rate=ra if act >= 30 else None, cpr=cp if act >= 30 else None, best=name(best) if up(best) else None, best_v=round(per_day(best))))
+    # 留存明显差的素材，配上底稿去看片。比同样这些天的全盘，不比老素材：老素材是筛过的，全盘每天的次留也在变
+    d1 = D - one
+    A0, R0 = Counter(), Counter()
+    for f in fams:
+        for x in f.a:
+            A0[x] += f.a[x]
+            R0[x] += f.r[x]
+    def stat(f):
+        c, a, r = (sum(m[x] for x in m if x <= d1) for m in (f.c, f.a, f.r))
+        return a, round(r / a * 100, 1) if a else None, round(c / r) if r else None
+    by_base = {}
+    for f in fams:
+        for n in f.names:
+            by_base[base_name(n)] = f
+    bad = []
+    for f in fams:
+        if not f.first or not D - one * 7 <= f.first < D:
+            continue
+        a, rate, cpr = stat(f)
+        if a < 100:
+            continue
+        same_day = sum(f.a[x] * R0[x] / A0[x] for x in f.a if x <= d1 and A0[x])
+        gap = rate - same_day / a * 100
+        if gap <= -5:
+            g, how = base_of(f, by_base, stat)
+            item = dict(id=sorted(f.ids)[0], name=name(f), u=f.sub, part=part.get(f.sub), t=f.kind, first=f.first.strftime('%m-%d'), act=round(a), rate=rate, cpr=cpr, gap=round(gap, 1))
+            if g:
+                ga, gr, gc = stat(g)
+                item['base'] = dict(id=sorted(g.ids)[0], name=name(g), how=how, act=round(ga), rate=gr, cpr=gc)
+            bad.append((gap * a, item))
+    bad = [x[1] for x in sorted(bad, key=lambda x: x[0])]
     order = {'可能见顶': 0, '不及预期': 1, '超预期': 2, '符合': 3, '样本少': 4}
     rows.sort(key=lambda x: (order[x['tag']], -x['n']))
     peak = []
@@ -450,7 +510,7 @@ def recover(fams, tot, D):
         if top >= 1000 and pk <= D - one * 2 and last2 >= ALIVE and f.c[D] < top * .7 and f.c[D - one] < top * .7:
             peak.append(dict(name=name(f), u=f.sub, part=part.get(f.sub), first=f.first.strftime('%m-%d'), pk=round(top), pkd=pk.strftime('%m-%d'), last2=round(last2), pct=round(last2 / top * 100)))
     peak.sort(key=lambda x: -x['pk'])
-    return dict(rows=rows, peak=peak[:8], npeak=len(peak), nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
+    return dict(rows=rows, bad=bad[:8], nbad=len(bad), peak=peak[:8], npeak=len(peak), nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
 
 
 def make_roi(rows, fams, spend, D, T):
