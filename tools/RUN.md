@@ -1,6 +1,6 @@
 # 每天生成日报
 
-D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素材」(1LHsOHd5U7Ep0SHF-XQecIE-wj9FN2JireiPFhvp3t0Q)，「投放数据_分日」每天 10:13 左右更新到 D。
+D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素材」(1LHsOHd5U7Ep0SHF-XQecIE-wj9FN2JireiPFhvp3t0Q)，「投放数据_分日」由定时任务「巨量投放数据日更」写，11/4 起它 06:51 开跑，07:20–07:40 更新到 D。
 
 1. 读 `'投放数据_分日'!A1:AB` 和 `'素材链接库'!A1:D`（get_values，结果存成文件）。再读 `'✅ Use case 库'!A1:G200` 存成文件，跑 `python3 tools/sync_ucs.py <库文件>` 同步简称（库里 Use case 写成「简称：描述」，第一个冒号前就是简称，Reina 11/4 定，不手改 ucs.json）。输出 changed 不为空要写进最后回复，no_colon 不为空说明库里有 Use case 没写简称，告诉 Reina。
 2. `python3 tools/compute.py --sheet <分日文件> --linklib <链接库文件> --date D --out /tmp/results.json`
@@ -123,7 +123,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 页面和 notes 不写 T1、T2、T3 这些代号（Reina 11/2 定），写大白话：能放量、留存好；量中等、留存好；能放量、留存不达标；量小，先观察。头部素材表不放脚本，脚本和分析放第六部分。
 页面是给公司看的报告：不写电脑没连上、几条没读脚本、脚本 bug、口径修正这类过程信息，这些只放推送和最后回复。页面和 notes 不只写 use case 编号，要写名字。「继续扩量的 use case」和二创素材的标签写全：一级分类 + UC_ID + 中文简称（页面按 uc、tag 字段自动带出）。
 
-M = 上周一。数据要等「投放数据_分日」更新到周日（周一 10:13 左右）。
+M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07:40 前）。
 
 1. 读 `'投放数据_分日'!A1:AB`（存成文件），再读 `'✅ Use case 库'!A1:G200` 跑 `python3 tools/sync_ucs.py <库文件>` 同步简称，然后 `python3 tools/week.py --sheet <分日文件> --week M --out /tmp/week.json`。输出 `NO_DATA` 就是周日还没出。
 2. 读全片脚本（见下面「读全片脚本」）：`python3 tools/script_todo.py --week /tmp/week.json --out /tmp/sc`，范围是周消耗 ≥ ¥2,000 的所有素材，脚本库里没有的都要读。
