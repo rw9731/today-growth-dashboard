@@ -26,6 +26,12 @@
   .wk-pick.warn { background: var(--color-warn); }
   .wk-tag { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
   .wk-pick { white-space: nowrap; }
+  /* 标签 = 量 + 次留：颜色看次留，深浅看量（实心 能放量，浅底 量中等，空心 量小） */
+  .tg { --c: var(--color-fg-muted); display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 12px; white-space: nowrap; border: 1px solid var(--c); color: var(--c); background: transparent; font-weight: 600; }
+  .tg.r-good { --c: var(--color-ok); } .tg.r-pricey { --c: #d9772b; } .tg.r-cost { --c: var(--color-warn); } .tg.r-mid { --c: #6b7a90; } .tg.r-bad { --c: var(--color-bad); } .tg.r-na { --c: var(--color-fg-muted); border-style: dashed; } .tg.r-new { --c: var(--bar); }
+  .tg.s-big { background: var(--c); color: #fff; border-style: solid; } .tg.s-mid { background: color-mix(in srgb, var(--c) 20%, transparent); }
+  .lx-table .stack span.tg { display: inline-block; width: auto; color: var(--c); } .lx-table .stack span.tg.s-big { color: #fff; }
+  .tg-legend { display: grid; grid-template-columns: max-content 1fr; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--color-fg-muted); margin: 8px 0 2px; } .tg-legend div { display: flex; flex-wrap: wrap; gap: 4px; }
   .wk-scripts .sc-cell { max-width: 26rem; }
   .wk-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 18px; vertical-align: middle; }
   .wk-spark i { width: 5px; background: var(--bar); border-radius: 1px 1px 0 0; display: block; }
@@ -144,7 +150,8 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">三、Use case：哪些能放量、留得住</h2>
-    <p class="lx-note"><b>能放量、留存好</b> = 能放量，次留率至少 30% 且不低于全盘，次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率至少 30% 且不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 次留好（至少 30%）或次留成本不高于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差」里的不列。</p>
+    <p class="lx-note">每个 use case 的标签 = 量 + 次留。<b>量</b>：能放量 = 周消耗占全盘 3% 以上且不少于 ¥2 万；量中等 = 占 1% 以上；量小 = 不到 1%。<b>次留</b>：次留好 = 激活 50 以上，次留率至少 30% 且不低于全盘，次留成本不高于全盘；次留好但贵 = 次留率够，次留成本超过全盘 1.2 倍；成本略高 = 次留率够，次留成本超过全盘但不到 1.2 倍；次留差 = 次留率低于全盘 85%，或次留率没到线且次留成本超过 1.2 倍；次留一般 = 次留率没到线，但没差到这个程度；样本不够 = 激活不到 50。颜色看次留，深浅看量。下面分组：<b>能放量、留存好</b> = 能放量，次留率至少 30% 且不低于全盘，次留成本不高于全盘；<b>量中等、留存好</b> = 周消耗占 1% 以上、激活 150 以上，次留率至少 30% 且不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 能放量但次留不达标；<b>留存差</b> = 里面留存最差的，加上量小留不住或 Use case 库里已暂停的。绿 = 次留好（至少 30%）或次留成本不高于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。周消耗占比不到 1%、又不在「留存差」里的不列。</p>
+    <div data-draw="tag-legend" data-scales="能放量,量中等,量小" data-rets="次留好,次留好但贵,成本略高,次留一般,次留差,样本不够"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table pl-table">
         <thead>
@@ -167,7 +174,7 @@
 
   <section class="lx-sec" id="top-mats">
     <h2 class="lx-h2">四、头部素材和拖后腿的素材</h2>
-    <p class="lx-note">这周有一天消耗到 ¥2,000 以上，或周消耗过 <b data-draw="top-bar">—</b> 的素材都算<b>能放量</b>，全部列出，共 <b data-draw="n-heads">—</b> 条，占全盘消耗 <b data-draw="heads-share">—</b>。<b>次留好</b> = 激活 100 以上，次留率至少 30% 且不低于全盘，次留成本不高于全盘（<b data-draw="n-good">—</b> 条）；<b>成本略高</b> = 次留率够，次留成本超过全盘但不到 1.2 倍；<b>次留略低</b> = 次留率不到 30% 或低于全盘，但没到下面的线。<b>次留差</b>、<b>次留好但贵</b>（<b data-draw="n-bad">—</b> 条）放在下面拖后腿的表。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
+    <p class="lx-note">这周有一天消耗到 ¥2,000 以上，或周消耗过 <b data-draw="top-bar">—</b> 的素材都算<b>能放量</b>，全部列出，共 <b data-draw="n-heads">—</b> 条，占全盘消耗 <b data-draw="heads-share">—</b>。<b>次留好</b> = 激活 100 以上，次留率至少 30% 且不低于全盘，次留成本不高于全盘（<b data-draw="n-good">—</b> 条）；<b>成本略高</b> = 次留率够，次留成本超过全盘但不到 1.2 倍；<b>次留一般</b> = 次留率不到 30% 或低于全盘，但没到下面的线。颜色和第三部分一样。<b>次留差</b>、<b>次留好但贵</b>（<b data-draw="n-bad">—</b> 条）放在下面拖后腿的表。<span class="wk-pick">二创</span> = 这周建议拿去二创的。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -462,7 +469,9 @@
   const TC = {T1: css('--color-ok'), T2: COLOR, T3: css('--color-warn'), DROP: css('--color-bad'), T0: css('--cds-chart-reference')};
   const TN = {T1: '能放量、留存好', T2: '量中等、留存好', T3: '能放量、留存不达标', T0: '量小，先观察', DROP: '留存差'};
     const plainT = (s) => String(s).replace(/T[0-3]/g, (t) => '「' + TN[t] + '」');
-  const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量还小或留存一般', DROP: '留存最差，或量小留不住，或 Use case 库里已暂停'};
+  const tagCls = (t) => { const s = t || ''; const sc = s.startsWith('能放量') ? 's-big' : s.startsWith('量中等') ? 's-mid' : 's-small'; const r = /次留差|拖后腿/.test(s) ? 'r-bad' : /但贵/.test(s) ? 'r-pricey' : /成本略高/.test(s) ? 'r-cost' : /次留一般|次留略低/.test(s) ? 'r-mid' : /样本不够/.test(s) ? 'r-na' : /新上线/.test(s) ? 'r-new' : /次留好/.test(s) ? 'r-good' : 'r-na'; return 'tg ' + sc + ' ' + r; };
+  document.querySelectorAll('[data-draw="tag-legend"]').forEach((box) => { const rs = box.dataset.rets.split(','); const scs = box.dataset.scales.split(','); box.className = 'tg-legend'; for (const sc of scs) { const l = document.createElement('span'); l.textContent = sc; box.appendChild(l); const d = document.createElement('div'); for (const r of rs) { const p = document.createElement('span'); const t = sc + ' + ' + r; p.className = tagCls(t); p.textContent = t; d.appendChild(p); } box.appendChild(d); } });
+  const TD = {T1: '围绕它多做变式、继续加量', T2: '小步加量', T3: '做变式压成本，次留率低的交产品看承接', T0: '量小，或量中等但次留没到线', DROP: '留存最差，或量小留不住，或 Use case 库里已暂停'};
   const CHN = {ai: 'AI', ec: '二创', yp: '原片'};
   fill('uc-rows', (tb) => {
     const dropN = {}; for (const x of N.drop || []) if (x.uc) dropN[x.uc] = x;
@@ -475,6 +484,7 @@
       for (const u of rows) {
         const tr = document.createElement('tr'); tr.style.setProperty('--tc', TC[tier]); const td = cellMaker(tr);
         const c0 = td('stack uccell'); const b = document.createElement('b'); b.textContent = u.uc + ' ' + u.short; const s = document.createElement('span'); s.textContent = u.l1; c0.append(b, s);
+        if (u.tag) { const g = document.createElement('span'); g.className = tagCls(u.tag); g.textContent = u.tag; g.style.marginTop = '3px'; c0.appendChild(g); }
         if (u.flag) { const f = document.createElement('span'); f.className = 'pl-flag'; f.textContent = plainT(u.flag); c0.appendChild(f); }
         const cs = td(); const w = barCell(cs, u.spend, max, 70, fmtW(u.spend) + ' · ' + fmtP0(u.share)); w.append(' '); spark(w, u.days);
         const cr = td(rateCls(u.rate)); cr.textContent = fmtP(u.rate);
@@ -498,11 +508,11 @@
   const why = N.top_note || {};
   const heads = data('heads');
   const DRAG = ['能放量 + 次留差', '能放量 + 次留好但贵'];
-  const tagCell = (c, t) => { const p = document.createElement('span'); p.className = t === '能放量 + 次留好' ? 'wk-pick' : t === '能放量 + 次留差' ? 'wk-pick bad' : t === '能放量 + 次留好但贵' ? 'wk-pick warn' : 'wk-tag'; p.textContent = t; c.appendChild(p); };
+  const tagCell = (c, t) => { const p = document.createElement('span'); p.className = tagCls(t); p.textContent = t; c.appendChild(p); };
   const tagWhy = (m) => {
-    if (m.tag === '激活太少') return '激活不够，先不判断';
+    if (/样本不够/.test(m.tag)) return '激活不够，先不判断';
     if (m.tag === '能放量 + 成本略高') return '次留率够，次留成本比全盘高一点';
-    if (m.tag === '能放量 + 次留略低') return m.cpr > cw ? '次留率和次留成本都比全盘差一点' : '次留成本够，次留率比全盘低一点';
+    if (m.tag === '能放量 + 次留一般') return m.cpr > cw ? '次留率和次留成本都比全盘差一点' : '次留成本够，次留率比全盘低一点';
     return '次留率和次留成本都好于全盘';
   };
   fill('n-heads', (el) => { el.textContent = heads.length; });

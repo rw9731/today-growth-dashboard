@@ -10,7 +10,7 @@ import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小，先观察'}
+LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小或没达标，先观察'}
 
 
 def c3(s):
