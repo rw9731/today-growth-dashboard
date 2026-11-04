@@ -84,6 +84,37 @@ compute.py 自动算：
 - 和前一天比，use case 和角度都没变时可以沿用，但 shot 和 sched 要更新。
 - 写法：方向不写太死，唯西可以在 use case 范围内发挥。不写产品短板和产品提升，不写投放参数和预算，不写连续 3 留，不写「重排」「直接加量」「不要再加」。素材名照抄原名，use case 带名字。不用破折号。
 
+## 排期看板（每天）
+
+Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天归档可回溯。页面在 schedule/<T>/，schedule/ 是最新一天，schedules.json 是目录。日报、周报导航里的「素材排期」链到这里。T = 今天（看板当天），D = 昨天（数据日）。「投放数据_分日」更新到 D 之后跑。
+
+1. 读 `'投放数据_分日'!A1:AB`（日报读过就复用）和 `'素材映射'!A1:J`（J 列是「子方向（PS03）」），get_values 结果存成文件。
+2. `python3 tools/schedule_data.py --sheet <分日文件> --map <素材映射文件> --date D --out-dir /tmp/sched`。输出 `NO_DATA`：表里还没有 D，等 20 分钟再读。有 WARNING（PS03 没标子方向）写进最后回复。
+3. 进度核对（要用 Reina 电脑上的内置浏览器，只读，不改飞书）。下面 6 个 tab 每个都 navigate 到带 `?sheet=` 的网址（切 tab 只能靠 URL），用 javascript_tool 跑 tools/schedule_read.js 全文，返回值原样存成 /tmp/sched/feishu/<tab id>.json：
+   - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
+   - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
+   然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
+4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
+5. 提交 schedule/、schedules.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+
+落下了怎么办：progress.json 的 groups.A.lag、groups.B.lag 是落下的行（行号、use case、差几条）。只推给 Reina，把 draft.A、draft.B 附上，这是可以直接发给唯西两个素材群的提醒草稿，发不发、怎么改她定。不自己发群，不改飞书，草稿不带看板链接。
+
+排期内容只在 tools/schedule_plan.json，页面不手改：
+- E 是排期条目：d 交付日、g 组、t 类型、n 条数、s 状态（done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加）、src 和 link 是飞书位置、to 是拿掉后怎么办。已上线的条数从数据算，不写在这里。
+- Reina 确认调整、写进飞书之后，把对应条目改掉（add 改 todo，cut 删掉或换 uc），MOVES 也跟着改，asof 改成当天。
+- 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
+- schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
+
+页面日期都按 D 和 T 算：柱子是 D 往前 14 天，排期列是 T 到 T+4。过了日子的 todo、cut、add 不再算进后面的供给，看进度那一行；已交没花钱的挪到今天，asof 之后上线的条数扣掉。
+
+口径（schedule_data.py）：
+- 批次日期 = 第一次上传巨量（素材ID >> 32 是秒，加 8 小时）。同名的推送版、修改版（前缀 推送视频_，后缀 _合规修改、修改版、_改动、 (1)）和同一脚本编号（如 A18-06-cw-20261023）算同一条，取最早。
+- 条数只算花过钱的。c7 = D-6 到 D 的消耗；次留率、次留成本看 D-6 到 D-1。
+- PS03 表里一行，三部分按素材映射 J 列分，写在执行细节。还是库外、靠 FUZZY 归 PS03 的算消息排清单。
+- 每条产出：首花 D-7 到 D-2 的素材，前 3 天消耗按全盘一天 ¥15 万折算后的条均。sh 是近 7 天消耗占比，np 是 D-14 到 D-1 上传的条数占比。放量 = 单日 ≥ ¥2,000。
+- 还没掉的钱 R：最近 2 天日均 ≥ ¥100，并且峰值在最近 2 天、第一次单日 ≥ ¥200 在 D-5 之后；或者首花到 T 还不满 4 天。到第 4 天的日期 = 首花 + 4 天，早于 T 的算 T。这是 11/4 手算版的脚本没留下来之后拟合的规则，总额差 0.6%，单个 use case 有出入。
+- 预警和条数建议的阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。
+
 ## 周报（每周一，Reina 11/1 定）
 
 页面和 notes 不写 T1、T2、T3 这些代号（Reina 11/2 定），写大白话：能放量、留存好；量中等、留存好；能放量、留存不达标；量小，先观察。头部素材表不放脚本，脚本和分析放第六部分。
