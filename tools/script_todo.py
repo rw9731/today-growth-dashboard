@@ -5,7 +5,7 @@ Usage:
   python3 tools/script_todo.py --week /tmp/week.json --out /tmp/sc         # 周报
 
 范围（Reina 11/1：条数要够多，才撑得起结论）：
-- 日报：「四、昨天消耗排行」里所有素材（昨天消耗 ≥ ¥1,000）、拖后腿和次留好但贵的、扩量素材和它们的原素材；
+- 日报：「四、昨天消耗排行」里所有素材（昨天消耗 ≥ ¥1,000）、次留差和次留好但贵的、扩量素材和它们的原素材；
 - 周报：本周消耗 ≥ ¥2,000 的所有素材（好的差的都要，才能比）。
 已经在 scripts/ 里的不再读。按消耗从高到低排，一次最多 --cap 条（默认日报 60、周报 80）。
 
@@ -45,7 +45,7 @@ def main():
         for m in r['mat']:
             if m['cost27'] >= rank:
                 add(m['id'], m['name'], m['cost27'], '昨天消耗排行')
-            if m['group'] in ('拖后腿', '次留好但贵') and m['cost27'] >= 500:
+            if ('次留差' in m['group'] or '次留好但贵' in m['group'] or m['group'] in ('拖后腿', '次留好但贵')) and m['cost27'] >= 500:
                 add(m['id'], m['name'], m['cost27'], m['group'])
         for k in r.get('kl', []):
             add(k['id'], k['name'], k['cost27'], '扩量')

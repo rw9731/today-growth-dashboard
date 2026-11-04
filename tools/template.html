@@ -202,7 +202,7 @@
     </div>
     <p class="lx-take" data-draw="take"></p>
     <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于、次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率至少 30% 且不低于三天全盘，次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
@@ -267,7 +267,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好但三天消耗没到这个数，可以试着加量。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
+    <p class="lx-note">按昨天消耗排。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，次留率至少 30% 且不低于三天全盘，次留成本不高于三天全盘；<b>次留好、量还小</b> = 次留好但三天消耗没到这个数，可以试着加量。<b>成本略高</b> = 次留率够，次留成本超过全盘但没到下面的线；<b>次留略低</b> = 次留率没到线；<b>次留差</b>、<b>次留好但贵</b>的定义见五。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -328,7 +328,7 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，且次留率、次留成本都好于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗不到这个数；<b>新上线</b> = 前天或昨天才开始花，次留还没出，次留两格先空着；<b>激活太少</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。<b>能放量 + 次留好</b> = 三天消耗超过 <b data-draw="th-scale">—</b>，次留率至少 30% 且不低于三天全盘，次留成本不高于三天全盘；<b>次留好、量还小</b> = 次留好，三天消耗不到这个数；其他标签一样，能放量的写「能放量 + …」，没到这个数的写「…、量还小」；<b>新上线</b> = 前天或昨天才开始花，次留还没出，次留两格先空着；<b>激活太少</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。绿底 = 本周（{{WEEK}} 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -369,7 +369,7 @@
 
   <section class="lx-sec" id="bad">
     <h2 class="lx-h2">五、拖后腿的素材</h2>
-    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留好但贵</b> = 次留率够、次留成本太高。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
+    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留率没到 30% 且次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留好但贵</b> = 次留率够、次留成本超过这条线。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -433,7 +433,7 @@
     <div class="pl-grid">
       <div class="pl-card">
         <h3>Use case 分在哪一层（{{D}}）</h3>
-        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>能放量、留存好</b> = 过放量线，次留率不低于、次留成本不高于全盘；<b>量中等、留存好</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 过放量线但次留不达标。</p>
+        <p class="lx-note">每个点是一个 use case。<b>放量线</b> = 四天消耗占全盘 <b data-draw="pl-big">—</b>。<b>能放量、留存好</b> = 过放量线，次留率至少 30% 且不低于全盘，次留成本不高于全盘；<b>量中等、留存好</b> = 占 <b data-draw="pl-mid">—</b> 到放量线之间，次留率至少 30% 且不低于全盘、次留成本不超过全盘 1.1 倍；<b>能放量、留存不达标</b> = 过放量线但次留不达标。</p>
         <div class="pl-chart" data-draw="pl-quad"></div>
         <div class="pl-legend" data-draw="pl-legend"></div>
       </div>
@@ -514,7 +514,7 @@
   const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
   const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
   const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
-  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate_w ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
+  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= Math.max(o.rate_w, 0.3) ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
   const r3Cls = (v, o) => (v === null || v === undefined || o.rate3_w == null ? 'num muted' : v >= o.rate3_w ? 'num lx-good' : v < 0.8 * o.rate3_w ? 'num lx-badv' : 'num');
   const c3Cls = (v, o) => (v === null || v === undefined || o.cpr3_w == null ? 'num muted' : v <= o.cpr3_w ? 'num lx-good' : v > 1.25 * o.cpr3_w ? 'num lx-badv' : 'num');
   const ret3 = (td, r, o) => { td(r3Cls(r.rate3, o)).textContent = fmtP(r.rate3); td(c3Cls(r.cpr3, o)).textContent = fmtY(r.cpr3); };
@@ -573,7 +573,7 @@
     }
   });
 
-  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '次留好但贵': 'g-pricey', '拖后腿': 'g-bad', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
+  const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '能放量 + 次留好但贵': 'g-pricey', '次留好但贵、量还小': 'g-pricey', '次留好但贵': 'g-pricey', '能放量 + 次留差': 'g-bad', '次留差、量还小': 'g-bad', '拖后腿': 'g-bad', '能放量 + 成本略高': 'g-mid', '成本略高、量还小': 'g-mid', '能放量 + 次留略低': 'g-mid', '次留略低、量还小': 'g-mid', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -687,7 +687,7 @@
   });
   const GOOD = ['能放量 + 次留好', '次留好、量还小'];
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '');
-  matTable('badrows', (v) => ['拖后腿', '次留好但贵'].includes(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
+  matTable('badrows', (v) => /次留差|次留好但贵|拖后腿/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''));
 
   // 扩量素材和原素材比
   fill('klrows', (box) => {

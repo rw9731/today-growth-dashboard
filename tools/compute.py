@@ -117,6 +117,7 @@ def load_rows(path):
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
+GOOD_RATE = 0.30  # 次留好至少 30%（Reina 11/4 定），全盘更高时要不低于全盘
 PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.10, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
 CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
@@ -166,17 +167,20 @@ def tiers_for(allrows, ucs, Dd, th):
                   'cost27': S(rs, D[3], 'cost'), 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0})})
         s['ch'] = {c: stats([r for r in rs if chan_of(r['src'], r['track'], r['name']) == c]) for c in CH_NAME}
         rate, cpr = s['rate'], s['cpr']
-        good = rate is not None and cpr is not None and rate >= rate_w and cpr <= cpr_w
-        nice = rate is not None and cpr is not None and rate >= rate_w and cpr <= PLAN_TH['nice'] * cpr_w
+        bar = max(rate_w, GOOD_RATE)
+        good = rate is not None and cpr is not None and rate >= bar and cpr <= cpr_w
+        nice = rate is not None and cpr is not None and rate >= bar and cpr <= PLAN_TH['nice'] * cpr_w
         big = s['share4'] >= PLAN_TH['big']
         mid = s['share4'] >= PLAN_TH['mid'] and s['act_w'] >= PLAN_TH['act']
         s['tier'] = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
         flag = ''
         if s['tier'] == 'T3' and rate is not None:
-            if rate >= 0.95 * rate_w and cpr is not None and cpr <= 1.05 * cpr_w:
+            if rate >= 0.95 * bar and cpr is not None and cpr <= 1.05 * cpr_w:
                 flag = '差一点进 T1'
             elif rate < 0.9 * rate_w:
                 flag = '次留率低'
+            elif rate < bar:
+                flag = '次留率不到 30%'
             else:
                 flag = '次留成本偏高'
         s['flag'] = flag
@@ -335,14 +339,17 @@ def main():
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def label(rate, cpr, cost, big, small):
+        # 和周报、use case 的说法一致（Reina 11/4）。次留好至少 30%，全盘更高时要不低于全盘。
         pricey = cpr is None or cpr > th['high'] * o['cpr_w']
-        if rate >= o['rate_w'] and cpr is not None and cpr <= o['cpr_w']:
+        bar = max(o['rate_w'], GOOD_RATE)
+        tag = (lambda x: '能放量 + ' + x) if cost > th['scale'] else (lambda x: x + '、量还小')
+        if rate >= bar and cpr is not None and cpr <= o['cpr_w']:
             return big if cost > th['scale'] else small
-        if rate >= o['rate_w'] and pricey:
-            return '次留好但贵'
+        if rate >= bar:
+            return tag('次留好但贵') if pricey else tag('成本略高')
         if rate < th['low'] * o['rate_w'] or pricey:
-            return '拖后腿'
-        return '一般'
+            return tag('次留差')
+        return tag('次留略低')
 
     # 一级
     t27 = S(R, D[3], 'cost') or 1
@@ -365,7 +372,6 @@ def main():
     by_id = defaultdict(list)
     for r in R:
         by_id[r['id']].append(r)
-    order = ['能放量 + 次留好', '次留好、量还小', '次留好但贵', '拖后腿', '一般']
     mat = []
     id_3 = group3(lambda r: r['id'])
     SCRIPTS = scripts_lib.load()
@@ -563,7 +569,7 @@ def main():
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if m['group'] != '一般' or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
+    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('成本略高', '次留略低')) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))

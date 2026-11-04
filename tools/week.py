@@ -149,17 +149,20 @@ def main():
             continue
         sp = stats(rs, P)
         share = s['spend'] / tot
-        good = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= rw and s['cpr'] <= cw
-        nice = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= rw and s['cpr'] <= WTH['nice'] * cw
+        bar = max(rw, C.GOOD_RATE)
+        good = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= bar and s['cpr'] <= cw
+        nice = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= bar and s['cpr'] <= WTH['nice'] * cw
         big = share >= WTH['uc_big_share'] and s['spend'] >= WTH['uc_big_min']
         mid = share >= WTH['uc_mid_share'] and s['act_r'] >= WTH['uc_act']
         tier = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
         flag = ''
         if tier == 'T3' and s['rate'] is not None:
-            if s['rate'] >= 0.95 * rw and s['cpr'] is not None and s['cpr'] <= 1.05 * cw:
+            if s['rate'] >= 0.95 * bar and s['cpr'] is not None and s['cpr'] <= 1.05 * cw:
                 flag = '差一点进 T1'
             elif s['rate'] < 0.9 * rw:
                 flag = '次留率低'
+            elif s['rate'] < bar:
+                flag = '次留率不到 30%'
             else:
                 flag = '次留成本偏高'
         ids = {r['id'] for r in rs if r['date'] in W and r['cost'] > 0}
@@ -213,7 +216,7 @@ def main():
         lk = links.get(i, {})
         ltype = lk.get('type', '')
         link = '' if ltype == '预览' else lk.get('link', '')
-        good = max(s['days']) >= WTH['top_day'] and s['act_r'] >= WTH['top_act'] and s['rate'] is not None and s['cpr'] is not None and s['rate'] >= rw and s['cpr'] <= cw
+        good = max(s['days']) >= WTH['top_day'] and s['act_r'] >= WTH['top_act'] and s['rate'] is not None and s['cpr'] is not None and s['rate'] >= max(rw, C.GOOD_RATE) and s['cpr'] <= cw
         bad = s['spend'] >= top_bar and s['rate'] is not None and (s['rate'] < WTH['bad_rate'] * rw or (s['cpr'] or 1e9) > WTH['bad_cpr'] * cw)
         # 比全盘多花的钱：这条的次留如果按全盘次留成本买，要花多少；多出来的就是浪费
         excess = s['cost_r'] - s['cost_r'] / s['cpr'] * cw if s['cpr'] else None
@@ -232,16 +235,17 @@ def main():
         m['pick'] = bool(m['rate'] >= 1.05 * rw and m['cpr'] <= 0.9 * cw)
     bad = sorted([m for m in mats if m['bad']], key=lambda m: -(m['excess'] or 0))[:WTH['bad_cap']]
     # 第四部分（Reina 11/4）：这周有一天消耗到门槛或周消耗过线的全部列出，标签和日报、use case 的说法一致。
-    # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率不低于、次留成本不高于全盘）；
-    # 次留差（激活 ≥ 50，次留率低于全盘 85%，或次留率低于全盘且次留成本超过全盘 1.2 倍）；
+    # 这些素材都算能放量，标签再看次留：次留好（激活 ≥ 100，次留率至少 30% 且不低于全盘，次留成本不高于全盘）；
+    # 次留差（激活 ≥ 50，次留率低于全盘 85%，或次留率没到线且次留成本超过全盘 1.2 倍）；
     # 次留好但贵（次留率不低于全盘，次留成本超过 1.2 倍）；其余按差在哪写次留略低、成本略高。
     def tag_of(m):
         r, c = m['rate'], m['cpr'] or 1e9
         if m['act_r'] < WTH['tag_act'] or r is None:
             return '激活太少'
-        if r >= rw and c <= cw:
+        bar = max(rw, C.GOOD_RATE)
+        if r >= bar and c <= cw:
             return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '激活太少'
-        if r >= rw:
+        if r >= bar:
             return '能放量 + 次留好但贵' if c > WTH['bad_cpr'] * cw else '能放量 + 成本略高'
         if r < WTH['bad_rate'] * rw or c > WTH['bad_cpr'] * cw:
             return '能放量 + 次留差'
