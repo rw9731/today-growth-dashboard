@@ -155,11 +155,13 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。只显示，不自动移档：探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。移档要 Reina 定，改 schedule_plan.json 的 GROUPS，并在 MOVED 写从哪档来、哪天，7 天内名字旁标「新进」。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 
-本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、星图达人，累计对比预计和完成度。
-- 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表），存进同一个目录。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
-- 按实际产出日算，不按排期日期：AI 和二创看完成时间和文件名最后一个日期，再空看产出日期；星广看成片完成时间；星图达人看发布时间。类型看扩量表「怎么改」的【AI】【二创/重配】，没写的老行看文件名。文件名没有日期的行写进 output.json 的 undated。
-- 预计在 tools/schedule_plan.json 的 output_targets（ai 150、ec 50、xg 15、xt 15），取自素材产出日报的每周目标，二创是「素材对齐」里二剪 50/周。外部 KOC/KOL 原片和自建号不算。
-- 和素材产出日报的数会不一样：日报的 AI 只算 A 组脚本及成片，不算扩量表和 B 组，二创不算，日报发出后补填的日期也不回改。
+本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、达人合作，累计对比预计和完成度。
+- 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（现在是 11月执行表，每月一张，换月要换 sheet id，存文件名还用 5cypAT.json），存进同一个目录。再读 'Today KOL/KOC 视频'!A1:Z 存成文件。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --koc <视频文件> --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
+- 类型（Reina 11/5 定）：水下达人原片都要剪了再投，不当投放素材类型，10 月中的老原片只留在数据里，不算产量。达人合作数的是发布的视频条数，不是投放素材。
+- 按实际产出日算，不按排期日期：AI 和二创看完成时间和文件名最后一个日期，再空看产出日期；星广看成片完成时间；达人看发布日期（唯西发布时间、悦普已发布的发布档期、其余代理商「Today KOL/KOC 视频」），图文不算。类型看扩量表「怎么改」的【AI】【二创/重配】，没写的老行看文件名。文件名没有日期的行写进 output.json 的 undated。
+- 预计：AI、真人二创用这周排期（plan 的 meters，已排条数）；星广 15、达人 65（外部 50 + 唯西 15）在 plan 的 output_targets，取自素材产出日报。meters 的 week 对不上时 AI、二创退回 150、50。
+- 水上：合作形式以「星图」开头的抖音合作，只算唯西和悦普；AnyMedia 的表没读，不知道水上水下。
+- 和素材产出日报的数会不一样：日报的 AI 只算 A 组脚本及成片，不算扩量表和 B 组，不算二创，外部 agency 没有悦普，发出后补填的日期也不回改。
 
 ## 周报（每周一，Reina 11/1 定）
 

@@ -388,14 +388,17 @@ def output_html(o):
     body = ''
     for r in o['rows']:
         sub = ' · '.join(f'{a} {b}' for a, b in r.get('split', []))
+        if r['k'] == 'kol':
+            sub += f" · 水上 {o.get('water', 0)}"
         body += row(r['name'], sub, r['y'], r['n'], r['t'])
     Y, N, TT = (sum(r[k] for r in o['rows']) for k in ('y', 'n', 't'))
     body += row('合计', '', Y, N, TT, 'o-total')
+    plan_note = 'AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。' if o.get('from_plan') else '预计是素材产出日报的每周目标，这周排期还没写进 plan。'
     miss = ('<p class="o-note o-miss">这几个 tab 今天没读到，数偏少：' + e('、'.join(o['missing'])) + '</p>') if o.get('missing') else ''
     return (f'<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>{md(mon)}–{md(mon + dt.timedelta(days=6))}，数到 {md(D)}，已过 {o["days"]} / 7 天</span></div>'
             '<div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead>'
             f'<tbody>{body}</tbody></table></div>'
-            f'<p class="o-note">竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，星图达人看发布日期。预计是素材产出日报的每周目标。外部 KOC/KOL 原片和自建号不在这四类。</p>{miss}</section>')
+            f'<p class="o-note">竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。{e(plan_note)}达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p>{miss}</section>')
 
 
 def render(tpl, P, fields, rel, T):
