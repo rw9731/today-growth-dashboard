@@ -114,4 +114,27 @@ if (__name === '脚本及成片') { // 500 多行，按 use case 和完成时间
   }
   __out = Object.values(m);
 }
-JSON.stringify({ tab: __name, sheet: __tab, doc: __url.pathname.split('/').pop(), rows: __out });
+// 分日表审核核对（Reina 11/5）：这张表最近 21 天每行的素材名和成片文件名，存成短 hash，tools/review_cover.py 拿投放分日表的新素材来对。每行是 [行号, 成片状态, 备注（0 没写、1 写了、2 写了小改）, hash]。
+const __COV = { '扩量素材迭代排期': ['扩量素材名', '迭代素材成片'], '脚本及成片': ['素材命名', '成片'], '脚本&成片': ['素材命名', '成片'], '真人素材和ai切片二剪': ['素材命名', '二创成片'] };
+const __norm = (x) => (x || '').trim().replace(/\.(mp4|mov|m4v)$/i, '').replace(/^推送视频[_-]?/, '').replace(/[_-](改动|合规修改|修改\d*)$/, '').replace(/[^一-龥a-zA-Z0-9]/g, '').toLowerCase();
+const __EC = /扩量|二创|二剪|重配|新剪|照真人|精剪|精简|混剪/; // AI 新脚本不在这个核对范围
+const __hash = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36); };
+let __cov;
+if (__COV[__name]) {
+  const __col = (w) => { let c = __hdr.indexOf(w); if (c < 0) c = __hdr.findIndex((h) => h.startsWith(w)); return c; };
+  const __both = (r, c) => { if (c < 0) return ''; let a = (__sh.getText(r, c) || '').trim(); try { const f = (__sh.getSegmentArray(r, c) || []).filter((s) => s.type === 'attachment').map((s) => s.text).join('\n').trim(); if (f) a = (a ? a + '\n' : '') + f; } catch (e) { /* 这一格没有附件 */ } return a; };
+  const [cn, cf, cs, cm] = [__COV[__name][0], __COV[__name][1], '成片状态', '成片备注'].map(__col);
+  const cd = __name === '脚本及成片' ? __col('完成时间') : (__dateCol ? __cols[__dateCol] : -1);
+  __cov = [];
+  let dd = '';
+  const old21 = (s) => { const m = /^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/.exec(s || '') || /^()(\d{1,2})[\/月](\d{1,2})/.exec(s || ''); return !!m && new Date(+(m[1] || new Date().getFullYear()), +m[2] - 1, +m[3]).getTime() < Date.now() - 21 * 864e5; };
+  for (let r = 1; r < __sh.getRowCount(); r++) {
+    if (cd >= 0) { const d = (__sh.getText(r, cd) || '').trim(); if (d) dd = d; else if (__name === '脚本及成片') dd = ''; }
+    if (old21(dd)) continue;
+    const L = (__both(r, cn) + '\n' + __both(r, cf)).split('\n').filter((x) => __EC.test(x)).map(__norm).filter((x) => x.length >= 8);
+    if (!L.length) continue;
+    const nt = __both(r, cm).slice(0, 60);
+    __cov.push([r + 1, (__both(r, cs) || '').split('\n')[0].slice(0, 8), /小改/.test(nt) ? 2 : (nt ? 1 : 0), [...new Set(L.map(__hash))].join(' ')]);
+  }
+}
+JSON.stringify({ tab: __name, sheet: __tab, doc: __url.pathname.split('/').pop(), rows: __out, cov: __cov });
