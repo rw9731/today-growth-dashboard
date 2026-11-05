@@ -27,7 +27,6 @@ HIT = 2000            # 放量：单日 ≥ ¥2,000
 ALIVE = 100           # 最近 2 天还在花：日均 ≥ ¥100
 RAMP = 200            # 起量日：第一次单日 ≥ ¥200
 STABLE = dt.date(2026, 10, 29)  # 全盘 10/30 起稳定在一天 ¥15 万以上。10/28 那批赶上预算放开，43 条 39 条跑起来，后面的批次到不了，不进每条能花多少的样本
-RAN = 500                       # 跑起来：首花第 0–1 天有一天按 ¥15 万折算花到这个数。首花 10/29–11/1 的 179 条：过线 42 条（23%），之后单日到 ¥1,000 的 43%，占 75% 的钱；没过的 137 条只有 8%。原来的 ¥200 太低（在跑素材一天平均就有 ¥378）
 # 每条素材首花后第 k 天相对前 3 天日均的比例，k 超出后保持最后一个值。首花 10/29 起：首花当天约是第二天的一半（AI ¥173 对 ¥436，二创 ¥99 对 ¥189）；
 # AI 第 2–3 天还在涨，第 4 天掉一半；二创第二天最高，第 2 天掉到 6 成。只有一周数据，11/7 看满 7 天后再校准
 CURVE = {'AI': (.55, 1.05, 1.4, 1.7, .75), '二创': (.7, 1.4, .9, .9, .9)}
@@ -291,6 +290,25 @@ def make_spend(rows, fams, of, D):
     return out
 
 
+def day_avg(fams, tot):
+    """每天大盘在跑素材平均每条花多少：全盘消耗 ÷ 当天花了钱的条数。"""
+    run = Counter()
+    for f in fams:
+        for x, v in f.c.items():
+            if v > 0:
+                run[x] += 1
+    return {x: tot[x] / n for x, n in run.items() if tot.get(x)}
+
+
+def is_up(f, avg, D):
+    """跑起来：首花第二天，花得比当天大盘平均每条多。跟当天大盘比，不定绝对值（Reina 11/5）。
+    首花 10/29–11/1 的 179 条：过线 38 条（21%），之后单日到大盘平均 3 倍的 55%，占 71% 的钱；没过的 141 条 8%。
+    只看第二天，当天冲一下第二天就掉的不算。还没有第二天的先看当天。"""
+    x = f.first + dt.timedelta(days=1)
+    x = x if x <= D else f.first
+    return x in avg and f.c[x] >= avg[x]
+
+
 def first_three_est(f, tot, D):
     """单条跑量用的前 3 天消耗。首花在 D-1 的只有两天，第 3 天按回测曲线估，这样前天上的那批也算得进来。"""
     v = first_three(f, tot)
@@ -441,11 +459,12 @@ def base_of(f, by_base, stat):
 
 def recover(fams, tot, D):
     """每天回收前 3 天放出去的素材。一条素材的钱很偏，几条素材的平均值高低多半是碰巧有没有爆款，所以看「跑起来几条」。
-    跑起来：首花第 0–1 天有一天按 ¥15 万折算花到 RAN。按方向和类型分开看，AI 和二创差很多。
+    跑起来见 is_up。按方向和类型分开看，AI 和二创差很多。
     预期 = 这个方向这类素材之前跑起来的比例（不足 5 条用这类素材全盘的）。碰巧这么低、这么高的概率不到 10% 才标。"""
     one = dt.timedelta(days=1)
     norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
-    up = lambda f: any(norm(f, f.first + one * a) >= RAN for a in (0, 1))
+    avg = day_avg(fams, tot)
+    up = lambda f: is_up(f, avg, D)
     per_day = lambda f: sum(norm(f, f.first + one * a) for a in range(min(3, (D - f.first).days) + 1)) / (min(3, (D - f.first).days) + 1)
     name = lambda f: min((n for n in f.names if not n.startswith('推送视频_')), key=len, default=next(iter(f.names)))
     part = {v: k for k, v in SUB_KEY.items()}
@@ -536,7 +555,8 @@ def batches(fams, tot, D):
     D 当天上传的还没有第二天，不算。"""
     one = dt.timedelta(days=1)
     norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
-    up = lambda f: any(norm(f, f.first + one * a) >= RAN for a in (0, 1))
+    avg = day_avg(fams, tot)
+    up = lambda f: is_up(f, avg, D)
     by = defaultdict(list)
     for f in fams:
         if f.spent and D - one * 15 <= f.batch < D:
@@ -551,7 +571,8 @@ def tier_stats(fams, tot, D):
     """分档要看的数，窗口和页面「近 7 天」「次留」一样：消耗 D-6..D，次留到 D-1（D 没回传完）。"""
     one = dt.timedelta(days=1)
     norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
-    up = lambda f: any(norm(f, f.first + one * a) >= RAN for a in (0, 1))
+    avg = day_avg(fams, tot)
+    up = lambda f: is_up(f, avg, D)
     A0, R0 = Counter(), Counter()
     for f in fams:
         for x in f.a:
@@ -575,7 +596,7 @@ def tier_stats(fams, tot, D):
         c7 = sum(ds)
         top = max((sum(f.c[D - one * k] for k in range(7)) for f in fs), default=0)
         lines = {f.first for f in fs if f.first and D - one * 6 <= f.first and up(f)}
-        return dict(sh=round(c7 / t7 * 100, 1) if t7 else 0, d5=sum(1 for v in ds if v >= 5000), top=round(top / c7 * 100) if c7 else 0, nb=len(lines), w7=st(fs, 6), w14=st(fs, 13))
+        return dict(sh=round(c7 / t7 * 100, 1) if t7 else 0, d5=sum(1 for k, v in enumerate(ds) if tot.get(D - one * k) and v / tot[D - one * k] >= .03), top=round(top / c7 * 100) if c7 else 0, nb=len(lines), w7=st(fs, 6), w14=st(fs, 13))
     groups = defaultdict(list)
     for f in fams:
         if f.spent:

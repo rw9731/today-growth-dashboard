@@ -180,21 +180,22 @@ def batch_view(R, groups):
     return B
 
 
-def batch_line(B, groups, D):
-    """页面顶部一句：前天上传的这批，第二天（昨天）每条花了多少。和之前一周的批次比。"""
+def batch_line(B, groups, D, total, days):
+    """页面顶部一句：前天上传的这批，第二天（昨天）每条花了多少，和当天大盘平均每条比。"""
     day = (D - dt.timedelta(days=1)).strftime('%m-%d')
-    prior = [(D - dt.timedelta(days=k)).strftime('%m-%d') for k in range(2, 9) if D - dt.timedelta(days=k) >= STABLE]  # 10/29 前预算还没稳，不比
+    i = len(days) - 1
+    run = sum(total['k'][i]) if total.get('k') else 0
+    avg = sum(total['s'][i]) / run if run else 0
     listed = {u for g in groups for u in g[1]}
     rows = []
-    for i, g in enumerate(groups):
-        us = list(g[1]) + ([u for u in B if u not in listed and not u.startswith('__')] if i == len(groups) - 1 else [])
-        pick = lambda ds, j: sum(B.get(u, {}).get(d, [0, 0, 0])[j] for u in us for d in ds)
-        n = pick([day], 0)
+    for gi, g in enumerate(groups):
+        us = list(g[1]) + ([u for u in B if u not in listed and not u.startswith('__')] if gi == len(groups) - 1 else [])
+        pick = lambda j: sum(B.get(u, {}).get(day, [0, 0, 0])[j] for u in us)
+        n = pick(0)
         if not n:
             continue
-        pn = pick(prior, 0)
-        rows.append(dict(g=g[0], n=n, k=pick([day], 1), per=round(pick([day], 2) / n), prev=round(pick(prior, 2) / pn) if pn else None))
-    return dict(day=day, rows=rows) if rows else None
+        rows.append(dict(g=g[0], n=n, k=pick(1), per=round(pick(2) / n), x=round(pick(2) / n / avg, 1) if avg else None))
+    return dict(day=day, avg=round(avg), rows=rows) if rows else None
 
 
 # 分档的线（Reina 11/5 问，见 claude/usecase-tiers-1104.md）
@@ -355,7 +356,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D), TIER=tier_view(R, plan['GROUPS'], total, plan, T), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
