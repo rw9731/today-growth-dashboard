@@ -187,12 +187,22 @@ def batch_view(R, groups):
     return B
 
 
+def material_urls(links, i, name, now=None):
+    """这条投出去的视频（唯西日报的永久链接优先，没有才用巨量的签名链接），和它的原帖。二创、扩量的 link 是根素材的原帖，不是它自己。"""
+    now = now or dt.datetime.now().timestamp()
+    x = links.get(i, {})
+    orig = '' if x.get('type') == '预览' else x.get('link', '')
+    video = x.get('video') or (x.get('link') if x.get('type') == '预览' else '') or (x.get('jl') if int(x.get('jl_exp', 0) or 0) > now + 3600 else '') or ''
+    if not video and orig and not re.search('二创|扩量|照真人|改动', name):
+        video, orig = orig, ''
+    return [video, orig if orig != video else '']
+
+
 def batch_detail(R):
     """点开柱子看的每批素材：PS03 合成一行，配上片子链接。"""
     raw = R.get('batch_items', {})
     keys = [k for _, k in SUB_KEYS]
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
-    url = lambda i: (lambda x: x.get('link') or x.get('video') or x.get('jl') or '')(links.get(i, {}))
     out = {u: dict(v) for u, v in raw.items() if u not in keys}
     out['PS03'] = {}
     for k in keys:
@@ -203,7 +213,7 @@ def batch_detail(R):
             x['items'] += v['items']
     for u in out:
         for v in out[u].values():
-            v['items'] = [it[1:] + [url(it[0])] for it in sorted(v['items'], key=lambda it: -it[4])]
+            v['items'] = [it[1:] + material_urls(links, it[0], it[1]) for it in sorted(v['items'], key=lambda it: -it[4])]
     return out
 
 
@@ -335,11 +345,10 @@ def load_why(T):
 def with_links(rev):
     """回收表的素材配上能打开的片子链接。"""
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
-    url = lambda i: (lambda x: x.get('link') or x.get('video') or x.get('jl') or '')(links.get(i, {}))
     for x in rev.get('bad', []):
-        x['url'] = url(x['id'])
+        x['url'] = material_urls(links, x['id'], x.get('name', ''))[0]
         if x.get('base'):
-            x['base']['url'] = url(x['base']['id'])
+            x['base']['url'] = material_urls(links, x['base']['id'], x['base'].get('name', ''))[0]
     return rev
 
 

@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('results')
     ap.add_argument('--out', required=True)
+    ap.add_argument('--roi', help='schedule_data.py 的 roi.json；给了就把排期看板每批素材里还没有视频的也一起找')
     a = ap.parse_args()
     res = json.load(open(a.results))
     mats = {m['id']: m for m in res['mat']}
@@ -65,6 +66,9 @@ def main():
     nolink = [m['id'] for m in mats.values() if not m.get('video')]
     # 扩量分析要对照原素材，原素材不一定在看板里，也一起找视频
     nolink += sorted({i for k in res.get('kl', []) for i in k.get('src_ids', []) if i not in mats and not links.get(i, {}).get('video')})
+    if a.roi:
+        batch = json.load(open(a.roi)).get('batch_items', {})
+        nolink += sorted({it[0] for v in batch.values() for x in v.values() for it in x['items'] if it[0] not in mats and not links.get(it[0], {}).get('video')})
     if nolink:
         files['yulan'] = WAIT % ("'每日素材数据'", 1, 0, "'每日素材数据'") + YULAN % json.dumps(nolink)
     for k, js in files.items():

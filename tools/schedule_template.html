@@ -113,6 +113,7 @@ a{color:var(--link)}
 .bp-s{border-top:1px solid var(--grid);margin-top:9px;padding-top:8px}
 .bp-s h4{margin:0 0 2px;font-size:12px;font-weight:600;color:var(--mute)}
 .bp-r{color:var(--bad);font-weight:600}
+.bp-o{font-size:11px;white-space:nowrap}
 .bp-s p{margin:0}.bp-v,.bp-z{font-weight:600}.bp-u{margin:3px 0 0;padding-left:18px}.bp-u li{margin:2px 0}
 .bp-t{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;font-variant-numeric:tabular-nums}
 .bp-t th,.bp-t td{padding:3px 6px;border-bottom:1px solid var(--grid);text-align:right;font-weight:400;white-space:nowrap}
@@ -407,8 +408,8 @@ function bpBody(u,day,cell){
   }else if(D&&D.items.length<3){h+=`<div class="bp-s"><p class="q">不到 3 条，不单独分析，看下面每条的数。</p></div>`}
   else h+=`<div class="bp-s"><p class="q">这批的内容分析还没写，先看下面每条的数。</p></div>`;
   if(D){
-    const rows=D.items.map(it=>{const[nm,kd,c0,c1,up,rt,a,url]=it;return `<tr><td class="nm">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(nm)}</a>`:esc(nm)}</td><td>${esc(kd)}</td><td>${money(c0)}</td><td class="${up?'good':''}">${money(c1)}</td><td>${na?(c1/na).toFixed(1)+' 倍':''}</td><td title="激活 ${a}">${rt==null?'·':rt.toFixed(1)+'%'}${a<100&&rt!=null?'<small class="q"> 样本小</small>':''}</td></tr>`}).join('');
-    h+=`<div class="bp-s"><details${N?'':' open'}><summary>这批每条素材（${D.items.length} 条，第一天共 ${money(D.c0)}${D.a0?`，激活 ${D.a0}，第一天次留 ${(D.r0/D.a0*100).toFixed(1)}%`:''}）</summary><table class="bp-t"><thead><tr><th class="nm">素材</th><th>类型</th><th>第一天</th><th>第二天</th><th>相对大盘</th><th>次留</th></tr></thead><tbody>${rows}</tbody></table></details></div>`;
+    const rows=D.items.map(it=>{const[nm,kd,c0,c1,up,rt,a,url,orig]=it;return `<tr><td class="nm">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(nm)}</a>`:esc(nm)}${orig?` <a class="bp-o" href="${esc(orig)}" target="_blank" rel="noopener">原帖</a>`:''}</td><td>${esc(kd)}</td><td>${money(c0)}</td><td class="${up?'good':''}">${money(c1)}</td><td>${na?(c1/na).toFixed(1)+' 倍':''}</td><td title="激活 ${a}">${rt==null?'·':rt.toFixed(1)+'%'}${a<100&&rt!=null?'<small class="q"> 样本小</small>':''}</td></tr>`}).join('');
+    h+=`<div class="bp-s"><h4>这批每条素材（${D.items.length} 条，第一天共 ${money(D.c0)}${D.a0?`，激活 ${D.a0}，第一天次留 ${(D.r0/D.a0*100).toFixed(1)}%`:''}）。点素材名看投出去的视频，「原帖」是博主原来发的那条</h4><table class="bp-t"><thead><tr><th class="nm">素材</th><th>类型</th><th>第一天</th><th>第二天</th><th>相对大盘</th><th>次留</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
   return h;
 }
