@@ -202,6 +202,18 @@ html,body{margin:0}
 .xb{gap:6px 10px}.xb i{height:10px;border-radius:0 5px 5px 0}.xb i span{border-radius:0 5px 5px 0}.xb i em{top:-3px;bottom:-3px}
 .now-tags{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
 @media (max-width:560px){.out,.tbox{padding:12px}.out td.n b{font-size:16px}.out .n{width:32px}.o-pct{min-width:40px}.o-pct b{font-size:14px}}
+.out,.tbox{padding:12px 16px}.o-head{margin-bottom:2px;flex-wrap:wrap}.o-head h2,.tbox h2{font-size:15px}
+.out tbody th{font-size:13px;line-height:1.3}.out small{margin-top:0;font-size:11px}.out th,.out td{padding-top:5px;padding-bottom:5px}.out td.n b{font-size:16px}
+.o-track{height:10px}.o-pct{min-width:88px}.o-pct b{font-size:14px}
+.o-more{margin:0 0 0 auto;padding:0;border:0;font-size:12px}.o-more[open]{flex-basis:100%;margin-left:0}
+.tbox{gap:8px}.tbox>*+*{border-top:0;padding-top:0}.tbox h2{margin-bottom:2px}
+.kv{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px 12px;align-items:baseline;line-height:1.45}
+.kv>.k{font-size:12px;color:var(--mute);white-space:nowrap}#alerts{display:contents}#alerts>*+*{border-top:0;padding-top:0}
+.lag summary{list-style-position:inside}.lag ul{margin-top:4px}
+.dd{grid-template-columns:44px minmax(0,1fr);gap:4px 6px}.dd code{padding:0 6px;margin:0 3px 0 0}
+@media (max-width:980px){.o-more{margin-left:auto}}
+.dd{grid-template-columns:50px minmax(0,1fr)}.dd b{white-space:nowrap}
+@media (max-width:560px){.out tbody th{white-space:normal}.o-track{min-width:32px}.out .n{width:28px}.out th,.out td{padding-right:4px}}
 </style>
 </head>
 <body>
@@ -216,10 +228,11 @@ html,body{margin:0}
 <h1>本周素材排期</h1>
 </header>
 <div class="top">
-<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 11/4，第 3 / 7 天，竖线是今天该到的位置</span></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">200</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 200"><span class="o-fill" style="width:53.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>53%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">138</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 138"><span class="o-fill" style="width:55.8%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>56%</b></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">达人合作<small>外部 19 · 唯西 2 · 水上 0</small></th><td class="n">8</td><td class="n"><b>21</b></td><td class="n mu">65</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 21 / 预计 65"><span class="o-fill" style="width:32.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>32%</b><em class="o-late">偏慢</em></span></div></td></tr></tbody></table></div><details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details></section>
-<aside class="tbox"><h2>今天要看</h2><p class="now-sub">B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。</p>
-<details class="lag"><summary><b>落下 5 行</b><span class="ct">A 组 61/69 · B 组 11/13</span></summary><ul><li>A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）</li><li>A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）</li><li>A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）</li><li>B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）</li><li>B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）</li></ul></details>
-<div id="alerts"></div></aside>
+<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 11/4，第 3 / 7 天，竖线是今天该到的位置</span><details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">200</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 200"><span class="o-fill" style="width:53.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>53%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">138</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 138"><span class="o-fill" style="width:55.8%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>56%</b></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">达人合作<small>外部 19 · 唯西 2 · 水上 0</small></th><td class="n">8</td><td class="n"><b>21</b></td><td class="n mu">65</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 21 / 预计 65"><span class="o-fill" style="width:32.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>32%</b><em class="o-late">偏慢</em></span></div></td></tr></tbody></table></div></section>
+<aside class="tbox"><h2>今天要看</h2><div class="kv">
+<span class="k">落下</span><details class="lag"><summary><b>5 行</b><span class="ct">A 组 61/69 · B 组 11/13</span></summary><ul><li>A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）</li><li>A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）</li><li>A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）</li><li>B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）</li><li>B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）</li></ul></details>
+<span class="k">B 组速度</span><span>每天要做约 22 条，是 11/4 的 2 倍</span>
+<div id="alerts"></div></div></aside>
 </div>
 <details class="more"><summary>本周产能（已排 / 产能）</summary><div class="meters" id="meters"></div></details>
 <div class="legend leg-min">
@@ -357,12 +370,10 @@ const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
 const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
 const dayMerged=[];Object.keys(dayRows).sort().forEach(d=>{const k=dayRows[d].join(),l=dayMerged[dayMerged.length-1];if(l&&l.k===k)l.to=d;else dayMerged.push({k,from:d,to:d,us:dayRows[d]})});
-const xMax=P.BT?Math.max(1.5,...P.BT.rows.map(x=>x.x||0)):1;
-const nowTags=[...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span><span class="pill ${c}">${t}</span> ${revTags(t).join('、')}</span>`:''),P.REV.nbad?`<span><span class="pill gray">要看片</span> <a href="#bad">${P.REV.nbad} 条</a></span>`:''].filter(Boolean).join('');
 document.getElementById('alerts').innerHTML=[
-  dayMerged.length?`<div><span class="now-k"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div></div>`:'',
-  P.BT?`<div><span class="now-k">${md(P.BT.day)} 首花这批，第二天每条比大盘（竖线 = 大盘 ${money(P.BT.avg)}）</span><div class="xb">${P.BT.rows.map(x=>`<span>${esc(x.g)}</span><i><span style="width:${Math.min(100,(x.x||0)/xMax*100)}%"></span><em style="left:${100/xMax}%"></em></i><small>${x.x} 倍</small><small>${x.k}/${x.n} 条</small>`).join('')}</div></div>`:'',
-  nowTags?`<div class="now-tag now-tags">${nowTags}</div>`:'',
+  dayMerged.length?`<span class="k">预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div>`:'',
+  revTags('可能见顶').length?`<span class="k">可能见顶</span><span>${revTags('可能见顶').join('、')}</span>`:'',
+  P.REV.nbad?`<span class="k">要看片</span><a href="#bad">${P.REV.nbad} 条</a>`:'',
 ].filter(Boolean).join('');
 const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);

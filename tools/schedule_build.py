@@ -359,6 +359,12 @@ def uc_names(plan):
     return names
 
 
+def short_sub(text):
+    """plan 的 sub 是一大句，右边面板只留 B 组后面每天要做多少。"""
+    m = re.search(r'每天要做约 ?\d+ ?条(，是[^，。]*?倍)?', text or '')
+    return f'<span class="k">B 组速度</span><span>{html.escape(m.group(0))}</span>' if m else ''
+
+
 def progress_html(prog, T):
     """「今天要看」里的落下：一行数，点开才是具体哪几行。"""
     if not prog or not prog.get('line'):
@@ -367,9 +373,9 @@ def progress_html(prog, T):
     ct = ' · '.join(f"{k} 组 {g[k]['got']}/{g[k]['due']}" for k in ('A', 'B') if k in g)
     lags = prog.get('lags', [])
     if not lags:
-        return f'<div class="lag"><b>没有落下的</b><span class="ct">{html.escape(ct)}</span></div>'
+        return f'<span class="k">落下</span><span>没有 · {html.escape(ct)}</span>'
     items = ''.join('<li>' + html.escape(x) + '</li>' for x in lags)
-    return f'<details class="lag"><summary><b>落下 {len(lags)} 行</b><span class="ct">{html.escape(ct)}</span></summary><ul>{items}</ul></details>'
+    return f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b><span class="ct">{html.escape(ct)}</span></summary><ul>{items}</ul></details>'
 
 
 def output_html(o):
@@ -397,10 +403,11 @@ def output_html(o):
         body += row(r['name'], sub, r['y'], r['n'], r['t'])
     plan_note = 'AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。' if o.get('from_plan') else '预计是素材产出日报的每周目标，这周排期还没写进 plan。'
     miss = ('<p class="o-note o-miss">这几个 tab 今天没读到，数偏少：' + e('、'.join(o['missing'])) + '</p>') if o.get('missing') else ''
-    return (f'<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 {md(D)}，第 {o["days"]} / 7 天，竖线是今天该到的位置</span></div>'
+    return (f'<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 {md(D)}，第 {o["days"]} / 7 天，竖线是今天该到的位置</span>'
+            f'<details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。{e(plan_note)}达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details></div>'
             '<div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead>'
             f'<tbody>{body}</tbody></table></div>'
-            f'<details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。{e(plan_note)}达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details>{miss}</section>')
+            f'{miss}</section>')
 
 
 def render(tpl, P, fields, rel, T):
@@ -474,7 +481,7 @@ def main():
     if a.output is None:
         print('WARNING 没给 --output：页面没有「本周实际产出」')
     fields = dict(
-        SUB=plan.get('sub', '') if in_week else '',
+        SUB=short_sub(plan.get('sub', '')) if in_week else '',
         PROG=progress_html(prog, T),
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),

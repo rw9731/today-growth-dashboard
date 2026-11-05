@@ -172,6 +172,18 @@ a{color:var(--link)}
 .xb{gap:6px 10px}.xb i{height:10px;border-radius:0 5px 5px 0}.xb i span{border-radius:0 5px 5px 0}.xb i em{top:-3px;bottom:-3px}
 .now-tags{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
 @media (max-width:560px){.out,.tbox{padding:12px}.out td.n b{font-size:16px}.out .n{width:32px}.o-pct{min-width:40px}.o-pct b{font-size:14px}}
+.out,.tbox{padding:12px 16px}.o-head{margin-bottom:2px;flex-wrap:wrap}.o-head h2,.tbox h2{font-size:15px}
+.out tbody th{font-size:13px;line-height:1.3}.out small{margin-top:0;font-size:11px}.out th,.out td{padding-top:5px;padding-bottom:5px}.out td.n b{font-size:16px}
+.o-track{height:10px}.o-pct{min-width:88px}.o-pct b{font-size:14px}
+.o-more{margin:0 0 0 auto;padding:0;border:0;font-size:12px}.o-more[open]{flex-basis:100%;margin-left:0}
+.tbox{gap:8px}.tbox>*+*{border-top:0;padding-top:0}.tbox h2{margin-bottom:2px}
+.kv{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px 12px;align-items:baseline;line-height:1.45}
+.kv>.k{font-size:12px;color:var(--mute);white-space:nowrap}#alerts{display:contents}#alerts>*+*{border-top:0;padding-top:0}
+.lag summary{list-style-position:inside}.lag ul{margin-top:4px}
+.dd{grid-template-columns:44px minmax(0,1fr);gap:4px 6px}.dd code{padding:0 6px;margin:0 3px 0 0}
+@media (max-width:980px){.o-more{margin-left:auto}}
+.dd{grid-template-columns:50px minmax(0,1fr)}.dd b{white-space:nowrap}
+@media (max-width:560px){.out tbody th{white-space:normal}.o-track{min-width:32px}.out .n{width:28px}.out th,.out td{padding-right:4px}}
 {{NAV_CSS}}
 .top{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,2fr);gap:12px;align-items:start}
 @media (max-width:980px){.top{grid-template-columns:minmax(0,1fr);max-width:calc(100vw - 32px)}}
@@ -197,9 +209,10 @@ a{color:var(--link)}
 </header>
 <div class="top">
 {{OUTPUT}}
-<aside class="tbox"><h2>今天要看</h2><p class="now-sub">{{SUB}}</p>
+<aside class="tbox"><h2>今天要看</h2><div class="kv">
 {{PROG}}
-<div id="alerts"></div></aside>
+{{SUB}}
+<div id="alerts"></div></div></aside>
 </div>
 <details class="more"><summary>本周产能（已排 / 产能）</summary><div class="meters" id="meters"></div></details>
 <div class="legend leg-min">
@@ -337,12 +350,10 @@ const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
 const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
 const dayMerged=[];Object.keys(dayRows).sort().forEach(d=>{const k=dayRows[d].join(),l=dayMerged[dayMerged.length-1];if(l&&l.k===k)l.to=d;else dayMerged.push({k,from:d,to:d,us:dayRows[d]})});
-const xMax=P.BT?Math.max(1.5,...P.BT.rows.map(x=>x.x||0)):1;
-const nowTags=[...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span><span class="pill ${c}">${t}</span> ${revTags(t).join('、')}</span>`:''),P.REV.nbad?`<span><span class="pill gray">要看片</span> <a href="#bad">${P.REV.nbad} 条</a></span>`:''].filter(Boolean).join('');
 document.getElementById('alerts').innerHTML=[
-  dayMerged.length?`<div><span class="now-k"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div></div>`:'',
-  P.BT?`<div><span class="now-k">${md(P.BT.day)} 首花这批，第二天每条比大盘（竖线 = 大盘 ${money(P.BT.avg)}）</span><div class="xb">${P.BT.rows.map(x=>`<span>${esc(x.g)}</span><i><span style="width:${Math.min(100,(x.x||0)/xMax*100)}%"></span><em style="left:${100/xMax}%"></em></i><small>${x.x} 倍</small><small>${x.k}/${x.n} 条</small>`).join('')}</div></div>`:'',
-  nowTags?`<div class="now-tag now-tags">${nowTags}</div>`:'',
+  dayMerged.length?`<span class="k">预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div>`:'',
+  revTags('可能见顶').length?`<span class="k">可能见顶</span><span>${revTags('可能见顶').join('、')}</span>`:'',
+  P.REV.nbad?`<span class="k">要看片</span><a href="#bad">${P.REV.nbad} 条</a>`:'',
 ].filter(Boolean).join('');
 const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
