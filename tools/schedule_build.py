@@ -109,18 +109,25 @@ def spend_row(R):
 def load_spend(S):
     """表里 PS03 一行放合计，三部分只写进执行细节。"""
     dec_run = lambda t: [[int(v) for v in day.split(',')] for day in t.split(';')]
+    dec_ret = lambda t: [[int(v) for v in day.split(',')] if day else [0] * 8 for day in t.split(';')]
     U = {u: spend_row(R) for u, R in S['U'].items()}
     for u, x in U.items():
         if u in S.get('run', {}):
             x['k'] = dec_run(S['run'][u])
+        if u in S.get('ret', {}):
+            x['rt'] = dec_ret(S['ret'][u])
     parts = {k: U.pop(k, None) for _, k in SUB_KEYS}
     if S.get('merged', {}).get('PS03'):
         U['PS03'] = spend_row(S['merged']['PS03'])
         if S.get('run_merged', {}).get('PS03'):
             U['PS03']['k'] = dec_run(S['run_merged']['PS03'])
+        if S.get('ret_merged', {}).get('PS03'):
+            U['PS03']['rt'] = dec_ret(S['ret_merged']['PS03'])
     total = dict(c7=S['t7'], rate=S['rate'], cpr=S['cpr'], n=[int(x) for x in S['T']['n'].split(',')], s=dec(S['T']['s']))
     if S['T'].get('k'):
         total['k'] = dec_run(S['T']['k'])
+    if S['T'].get('ret'):
+        total['rt'] = dec_ret(S['T']['ret'])
     return U, total, parts
 
 
@@ -190,9 +197,9 @@ def batch_detail(R):
     out['PS03'] = {}
     for k in keys:
         for d, v in raw.get(k, {}).items():
-            x = out['PS03'].setdefault(d, dict(c0=0, a0=0, r0=0, items=[]))
-            for f in ('c0', 'a0', 'r0'):
-                x[f] += v[f]
+            x = out['PS03'].setdefault(d, dict(c0=0, a0=0, r0=0, at=0, rt=0, items=[]))
+            for f in ('c0', 'a0', 'r0', 'at', 'rt'):
+                x[f] += v.get(f, 0)
             x['items'] += v['items']
     for u in out:
         for v in out[u].values():

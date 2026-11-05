@@ -221,6 +221,7 @@ def spend_uc(rows, fams, of, days, D):
     idx = {d: i for i, d in enumerate(days)}
     seg = defaultdict(lambda: [[0.0] * 4 for _ in days])
     run = defaultdict(lambda: [[set() for _ in range(4)] for _ in days])  # 在跑：当天花了钱的素材，按批次
+    ret = defaultdict(lambda: [[0.0] * 8 for _ in days])  # 当天激活、次留，按批次：激活0、次留0、激活1、次留1……
     seven = Counter()
     win = defaultdict(lambda: [0.0, 0.0, 0.0])  # 消耗、激活、次留
     d6, d1 = D - dt.timedelta(days=6), D - dt.timedelta(days=1)
@@ -232,6 +233,8 @@ def spend_uc(rows, fams, of, days, D):
             seg[u][idx[r['d']]][b] += r['c']
             if r['c'] > 0:
                 run[u][idx[r['d']]][b].add(id(f))
+            ret[u][idx[r['d']]][b * 2] += r['a']
+            ret[u][idx[r['d']]][b * 2 + 1] += r['r']
         if d6 <= r['d'] <= D:
             seven[u] += r['c']
         if d6 <= r['d'] <= d1:
@@ -243,7 +246,7 @@ def spend_uc(rows, fams, of, days, D):
     for f in fams:
         if f.spent and f.batch in idx:
             cnt[f.sub][idx[f.batch]] += 1
-    return seg, seven, win, cnt, run
+    return seg, seven, win, cnt, run, ret
 
 
 def sub_of_row(r, f):
@@ -269,7 +272,7 @@ def merge_seg(seg, keys, n_days):
 
 def make_spend(rows, fams, of, D):
     days = [D - dt.timedelta(days=13 - i) for i in range(14)]
-    seg, seven, win, cnt, run = spend_uc(rows, fams, of, days, D)
+    seg, seven, win, cnt, run, ret = spend_uc(rows, fams, of, days, D)
     n = len(days)
     t = [[sum(seg[u][i][j] for u in seg) for j in range(4)] for i in range(n)]
     tw = [sum(win[u][k] for u in win) for k in range(3)]
@@ -282,9 +285,14 @@ def make_spend(rows, fams, of, D):
     union = lambda us: [[set().union(*[run[u][i][j] for u in us if u in run]) if any(u in run for u in us) else set() for j in range(4)] for i in range(n)]
     out['run'] = {u: enc_run(run[u]) for u in run}
     out['T']['k'] = enc_run(union(list(run)))
+    enc_ret = lambda m: ';'.join(','.join(str(int(round(v))) for v in day) if any(day) else '' for day in m)
+    add_ret = lambda us: [[sum(ret[u][i][j] for u in us if u in ret) for j in range(8)] for i in range(n)]
+    out['ret'] = {u: enc_ret(ret[u]) for u in ret}
+    out['T']['ret'] = enc_ret(add_ret(list(ret)))
     keys = list(SUB_KEY.values())
     if any(k in out['U'] for k in keys):
         out['run_merged'] = {'PS03': enc_run(union(keys))}
+        out['ret_merged'] = {'PS03': enc_ret(add_ret(keys))}
         w = [sum(win[k][i] for k in keys) for i in range(3)]
         c = [sum(cnt[k][i] for k in keys) for i in range(n)]
         s = merge_seg(seg, keys, n)
@@ -572,7 +580,8 @@ def batches(fams, tot, D):
 
 def batch_items(fams, tot, D):
     """每批每条素材，给看板点开柱子用。批次和 batches 一样。items 按第二天花费从高到低：
-    [素材ID, 素材名, 类型, 第一天, 第二天, 跑起来, 次留, 激活]，次留和激活看到 D-1（D 没回传完）。"""
+    [素材ID, 素材名, 类型, 第一天, 第二天, 跑起来, 次留, 激活]，次留和激活看到 D-1（D 没回传完）。
+    a0、r0 是这批首花当天的激活和次留，at、rt 是这批到 D-1 的合计。"""
     one = dt.timedelta(days=1)
     avg = day_avg(fams, tot)
     up = lambda f: is_up(f, avg, D)
@@ -589,7 +598,8 @@ def batch_items(fams, tot, D):
             r = sum(v for k, v in f.r.items() if k < D)
             rows.append([sorted(f.ids)[0], nm(f), f.kind, round(f.c[b]), round(f.c[b + one]), bool(up(f)), round(r / a * 100, 1) if a else None, round(a)])
         a0, r0 = sum(f.a[b] for f in fs), sum(f.r[b] for f in fs)
-        out[u][b.strftime('%m-%d')] = dict(c0=round(sum(f.c[b] for f in fs)), a0=round(a0), r0=round(r0), items=rows)
+        at, rt = sum(v for f in fs for k, v in f.a.items() if k < D), sum(v for f in fs for k, v in f.r.items() if k < D)
+        out[u][b.strftime('%m-%d')] = dict(c0=round(sum(f.c[b] for f in fs)), a0=round(a0), r0=round(r0), at=round(at), rt=round(rt), items=rows)
     return out
 
 
