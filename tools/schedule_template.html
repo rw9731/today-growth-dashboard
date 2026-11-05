@@ -102,7 +102,9 @@ a{color:var(--link)}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
 .rules p{margin:0;max-width:96ch}
 #b .help,.legend .help{cursor:help}#b th.help,#b td.help small,.legend .help{text-decoration:underline dotted;text-underline-offset:3px}
-#tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;font-size:12px;line-height:1.5;max-width:240px;font-variant-numeric:tabular-nums}
+#tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;font-size:12px;line-height:1.5;max-width:340px;font-variant-numeric:tabular-nums}
+#tip .ts{border-top:1px solid color-mix(in srgb,var(--bg) 35%,transparent);margin-top:6px;padding-top:6px}
+#tip .tl{display:block;font-size:11px;opacity:.65;margin-bottom:1px}
 .foot{color:var(--mute);font-size:12px;margin:0;max-width:112ch}
 .mv{display:grid;gap:7px;background:var(--panel);border:1px solid var(--grid);padding:10px 12px}
 .mv>div{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px}
@@ -333,7 +335,10 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
   tip.dataset.h='';tip.style.maxWidth='';
   const c=ev.target.closest('td.d');if(!c||!c.dataset.d){tip.hidden=true;return}
   let html=`<b>${c.dataset.d}</b>`;
-  if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg),kk=c.dataset.k?c.dataset.k.split(',').map(Number):null;html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，每条 ${money(t/sum(kk))}`;seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))html+=`<br>${nm[j]}批次 ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，在跑 ${kk[j]} 条`:''}`});html+=`<br>上新 ${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，${up} 条跑起来<br>这 ${n} 条第二天平均每条 ${money(cc/n)}${na?`，当天大盘每条 ${money(na)}`:''}`}}
+  if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg),kk=c.dataset.k?c.dataset.k.split(',').map(Number):null;
+   html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，平均每条 ${money(t/sum(kk))}`;
+   html+=`<div class="ts"><span class="tl">当天上新</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?`，当天大盘每条 ${money(na)}`:''}`}html+=`</div>`;
+   let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`}
   else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
   placeTip(ev.clientX,ev.clientY);
