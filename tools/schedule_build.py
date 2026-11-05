@@ -200,6 +200,29 @@ def batch_detail(R):
     return out
 
 
+def why_rows(why, notes, B, names, total, days):
+    """回收那一节的表：前天上传这批，每批一行，从 notes/batches.json 取。"""
+    if not why:
+        return why
+    day = why['day']
+    i = len(days) - 1
+    run = sum(total['k'][i]) if total.get('k') else 0
+    avg = sum(total['s'][i]) / run if run else 0
+    rows = []
+    for k, e in notes.items():
+        u, d = k.split('|')
+        v = B.get(u, {}).get(d)
+        if d != day or not v or v[0] < 3:
+            continue
+        per = v[2] / v[0]
+        rows.append(dict(label=f"{names.get(u, '')} {u}".strip(), color='green' if per >= avg else 'red', n=v[0], k=v[1], per=round(per), why='\n'.join(x for x in (e.get('good'), e.get('bad')) if x), next=e.get('next', '')))
+    if rows:
+        rows.sort(key=lambda r: (r['color'] != 'red', -r['n']))
+        why = {**why, 'rows': rows}
+    why.setdefault('rows', [])
+    return why
+
+
 def load_batch_notes():
     """每批的内容和操作分析。notes/batches.json，键是「UC|MM-DD」，全盘当天的操作写在「__day|MM-DD」。"""
     p = os.path.join(ROOT, 'notes', 'batches.json')
@@ -296,7 +319,10 @@ def rule_rows(RU, U, E, GL, W, T):
 def load_why(T):
     """前天上传这批红、绿的内容分析（tools/schedule_why.py 列清单，看完片写 notes/schedule-T.json），没有就不显示。"""
     p = os.path.join(ROOT, 'notes', f'schedule-{T.isoformat()}.json')
-    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else None
+    if not os.path.exists(p):
+        return None
+    why = json.load(open(p, encoding='utf-8'))
+    return why
 
 
 def with_links(rev):
@@ -388,7 +414,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=load_why(T), BD=batch_detail(R), BN=load_batch_notes(), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
