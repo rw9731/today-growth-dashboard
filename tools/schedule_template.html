@@ -357,7 +357,7 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
   if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg),kk=c.dataset.k?c.dataset.k.split(',').map(Number):null;
    const ci=+c.dataset.i,rd=rtDay(ci),rr=c.dataset.r?c.dataset.r.split(',').map(Number):null,bb=c.dataset.b?batchRt(c.closest('tr').dataset.id,P.days[ci]):null;
    html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，平均每条 ${money(t/sum(kk))}`;if(rd)html+=`<br>当天大盘留存 ${rtTip(rd[0],rd[1],ci)}${ci===P.days.length-2?'，这天还在回传，可能偏低约 1 个点':''}`;
-   html+=`<div class="ts"><span class="tl">当天上新</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?(()=>{const df=cc/n-na,up=df>=0,pc=Math.round(Math.abs(df)/na*100);return `，${up?'高于':'低于'}当天大盘 ${money(Math.abs(df))}（${up?'高':'低'} ${pc}%）`})():''}`}if(bb)html+=`<br>新上素材留存 ${rtTip(bb.a0,bb.r0,ci)}`;html+=`</div>`;
+   html+=`<div class="ts"><span class="tl">当天首花</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?(()=>{const df=cc/n-na,up=df>=0,pc=Math.round(Math.abs(df)/na*100);return `，${up?'高于':'低于'}当天大盘 ${money(na)}（${up?'高':'低'} ${pc}%）`})():''}`}if(bb)html+=`<br>新上素材留存 ${rtTip(bb.a0,bb.r0,ci)}`;html+=`</div>`;
    let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}${rr&&rr[j*2]&&ci!==P.days.length-1?`，留存 ${rtPct(rr[j*2],rr[j*2+1])}${rr[j*2]<100?'（样本小）':''}`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`;if(c.dataset.b)html+=`<div class="ts"><span class="tl">点柱子看这批的分析</span></div>`}
   else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
@@ -368,7 +368,7 @@ document.querySelector('#b').addEventListener('mouseleave',()=>tip.hidden=true);
 // 点柱子：在这一行下面展开这批的分析，再点收起
 const bpUid=tr=>tr.dataset.id;
 const VERD={'内容':'主要是内容的问题','操作':'主要是投手操作的问题','都有':'内容和投手操作都有问题','看不出':'现在还看不出','好在内容':'主要好在内容','好在操作':'主要是投手放量，内容不一定好'};
-const dfTxt=(v,na)=>{const d=v-na,up=d>=0;return `${up?'高于':'低于'}当天大盘 ${money(Math.abs(d))}（${up?'高':'低'} ${Math.round(Math.abs(d)/na*100)}%）`};
+const dfTxt=(v,na)=>{const d=v-na,up=d>=0;return `${up?'高于':'低于'}当天大盘 ${money(na)}（${up?'高':'低'} ${Math.round(Math.abs(d)/na*100)}%）`};
 const para=t=>mk(t).replace(/\n/g,'<br>');
 const zf=t=>{const[a,...b]=String(t).split('\n').filter(x=>x.trim());return `<p class="bp-z">${mk(a)}</p>${b.length?`<ul class="bp-u">${b.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>`:''}`};
 function bpHead(u,day,cell){
