@@ -69,6 +69,7 @@
   [
    "跑量少 + 留存好",
    [
+    "LG03",
     "NT01",
     "IN01",
     "PS04",
@@ -124,7 +125,7 @@
  ],
  "MT": {
   "LG01": 24,
-  "LG02": 12,
+  "LG02": 8,
   "PS01": 27,
   "WK01": 17,
   "WK05": 19,
@@ -138,7 +139,8 @@
   "WK02": 31,
   "HL02": 15,
   "AI00": 8,
-  "SH02": 5
+  "SH02": 5,
+  "LG03": 4
  },
  "UC_extra": {},
  "MOVES": [],
@@ -148,7 +150,29 @@
    "d": "2026-11-03",
    "g": "A",
    "t": "AI",
-   "n": 4,
+   "n": 2,
+   "s": "done",
+   "src": "A 组脚本及成片，11/2–3 完成",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b",
+   "to": ""
+  },
+  {
+   "uc": "LG03",
+   "d": "2026-11-03",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "done",
+   "src": "A 组脚本及成片，11/2–3 完成",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b",
+   "to": ""
+  },
+  {
+   "uc": "PS02",
+   "d": "2026-11-03",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
    "s": "done",
    "src": "A 组脚本及成片，11/2–3 完成",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b",
@@ -320,7 +344,7 @@
    "to": ""
   },
   {
-   "uc": "LG02",
+   "uc": "LG03",
    "d": "2026-11-04",
    "g": "A",
    "t": "AI",
@@ -331,7 +355,7 @@
    "to": ""
   },
   {
-   "uc": "LG02",
+   "uc": "LG03",
    "d": "2026-11-04",
    "g": "A",
    "t": "AI",
@@ -419,7 +443,7 @@
    "to": ""
   },
   {
-   "uc": "LG02",
+   "uc": "PS02",
    "d": "2026-11-04",
    "g": "A",
    "t": "二创",
@@ -573,7 +597,7 @@
    "to": ""
   },
   {
-   "uc": "LG02",
+   "uc": "PS02",
    "d": "2026-11-06",
    "g": "A",
    "t": "二创",
