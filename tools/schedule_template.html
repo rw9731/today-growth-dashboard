@@ -105,6 +105,19 @@ a{color:var(--link)}
 #tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;font-size:12px;line-height:1.5;max-width:340px;font-variant-numeric:tabular-nums}
 #tip .ts{border-top:1px solid color-mix(in srgb,var(--bg) 35%,transparent);margin-top:6px;padding-top:6px}
 #tip .tl{display:block;font-size:11px;opacity:.65;margin-bottom:1px}
+.d.p[data-b]{cursor:pointer}.d.p[data-b]:hover .bar{opacity:.72}.d.p.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+#b tr.bp>td{padding:0;background:var(--band);border-bottom:2px solid var(--base)}
+.bp-in{position:sticky;left:0;box-sizing:border-box;width:min(900px,calc(100vw - 40px));padding:12px 14px 14px;font-size:13px;line-height:1.6;white-space:normal;text-align:left}
+.bp-h{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.bp-h b{font-size:14px}.bp-x{flex:none;border:1px solid var(--base);background:transparent;color:var(--ink);font:inherit;font-size:12px;padding:1px 8px;cursor:pointer}
+.bp-s{border-top:1px solid var(--grid);margin-top:9px;padding-top:8px}
+.bp-s h4{margin:0 0 2px;font-size:12px;font-weight:600;color:var(--mute)}
+.bp-s p{margin:0}.bp-v{font-weight:600}
+.bp-t{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;font-variant-numeric:tabular-nums}
+.bp-t th,.bp-t td{padding:3px 6px;border-bottom:1px solid var(--grid);text-align:right;font-weight:400;white-space:nowrap}
+.bp-t th{color:var(--mute)}.bp-t .nm{text-align:left;white-space:normal;word-break:break-all;width:60%}
+.bp-s details summary{cursor:pointer;color:var(--mute);font-size:12px}
+.bp-l{cursor:pointer;background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;text-decoration:underline dotted;text-underline-offset:2px}
 .foot{color:var(--mute);font-size:12px;margin:0;max-width:112ch}
 .mv{display:grid;gap:7px;background:var(--panel);border:1px solid var(--grid);padding:10px 12px}
 .mv>div{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px}
@@ -204,7 +217,7 @@ function dayCells(r,es,max,warn,muted,bt){
   pastDays.forEach((d,j)=>{
     const i=j+START,seg=r.s[i],tot=sum(seg),bn=bt&&bt[P.days[i]],na=P.T.k&&sum(P.T.k[i+1]||[])?sum(P.T.s[i+1])/sum(P.T.k[i+1]):0,hit=bn&&bn[0]>=3&&na?(bn[2]/bn[0]>=na?' hi':' lo'):'';
     const bars=seg.map((v,b)=>v>0?`<i class="b${b}" style="height:${Math.max(1,v/max*31).toFixed(1)}px"></i>`:'').join('');
-    h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-i="${i}" data-s="${seg.join(',')}" data-k="${r.k?r.k[i].join(','):''}" data-n="${r.n[i]}"${bn?` data-b="${bn.join(',')}"`:''}><div class="bar">${bars}</div><div class="cnt${hit}">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
+    h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-i="${i}" data-s="${seg.join(',')}" data-k="${r.k?r.k[i].join(','):''}" data-n="${r.n[i]}"${bn?` data-b="${bn.join(',')}" tabindex="0" role="button"`:''}><div class="bar">${bars}</div><div class="cnt${hit}">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
   });
   futDays.forEach(d=>{
     const toks=[];const key=keyOf(d);const w=warn&&warn[key];
@@ -228,7 +241,7 @@ function row(id,code,label,r,es,max,cls,gi){
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
-  return `<tr class="row ${cls}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}</button></td>
+  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r)}${dayCells(r,es,max,x?x.warn:null,gi===2&&!DIR.has(id),P.B[id])}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
@@ -236,7 +249,7 @@ const NC=3+all.length+4;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -338,12 +351,63 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
   if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg),kk=c.dataset.k?c.dataset.k.split(',').map(Number):null;
    html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，平均每条 ${money(t/sum(kk))}`;
    html+=`<div class="ts"><span class="tl">当天上新</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?(()=>{const df=cc/n-na,up=df>=0,pc=Math.round(Math.abs(df)/na*100);return `，${up?'高于':'低于'}当天大盘 ${money(Math.abs(df))}（${up?'高':'低'} ${pc}%）`})():''}`}html+=`</div>`;
-   let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`}
+   let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`;if(c.dataset.b)html+=`<div class="ts"><span class="tl">点柱子看这批的分析</span></div>`}
   else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
   placeTip(ev.clientX,ev.clientY);
 });
 document.querySelector('#b').addEventListener('mouseleave',()=>tip.hidden=true);
+
+// 点柱子：在这一行下面展开这批的分析，再点收起
+const bpUid=tr=>tr.dataset.id;
+const VERD={'内容':'主要是内容','操作':'主要是操作','都有':'内容和操作都有','看不出':'还看不出','好在内容':'好在内容','好在操作':'主要是投手放量，内容不一定好'};
+const dfTxt=(v,na)=>{const d=v-na,up=d>=0;return `${up?'高于':'低于'}当天大盘 ${money(Math.abs(d))}（${up?'高':'低'} ${Math.round(Math.abs(d)/na*100)}%）`};
+const para=t=>esc(t).replace(/\n/g,'<br>');
+function bpHead(u,day,cell){
+  const nameOf=u==='__all'?'全盘':`${u} ${P.UC[u]||''}`;
+  const [n,up,cc]=cell.dataset.b.split(',').map(Number),ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
+  return `<div class="bp-h"><div><b>${esc(nameOf)} · ${md(day)} 上传</b><br>${n} 条，第二天跑起来 ${up} 条；第二天平均每条 ${money(cc/n)}${na?'，'+dfTxt(cc/n,na):''}</div><button class="bp-x" type="button">收起</button></div>`;
+}
+function bpBody(u,day,cell){
+  const N=(P.BN||{})[u+'|'+day],D=((P.BD||{})[u]||{})[day],ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
+  let h='';
+  if(u==='__all'){
+    const dn=(P.BN||{})['__day|'+day];
+    if(dn&&dn.op)h+=`<div class="bp-s"><h4>当天投手的操作</h4><p>${para(dn.op)}</p></div>`;
+    const list=Object.entries(P.B).filter(([k,v])=>k!=='__all'&&v[day]).map(([k,v])=>[k,...v[day]]).sort((p,q)=>q[3]/q[1]-p[3]/p[1]);
+    h+=`<div class="bp-s"><h4>这天各方向第二天平均每条，点名字看这批</h4><table class="bp-t"><thead><tr><th class="nm">use case</th><th>条数</th><th>跑起来</th><th>第二天每条</th><th>相对大盘</th></tr></thead><tbody>${list.map(([k,n,up,cc])=>`<tr><td class="nm"><button class="bp-l" type="button" data-u="${esc(k)}">${esc(k)} ${esc(P.UC[k]||'')}</button></td><td>${n}</td><td>${up}</td><td>${money(cc/n)}</td><td class="${n>=3&&na?(cc/n>=na?'good':'bad'):''}">${na?(cc/n/na).toFixed(1)+' 倍':''}</td></tr>`).join('')}</tbody></table></div>`;
+    return h;
+  }
+  if(N){
+    if(N.verdict)h+=`<div class="bp-s"><h4>判断</h4><p><span class="bp-v">${esc(VERD[N.verdict]||N.verdict)}</span>${N.why?'。'+para(N.why):''}</p></div>`;
+    if(N.good)h+=`<div class="bp-s"><h4>跑得好的素材</h4><p>${para(N.good)}</p></div>`;
+    if(N.bad)h+=`<div class="bp-s"><h4>和之前比，这批内容差在哪</h4><p>${para(N.bad)}</p></div>`;
+    if(N.op)h+=`<div class="bp-s"><h4>操作</h4><p>${para(N.op)}</p></div>`;
+    if(N.next)h+=`<div class="bp-s"><h4>下一步</h4><p>${para(N.next)}</p></div>`;
+  }else if(D&&D.items.length<3){h+=`<div class="bp-s"><p class="q">不到 3 条，不单独分析，看下面每条的数。</p></div>`}
+  else h+=`<div class="bp-s"><p class="q">这批的内容分析还没写，先看下面每条的数。</p></div>`;
+  if(D){
+    const rows=D.items.map(it=>{const[nm,kd,c0,c1,up,rt,a,url]=it;return `<tr><td class="nm">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(nm)}</a>`:esc(nm)}</td><td>${esc(kd)}</td><td>${money(c0)}</td><td class="${up?'good':''}">${money(c1)}</td><td>${na?(c1/na).toFixed(1)+' 倍':''}</td><td title="激活 ${a}">${rt==null?'·':rt.toFixed(1)+'%'}${a<100&&rt!=null?'<small class="q"> 样本小</small>':''}</td></tr>`}).join('');
+    h+=`<div class="bp-s"><details${N?'':' open'}><summary>这批每条素材（${D.items.length} 条，第一天共 ${money(D.c0)}${D.a0?`，激活 ${D.a0}，第一天次留 ${(D.r0/D.a0*100).toFixed(1)}%`:''}）</summary><table class="bp-t"><thead><tr><th class="nm">素材</th><th>类型</th><th>第一天</th><th>第二天</th><th>相对大盘</th><th>次留</th></tr></thead><tbody>${rows}</tbody></table></details></div>`;
+  }
+  return h;
+}
+function bpClose(){document.querySelectorAll('#b tr.bp').forEach(x=>x.remove());document.querySelectorAll('#b .d.sel').forEach(x=>x.classList.remove('sel'))}
+function bpOpen(cell){
+  const tr=cell.closest('tr'),u=tr.dataset.id,di=+cell.dataset.i,day=P.days[di],was=cell.classList.contains('sel');
+  bpClose();if(was||!u||!cell.dataset.b)return;
+  cell.classList.add('sel');
+  const row=document.createElement('tr');row.className='bp';row.innerHTML=`<td colspan="${NC}"><div class="bp-in">${bpHead(u,day,cell)}${bpBody(u,day,cell)}</div></td>`;
+  tr.after(row);
+}
+document.querySelector('#b').addEventListener('click',ev=>{
+  if(ev.target.closest('.bp-x')){bpClose();return}
+  const l=ev.target.closest('.bp-l');
+  if(l){const day=P.days[+document.querySelector('#b .d.sel').dataset.i];const c=document.querySelector(`#b tr[data-id="${CSS.escape(l.dataset.u)}"] td.d[data-i="${P.days.indexOf(day)}"]`);if(c){bpOpen(c);c.scrollIntoView({block:'center'})}return}
+  if(ev.target.closest('.bp-in'))return;
+  const c=ev.target.closest('td.d.p');if(c&&c.dataset.b&&!ev.target.closest('[data-help]'))bpOpen(c);
+});
+document.querySelector('#b').addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches&&ev.target.matches('td.d.p[data-b]')){ev.preventDefault();bpOpen(ev.target)}});
 const M=P.meters;
 document.getElementById('meters').innerHTML=!M.length?'':'<span style="font-weight:600">已排 / 本周产能</span>'+M.map(x=>`<span class="m ${x[1]>x[2]?'over':''}"><span>${x[0]}</span><span class="track"><span class="fill" style="width:${Math.min(100,x[1]/x[2]*100)}%"></span></span><b>${x[1]} / ${x[2]}</b></span>`).join('');
 </script>

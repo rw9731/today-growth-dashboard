@@ -180,6 +180,32 @@ def batch_view(R, groups):
     return B
 
 
+def batch_detail(R):
+    """点开柱子看的每批素材：PS03 合成一行，配上片子链接。"""
+    raw = R.get('batch_items', {})
+    keys = [k for _, k in SUB_KEYS]
+    links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    url = lambda i: (lambda x: x.get('link') or x.get('video') or x.get('jl') or '')(links.get(i, {}))
+    out = {u: dict(v) for u, v in raw.items() if u not in keys}
+    out['PS03'] = {}
+    for k in keys:
+        for d, v in raw.get(k, {}).items():
+            x = out['PS03'].setdefault(d, dict(c0=0, a0=0, r0=0, items=[]))
+            for f in ('c0', 'a0', 'r0'):
+                x[f] += v[f]
+            x['items'] += v['items']
+    for u in out:
+        for v in out[u].values():
+            v['items'] = [it[1:] + [url(it[0])] for it in sorted(v['items'], key=lambda it: -it[4])]
+    return out
+
+
+def load_batch_notes():
+    """每批的内容和操作分析。notes/batches.json，键是「UC|MM-DD」，全盘当天的操作写在「__day|MM-DD」。"""
+    p = os.path.join(ROOT, 'notes', 'batches.json')
+    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+
+
 def batch_line(B, groups, D, total, days):
     """页面顶部一句：前天上传的这批，第二天（昨天）每条花了多少，和当天大盘平均每条比。"""
     day = (D - dt.timedelta(days=1)).strftime('%m-%d')
@@ -362,7 +388,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=load_why(T), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=load_why(T), BD=batch_detail(R), BN=load_batch_notes(), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:

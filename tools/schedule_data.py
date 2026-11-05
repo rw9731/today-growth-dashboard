@@ -567,6 +567,29 @@ def batches(fams, tot, D):
     return out
 
 
+def batch_items(fams, tot, D):
+    """每批每条素材，给看板点开柱子用。批次和 batches 一样。items 按第二天花费从高到低：
+    [素材ID, 素材名, 类型, 第一天, 第二天, 跑起来, 次留, 激活]，次留和激活看到 D-1（D 没回传完）。"""
+    one = dt.timedelta(days=1)
+    avg = day_avg(fams, tot)
+    up = lambda f: is_up(f, avg, D)
+    nm = lambda f: min((n for n in f.names if not n.startswith('推送视频_')), key=len, default=next(iter(f.names)))
+    by = defaultdict(list)
+    for f in fams:
+        if f.spent and D - one * 15 <= f.batch < D:
+            by[f.sub, f.batch].append(f)
+    out = defaultdict(dict)
+    for (u, b), fs in by.items():
+        rows = []
+        for f in sorted(fs, key=lambda f: -f.c[b + one]):
+            a = sum(v for k, v in f.a.items() if k < D)
+            r = sum(v for k, v in f.r.items() if k < D)
+            rows.append([sorted(f.ids)[0], nm(f), f.kind, round(f.c[b]), round(f.c[b + one]), bool(up(f)), round(r / a * 100, 1) if a else None, round(a)])
+        a0, r0 = sum(f.a[b] for f in fs), sum(f.r[b] for f in fs)
+        out[u][b.strftime('%m-%d')] = dict(c0=round(sum(f.c[b] for f in fs)), a0=round(a0), r0=round(r0), items=rows)
+    return out
+
+
 def tier_stats(fams, tot, D):
     """分档要看的数，窗口和页面「近 7 天」「次留」一样：消耗 D-6..D，次留到 D-1（D 没回传完）。"""
     one = dt.timedelta(days=1)
@@ -635,7 +658,7 @@ def make_roi(rows, fams, spend, D, T):
         if not y_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
-    out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), tier=tier_stats(fams, tot, D))
+    out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(fams, tot, D))
     keys = list(SUB_KEY.values())
     fs = [f for k in keys for f in groups.get(k, [])]
     batch_fs = [f for f in fs if f in W]

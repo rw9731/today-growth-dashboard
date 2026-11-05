@@ -3,7 +3,7 @@
  "week": "2026-11-02",
  "asof": "2026-11-04",
  "bars": 14,
- "sub": "B 组这周排了 85 条，到 11/4 交 11 条，11/5–11/8 每天要做约 19 条，是 11/4 的 1.7 倍，要确认实际速度。AI 还留 15 条，按数据每天补。",
+ "sub": "B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。",
  "meters": [
   [
    "A 组 AI",
@@ -17,7 +17,7 @@
   ],
   [
    "B 组 AI",
-   35,
+   50,
    50
   ],
   [
@@ -1030,7 +1030,7 @@
    "t": "AI",
    "n": 5,
    "s": "todo",
-   "src": "B 组扩量排期第 27 行，周三交、周四上线",
+   "src": "B 组扩量排期第 30 行，周三交、周四上线",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1165,6 +1165,50 @@
    "src": "A 组扩量第 80 行，新原片亮拐",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
+  },
+  {
+   "uc": "PS03",
+   "d": "2026-11-08",
+   "g": "B",
+   "t": "AI",
+   "n": 4,
+   "s": "todo",
+   "to": "",
+   "src": "消息排清单、孩子的具体问题：B 组扩量排期第 26 行，新写脚本",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB"
+  },
+  {
+   "uc": "NT01",
+   "d": "2026-11-08",
+   "g": "B",
+   "t": "AI",
+   "n": 4,
+   "s": "todo",
+   "to": "",
+   "src": "B 组扩量排期第 27 行，新写脚本",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB"
+  },
+  {
+   "uc": "LG02",
+   "d": "2026-11-08",
+   "g": "B",
+   "t": "AI",
+   "n": 4,
+   "s": "todo",
+   "to": "",
+   "src": "B 组扩量排期第 28 行，新写脚本",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB"
+  },
+  {
+   "uc": "AI00",
+   "d": "2026-11-08",
+   "g": "B",
+   "t": "AI",
+   "n": 3,
+   "s": "todo",
+   "to": "",
+   "src": "B 组扩量排期第 29 行，新写脚本",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB"
   }
  ],
  "MOVED": {
