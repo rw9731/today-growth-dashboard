@@ -12,7 +12,7 @@
   ],
   [
    "A 组二创",
-   100,
+   98,
    100
   ],
   [
@@ -441,17 +441,6 @@
    "to": ""
   },
   {
-   "uc": "WK05",
-   "d": "2026-11-04",
-   "g": "A",
-   "t": "二创",
-   "n": 2,
-   "s": "done",
-   "src": "A 组扩量第 83 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
    "uc": "WK02",
    "d": "2026-11-04",
    "g": "B",
@@ -584,35 +573,13 @@
    "to": ""
   },
   {
-   "uc": "LG01",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "二创",
-   "n": 3,
-   "s": "todo",
-   "src": "A 组扩量第 80 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
    "uc": "LG02",
    "d": "2026-11-06",
    "g": "A",
    "t": "二创",
    "n": 2,
-   "s": "todo",
+   "s": "done",
    "src": "A 组扩量第 81 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "WK05",
-   "d": "2026-11-06",
-   "g": "A",
-   "t": "二创",
-   "n": 1,
-   "s": "todo",
-   "src": "A 组扩量第 83 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -622,7 +589,7 @@
    "g": "A",
    "t": "二创",
    "n": 4,
-   "s": "todo",
+   "s": "done",
    "src": "A 组扩量第 84 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
@@ -655,7 +622,7 @@
    "g": "A",
    "t": "二创",
    "n": 3,
-   "s": "todo",
+   "s": "done",
    "src": "A 组扩量第 93 行",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
@@ -1101,68 +1068,13 @@
    "to": ""
   },
   {
-   "uc": "PS03",
-   "d": "2026-11-06",
-   "g": "B",
-   "t": "二创",
-   "n": 4,
-   "s": "todo",
-   "src": "孩子的具体问题：B 组扩量第 26 行，新原片艾小艾、梨白白Ari",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
    "uc": "LG01",
    "d": "2026-11-06",
    "g": "B",
    "t": "二创",
-   "n": 2,
+   "n": 5,
    "s": "todo",
-   "src": "B 组扩量第 26 行，新原片清华妈妈的美育课",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "WK01",
-   "d": "2026-11-06",
-   "g": "B",
-   "t": "二创",
-   "n": 2,
-   "s": "todo",
-   "src": "B 组扩量第 26 行，新原片小颜博士",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "PS03",
-   "d": "2026-11-07",
-   "g": "B",
-   "t": "二创",
-   "n": 2,
-   "s": "todo",
-   "src": "接娃和班级群：B 组扩量第 26 行，新原片奶油琪妹儿",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "LG01",
-   "d": "2026-11-07",
-   "g": "B",
-   "t": "二创",
-   "n": 2,
-   "s": "todo",
-   "src": "B 组扩量第 26 行，新原片甜甜卷",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "PS01",
-   "d": "2026-11-07",
-   "g": "B",
-   "t": "二创",
-   "n": 2,
-   "s": "todo",
-   "src": "B 组扩量第 26 行，新原片甜野",
+   "src": "B 组扩量第 10 行，新原片清华妈妈的美育课、甜甜卷、富贵师姐",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1173,29 +1085,29 @@
    "t": "二创",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 26 行，新原片解忧代码",
+   "src": "B 组扩量第 15 行，新原片解忧代码",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
   {
    "uc": "PS03",
-   "d": "2026-11-08",
+   "d": "2026-11-07",
    "g": "B",
    "t": "二创",
-   "n": 1,
+   "n": 6,
    "s": "todo",
-   "src": "孩子的具体问题：B 组扩量第 26 行，甜欣（育婴师版）",
+   "src": "孩子的具体问题：B 组扩量第 17 行，新原片艾小艾、梨白白Ari、甜欣",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
   {
-   "uc": "LG01",
-   "d": "2026-11-08",
+   "uc": "PS03",
+   "d": "2026-11-07",
    "g": "B",
    "t": "二创",
-   "n": 1,
+   "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 26 行，富贵师姐",
+   "src": "接娃和班级群：B 组扩量第 17 行，新原片奶油琪妹儿",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1204,9 +1116,20 @@
    "d": "2026-11-08",
    "g": "B",
    "t": "二创",
-   "n": 1,
+   "n": 3,
    "s": "todo",
-   "src": "B 组扩量第 26 行，柒柒的AI体验局",
+   "src": "B 组扩量第 20 行，新原片甜野、柒柒的AI体验局",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "WK01",
+   "d": "2026-11-08",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 21 行，新原片小颜博士",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1217,7 +1140,7 @@
    "t": "二创",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 26 行，新原片是滢滢吖",
+   "src": "B 组扩量第 23 行，新原片是滢滢吖",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -1228,19 +1151,19 @@
    "t": "二创",
    "n": 1,
    "s": "todo",
-   "src": "B 组扩量第 26 行，辣妈晶晶",
+   "src": "B 组扩量第 25 行，辣妈晶晶",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
   {
    "uc": "HL02",
-   "d": "2026-11-08",
-   "g": "B",
+   "d": "2026-11-06",
+   "g": "A",
    "t": "二创",
-   "n": 1,
+   "n": 3,
    "s": "todo",
-   "src": "B 组扩量第 26 行，新原片亮拐",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "src": "A 组扩量第 80 行，新原片亮拐",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   }
  ],

@@ -103,6 +103,8 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
 5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
+改排期（Reina 11/5 定）：今天之后的排期，确定要改就直接在原来的行上改，把这一行的 UC、原素材、条数、怎么改都换成新的，不加「调整」标记、不写改了什么、不留旧内容，也不用通知唯西。改之前先看「扩量素材名」有没有已交，已交的不动。今天的行不改。
+
 排期规则（Reina 11/5 定）：同一条原片最多 3 条二创，第 4 条起不排，换新原片，换人设、换角度也算同一条原片。扩量只换开头，后面不动，底稿的数字、金额、省的时间和完整演示都留着，不压时长。新原片从「Today AI KOC KOL 真人原素材」表找没剪过的。
 
 所有分析早上 10 点前做完（Reina 11/5 定）。建议只动 T+1 起的排期，当天的排期不改，除非 Reina 明确说要改。
