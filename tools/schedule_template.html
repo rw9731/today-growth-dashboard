@@ -140,8 +140,8 @@ a{color:var(--link)}
 <span class="it"><i class="sw" style="background:var(--b2)"></i>8–14 天</span>
 <span class="it"><i class="sw" style="background:var(--b3)"></i>15 天以上</span>
 <span class="it" style="margin-left:8px">柱子下面的条数：</span>
-<span class="it"><b class="good">绿色</b>这批四成以上跑起来</span>
-<span class="it"><b class="bad">红色</b>不到 15%（平均两成）</span>
+<span class="it"><b class="good">绿色</b>这批第二天每条比当天大盘高</span>
+<span class="it"><b class="bad">红色</b>比当天大盘低</span>
 <span class="it" style="margin-left:8px">排期格的条数：</span>
 <span class="it"><b class="t-done">绿色</b>已交没花钱</span>
 <span class="it"><b class="t-todo">蓝色</b>待交</span>
@@ -151,7 +151,7 @@ a{color:var(--link)}
 <span class="it"><b>条数建议</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制。留存差的素材看回收表</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
-<p class="foot">消耗到 {{D}}，柱子下面的数字是当天上传且花过钱的条数，跑起来是首花第二天花得比当天大盘平均每条多，绿色是这批四成以上跑起来，红色是不到 15%（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
+<p class="foot">消耗到 {{D}}，柱子下面的数字是当天上传且花过钱的条数，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <h2>回收：<span id="rev-range"></span> 放出去的素材</h2>
 <p class="rev-note" id="rev-note"></p>
 <div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>放出</th><th>跑起来</th><th>每条每天</th><th>次留、成本</th><th>标注</th><th>最好一条</th></tr></thead><tbody></tbody></table></div>
@@ -200,7 +200,7 @@ function keyOf(d){const key=P.futKey[d];return key}
 function dayCells(r,es,max,warn,muted,bt){
   let h='';
   pastDays.forEach((d,j)=>{
-    const i=j+START,seg=r.s[i],tot=sum(seg),bn=bt&&bt[P.days[i]],hit=bn&&bn[0]>=3?(bn[1]/bn[0]>=.4?' hi':bn[1]/bn[0]<.15?' lo':''):'';
+    const i=j+START,seg=r.s[i],tot=sum(seg),bn=bt&&bt[P.days[i]],na=P.T.k&&sum(P.T.k[i+1]||[])?sum(P.T.s[i+1])/sum(P.T.k[i+1]):0,hit=bn&&bn[0]>=3&&na?(bn[2]/bn[0]>=na?' hi':' lo'):'';
     const bars=seg.map((v,b)=>v>0?`<i class="b${b}" style="height:${Math.max(1,v/max*31).toFixed(1)}px"></i>`:'').join('');
     h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-i="${i}" data-s="${seg.join(',')}" data-k="${r.k?r.k[i].join(','):''}" data-n="${r.n[i]}"${bn?` data-b="${bn.join(',')}"`:''}><div class="bar">${bars}</div><div class="cnt${hit}">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
   });

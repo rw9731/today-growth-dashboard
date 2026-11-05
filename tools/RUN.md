@@ -103,9 +103,16 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
 5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
+所有分析早上 10 点前做完（Reina 11/5 定）。建议只动 T+1 起的排期，当天的排期不改，除非 Reina 明确说要改。
+
 内容下钻（第 4 步之前做，Reina 11/5 定）：每天都看前天上传那批的具体内容。第二天没跑起来的（红）分析为什么，跑起来的（绿）分析好在哪。只看数不算分析。
 - `python3 tools/schedule_why.py --sheet <分日文件> --map <素材映射文件> --date D --out /tmp/sched/why`：context.json 是红、绿的方向（这批 3 条以上）和每条素材：是不是扩量、根素材之前上过多少条花过多少、这个方向最近跑起来的素材；todo.json 和 jl.js 是还没有脚本的素材，最多 20 条。
 - 按下面「读全片脚本」读 todo 里的素材，存进 scripts/。超过 12 条拆批用 Agent 并行。电脑连不上就只写数据能看出来的，并写明没看片。
+- 看操作，每天都要看，不只看内容。两件事：
+  - 读「Today-唯西 巨量投放1群」（1 组，金铭、陈妍）和「Today-唯西2组 巨量投放对接」（2 组，熊斌、吕阳）D 和今天早上的消息，只读不发。记下：按次留关了什么线、点名控了哪些类型（learning、family、health 这些）、基建增减、新项目新批次有没有被卡。消息 id 右移 32 位是秒级时间戳。
+  - 用 tools/schedule_acct.js 扫 D 和 D-1 按账户的消耗：这批钱在哪几个户（前 3 户占比）、哪一组投手、老素材掉的钱集中在哪些户。钱集中在 1、2 个户的，几条一起跑起来不算几个独立信号。
+  - 判断时分开写：新批为什么没放起来（内容、同底稿第几条、首日次留）；老素材为什么掉（投手砍量还是自己掉）。同一组账户同一天，其他块放大而这块没放大，才说块之间的差不是操作。
+- 看同底稿第几条：二创同一条根素材第 4 条起，历史上几乎跑不起来（10/29 到 11/2：前 3 条 13 条 23% 跑起来；第 4 到 10 条 13 条 0 条；第 11 条以后 37 条 14%）。context.json 的 root_before 就是之前上过几条。
 - 对比读：这条和它的根素材、和这个方向最近跑起来的素材，比开头第一句、讲的痛点、形式、Today 第几秒出现、演示的是哪一下、结尾落在哪。也看是不是同一条根素材已经改了很多条。写看到的事实，原因是判断就写成判断，不把一批素材的结果算到 use case 头上。
 - 写 notes/schedule-T.json：`{"day":"MM-DD","summary":"一两句总的判断","rows":[{"label":"use case 名字","color":"red 或 green","n":条数,"k":跑起来条数,"per":第二天每条,"why":"内容上差在哪、好在哪，素材名照抄，带开头原话","next":"下一步"}]}`。n、k、per 从 context.json 抄。schedule_build 读它放进回收那一节。
 
@@ -131,7 +138,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 预警（schedule_data.py 的 flow）：页面只显示红色警告，不显示金额。这天预计掉的比补的多，差额超过 ¥500 和现在消耗的 10%（全盘 5%），现在消耗不到 ¥1,000 的不标。补的按 CURVE 算，AI 和二创分开，每条每天取这个方向这类素材前 3 天日均，不足 5 条用这类素材全盘的。前两天刚上的素材按实际跑量校正。待交的按交付第二天首花。
 - 回收（schedule_data.py 的 recover）：前 3 天（D-3 到 D-1）放出的素材，按方向和 AI、二创分行，3 条以上才列。跑起来 = 首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数，schedule_data.py 的 is_up）。不定绝对值。预期 = 这个方向这类素材之前跑起来的比例 × 条数。5 条以上且碰巧概率 <10% 才标不及预期、超预期。可能见顶 = 不及预期 + 最近 3 天占比没涨 + 7 天内上了 10 条以上。
 - 要看片的素材（recover 的 bad）：首花 7 天内，激活 ≥100，次留比同样这些天的全盘低 5 个点以上，配底稿。Reina 11/5 定：use case 的性质不因一批素材改，新素材差要下钻内容，不打在 use case 上。下钻顺序见项目文档 claude/new-batch-retention-drill-1105.md。
-- 批次回收（schedule_data.py 的 batches）：每个上传日几条、几条跑起来、第二天花多少。柱子下面的条数按它标色，四成以上绿色，不到 15% 红色，3 条以上才标；页面顶部一行写前天上传这批第二天每条花多少。
+- 批次回收（schedule_data.py 的 batches）：每个上传日几条、几条跑起来、第二天花多少。柱子下面的条数按它标色：这批第二天平均每条比当天大盘高绿色，低红色，3 条以上才标；页面顶部一行写前天上传这批第二天每条花多少。
 - 在跑：当天花了钱的条数，按批次分，悬停柱子看。
 - 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。只显示，不自动移档：探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。移档要 Reina 定，改 schedule_plan.json 的 GROUPS，并在 MOVED 写从哪档来、哪天，7 天内名字旁标「新进」。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。

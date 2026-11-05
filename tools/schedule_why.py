@@ -18,7 +18,6 @@ import scripts_lib  # noqa: E402
 from jl_js import JS, PAGE  # noqa: E402
 
 CAP = 20  # 一天最多读这么多条
-HI, LO = .4, .15  # 和页面标色一样
 
 
 def name(f):
@@ -73,10 +72,11 @@ def main():
         n, k = len(fs), sum(1 for f in fs if up(f))
         if n < 3:
             continue
-        color = 'green' if k / n >= HI else 'red' if k / n < LO else ''
-        if not color:
-            continue
         cost = sum(f.c[day + one] for f in fs)
+        base = avg.get(day + one, 0)
+        if not base:
+            continue
+        color = 'green' if cost / n >= base else 'red'  # 和页面标色一样：第二天平均每条和当天大盘比
         recent = sorted([f for f in fams if f.sub == u and D - one * 8 <= f.batch < day and up(f)], key=lambda f: -sum(f.c.values()))[:3]
         out.append(dict(u=u, part=part.get(u), color=color, n=n, k=k, per=round(cost / n), avg=round(avg.get(day + one, 0)), pieces=[brief(f) for f in sorted(fs, key=lambda f: -f.c[day + one])], recent=[brief(f) for f in recent]))
     # 先看第一档的红，再看第二档，探索排最后。条数有上限，要先保住放量方向
