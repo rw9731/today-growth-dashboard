@@ -27,7 +27,7 @@ HIT = 2000            # 放量：单日 ≥ ¥2,000
 ALIVE = 100           # 最近 2 天还在花：日均 ≥ ¥100
 RAMP = 200            # 起量日：第一次单日 ≥ ¥200
 STABLE = dt.date(2026, 10, 29)  # 全盘 10/30 起稳定在一天 ¥15 万以上。10/28 那批赶上预算放开，43 条 39 条跑起来，后面的批次到不了，不进每条能花多少的样本
-RAN = 200                       # 跑起来：首花第 0–1 天有一天按 ¥15 万折算花到这个数。没到的 68 条后来 3 条到 ¥1,000，到了的 65 条 16 条（首花 10/28–29，到 11/3）
+RAN = 500                       # 跑起来：首花第 0–1 天有一天按 ¥15 万折算花到这个数。首花 10/29–11/1 的 179 条：过线 42 条（23%），之后单日到 ¥1,000 的 43%，占 75% 的钱；没过的 137 条只有 8%。原来的 ¥200 太低（在跑素材一天平均就有 ¥378）
 # 每条素材首花后第 k 天相对前 3 天日均的比例，k 超出后保持最后一个值。首花 10/29 起：首花当天约是第二天的一半（AI ¥173 对 ¥436，二创 ¥99 对 ¥189）；
 # AI 第 2–3 天还在涨，第 4 天掉一半；二创第二天最高，第 2 天掉到 6 成。只有一周数据，11/7 看满 7 天后再校准
 CURVE = {'AI': (.55, 1.05, 1.4, 1.7, .75), '二创': (.7, 1.4, .9, .9, .9)}
@@ -291,6 +291,15 @@ def make_spend(rows, fams, of, D):
     return out
 
 
+def first_three_est(f, tot, D):
+    """单条跑量用的前 3 天消耗。首花在 D-1 的只有两天，第 3 天按回测曲线估，这样前天上的那批也算得进来。"""
+    v = first_three(f, tot)
+    if (D - f.first).days >= 2:
+        return v
+    c = CURVE[f.kind]
+    return v * (c[0] + c[1] + c[2]) / (c[0] + c[1])
+
+
 def first_three(f, tot):
     """前 3 天消耗，每天按全盘一天 ¥15 万折算。"""
     v = 0.0
@@ -329,8 +338,9 @@ def still_up(f, D, T):
     return last2 * DROP, max(T, f.first + dt.timedelta(days=4))
 
 
-def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total):
-    ys = sorted(first_three(f, tot) for f in batch_fs)
+def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total, y_fs=None):
+    y_fs = batch_fs if y_fs is None else y_fs
+    ys = sorted(first_three_est(f, tot, D) for f in y_fs)
     n = len(ys)
     s = sum(ys)
     rate, cpr = retention(batch_fs, D - dt.timedelta(days=1))
@@ -354,7 +364,7 @@ def roi_row(fs, batch_fs, tot, D, T, new14, total_new, c7, c7_total):
     fresh_t = {t: dict(Counter(f.first.strftime('%m-%d') for f in fresh if f.kind == t)) for t in CURVE}
     fresh_act = {t: round(sum(f.c[d] * ONE_DAY / tot[d] for f in fresh if f.kind == t for d in (d1, D) if tot.get(d))) for t in CURVE}
     return dict(yt=yt, fresh=fresh_t, fresh_act=fresh_act, n14=new14, n=n, y=round(s / n) if n else 0, yx=round((s - ys[-1]) / (n - 1)) if n > 1 else 0, top=round(ys[-1] / s, 2) if s else 0,
-                hit=sum(1 for f in batch_fs if max(f.c.values()) >= HIT), rate=rate, cpr=cpr,
+                hit=sum(1 for f in y_fs if max(f.c.values()) >= HIT), rate=rate, cpr=cpr,
                 sh=round(c7 / c7_total * 100, 1) if c7_total else 0, np=round(new14 / total_new * 100, 1) if total_new else 0,
                 mom=round(mom, 1), lvl=round(lvl), R=round(R), Dn=round(lvl) - round(R), n01=n01, chips={k: round(v) for k, v in sorted(chips.items())})
 
@@ -588,10 +598,11 @@ def make_roi(rows, fams, spend, D, T):
     W = [f for f in fams if f.first and max(lo, STABLE) <= f.first <= hi]
     n_lo, n_hi = D - dt.timedelta(days=14), D - dt.timedelta(days=1)
     new = [f for f in fams if f.spent and n_lo <= f.batch <= n_hi]
-    ys = [first_three(f, tot) for f in W]
+    Wy = [f for f in fams if f.first and max(lo, STABLE) <= f.first <= D - dt.timedelta(days=1)]  # 单条跑量比 W 多算前天首花的这批
+    ys = [first_three_est(f, tot, D) for f in Wy]
     rate, cpr = retention(W, D - dt.timedelta(days=1))
-    g = dict(y=round(sum(ys) / len(ys)) if ys else 0, hit=round(sum(1 for f in W if max(f.c.values()) >= HIT) / len(W) * 100, 1) if W else 0,
-             rate=rate, cpr=cpr, nW=len(W), allN=len(new), t0=round((tot[D] + tot[D - dt.timedelta(days=1)]) / 2))
+    g = dict(y=round(sum(ys) / len(ys)) if ys else 0, hit=round(sum(1 for f in Wy if max(f.c.values()) >= HIT) / len(Wy) * 100, 1) if Wy else 0,
+             rate=rate, cpr=cpr, nW=len(Wy), allN=len(new), t0=round((tot[D] + tot[D - dt.timedelta(days=1)]) / 2))
     g['yt'] = {t: dict(n=sum(1 for f in W if f.kind == t), y=round(sum(first_three(f, tot) for f in W if f.kind == t) / max(1, sum(1 for f in W if f.kind == t)))) for t in CURVE}
     groups = defaultdict(list)
     for f in fams:
@@ -599,16 +610,18 @@ def make_roi(rows, fams, spend, D, T):
     U = {}
     for u, fs in groups.items():
         batch_fs = [f for f in fs if f in W]
-        if not batch_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
+        y_fs = [f for f in fs if f in Wy]
+        if not y_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
             continue
-        U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'])
+        U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
     out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), tier=tier_stats(fams, tot, D))
     keys = list(SUB_KEY.values())
     fs = [f for k in keys for f in groups.get(k, [])]
     batch_fs = [f for f in fs if f in W]
-    if batch_fs:
+    y_fs = [f for f in fs if f in Wy]
+    if y_fs:
         c7 = spend['merged']['PS03'][0] if 'merged' in spend else 0
-        out['merged'] = {'PS03': roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub in keys), len(new), c7, spend['t7'])}
+        out['merged'] = {'PS03': roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub in keys), len(new), c7, spend['t7'], y_fs)}
     return out
 
 

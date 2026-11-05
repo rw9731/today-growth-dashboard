@@ -233,9 +233,9 @@ def tier_view(R, groups, total, plan, T):
     return dict(U=out, up=dict(sh=UP_SH, d5=UP_D5, top=UP_TOP, nb=UP_NB, gap=UP_GAP), inn=dict(act=IN_ACT, gap=IN_GAP))
 
 
-def rule_rows(RU, U, E, GL, W, T, B=None, keep=()):
+def rule_rows(RU, U, E, GL, W, T):
     """每个 use case 的交界点和条数建议。条数建议的阈值是初值，Reina 11/4 定先跑 1–2 周。
-    单条跑量看的是首花 D-2 及以前的素材，前天上传的这批没算进去。前两档再看这一批：5 条以上过半跑起来就是多加，不到四分之一就不再标多加。"""
+    """
     days = [T + dt.timedelta(days=i) for i in range(len(W))]
     X = {}
     for u, x in RU.items():
@@ -262,14 +262,7 @@ def rule_rows(RU, U, E, GL, W, T, B=None, keep=()):
             tag = '减'
         else:
             tag = '持平'
-        ov = None
-        last = (B or {}).get(u, {}).get((T - dt.timedelta(days=2)).strftime('%m-%d'))
-        if u in keep and last and last[0] >= 5:
-            if last[1] / last[0] >= .5 and tag != '加':
-                tag, ov = '加', f'{last[1]}/{last[0]}'
-            elif last[1] / last[0] < .25 and tag == '加':
-                tag, ov = '持平', f'{last[1]}/{last[0]}'
-        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, ov=ov, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
+        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
     return X
 
 
@@ -348,7 +341,7 @@ def main():
     W = [md(d) for d in fut]
     E = view_entries(plan, U, days, D, T)
     B = batch_view(R, plan['GROUPS'])
-    X = rule_rows(RU, U, E, GL, W, T, B, {u for g in plan['GROUPS'][:2] for u in g[1]})
+    X = rule_rows(RU, U, E, GL, W, T)
     WT = total_warn(X, GL['t0'])
     in_week = plan.get('week') == (T - dt.timedelta(days=T.weekday())).isoformat()
     if not in_week:
@@ -372,7 +365,7 @@ def main():
         PROG=progress_html(prog, T),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
-        FIRST=short_range(max(D - dt.timedelta(days=7), STABLE), D - dt.timedelta(days=2)), GY=f"{GL['y']:,}",
+        FIRST=short_range(max(D - dt.timedelta(days=7), STABLE), D - dt.timedelta(days=1)), GY=f"{GL['y']:,}",
         FOOT=plan.get('foot_note', ''), BACKTEST=plan.get('backtest', ''),
         MOVES_HEAD=plan.get('moves_head', '要改什么') if T == asof else f"{md(asof)} 提的改动，{plan.get('moves_head', '要改什么')}",
         MOVES_HIDE='' if P['MOVES'] else ' hidden')
