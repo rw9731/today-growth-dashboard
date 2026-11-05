@@ -8,8 +8,9 @@ Usage:
 
 Windows (D = the report day, usually yesterday):
 - spend columns use D itself;
-- 次留率 / 次留成本 use activations on D-3..D-1 with their next-day 次留
-  (巨量 books 次留 on the callback day, so D's own activations are not complete yet).
+- 次留率 / 次留成本 use activations on D-3..D-1 with their 次留. Since 11/4 the sheet holds 转化数 and
+  深度转化数 (计费时间), both booked on the billing day; load_rows moves ret one day later so the code
+  below can keep reading D's cohort from D+1. D's own activations are not complete yet.
 - 连续 3 留率 / 成本 use activations on D-5..D-3: the「3日留存」column (AB, from 10/16) is booked
   on the activation day and needs about 3 days to settle, so D-2..D are left out. It is 巨量's
   retention_3d, which we report only when D1, D2 and D3 are all opened. It is not the exact-day
@@ -111,7 +112,24 @@ def load_rows(path):
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
                     'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
                     'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != ''})
-    return out
+    return shift_ret(out)
+
+
+def shift_ret(rows):
+    """11/4 起表里激活 = 转化数（计费时间），次留 = 深度转化数（计费时间），都记在计费当天（Reina 定）。
+    这里和 week.py 的算法都按「次留记在第二天」写的（D 天的 cohort 看 D+1 的 ret），
+    所以读表时把 ret 统一往后挪一天，算出来的就是 D 天深度转化数 ÷ D 天转化数。
+    最新一天的 ret 还没回传完，挪出去以后不用。"""
+    if not rows:
+        return rows
+    last = max(r['date'] for r in rows)
+    extra = []
+    for r in rows:
+        v, r['ret'] = r['ret'], 0
+        nd = (dt.date.fromisoformat(r['date']) + dt.timedelta(days=1)).isoformat()
+        if v and nd <= last:
+            extra.append({**r, 'date': nd, 'cost': 0, 'act': 0, 'ret': v, 'r3': 0, 'has3': False})
+    return sorted(rows + extra, key=lambda r: r['date'])
 
 
 # 七、核心 insight 和下一步：use case 分层（Reina 10/31 定的逻辑）

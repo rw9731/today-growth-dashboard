@@ -1,5 +1,11 @@
 # 每天生成日报
 
+## 激活和次留口径（Reina 11/4 定）
+
+激活 = 巨量转化数（计费时间），次留 = 深度转化数（计费时间），都记在计费当天，次留率 = 深度转化数 ÷ 转化数。
+compute.load_rows 的 shift_ret 把 ret 往后挪一天喂给原来的算法，所以 results 里看到的日期窗口含义不变（D 天 cohort）；不要再自己挪一次。
+10/11 以来的表已重算，11/4 之前发布的日报、周报页面和 notes 里的数字还是旧口径（激活 active，次留 next_day_open）。
+
 D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素材」(1LHsOHd5U7Ep0SHF-XQecIE-wj9FN2JireiPFhvp3t0Q)，「投放数据_分日」由定时任务「巨量投放数据日更」写，11/4 起它 06:51 开跑，07:20–07:40 更新到 D。
 
 1. 读 `'投放数据_分日'!A1:AB` 和 `'素材链接库'!A1:D`（get_values，结果存成文件）。再读 `'✅ Use case 库'!A1:G200` 存成文件，跑 `python3 tools/sync_ucs.py <库文件>` 同步简称（库里 Use case 写成「简称：描述」，第一个冒号前就是简称，Reina 11/4 定，不手改 ucs.json）。输出 changed 不为空要写进最后回复，no_colon 不为空说明库里有 Use case 没写简称，告诉 Reina。
