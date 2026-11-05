@@ -181,11 +181,14 @@ def families(rows, sub_map):
         f.by_uc[r['uc']] += r['c']
         f.src[r['src']] += 1
         f.from_fuzzy = f.from_fuzzy or r['fuzzy']
+    start = min(r['d'] for r in rows)
     for f in fams.values():
-        f.batch = min(upload_day(i) for i in f.ids)
+        f.upload = min(upload_day(i) for i in f.ids)
         spent = sorted(d for d, v in f.c.items() if v > 0)
         f.first = spent[0] if spent else None
         f.spent = bool(spent)
+        # 批次按首花（Reina 11/5 定，和日报一致）。分日表最早一天就花了钱的，真正的首花在表外，用上传日
+        f.batch = f.first if f.first and f.first > start else f.upload
         f.uc = f.key_uc()
         f.kind = 'AI' if f.src.most_common(1)[0][0] == 'AIGC' else '二创'  # 只分两类：AI 片（含二剪）和真人片的二创
         f.sub = sub_of(f, sub_map)
@@ -551,8 +554,8 @@ def recover(fams, tot, D):
 
 
 def batches(fams, tot, D):
-    """每个上传日这批素材：几条、几条跑起来、第二天每条花多少。条数和看板柱子下面的数一致（当天上传且花过钱）。
-    D 当天上传的还没有第二天，不算。"""
+    """每个首花日这批素材：几条、几条跑起来、第二天每条花多少。条数和看板柱子下面的数一致（当天第一次花钱）。
+    D 当天首花的还没有第二天，不算。"""
     one = dt.timedelta(days=1)
     norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
     avg = day_avg(fams, tot)

@@ -133,7 +133,7 @@ def ps03_note(parts, suffix):
 
 def view_entries(plan, U, days, D, T):
     """这一天页面上的排期条目。
-    已上线的从数据算（当周、当天上传且花过钱）；已交没花钱的挪到今天，排期写定之后上线的条数扣掉；
+    已上线的从数据算（当周、当天第一次花钱）；已交没花钱的挪到今天，排期写定之后上线的条数扣掉；
     过了日子还没交的不再算进后面的供给，看进度那一行。"""
     mon = T - dt.timedelta(days=T.weekday())
     sun = mon + dt.timedelta(days=6)
@@ -201,7 +201,7 @@ def batch_detail(R):
 
 
 def why_rows(why, notes, B, names, total, days):
-    """回收那一节的表：前天上传这批，每批一行，从 notes/batches.json 取。"""
+    """回收那一节的表：前天首花这批，每批一行，从 notes/batches.json 取。"""
     if not why:
         return why
     day = why['day']
@@ -230,7 +230,7 @@ def load_batch_notes():
 
 
 def batch_line(B, groups, D, total, days):
-    """页面顶部一句：前天上传的这批，第二天（昨天）每条花了多少，和当天大盘平均每条比。"""
+    """页面顶部一句：前天首花的这批，第二天（昨天）每条花了多少，和当天大盘平均每条比。"""
     day = (D - dt.timedelta(days=1)).strftime('%m-%d')
     i = len(days) - 1
     run = sum(total['k'][i]) if total.get('k') else 0
@@ -317,7 +317,7 @@ def rule_rows(RU, U, E, GL, W, T):
 
 
 def load_why(T):
-    """前天上传这批红、绿的内容分析（tools/schedule_why.py 列清单，看完片写 notes/schedule-T.json），没有就不显示。"""
+    """前天首花这批红、绿的内容分析（tools/schedule_why.py 列清单，看完片写 notes/schedule-T.json），没有就不显示。"""
     p = os.path.join(ROOT, 'notes', f'schedule-{T.isoformat()}.json')
     if not os.path.exists(p):
         return None

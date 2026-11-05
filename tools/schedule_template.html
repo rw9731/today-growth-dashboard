@@ -150,7 +150,7 @@ a{color:var(--link)}
 <div class="meters" id="meters"></div>
 <div class="legend">
 <span class="it">消耗按批次：</span>
-<span class="it"><i class="sw" style="background:var(--b0)"></i>上传 0–3 天</span>
+<span class="it"><i class="sw" style="background:var(--b0)"></i>首花 0–3 天</span>
 <span class="it"><i class="sw" style="background:var(--b1)"></i>4–7 天</span>
 <span class="it"><i class="sw" style="background:var(--b2)"></i>8–14 天</span>
 <span class="it"><i class="sw" style="background:var(--b3)"></i>15 天以上</span>
@@ -166,7 +166,7 @@ a{color:var(--link)}
 <span class="it"><b>条数建议</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制。留存差的素材看回收表</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
-<p class="foot">消耗到 {{D}}，柱子下面的数字是当天上传且花过钱的条数，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
+<p class="foot">消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <h2>回收：<span id="rev-range"></span> 放出去的素材</h2>
 <p class="rev-note" id="rev-note"></p>
 <div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>放出</th><th>跑起来</th><th>每条每天</th><th>次留、成本</th><th>标注</th><th>最好一条</th></tr></thead><tbody></tbody></table></div>
@@ -282,7 +282,7 @@ const warnDays=w=>Object.keys(w).sort().map(md).join('、');
 const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.GROUPS.slice(0,2).some(g=>g[1].includes(u))||DIR.has(u))).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
 document.getElementById('alerts').innerHTML=[
-  P.BT?`<span class="pill gray">${md(P.BT.day)} 上传这批</span> <span>第二天每条花多少，大盘每条 ${money(P.BT.avg)}：${P.BT.rows.map(x=>`${esc(x.g)} ${money(x.per)}（${x.x} 倍），${x.k}/${x.n} 条跑起来`).join('；')}</span>`:'',
+  P.BT?`<span class="pill gray">${md(P.BT.day)} 首花这批</span> <span>第二天每条花多少，大盘每条 ${money(P.BT.avg)}：${P.BT.rows.map(x=>`${esc(x.g)} ${money(x.per)}（${x.x} 倍），${x.k}/${x.n} 条跑起来`).join('；')}</span>`:'',
   Object.keys(P.WT).length||lineUp.length?`<b class="t-warn" style="margin-right:4px">!</b><span>${[Object.keys(P.WT).length?'全盘 '+warnDays(P.WT):''].concat(lineUp.map(([u,x])=>`${u} ${warnDays(x.warn)}`)).filter(Boolean).join('；')}</span>`:'',
   ...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span class="pill ${c}">${t}</span> <span>${revTags(t).join('、')}</span>`:''),
   P.REV.nbad?`<span class="pill gray">要看片</span> <span>${P.REV.nbad} 条，在回收表</span>`:'',
@@ -291,7 +291,7 @@ const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不�
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
 document.getElementById('rev-note').textContent=`一共放出 ${P.REV.nfresh} 条，列 3 条以上的。跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。`;
 document.querySelector('#rev tbody').innerHTML=P.REV.rows.map(x=>`<tr><td class="n">${esc(ucName(x))}</td><td class="n">${x.n} 条<small class="q">（${Object.entries(x.days).map(([d,n])=>md(d)+' '+n).join('，')}）</small></td><td class="n">${x.k} 条，预期 ${x.e}</td><td class="num">${money(x.per)}</td><td class="n">${x.rate==null?'<span class="q">样本小</span>':x.rate.toFixed(1)+'%，¥'+x.cpr}</td><td class="n">${REVCLS[x.tag]}</td><td class="nm">${x.best?esc(x.best)+`<small class="q">（${money(x.best_v)}/天）</small>`:'<span class="q">没有跑起来的</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">这几天放出去的，每个方向都不到 3 条</td></tr>';
-if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 上传这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${esc(x.why)}</td><td>${esc(x.next||'')}</td></tr>`).join('')}
+if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 首花这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${esc(x.why)}</td><td>${esc(x.next||'')}</td></tr>`).join('')}
 const lnk=(n,u)=>u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`:esc(n);
 document.getElementById('bad-note').textContent=`首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上的，一共 ${P.REV.nbad} 条，列影响最大的 8 条。这是素材的问题，不代表这个方向不行。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。`;
 document.querySelector('#bad tbody').innerHTML=P.REV.bad.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${x.act}</td><td class="n">${x.rate.toFixed(1)}%，¥${x.cpr}</td><td class="num">${x.gap.toFixed(1)}</td><td class="nm">${x.base?`<small class="q">${x.base.how}</small> ${lnk(x.base.name,x.base.url)}<small class="q">（${x.base.rate==null?'样本小':x.base.rate.toFixed(1)+'%，¥'+x.base.cpr}，激活 ${x.base.act}）</small>`:'<span class="q">没找到</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有</td></tr>';
@@ -367,7 +367,7 @@ const zf=t=>{const[a,...b]=String(t).split('\n').filter(x=>x.trim());return `<p 
 function bpHead(u,day,cell){
   const nameOf=u==='__all'?'全盘':`${u} ${P.UC[u]||''}`;
   const [n,up,cc]=cell.dataset.b.split(',').map(Number),ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
-  return `<div class="bp-h"><div><b>${esc(nameOf)} · ${md(day)} 上传</b><br>${n} 条，第二天跑起来 ${up} 条；第二天平均每条 ${money(cc/n)}${na?'，'+dfTxt(cc/n,na):''}</div><button class="bp-x" type="button">收起</button></div>`;
+  return `<div class="bp-h"><div><b>${esc(nameOf)} · ${md(day)} 首花</b><br>${n} 条，第二天跑起来 ${up} 条；第二天平均每条 ${money(cc/n)}${na?'，'+dfTxt(cc/n,na):''}</div><button class="bp-x" type="button">收起</button></div>`;
 }
 function bpBody(u,day,cell){
   const N=(P.BN||{})[u+'|'+day],D=((P.BD||{})[u]||{})[day],ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
