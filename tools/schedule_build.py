@@ -368,6 +368,36 @@ def progress_html(prog, T):
     return ('<details class="prog"><summary>' + html.escape(prog['head']) + f"落下 {prog['lag_n']} 行：</summary>" + html.escape('；'.join(prog['lags'])) + '。</details>')
 
 
+def output_html(o):
+    """本周实际产出：昨天、累计、预计、完成度。进度条上的竖线是按一周 7 天平摊到昨天该到的位置。"""
+    if not o or not o.get('rows'):
+        return ''
+    e = html.escape
+    D, mon = date(o['D']), date(o['mon'])
+    pace = o['days'] / 7
+    def row(name, sub, y, n, t, cls=''):
+        pct = n / t if t else 0
+        late = t and pct < pace - .1
+        over = pct >= 1
+        flag = '<em class="o-late">偏慢</em>' if late else ('<em class="o-over">超预计</em>' if over else '')
+        fill = min(100, pct * 100)
+        return (f'<tr class="{cls}"><th scope="row">{e(name)}' + (f'<small>{e(sub)}</small>' if sub else '') + '</th>'
+                f'<td class="n">{y}</td><td class="n"><b>{n}</b></td><td class="n mu">{t}</td>'
+                f'<td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 {n} / 预计 {t}"><span class="o-fill" style="width:{fill:.1f}%"></span><i class="o-pace" style="left:{pace * 100:.1f}%"></i></span>'
+                f'<span class="o-pct"><b>{pct:.0%}</b>{flag}</span></div></td></tr>')
+    body = ''
+    for r in o['rows']:
+        sub = ' · '.join(f'{a} {b}' for a, b in r.get('split', []))
+        body += row(r['name'], sub, r['y'], r['n'], r['t'])
+    Y, N, TT = (sum(r[k] for r in o['rows']) for k in ('y', 'n', 't'))
+    body += row('合计', '', Y, N, TT, 'o-total')
+    miss = ('<p class="o-note o-miss">这几个 tab 今天没读到，数偏少：' + e('、'.join(o['missing'])) + '</p>') if o.get('missing') else ''
+    return (f'<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>{md(mon)}–{md(mon + dt.timedelta(days=6))}，数到 {md(D)}，已过 {o["days"]} / 7 天</span></div>'
+            '<div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead>'
+            f'<tbody>{body}</tbody></table></div>'
+            f'<p class="o-note">竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，星图达人看发布日期。预计是素材产出日报的每周目标。外部 KOC/KOL 原片和自建号不在这四类。</p>{miss}</section>')
+
+
 def render(tpl, P, fields, rel, T):
     blob = json.dumps(P, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     rep = dict(fields)
@@ -387,6 +417,7 @@ def main():
     ap.add_argument('--data-dir', required=True)
     ap.add_argument('--date', required=True, help='看板当天 T')
     ap.add_argument('--progress')
+    ap.add_argument('--output', help='schedule_output.py 的结果，页面上的「本周实际产出」')
     ap.add_argument('--root', default=ROOT, help='输出目录，测试时用')
     ap.add_argument('--force', action='store_true')
     a = ap.parse_args()
@@ -435,9 +466,12 @@ def main():
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
         print('WARNING 没给 --progress：页面顶部没有进度那一行')
+    if a.output is None:
+        print('WARNING 没给 --output：页面没有「本周实际产出」')
     fields = dict(
         SUB=plan.get('sub', '') if in_week else '',
         PROG=progress_html(prog, T),
+        OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
         FIRST=short_range(max(D - dt.timedelta(days=7), STABLE), D - dt.timedelta(days=1)), GY=f"{GL['y']:,}",

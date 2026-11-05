@@ -154,6 +154,12 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。只显示，不自动移档：探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。移档要 Reina 定，改 schedule_plan.json 的 GROUPS，并在 MOVED 写从哪档来、哪天，7 天内名字旁标「新进」。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 
+本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、星图达人，累计对比预计和完成度。
+- 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表），存进同一个目录。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
+- 按实际产出日算，不按排期日期：AI 和二创看完成时间和文件名最后一个日期，再空看产出日期；星广看成片完成时间；星图达人看发布时间。类型看扩量表「怎么改」的【AI】【二创/重配】，没写的老行看文件名。文件名没有日期的行写进 output.json 的 undated。
+- 预计在 tools/schedule_plan.json 的 output_targets（ai 150、ec 50、xg 15、xt 15），取自素材产出日报的每周目标，二创是「素材对齐」里二剪 50/周。外部 KOC/KOL 原片和自建号不算。
+- 和素材产出日报的数会不一样：日报的 AI 只算 A 组脚本及成片，不算扩量表和 B 组，二创不算，日报发出后补填的日期也不回改。
+
 ## 周报（每周一，Reina 11/1 定）
 
 页面和 notes 不写 T1、T2、T3 这些代号（Reina 11/2 定），写大白话：能放量、留存好；量中等、留存好；能放量、留存不达标；量小，先观察。头部素材表不放脚本，脚本和分析放第六部分。

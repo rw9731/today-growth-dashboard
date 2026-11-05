@@ -153,6 +153,22 @@ html,body{margin:0}
 .sx-nav select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--grid);border-radius:999px;padding:5px 10px;max-width:100%}
 .prog{color:var(--sub);font-size:12px;margin:4px 0 0;max-width:112ch}
 .prog summary{cursor:pointer}
+.out{background:var(--panel);border:1px solid var(--grid);padding:12px 14px 10px;max-width:calc(100vw - 32px);box-sizing:border-box}
+.o-head{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline}.o-head h2{margin:0;font-size:15px}.o-head span{color:var(--sub);font-size:12px}
+.out table{margin-top:6px;max-width:760px}
+.out th,.out td{padding:6px 10px 6px 0;border-bottom:1px solid var(--grid);text-align:left;font-weight:400;vertical-align:middle}
+.out thead th{font-size:11px;color:var(--mute);padding-block:3px;white-space:nowrap}
+.out tbody th{font-weight:600;white-space:nowrap}.out small{display:block;font-weight:400;font-size:11px;color:var(--mute);line-height:1.3}
+.out .n{text-align:right;font-variant-numeric:tabular-nums;width:44px}.out td.mu{color:var(--sub)}.out td b,.o-pct b{font-weight:600}
+.out td.o-bar{padding-left:14px;padding-right:0}.o-cell{display:flex;align-items:center;gap:10px}.out thead th:last-child{padding-left:14px}
+.o-track{position:relative;display:block;flex:1;min-width:90px;height:8px;background:var(--grid);border-radius:0 4px 4px 0}
+.o-fill{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}
+.o-pace{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink)}
+.o-pct{min-width:92px;font-variant-numeric:tabular-nums;white-space:nowrap}.o-pct em{font-style:normal;font-size:11px;margin-left:6px}
+.o-late{color:var(--bad)}.o-over{color:var(--good)}
+.o-total th,.o-total td{border-bottom:0}.o-total th,.o-total td{padding-top:7px}.o-total td,.o-total th{border-top:1px solid var(--base)}
+.o-note{margin:7px 0 0;color:var(--mute);font-size:11px;line-height:1.5;max-width:760px}.o-miss{color:var(--bad)}
+@media (max-width:560px){.out{padding:10px}.out th,.out td{padding-right:6px}.out td.o-bar{padding-left:8px}.o-cell{gap:6px}.o-track{min-width:44px}.o-pct{min-width:38px}.o-pct em{display:block;margin-left:0}.out .n{width:30px}}
 </style>
 </head>
 <body>
@@ -169,6 +185,7 @@ html,body{margin:0}
 <p class="prog">进度（11/2 到 11/4）：A 组截至昨天该交 69 实交 61，B 组截至昨天该交 13 实交 11。落下：A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）；A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）；A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）；B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）；B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）。</p>
 <div class="alerts" id="alerts" style="margin-top:8px"></div>
 </header>
+<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>11/2–11/8，数到 11/4，已过 3 / 7 天</span></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">150</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 150"><span class="o-fill" style="width:70.7%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>71%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">50</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 50"><span class="o-fill" style="width:100.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>154%</b><em class="o-over">超预计</em></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">星图达人</th><td class="n">2</td><td class="n"><b>2</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 2 / 预计 15"><span class="o-fill" style="width:13.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>13%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class="o-total"><th scope="row">合计</th><td class="n">55</td><td class="n"><b>188</b></td><td class="n mu">230</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 188 / 预计 230"><span class="o-fill" style="width:81.7%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>82%</b></span></div></td></tr></tbody></table></div><p class="o-note">竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，星图达人看发布日期。预计是素材产出日报的每周目标。外部 KOC/KOL 原片和自建号不在这四类。</p></section>
 <div class="meters" id="meters"></div>
 <div class="legend">
 <span class="it">消耗按批次：</span>
