@@ -101,7 +101,13 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
    然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
-5. 提交 schedule/、schedules.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+
+内容下钻（第 4 步之前做，Reina 11/5 定）：每天都看前天上传那批的具体内容。第二天没跑起来的（红）分析为什么，跑起来的（绿）分析好在哪。只看数不算分析。
+- `python3 tools/schedule_why.py --sheet <分日文件> --map <素材映射文件> --date D --out /tmp/sched/why`：context.json 是红、绿的方向（这批 3 条以上）和每条素材：是不是扩量、根素材之前上过多少条花过多少、这个方向最近跑起来的素材；todo.json 和 jl.js 是还没有脚本的素材，最多 20 条。
+- 按下面「读全片脚本」读 todo 里的素材，存进 scripts/。超过 12 条拆批用 Agent 并行。电脑连不上就只写数据能看出来的，并写明没看片。
+- 对比读：这条和它的根素材、和这个方向最近跑起来的素材，比开头第一句、讲的痛点、形式、Today 第几秒出现、演示的是哪一下、结尾落在哪。也看是不是同一条根素材已经改了很多条。写看到的事实，原因是判断就写成判断，不把一批素材的结果算到 use case 头上。
+- 写 notes/schedule-T.json：`{"day":"MM-DD","summary":"一两句总的判断","rows":[{"label":"use case 名字","color":"red 或 green","n":条数,"k":跑起来条数,"per":第二天每条,"why":"内容上差在哪、好在哪，素材名照抄，带开头原话","next":"下一步"}]}`。n、k、per 从 context.json 抄。schedule_build 读它放进回收那一节。
 
 落下了怎么办：progress.json 的 groups.A.lag、groups.B.lag 是落下的行（行号、use case、差几条）。只推给 Reina，把 draft.A、draft.B 附上，这是可以直接发给唯西两个素材群的提醒草稿，发不发、怎么改她定。不自己发群，不改飞书，草稿不带看板链接。
 
