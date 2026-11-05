@@ -135,8 +135,10 @@ def main():
         out['line'] = f'{md} 审核核对没做全：{"、".join(missing)} 没读到'
     elif bad:
         out['line'] = f'{md} 扩量和二剪：{len(out["no_table"])} 条没传表就投了，{len(out["not_reviewed"])} 条传了没审就投了，{len(out["need_fix"])} 条要改还在投'
-    else:
+    elif out['ok']:
         out['line'] = f'{md} 扩量和二剪都审过了（{out["ok"]} 条）'
+    else:
+        out['line'] = f'{md} 没有要核对的扩量和二剪（{a.since} 起交的还没花钱）'
     json.dump(out, open(a.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print(out['line'])
 
