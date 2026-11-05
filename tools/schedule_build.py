@@ -199,6 +199,7 @@ def batch_line(B, groups, D):
 
 # 分档的线（Reina 11/5 问，见 claude/usecase-tiers-1104.md）
 UP_SH, UP_D5, UP_TOP, UP_NB, UP_GAP = 5, 5, 33, 2, 1.5
+COST_OK = 3  # 成本差 ¥3 以内算和全盘差不多，和页面标色一致。第一档占全盘一半以上，卡死 ≤全盘就是 ¥1 定档
 IN_ACT, IN_GAP = 100, 3
 
 
@@ -217,12 +218,12 @@ def tier_view(R, groups, total, plan, T):
             w7, w14 = t['w7'], t['w14']
             if gi < 2:
                 x.update(rate=w7['rate'], cpr=w7['cpr'])
-                x['can'] = gi == 1 and t['sh'] >= UP_SH and t['d5'] >= UP_D5 and t['top'] <= UP_TOP and t['nb'] >= UP_NB and w7['rate'] is not None and w7['rate'] >= total['rate'] - UP_GAP and (w7['cpr'] or 999) <= total['cpr']
+                x['can'] = gi == 1 and t['sh'] >= UP_SH and t['d5'] >= UP_D5 and t['top'] <= UP_TOP and t['nb'] >= UP_NB and w7['rate'] is not None and w7['rate'] >= total['rate'] - UP_GAP and (w7['cpr'] or 999) <= total['cpr'] + COST_OK
             else:
-                ok = lambda w, k: w['a'] >= IN_ACT and w['gap'] is not None and w['gap'] >= IN_GAP and (w['cpr'] or 999) <= gl.get(k, {}).get('cpr', 0)
+                ok = lambda w, k: w['a'] >= IN_ACT and w['gap'] is not None and w['gap'] >= IN_GAP and (w['cpr'] or 999) <= gl.get(k, {}).get('cpr', 0) + COST_OK
                 k = 'w14' if ok(w14, 'w14') and not ok(w7, 'w7') else 'w7'
                 w = t[k]
-                x.update(win=7 if k == 'w7' else 14, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr'), can=ok(w, k))
+                x.update(win=7 if k == 'w7' else 14, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr', 0) + COST_OK, can=ok(w, k))
             if u in moved:
                 d = date(moved[u]['d'])
                 x['from'] = moved[u]['from']
