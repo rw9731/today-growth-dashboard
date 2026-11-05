@@ -112,7 +112,7 @@ a{color:var(--link)}
 .bp-h b{font-size:14px}.bp-x{flex:none;border:1px solid var(--base);background:transparent;color:var(--ink);font:inherit;font-size:12px;padding:1px 8px;cursor:pointer}
 .bp-s{border-top:1px solid var(--grid);margin-top:9px;padding-top:8px}
 .bp-s h4{margin:0 0 2px;font-size:12px;font-weight:600;color:var(--mute)}
-.bp-s p{margin:0}.bp-v{font-weight:600}
+.bp-s p{margin:0}.bp-v,.bp-z{font-weight:600}.bp-u{margin:3px 0 0;padding-left:18px}.bp-u li{margin:2px 0}
 .bp-t{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;font-variant-numeric:tabular-nums}
 .bp-t th,.bp-t td{padding:3px 6px;border-bottom:1px solid var(--grid);text-align:right;font-weight:400;white-space:nowrap}
 .bp-t th{color:var(--mute)}.bp-t .nm{text-align:left;white-space:normal;word-break:break-all;width:60%}
@@ -360,9 +360,10 @@ document.querySelector('#b').addEventListener('mouseleave',()=>tip.hidden=true);
 
 // 点柱子：在这一行下面展开这批的分析，再点收起
 const bpUid=tr=>tr.dataset.id;
-const VERD={'内容':'主要是内容','操作':'主要是操作','都有':'内容和操作都有','看不出':'还看不出','好在内容':'好在内容','好在操作':'主要是投手放量，内容不一定好'};
+const VERD={'内容':'主要是内容的问题','操作':'主要是投手操作的问题','都有':'内容和投手操作都有问题','看不出':'现在还看不出','好在内容':'主要好在内容','好在操作':'主要是投手放量，内容不一定好'};
 const dfTxt=(v,na)=>{const d=v-na,up=d>=0;return `${up?'高于':'低于'}当天大盘 ${money(Math.abs(d))}（${up?'高':'低'} ${Math.round(Math.abs(d)/na*100)}%）`};
 const para=t=>esc(t).replace(/\n/g,'<br>');
+const zf=t=>{const[a,...b]=String(t).split('\n').filter(x=>x.trim());return `<p class="bp-z">${esc(a)}</p>${b.length?`<ul class="bp-u">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}`};
 function bpHead(u,day,cell){
   const nameOf=u==='__all'?'全盘':`${u} ${P.UC[u]||''}`;
   const [n,up,cc]=cell.dataset.b.split(',').map(Number),ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
@@ -379,10 +380,11 @@ function bpBody(u,day,cell){
     return h;
   }
   if(N){
-    if(N.verdict)h+=`<div class="bp-s"><h4>判断</h4><p><span class="bp-v">${esc(VERD[N.verdict]||N.verdict)}</span>${N.why?'。'+para(N.why):''}</p></div>`;
-    if(N.good)h+=`<div class="bp-s"><h4>跑得好的素材</h4><p>${para(N.good)}</p></div>`;
-    if(N.bad)h+=`<div class="bp-s"><h4>和之前比，这批内容差在哪</h4><p>${para(N.bad)}</p></div>`;
-    if(N.op)h+=`<div class="bp-s"><h4>操作</h4><p>${para(N.op)}</p></div>`;
+    const [bn,,bc]=cell.dataset.b.split(',').map(Number),isUp=na&&bc/bn>=na;
+    if(N.verdict)h+=`<div class="bp-s"><h4>${isUp?'这批为什么比大盘跑得好':'这批为什么没跑起来'}</h4><p><span class="bp-v">${esc(VERD[N.verdict]||N.verdict)}</span>${N.why?'。'+para(N.why):''}</p></div>`;
+    if(N.good)h+=`<div class="bp-s"><h4>跑得好的素材</h4>${zf(N.good)}</div>`;
+    if(N.bad)h+=`<div class="bp-s"><h4>和之前比，这批内容差在哪</h4>${zf(N.bad)}</div>`;
+    if(N.op)h+=`<div class="bp-s"><h4>投手操作和这批的关系</h4>${zf(N.op)}</div>`;
     if(N.next)h+=`<div class="bp-s"><h4>下一步</h4><p>${para(N.next)}</p></div>`;
   }else if(D&&D.items.length<3){h+=`<div class="bp-s"><p class="q">不到 3 条，不单独分析，看下面每条的数。</p></div>`}
   else h+=`<div class="bp-s"><p class="q">这批的内容分析还没写，先看下面每条的数。</p></div>`;
