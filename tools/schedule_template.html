@@ -337,7 +337,7 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
   let html=`<b>${c.dataset.d}</b>`;
   if(c.dataset.s){const seg=c.dataset.s.split(',').map(Number),t=sum(seg),kk=c.dataset.k?c.dataset.k.split(',').map(Number):null;
    html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，平均每条 ${money(t/sum(kk))}`;
-   html+=`<div class="ts"><span class="tl">当天上新</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?`，当天大盘每条 ${money(na)}`:''}`}html+=`</div>`;
+   html+=`<div class="ts"><span class="tl">当天上新</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?(()=>{const df=cc/n-na,up=df>=0,pc=Math.round(Math.abs(df)/na*100);return `，${up?'高于':'低于'}当天大盘 ${money(Math.abs(df))}（${up?'高':'低'} ${pc}%）`})():''}`}html+=`</div>`;
    let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`}
   else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
