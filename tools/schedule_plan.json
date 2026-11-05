@@ -22,7 +22,7 @@
   ],
   [
    "B 组二创",
-   50,
+   40,
    50
   ]
  ],
@@ -42,6 +42,13 @@
    "r": 7,
    "uc": "SH04",
    "why": "同上"
+  },
+  {
+   "g": "B",
+   "tab": "ec",
+   "r": 6,
+   "uc": "SH04",
+   "why": "11/5 定和第 2、7 行一起先放着，已发 TodayB组素材群"
   }
  ],
  "ps03_note": "只加后两块，接娃和班级群不加",
@@ -841,17 +848,6 @@
    "to": ""
   },
   {
-   "uc": "SH04",
-   "d": "2026-11-04",
-   "g": "B",
-   "t": "二创",
-   "n": 1,
-   "s": "done",
-   "src": "B 组二创第 6 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG",
-   "to": ""
-  },
-  {
    "uc": "HL02",
    "d": "2026-11-04",
    "g": "B",
@@ -897,17 +893,6 @@
   },
   {
    "uc": "LG01",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "二创",
-   "n": 7,
-   "s": "todo",
-   "src": "B 组扩量排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "LG01",
    "d": "2026-11-06",
    "g": "B",
    "t": "二创",
@@ -941,17 +926,6 @@
   },
   {
    "uc": "PS03",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "二创",
-   "n": 3,
-   "s": "todo",
-   "src": "消息排清单：B 组扩量排期",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "PS03",
    "d": "2026-11-07",
    "g": "B",
    "t": "二创",
@@ -974,7 +948,7 @@
   },
   {
    "uc": "NT01",
-   "d": "2026-11-07",
+   "d": "2026-11-05",
    "g": "B",
    "t": "二创",
    "n": 3,
@@ -996,7 +970,7 @@
   },
   {
    "uc": "PS03",
-   "d": "2026-11-06",
+   "d": "2026-11-05",
    "g": "B",
    "t": "二创",
    "n": 4,
@@ -1069,17 +1043,6 @@
    "s": "todo",
    "src": "A 组扩量第 97、98 行，AI 照真人",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
-   "to": ""
-  },
-  {
-   "uc": "LG02",
-   "d": "2026-11-05",
-   "g": "B",
-   "t": "AI",
-   "n": 3,
-   "s": "todo",
-   "src": "B 组扩量排期，AI 二剪，换掉脚本第 7、9、10 行",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
   {
@@ -1179,6 +1142,39 @@
    "s": "todo",
    "src": "B 组扩量排期第 27 行，周三交、周四上线",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-05",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组脚本第 11 行，11/5 恢复，小改完直接拍",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-05",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组脚本第 12 行，11/5 恢复，小改完直接拍",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-05",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组脚本第 13 行，11/5 恢复，小改完直接拍",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9",
    "to": ""
   }
  ],
