@@ -103,7 +103,7 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
    然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
-   分日表审核核对（Reina 11/5）：`python3 tools/review_cover.py --sheet <分日文件> --date D --dir /tmp/sched/feishu --out /tmp/sched/review_cover.json`。用 schedule_read.js 返回的 cov，查 11/5 起首花的扩量、二剪有没有都审过：no_table 没传表就投了，not_reviewed 传了没审就投了（含他们自己标通过、没有审核备注的），need_fix 要改还在投。第一行 line 进推送，名单写进 claude/schedule-progress-MMDD.md。只告诉 Reina，不发群，不改飞书。11/5 用 11/3、11/4 的数据试跑过：扩量都对得上，没传表的 27 条全是 A 组新原片首剪（today koc_UC_博主_二创_精剪_剪辑），A 组这类目前没有交审的地方。
+   分日表审核核对（Reina 11/5）：`python3 tools/review_cover.py --sheet <分日文件> --date D --dir /tmp/sched/feishu --out /tmp/sched/review_cover.json`。用 schedule_read.js 返回的 cov，查 11/5 起首花的扩量、二剪有没有都审过：no_table 没传表就投了，not_reviewed 传了没审就投了（含他们自己标通过、没有审核备注的），need_fix 要改还在投。第一行 line 进推送，名单写进 claude/schedule-progress-MMDD.md。只告诉 Reina，不发群，不改飞书。11/5 用 11/3、11/4 的数据试跑过：扩量都对得上，没传表的 27 条全是 A 组新原片首剪（today koc_UC_博主_二创_精剪_剪辑），11/5 23:39 已在 Today素材群告诉单志远、赵勇洲，以后这类也传到扩量排期，对应行或最下面加一行。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
 5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
