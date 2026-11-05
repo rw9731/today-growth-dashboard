@@ -103,16 +103,24 @@ def dec(s):
 
 
 def spend_row(R):
-    return dict(c7=R[0], rate=R[1], cpr=R[2], n=[int(x) for x in R[4].split(',')], s=dec(R[5]))
+    return dict(c7=R[0], rate=R[1], cpr=R[2], a=R[3], n=[int(x) for x in R[4].split(',')], s=dec(R[5]))
 
 
 def load_spend(S):
     """表里 PS03 一行放合计，三部分只写进执行细节。"""
+    dec_run = lambda t: [[int(v) for v in day.split(',')] for day in t.split(';')]
     U = {u: spend_row(R) for u, R in S['U'].items()}
+    for u, x in U.items():
+        if u in S.get('run', {}):
+            x['k'] = dec_run(S['run'][u])
     parts = {k: U.pop(k, None) for _, k in SUB_KEYS}
     if S.get('merged', {}).get('PS03'):
         U['PS03'] = spend_row(S['merged']['PS03'])
+        if S.get('run_merged', {}).get('PS03'):
+            U['PS03']['k'] = dec_run(S['run_merged']['PS03'])
     total = dict(c7=S['t7'], rate=S['rate'], cpr=S['cpr'], n=[int(x) for x in S['T']['n'].split(',')], s=dec(S['T']['s']))
+    if S['T'].get('k'):
+        total['k'] = dec_run(S['T']['k'])
     return U, total, parts
 
 
@@ -153,8 +161,80 @@ def view_entries(plan, U, days, D, T):
     return out
 
 
-def rule_rows(RU, U, E, GL, W, T):
-    """每个 use case 的交界点和条数建议。条数建议的阈值是初值，Reina 11/4 定先跑 1–2 周。"""
+def batch_view(R, groups):
+    """看板用的批次数：PS03 合成一行，再加全盘。[条数, 跑起来, 第二天合计消耗]"""
+    raw = R.get('batch', {})
+    keys = [k for _, k in SUB_KEYS]
+    def add(into, src):
+        for d, v in src.items():
+            x = into.setdefault(d, [0, 0, 0])
+            for i in range(3):
+                x[i] += v[i]
+    B = {u: dict(v) for u, v in raw.items() if u not in keys}
+    B['PS03'] = {}
+    B['__all'] = {}
+    for k in keys:
+        add(B['PS03'], raw.get(k, {}))
+    for v in raw.values():
+        add(B['__all'], v)
+    return B
+
+
+def batch_line(B, groups, D):
+    """页面顶部一句：前天上传的这批，第二天（昨天）每条花了多少。和之前一周的批次比。"""
+    day = (D - dt.timedelta(days=1)).strftime('%m-%d')
+    prior = [(D - dt.timedelta(days=k)).strftime('%m-%d') for k in range(2, 9) if D - dt.timedelta(days=k) >= STABLE]  # 10/29 前预算还没稳，不比
+    listed = {u for g in groups for u in g[1]}
+    rows = []
+    for i, g in enumerate(groups):
+        us = list(g[1]) + ([u for u in B if u not in listed and not u.startswith('__')] if i == len(groups) - 1 else [])
+        pick = lambda ds, j: sum(B.get(u, {}).get(d, [0, 0, 0])[j] for u in us for d in ds)
+        n = pick([day], 0)
+        if not n:
+            continue
+        pn = pick(prior, 0)
+        rows.append(dict(g=g[0], n=n, k=pick([day], 1), per=round(pick([day], 2) / n), prev=round(pick(prior, 2) / pn) if pn else None))
+    return dict(day=day, rows=rows) if rows else None
+
+
+# 分档的线（Reina 11/5 问，见 claude/usecase-tiers-1104.md）
+UP_SH, UP_D5, UP_TOP, UP_NB, UP_GAP = 5, 5, 33, 2, 1.5
+IN_ACT, IN_GAP = 100, 3
+
+
+def tier_view(R, groups, total, plan, T):
+    """每个 use case 悬停时显示的分档信息：现在哪一档，到下一档还差什么。"""
+    raw = R.get('tier', {})
+    gl = raw.get('__gl', {})
+    moved = plan.get('MOVED', {})
+    out = {}
+    for gi, g in enumerate(groups):
+        for u in g[1]:
+            t = raw.get(u)
+            if not t:
+                continue
+            x = dict(g=gi, sh=t['sh'], d5=t['d5'], top=t['top'], nb=t['nb'])
+            w7, w14 = t['w7'], t['w14']
+            if gi < 2:
+                x.update(rate=w7['rate'], cpr=w7['cpr'])
+                x['can'] = gi == 1 and t['sh'] >= UP_SH and t['d5'] >= UP_D5 and t['top'] <= UP_TOP and t['nb'] >= UP_NB and w7['rate'] is not None and w7['rate'] >= total['rate'] - UP_GAP and (w7['cpr'] or 999) <= total['cpr']
+            else:
+                ok = lambda w, k: w['a'] >= IN_ACT and w['gap'] is not None and w['gap'] >= IN_GAP and (w['cpr'] or 999) <= gl.get(k, {}).get('cpr', 0)
+                k = 'w14' if ok(w14, 'w14') and not ok(w7, 'w7') else 'w7'
+                w = t[k]
+                x.update(win=7 if k == 'w7' else 14, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr'), can=ok(w, k))
+            if u in moved:
+                d = date(moved[u]['d'])
+                x['from'] = moved[u]['from']
+                x['md'] = md(d)
+                x['fresh'] = (T - d).days <= 7
+            out[u] = x
+    return dict(U=out, up=dict(sh=UP_SH, d5=UP_D5, top=UP_TOP, nb=UP_NB, gap=UP_GAP), inn=dict(act=IN_ACT, gap=IN_GAP))
+
+
+def rule_rows(RU, U, E, GL, W, T, B=None, keep=()):
+    """每个 use case 的交界点和条数建议。条数建议的阈值是初值，Reina 11/4 定先跑 1–2 周。
+    单条跑量看的是首花 D-2 及以前的素材，前天上传的这批没算进去。前两档再看这一批：5 条以上过半跑起来就是多加，不到四分之一就不再标多加。"""
     days = [T + dt.timedelta(days=i) for i in range(len(W))]
     X = {}
     for u, x in RU.items():
@@ -181,7 +261,14 @@ def rule_rows(RU, U, E, GL, W, T):
             tag = '减'
         else:
             tag = '持平'
-        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
+        ov = None
+        last = (B or {}).get(u, {}).get((T - dt.timedelta(days=2)).strftime('%m-%d'))
+        if u in keep and last and last[0] >= 5:
+            if last[1] / last[0] >= .5 and tag != '加':
+                tag, ov = '加', f'{last[1]}/{last[0]}'
+            elif last[1] / last[0] < .25 and tag == '加':
+                tag, ov = '持平', f'{last[1]}/{last[0]}'
+        X[u] = dict(mult=round(mult, 1), mx=round(mx, 1), n=x['n'], hit=x['hit'], tag=tag, ov=ov, R=x['R'], top=x['top'], dens=round(dens, 1), nr=x['rate'], nc=x['cpr'], **f)
     return X
 
 
@@ -259,7 +346,8 @@ def main():
     fut = [T + dt.timedelta(days=i) for i in range(5)]
     W = [md(d) for d in fut]
     E = view_entries(plan, U, days, D, T)
-    X = rule_rows(RU, U, E, GL, W, T)
+    B = batch_view(R, plan['GROUPS'])
+    X = rule_rows(RU, U, E, GL, W, T, B, {u for g in plan['GROUPS'][:2] for u in g[1]})
     WT = total_warn(X, GL['t0'])
     in_week = plan.get('week') == (T - dt.timedelta(days=T.weekday())).isoformat()
     if not in_week:
@@ -273,7 +361,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D), TIER=tier_view(R, plan['GROUPS'], total, plan, T), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
