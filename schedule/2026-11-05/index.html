@@ -169,6 +169,20 @@ html,body{margin:0}
 .o-total th,.o-total td{border-bottom:0}.o-total th,.o-total td{padding-top:7px}.o-total td,.o-total th{border-top:1px solid var(--base)}
 .o-note{margin:7px 0 0;color:var(--mute);font-size:11px;line-height:1.5;max-width:760px}.o-miss{color:var(--bad)}
 @media (max-width:560px){.out{padding:10px}.out th,.out td{padding-right:6px}.out td.o-bar{padding-left:8px}.o-cell{gap:6px}.o-track{min-width:44px}.o-pct{min-width:38px}.o-pct em{display:block;margin-left:0}.out .n{width:30px}}
+.top{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,2fr);gap:12px;align-items:start}
+@media (max-width:980px){.top{grid-template-columns:minmax(0,1fr);max-width:calc(100vw - 32px)}}
+.out table{max-width:none}.out{max-width:none}
+.o-more,.more{color:var(--sub);font-size:12px}.o-more{margin-top:8px}.o-more summary,.more summary{cursor:pointer;color:var(--mute);width:max-content}.o-more p{margin:5px 0 0;line-height:1.55}
+.more>.rules,.more>.meters{margin-top:8px}.more>h2{margin:0}
+.now{background:var(--panel);border:1px solid var(--grid);padding:12px 14px;display:flex;flex-direction:column;gap:11px;min-width:0}
+.now h2{margin:0;font-size:15px}.now-sub{margin:0;font-weight:600;line-height:1.45}
+.now-k{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
+.lag summary{cursor:pointer}.lag b{font-weight:700}.lag .ct{color:var(--sub);font-variant-numeric:tabular-nums;margin-left:6px}.lag ul{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--sub);line-height:1.6}
+#alerts{display:flex;flex-direction:column;gap:11px}
+.dd{display:grid;grid-template-columns:42px minmax(0,1fr);gap:1px 6px;line-height:1.5}.dd b{font-weight:600;font-variant-numeric:tabular-nums}.dd code{font:600 12px var(--mono);margin-right:6px;white-space:nowrap}
+.xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+.now-tag{line-height:1.6}.now-tag a{color:var(--link)}
+.leg-min{gap:3px 12px}
 </style>
 </head>
 <body>
@@ -181,31 +195,27 @@ html,body{margin:0}
 <select id="sx-more" aria-label="更早的排期" hidden></select>
 </nav>
 <h1>本周素材排期</h1>
-<p class="sub">B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。</p>
-<p class="prog">进度（11/2 到 11/4）：A 组截至昨天该交 69 实交 61，B 组截至昨天该交 13 实交 11。落下：A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）；A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）；A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）；B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）；B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）。</p>
-<div class="alerts" id="alerts" style="margin-top:8px"></div>
 </header>
-<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>11/2–11/8，数到 11/4，已过 3 / 7 天</span></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">200</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 200"><span class="o-fill" style="width:53.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>53%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">138</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 138"><span class="o-fill" style="width:55.8%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>56%</b></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">达人合作<small>外部 19 · 唯西 2 · 水上 0</small></th><td class="n">8</td><td class="n"><b>21</b></td><td class="n mu">65</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 21 / 预计 65"><span class="o-fill" style="width:32.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>32%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class="o-total"><th scope="row">合计</th><td class="n">61</td><td class="n"><b>207</b></td><td class="n mu">418</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 207 / 预计 418"><span class="o-fill" style="width:49.5%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>50%</b></span></div></td></tr></tbody></table></div><p class="o-note">竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></section>
-<div class="meters" id="meters"></div>
-<div class="legend">
-<span class="it">消耗按批次：</span>
+<div class="top">
+<section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 11/4，第 3 / 7 天，竖线是今天该到的位置</span></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">200</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 200"><span class="o-fill" style="width:53.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>53%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">138</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 138"><span class="o-fill" style="width:55.8%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>56%</b></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">达人合作<small>外部 19 · 唯西 2 · 水上 0</small></th><td class="n">8</td><td class="n"><b>21</b></td><td class="n mu">65</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 21 / 预计 65"><span class="o-fill" style="width:32.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>32%</b><em class="o-late">偏慢</em></span></div></td></tr></tbody></table></div><details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details></section>
+<aside class="now"><h2>今天要看</h2><p class="now-sub">B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。</p>
+<details class="lag"><summary><b>落下 5 行</b><span class="ct">A 组 61/69 · B 组 11/13</span></summary><ul><li>A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）</li><li>A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）</li><li>A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）</li><li>B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）</li><li>B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）</li></ul></details>
+<div id="alerts"></div></aside>
+</div>
+<details class="more"><summary>本周产能（已排 / 产能）</summary><div class="meters" id="meters"></div></details>
+<div class="legend leg-min">
 <span class="it"><i class="sw" style="background:var(--b0)"></i>首花 0–3 天</span>
 <span class="it"><i class="sw" style="background:var(--b1)"></i>4–7 天</span>
 <span class="it"><i class="sw" style="background:var(--b2)"></i>8–14 天</span>
 <span class="it"><i class="sw" style="background:var(--b3)"></i>15 天以上</span>
-<span class="it" style="margin-left:8px">柱子下面的条数：</span>
-<span class="it"><b class="good">绿色</b>这批第二天每条比当天大盘高</span>
-<span class="it"><b class="bad">红色</b>比当天大盘低</span>
-<span class="it" style="margin-left:8px">排期格的条数：</span>
-<span class="it"><b class="t-done">绿色</b>已交没花钱</span>
-<span class="it"><b class="t-todo">蓝色</b>待交</span>
-<span class="it" id="lg-add" style="display:none"><b class="t-add">+数字</b>建议加的条数</span>
-<span class="it" id="lg-cut" style="display:none"><b class="t-cut">划线数字</b>建议拿掉的条数</span>
-<span class="it help" data-help="warn" tabindex="0"><b class="t-warn" style="margin-right:4px">!</b>预计这天会跌，已算上排期。当天交的第二天才开始花，帮不上当天。每天按前一天的实际跑量重算，是估计</span>
-<span class="it"><b>条数建议</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制。留存差的素材看回收表</span>
+<span class="it" style="margin-left:8px"><b class="good">绿</b> / <b class="bad">红</b> 这批第二天每条高于 / 低于大盘</span>
+<span class="it" style="margin-left:8px"><b class="t-done">绿</b> 已交没花钱</span>
+<span class="it"><b class="t-todo">蓝</b> 待交</span>
+<span class="it" id="lg-add" style="display:none"><b class="t-add">+数字</b> 建议加</span>
+<span class="it" id="lg-cut" style="display:none"><b class="t-cut">划线</b> 建议拿掉</span>
+<span class="it help" data-help="warn" tabindex="0"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
-<p class="foot">消耗到 11/4，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">10/29–11/3</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。</p>
 <h2>回收：<span id="rev-range"></span> 放出去的素材</h2>
 <p class="rev-note" id="rev-note"></p>
 <div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>放出</th><th>跑起来</th><th>每条每天</th><th>次留、成本</th><th>标注</th><th>最好一条</th></tr></thead><tbody></tbody></table></div>
@@ -216,13 +226,18 @@ html,body{margin:0}
 <h3>可能开始见顶的素材</h3>
 <p class="rev-note" id="pk-note"></p>
 <div class="scroll"><table class="dt" id="pk"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>峰值</th><th>最近 2 天日均</th><th>占峰值</th></tr></thead><tbody></tbody></table></div>
-<h2>规则</h2>
-<div class="rules">
+<details class="more"><summary>规则和口径</summary><div class="rules">
+<p><b>怎么看这张表：</b>消耗到 11/4，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">10/29–11/3</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。</p>
+<p><b>回收：</b>跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。</p>
+<p><b>要看片：</b>首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。</p>
+<p><b>可能见顶的素材：</b>首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成。</p>
+<p><b>条数建议：</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制。留存差的素材看回收表。</p>
+<p><b>预计会跌：</b>已算上排期。当天交的第二天才开始花，帮不上当天。每天按前一天的实际跑量重算，是估计。</p>
 <p><b>预警：</b>这天预计掉的比补的多，差额超过 ¥500，也超过这个方向现在消耗的 10%（全盘 5%），就标红色警告。现在消耗不到 ¥1,000 的不标。探索这档标灰，会掉也不补。每天用前一天的实际数重算，前两天刚上的素材按实际跑量校正。</p>
 <p><b>回测：</b>10/31–11/2 三天分别算，看到 11/3，样本重叠。有警告的天 35 个，真跌 20 个，当天占比中位 −26%。没警告的天 103 个，真跌 57 个，中位 −6%。有警告不一定更容易跌，但跌得更多，所以只是提醒去看。</p>
 <p id="ydef"><b>单条跑量：</b>首花 10/29–11/3 的素材，前 3 天消耗按一天 ¥15 万折算，除以全盘条均 ¥743。前天才首花的第 3 天按回测曲线估。条数只算花过钱的，所以偏高。</p>
 <p><b>判定：</b>按顺序看，先中先停。不足 5 条：不判，按 30 套测完。单条跑量 ≥1.3 倍且去掉最大一条 ≥0.8 倍：加。单条跑量 ≥0.8 倍但去掉最大一条 &lt;0.6 倍，或最大一条占 60% 以上：靠一条，小步复制。单条跑量 &lt;0.6 倍且上新占比不低于消耗占比：减，只用于探索，前两档是验证过的方向，跑不起来先看片。其余持平。阈值是初值，先跑 1–2 周。</p>
-</div>
+</div></details>
 <h2>执行细节</h2>
 <h3>每个 use case 的排期行</h3>
 <div class="scroll"><table class="dt" id="dt"><thead><tr><th>交付</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
@@ -321,21 +336,23 @@ const ucName=x=>(x.part?'PS03 '+x.part:x.u+' '+(P.UC[x.u]||''))+'（'+x.t+'）';
 const warnDays=w=>Object.keys(w).sort().map(md).join('、');
 const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.GROUPS.slice(0,2).some(g=>g[1].includes(u))||DIR.has(u))).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
+const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
+const xMax=P.BT?Math.max(1.5,...P.BT.rows.map(x=>x.x||0)):1;
 document.getElementById('alerts').innerHTML=[
-  P.BT?`<span class="pill gray">${md(P.BT.day)} 首花这批</span> <span>第二天每条花多少，大盘每条 ${money(P.BT.avg)}：${P.BT.rows.map(x=>`${esc(x.g)} ${money(x.per)}（${x.x} 倍），${x.k}/${x.n} 条跑起来`).join('；')}</span>`:'',
-  Object.keys(P.WT).length||lineUp.length?`<b class="t-warn" style="margin-right:4px">!</b><span>${[Object.keys(P.WT).length?'全盘 '+warnDays(P.WT):''].concat(lineUp.map(([u,x])=>`${u} ${warnDays(x.warn)}`)).filter(Boolean).join('；')}</span>`:'',
-  ...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span class="pill ${c}">${t}</span> <span>${revTags(t).join('、')}</span>`:''),
-  P.REV.nbad?`<span class="pill gray">要看片</span> <span>${P.REV.nbad} 条，在回收表</span>`:'',
-].filter(Boolean).map(h=>`<div style="margin-top:3px">${h}</div>`).join('');
+  Object.keys(dayRows).length?`<div><span class="now-k"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span><div class="dd">${Object.keys(dayRows).sort().map(d=>`<b>${md(d)}</b><span>${dayRows[d].map(u=>`<code>${esc(u)}</code>`).join('')}</span>`).join('')}</div></div>`:'',
+  P.BT?`<div><span class="now-k">${md(P.BT.day)} 首花这批，第二天每条比大盘（竖线 = 大盘 ${money(P.BT.avg)}）</span><div class="xb">${P.BT.rows.map(x=>`<span>${esc(x.g)}</span><i><span style="width:${Math.min(100,(x.x||0)/xMax*100)}%"></span><em style="left:${100/xMax}%"></em></i><small>${x.x} 倍</small><small>${x.k}/${x.n} 条</small>`).join('')}</div></div>`:'',
+  ...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<div class="now-tag"><span class="pill ${c}">${t}</span> ${revTags(t).join('、')}</div>`:''),
+  P.REV.nbad?`<div class="now-tag"><span class="pill gray">要看片</span> <a href="#bad">${P.REV.nbad} 条</a></div>`:'',
+].filter(Boolean).join('');
 const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
-document.getElementById('rev-note').textContent=`一共放出 ${P.REV.nfresh} 条，列 3 条以上的。跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。`;
+document.getElementById('rev-note').textContent=`一共放出 ${P.REV.nfresh} 条，列 3 条以上的。`;
 document.querySelector('#rev tbody').innerHTML=P.REV.rows.map(x=>`<tr><td class="n">${esc(ucName(x))}</td><td class="n">${x.n} 条<small class="q">（${Object.entries(x.days).map(([d,n])=>md(d)+' '+n).join('，')}）</small></td><td class="n">${x.k} 条，预期 ${x.e}</td><td class="num">${money(x.per)}</td><td class="n">${x.rate==null?'<span class="q">样本小</span>':x.rate.toFixed(1)+'%，¥'+x.cpr}</td><td class="n">${REVCLS[x.tag]}</td><td class="nm">${x.best?esc(x.best)+`<small class="q">（${money(x.best_v)}/天）</small>`:'<span class="q">没有跑起来的</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">这几天放出去的，每个方向都不到 3 条</td></tr>';
 if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 首花这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${mk(x.why)}</td><td>${mk(x.next||'')}</td></tr>`).join('')}
 const lnk=(n,u)=>u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`:esc(n);
-document.getElementById('bad-note').textContent=`首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上的，一共 ${P.REV.nbad} 条，列影响最大的 8 条。这是素材的问题，不代表这个方向不行。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。`;
+document.getElementById('bad-note').textContent=`共 ${P.REV.nbad} 条，列影响最大的 8 条。这是素材的问题，不代表这个方向不行。`;
 document.querySelector('#bad tbody').innerHTML=P.REV.bad.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${x.act}</td><td class="n">${x.rate.toFixed(1)}%，¥${x.cpr}</td><td class="num">${x.gap.toFixed(1)}</td><td class="nm">${x.base?`<small class="q">${x.base.how}</small> ${lnk(x.base.name,x.base.url)}<small class="q">（${x.base.rate==null?'样本小':x.base.rate.toFixed(1)+'%，¥'+x.base.cpr}，激活 ${x.base.act}）</small>`:'<span class="q">没找到</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有</td></tr>';
-document.getElementById('pk-note').textContent=`首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成的，一共 ${P.REV.npeak} 条，列峰值最高的 8 条。`;
+document.getElementById('pk-note').textContent=`共 ${P.REV.npeak} 条，列峰值最高的 8 条。`;
 document.querySelector('#pk tbody').innerHTML=P.REV.peak.map(x=>`<tr><td class="nm">${esc(x.name)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="n">${money(x.pk)}（${md(x.pkd)}）</td><td class="num">${money(x.last2)}</td><td class="num">${x.pct}%</td></tr>`).join('')||'<tr><td colspan="6" class="q">没有</td></tr>';
 document.querySelector('#b').addEventListener('click',ev=>{
   const btn=ev.target.closest('button[data-go]');if(!btn)return;
