@@ -174,8 +174,8 @@ html,body{margin:0}
 .out table{max-width:none}.out{max-width:none}
 .o-more,.more{color:var(--sub);font-size:12px}.o-more{margin-top:8px}.o-more summary,.more summary{cursor:pointer;color:var(--mute);width:max-content}.o-more p{margin:5px 0 0;line-height:1.55}
 .more>.rules,.more>.meters{margin-top:8px}.more>h2{margin:0}
-.now{background:var(--panel);border:1px solid var(--grid);padding:12px 14px;display:flex;flex-direction:column;gap:11px;min-width:0}
-.now h2{margin:0;font-size:15px}.now-sub{margin:0;font-weight:600;line-height:1.45}
+.tbox{background:var(--panel);border:1px solid var(--grid);padding:12px 14px;display:flex;flex-direction:column;gap:11px;min-width:0}
+.tbox h2{margin:0;font-size:15px}.now-sub{margin:0;font-weight:600;line-height:1.45}
 .now-k{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
 .lag summary{cursor:pointer}.lag b{font-weight:700}.lag .ct{color:var(--sub);font-variant-numeric:tabular-nums;margin-left:6px}.lag ul{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--sub);line-height:1.6}
 #alerts{display:flex;flex-direction:column;gap:11px}
@@ -183,6 +183,25 @@ html,body{margin:0}
 .xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
 .now-tag{line-height:1.6}.now-tag a{color:var(--link)}
 .leg-min{gap:3px 12px}
+.top{align-items:stretch}
+.out,.tbox{border-radius:12px;padding:16px 18px}
+.out{display:flex;flex-direction:column}.o-head h2,.tbox h2{font-size:16px;font-weight:700}.o-head{margin-bottom:6px}
+.o-scroll{flex:1;display:flex;min-height:0}.out table{flex:1;height:100%;margin-top:0}
+.out thead th{font-size:12px;padding-bottom:6px}
+.out tbody th{font-size:14px}.out small{font-size:12px;margin-top:2px}
+.out td.n{font-size:14px}.out td.n b{font-size:20px;font-weight:700}.out .n{width:52px}
+.out tbody tr:last-child th,.out tbody tr:last-child td{border-bottom:0}
+.o-track{height:12px;border-radius:0 6px 6px 0}.o-fill{border-radius:0 6px 6px 0}.o-pace{top:-4px;bottom:-4px}
+.o-pct{min-width:100px}.o-pct b{font-size:16px;font-weight:700}
+.o-more{margin-top:auto;padding-top:10px;border-top:1px solid var(--grid)}
+.tbox{gap:12px}#alerts{gap:12px}.now-sub{font-size:13px}
+.tbox>*+*,#alerts>*+*{border-top:1px solid var(--grid);padding-top:12px}
+.dd{grid-template-columns:64px minmax(0,1fr);gap:5px 8px;align-items:center}
+.dd code{display:inline-block;padding:1px 7px;margin:0 4px 0 0;border-radius:5px;background:var(--band);box-shadow:inset 0 0 0 1px var(--grid);font-size:12px}
+.dd code.all{background:var(--crit);color:#fff;box-shadow:none}
+.xb{gap:6px 10px}.xb i{height:10px;border-radius:0 5px 5px 0}.xb i span{border-radius:0 5px 5px 0}.xb i em{top:-3px;bottom:-3px}
+.now-tags{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+@media (max-width:560px){.out,.tbox{padding:12px}.out td.n b{font-size:16px}.out .n{width:32px}.o-pct{min-width:40px}.o-pct b{font-size:14px}}
 </style>
 </head>
 <body>
@@ -198,7 +217,7 @@ html,body{margin:0}
 </header>
 <div class="top">
 <section class="out" aria-labelledby="out-h"><div class="o-head"><h2 id="out-h">本周实际产出</h2><span>数到 11/4，第 3 / 7 天，竖线是今天该到的位置</span></div><div class="o-scroll"><table><thead><tr><th scope="col">类型</th><th scope="col" class="n">昨天</th><th scope="col" class="n">累计</th><th scope="col" class="n">预计</th><th scope="col">完成度</th></tr></thead><tbody><tr class=""><th scope="row">AI 素材<small>A 组 101 · B 组 5</small></th><td class="n">26</td><td class="n"><b>106</b></td><td class="n mu">200</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 106 / 预计 200"><span class="o-fill" style="width:53.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>53%</b></span></div></td></tr><tr class=""><th scope="row">真人二创<small>A 组 67 · B 组 10</small></th><td class="n">26</td><td class="n"><b>77</b></td><td class="n mu">138</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 77 / 预计 138"><span class="o-fill" style="width:55.8%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>56%</b></span></div></td></tr><tr class=""><th scope="row">星广</th><td class="n">1</td><td class="n"><b>3</b></td><td class="n mu">15</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 3 / 预计 15"><span class="o-fill" style="width:20.0%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>20%</b><em class="o-late">偏慢</em></span></div></td></tr><tr class=""><th scope="row">达人合作<small>外部 19 · 唯西 2 · 水上 0</small></th><td class="n">8</td><td class="n"><b>21</b></td><td class="n mu">65</td><td class="o-bar"><div class="o-cell"><span class="o-track" title="累计 21 / 预计 65"><span class="o-fill" style="width:32.3%"></span><i class="o-pace" style="left:42.9%"></i></span><span class="o-pct"><b>32%</b><em class="o-late">偏慢</em></span></div></td></tr></tbody></table></div><details class="o-more"><summary>口径</summary><p>竖线是一周 7 天平摊到昨天该到的位置，比它低 10 个点以上标偏慢。按实际产出日算：AI、二创看完成时间和文件名日期，星广看成片完成时间，达人看发布日期。AI、二创的预计是这周排期，星广、达人是素材产出日报的每周目标（达人：外部 50 + 唯西 15）。达人合作数的是发布的视频条数，水下原片要剪了再投，不等于投放素材；水上只算唯西和悦普，AnyMedia 还没标。自建号不算。</p></details></section>
-<aside class="now"><h2>今天要看</h2><p class="now-sub">B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。</p>
+<aside class="tbox"><h2>今天要看</h2><p class="now-sub">B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。</p>
 <details class="lag"><summary><b>落下 5 行</b><span class="ct">A 组 61/69 · B 组 11/13</span></summary><ul><li>A 组扩量第 47 行 PS03 工作和孩子 差 1 条（11/3 该交）</li><li>A 组扩量第 51 行 HL02 个性化训练和饮食 差 1 条（11/3 该交）</li><li>A 组扩量第 60 行 IN01 追踪自己关注的事 差 6 条 AI（11/4 该交）</li><li>B 组二创第 8 行 HL02 个性化训练和饮食 差 1 条 二创（11/4 该交）</li><li>B 组二创第 9 行 WK01 会议前后全管 差 1 条 二创（11/4 该交）</li></ul></details>
 <div id="alerts"></div></aside>
 </div>
@@ -337,12 +356,13 @@ const warnDays=w=>Object.keys(w).sort().map(md).join('、');
 const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.GROUPS.slice(0,2).some(g=>g[1].includes(u))||DIR.has(u))).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
 const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
+const dayMerged=[];Object.keys(dayRows).sort().forEach(d=>{const k=dayRows[d].join(),l=dayMerged[dayMerged.length-1];if(l&&l.k===k)l.to=d;else dayMerged.push({k,from:d,to:d,us:dayRows[d]})});
 const xMax=P.BT?Math.max(1.5,...P.BT.rows.map(x=>x.x||0)):1;
+const nowTags=[...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<span><span class="pill ${c}">${t}</span> ${revTags(t).join('、')}</span>`:''),P.REV.nbad?`<span><span class="pill gray">要看片</span> <a href="#bad">${P.REV.nbad} 条</a></span>`:''].filter(Boolean).join('');
 document.getElementById('alerts').innerHTML=[
-  Object.keys(dayRows).length?`<div><span class="now-k"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span><div class="dd">${Object.keys(dayRows).sort().map(d=>`<b>${md(d)}</b><span>${dayRows[d].map(u=>`<code>${esc(u)}</code>`).join('')}</span>`).join('')}</div></div>`:'',
+  dayMerged.length?`<div><span class="now-k"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div></div>`:'',
   P.BT?`<div><span class="now-k">${md(P.BT.day)} 首花这批，第二天每条比大盘（竖线 = 大盘 ${money(P.BT.avg)}）</span><div class="xb">${P.BT.rows.map(x=>`<span>${esc(x.g)}</span><i><span style="width:${Math.min(100,(x.x||0)/xMax*100)}%"></span><em style="left:${100/xMax}%"></em></i><small>${x.x} 倍</small><small>${x.k}/${x.n} 条</small>`).join('')}</div></div>`:'',
-  ...[['可能见顶','red'],['不及预期','amber']].map(([t,c])=>revTags(t).length?`<div class="now-tag"><span class="pill ${c}">${t}</span> ${revTags(t).join('、')}</div>`:''),
-  P.REV.nbad?`<div class="now-tag"><span class="pill gray">要看片</span> <a href="#bad">${P.REV.nbad} 条</a></div>`:'',
+  nowTags?`<div class="now-tag now-tags">${nowTags}</div>`:'',
 ].filter(Boolean).join('');
 const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
