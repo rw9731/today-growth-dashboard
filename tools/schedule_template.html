@@ -507,12 +507,20 @@ function bpRt(u,day,cell){
   const i=+cell.dataset.i,rd=rtDay(i);if(!rd||!rd[0])return '';
   const base=rd[1]/rd[0]*100,rr=cell.dataset.r?cell.dataset.r.split(',').map(Number):[0,0,0,0,0,0,0,0],bb=batchRt(u,day);
   const cmp=(a,r)=>{if(!a)return '';if(a<100)return '<span class="q">样本小</span>';const d=r/a*100-base,cl=d>=1?'good':d<=-1?'bad':'';return `<span class="${cl}">${d>=0?'高':'低'} ${Math.abs(d).toFixed(1)} 个点</span>`};
-  const line=(lab,a,r,c,hp)=>`<tr><td class="nm">${lab}</td><td>${hp?`<span class="help" data-help="co:${esc(hp)}" tabindex="0">${rtPct(a,r)}</span>`:rtPct(a,r)}</td><td>${a.toLocaleString('en-US')}</td><td>${c||''}</td></tr>`;
+  const line=(lab,a,r,c,hp,n)=>`<tr><td class="nm">${lab}</td><td>${n==null?'':n}</td><td>${hp?`<span class="help" data-help="co:${esc(hp)}" tabindex="0">${rtPct(a,r)}</span>`:rtPct(a,r)}</td><td>${a.toLocaleString('en-US')}</td><td>${c||''}</td></tr>`;
+  const co=((P.RT||{}).co&&(P.RT.co[u]||{})[day])||null,isLast=i===P.days.length-1;
+  const byDay=co?Object.entries(co).map(([b,x])=>{const t=x.p.split(';').pop().split(',').map(Number);return{b,n:x.n,age:x.age,a:t[0],r:t[1]}}).sort((p,q)=>p.age-q.age):[];
+  const runN=byDay.reduce((s,x)=>s+x.n,0);
   let rows=line('当天大盘留存',rd[0],rd[1]);
-  if(bb){rows+=line('新上素材留存（这批首花当天）',bb.a0,bb.r0,cmp(bb.a0,bb.r0));if(bb.at!==bb.a0)rows+=line(`这批到现在（看到 ${md(P.days[P.days.length-2])}）`,bb.at,bb.rt)}
-  if(u!=='__all')rows+=line('这个方向当天留存',rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7],cmp(rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7]));
-  nm.forEach((n,j)=>{if(rr[j*2])rows+=line(`按批次留存 · 首花 ${n}`,rr[j*2],rr[j*2+1],cmp(rr[j*2],rr[j*2+1]),((P.RT||{}).co&&((P.RT.co[u]||{})[day]||{})[j])?`${u}|${day}|${j}|${n}`:'')});
-  return `<div class="bp-s"><h4>留存（${md(day)} 激活的人）${i===P.days.length-2?'<small class="q">　这天还在回传，可能偏低约 1 个点</small>':''}</h4><table class="bp-t"><thead><tr><th class="nm"></th><th>次留</th><th>激活</th><th>比当天大盘</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  if(bb){if(!co)rows+=line('新上素材留存（这批首花当天）',bb.a0,bb.r0,cmp(bb.a0,bb.r0));if(bb.at!==bb.a0)rows+=line(`这批到现在（看到 ${md(P.days[P.days.length-2])}）`,bb.at,bb.rt)}
+  if(u!=='__all')rows+=line('这个方向当天留存',rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7],cmp(rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7]),'',co?runN:null);
+  if(co){
+    let show=byDay,tail=[];
+    if(byDay.length>12){show=byDay.filter(x=>x.a>=30);tail=byDay.filter(x=>x.a<30)}
+    show.forEach(x=>{rows+=line(`首花 ${md(x.b)}${x.age?`（第 ${x.age+1} 天）`:'（当天）'}`,x.a,x.r,cmp(x.a,x.r),isLast||!x.a?'':`${u}|${day}|${x.b}|${md(x.b)}`,x.n)});
+    if(tail.length){const a=tail.reduce((s,x)=>s+x.a,0),r=tail.reduce((s,x)=>s+x.r,0);rows+=line(`其余 ${tail.length} 个首花日（每天激活不到 30）`,a,r,cmp(a,r),'',tail.reduce((s,x)=>s+x.n,0))}
+  }else nm.forEach((n,j)=>{if(rr[j*2])rows+=line(`按批次留存 · 首花 ${n}`,rr[j*2],rr[j*2+1],cmp(rr[j*2],rr[j*2+1]))});
+  return `<div class="bp-s"><h4>留存（${md(day)} 激活的人）${i===P.days.length-2?'<small class="q">　这天还在回传，可能偏低约 1 个点</small>':''}</h4><table class="bp-t"><thead><tr><th class="nm"></th><th>在跑条数</th><th>次留</th><th>激活</th><th>比当天大盘</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function bpWhy(u,day){
   const w=(((P.RT||{}).why||{})[u]||{})[day];if(!w)return '';

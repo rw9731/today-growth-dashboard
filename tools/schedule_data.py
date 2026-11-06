@@ -704,11 +704,12 @@ def rt_diagnose(rows, of, D):
         return pa, pr, pc, (pb / pa if pa else 0), peak, nd
 
     def cohort(u, d):
-        co = {}
+        """这天在跑的素材按首花日分：条数（当天花了钱或有激活）、首花第几天、同样这几条往前 10 天的激活和次留。"""
         ids = defaultdict(list)
         for fid, x in daily[u][d].items():
-            if x[1] > 0:
-                ids[bucket((d - fam[fid].batch).days)].append(fid)
+            if x[0] > 0 or x[1] > 0:
+                ids[fam[fid].batch].append(fid)
+        co = {}
         for b, fs in ids.items():
             pts = []
             for i in range(9, -1, -1):
@@ -716,7 +717,7 @@ def rt_diagnose(rows, of, D):
                 a = sum(daily[u][day][fid][1] for fid in fs if fid in daily[u][day])
                 r = sum(daily[u][day][fid][2] for fid in fs if fid in daily[u][day])
                 pts.append(f'{round(a)},{round(r)}')
-            co[str(b)] = dict(n=len(fs), p=';'.join(pts))
+            co[b.strftime('%m-%d')] = dict(n=len(fs), age=(d - b).days, p=';'.join(pts))
         return co
 
     def plat_line(u, d):
@@ -863,16 +864,16 @@ def rt_diagnose(rows, of, D):
     why, co = defaultdict(dict), defaultdict(dict)
     for u in list(daily):
         d = start
-        while d < D:
-            if d in daily[u] and any(x[1] > 0 for x in daily[u][d].values()):
+        while d <= D:
+            if d in daily[u] and any(x[0] > 0 or x[1] > 0 for x in daily[u][d].values()):
                 k = d.strftime('%m-%d')
                 co[u][k] = cohort(u, d)
-                w = one_all(d) if u == '__all' else one_uc(u, d)
+                w = None if d == D else one_all(d) if u == '__all' else one_uc(u, d)
                 if w:
                     why[u][k] = w
             d += one
     days, d = [], start - one * 10
-    while d < D:
+    while d <= D:
         days.append(d)
         d += one
     return dict(why=why, co=co, days=[x.strftime('%m-%d') for x in days], base=[[round(base[x][0]), round(base[x][1])] for x in days])
