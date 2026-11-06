@@ -197,8 +197,8 @@ a{color:var(--link)}
 .pg{min-width:0}.pg .o-cell{gap:8px}.pg .o-track{min-width:80px}.pg .o-pct{min-width:0}.pg small{display:block;font-size:11px;color:var(--mute);line-height:1.4;margin-top:2px}
 .st .trend{cursor:help}.st .trend:hover,.st .trend:focus-visible{text-decoration:underline dotted;text-underline-offset:3px}
 .tr-lg{float:right;font-size:11px;opacity:.8;margin-left:12px}.tr-lg i{display:inline-block;width:16px;margin:0 4px 3px 8px;vertical-align:middle;border-top:2px solid var(--meter)}.tr-lg i.d{border-top:2px dashed var(--bg)}
-.tr-svg{display:block;margin-top:6px;max-width:100%;height:auto}.tr-svg text{font-size:10px;fill:var(--bg);opacity:.7;font-variant-numeric:tabular-nums}.tr-svg .tg{stroke:var(--bg);stroke-opacity:.16;stroke-width:1}.tr-svg .tm{fill:none;stroke:var(--meter);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.tr-svg .tb{fill:none;stroke:var(--bg);stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:4 3}
-.tr-t{border-collapse:collapse;width:100%;margin-top:4px;font-size:10.5px;font-variant-numeric:tabular-nums}.tr-t th,.tr-t td{padding:1px 2px;text-align:right;font-weight:400;white-space:nowrap}.tr-t tbody th{text-align:left;opacity:.7}.tr-t thead th{opacity:.7}
+.tr-svg{display:block;margin-top:6px;width:320px;height:100px}.tr-svg .tv{stroke:var(--bg);stroke-opacity:.12;stroke-width:1}.tr-svg text{font-size:10px;fill:var(--bg);opacity:.7;font-variant-numeric:tabular-nums}.tr-svg .tg{stroke:var(--bg);stroke-opacity:.16;stroke-width:1}.tr-svg .tm{fill:none;stroke:var(--meter);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.tr-svg .tb{fill:none;stroke:var(--bg);stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:4 3}
+.tr-t{border-collapse:collapse;table-layout:fixed;width:320px;margin-top:0;font-size:10.5px;font-variant-numeric:tabular-nums}.tr-t th:first-child{width:42px}.tr-t th,.tr-t td{padding:1px 0;text-align:center;font-weight:400;white-space:nowrap}.tr-t tbody th{text-align:left;opacity:.7}.tr-t thead th{opacity:.7}
 .tr-n{margin-top:4px;font-size:10.5px;opacity:.65;line-height:1.4}
 .dd{display:grid;grid-template-columns:42px minmax(0,1fr);gap:1px 6px;line-height:1.5}.dd b{font-weight:600;font-variant-numeric:tabular-nums}.dd code{font:600 12px var(--mono);margin-right:6px;white-space:nowrap}
 .xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
@@ -405,12 +405,12 @@ function trendCard(id,m){
   const title=(isAll?'全盘':`${esc(id)} ${esc(P.UC[id]||'')}`)+` · ${isR?'次留率':'次留成本'}`;
   if(!vals.length)return `<b>${title}</b><br>最近 7 天每天激活都不到 ${TREND_MIN}，样本太小，没画趋势。`;
   let lo=Math.min(...vals),hi=Math.max(...vals);const pad=Math.max((hi-lo)*.15,isR?1:3);lo=Math.max(0,lo-pad);hi+=pad;
-  const W=320,H=112,L=34,R=8,T=8,B=20,cnt=me.length,X=j=>L+(cnt>1?j*(W-L-R)/(cnt-1):0),Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+  const W=320,H=100,L=42,T=8,B=6,cnt=me.length,X=j=>L+(j+.5)*(W-L)/cnt,Y=v=>T+(hi-v)/(hi-lo)*(H-T-B); // 每个点对齐下面表格那一列的正中间，表头就是横轴
   const fv=v=>v==null?'·':isR?v.toFixed(1)+'%':'¥'+Math.round(v);
   const path=s=>{let d='',on=false;s.forEach((x,j)=>{if(x.v==null){on=false;return}d+=`${on?'L':'M'}${X(j).toFixed(1)} ${Y(x.v).toFixed(1)}`;on=true});return d};
   const dots=me.map((x,j)=>x.v==null?'':`<circle cx="${X(j).toFixed(1)}" cy="${Y(x.v).toFixed(1)}" r="${j===cnt-1?3.5:2.5}" fill="${j===cnt-1?'var(--ink)':'var(--meter)'}" stroke="var(--meter)" stroke-width="${j===cnt-1?2:0}"/>`).join('');
-  const ticks=[hi,(hi+lo)/2,lo].map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="tg"/><text x="${L-5}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end">${isR?v.toFixed(0)+'%':'¥'+Math.round(v)}</text>`).join('');
-  const xl=me.map((x,j)=>j===0||j===cnt-1?`<text x="${X(j).toFixed(1)}" y="${H-5}" text-anchor="${j===0?'start':'end'}">${md(P.days[x.i])}</text>`:'').join('');
+  const ticks=[hi,(hi+lo)/2,lo].map(v=>`<line x1="${L}" x2="${W}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="tg"/><text x="${L-5}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end">${isR?v.toFixed(0)+'%':'¥'+Math.round(v)}</text>`).join('');
+  const xl=me.map((x,j)=>`<line x1="${X(j).toFixed(1)}" x2="${X(j).toFixed(1)}" y1="${T}" y2="${H-B}" class="tv"/>`).join('');
   const svg=`<svg class="tr-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${title} 最近 7 天趋势">${ticks}${xl}${isAll?'':`<path d="${path(base)}" class="tb"/>`}<path d="${path(me)}" class="tm"/>${dots}</svg>`;
   const cell=(x,y)=>{if(x==null||y==null)return '·';const d=Math.round((x-y)/y*100);return d===0?'持平':(d>0?'+':'−')+Math.abs(d)+'%'};
   const head=me.map(x=>`<th>${md(P.days[x.i])}</th>`).join('');
