@@ -717,7 +717,7 @@ def rt_diagnose(rows, of, D):
                 a = sum(daily[u][day][fid][1] for fid in fs if fid in daily[u][day])
                 r = sum(daily[u][day][fid][2] for fid in fs if fid in daily[u][day])
                 pts.append(f'{round(a)},{round(r)}')
-            co[b.strftime('%m-%d')] = dict(n=len(fs), age=(d - b).days, p=';'.join(pts))
+            co[b.strftime('%m-%d')] = dict(n=len(fs), age=(d - b).days, c=round(sum(daily[u][d][fid][0] for fid in fs)), p=';'.join(pts))
         return co
 
     def plat_line(u, d):

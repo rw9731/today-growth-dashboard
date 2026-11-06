@@ -69,7 +69,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 .bar{height:32px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:1px;border-bottom:1px solid var(--base)}
 .bar i{display:block;width:17px}
 .bar i:first-child{border-radius:2px 2px 0 0}
-.bar .b0{background:var(--b0)}.bar .b1{background:var(--b1)}.bar .b2{background:var(--b2)}.bar .b3{background:var(--b3)}
+.bar.bd{gap:0}.bar.bd i{box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--bg) 45%,transparent)}.sw-g{width:44px!important;background:linear-gradient(90deg,var(--b0),var(--b3))}.bar .b0{background:var(--b0)}.bar .b1{background:var(--b1)}.bar .b2{background:var(--b2)}.bar .b3{background:var(--b3)}
 .cnt{height:16px;font:600 11px/16px var(--mono);font-variant-numeric:tabular-nums}
 .cnt .zero{color:var(--base);font-weight:400}
 .plan{display:flex;flex-direction:column;align-items:center;gap:1px;font:600 11px/1.3 var(--mono);font-variant-numeric:tabular-nums;padding:2px 0}
@@ -221,10 +221,7 @@ a{color:var(--link)}
 </div>
 <details class="more"><summary>本周产能（已排 / 产能）</summary><div class="meters" id="meters"></div></details>
 <div class="legend leg-min">
-<span class="it"><i class="sw" style="background:var(--b0)"></i>首花 0–3 天</span>
-<span class="it"><i class="sw" style="background:var(--b1)"></i>4–7 天</span>
-<span class="it"><i class="sw" style="background:var(--b2)"></i>8–14 天</span>
-<span class="it"><i class="sw" style="background:var(--b3)"></i>15 天以上</span>
+<span class="it"><i class="sw sw-g"></i>每段一个首花日，颜色越深首花越近</span>
 <span class="it" style="margin-left:8px"><b class="good">绿</b> / <b class="bad">红</b> 这批第二天每条高于 / 低于大盘</span>
 <span class="it" style="margin-left:8px"><b class="t-done">绿</b> 已交没花钱</span>
 <span class="it"><b class="t-todo">蓝</b> 待交</span>
@@ -285,12 +282,15 @@ const zero=()=>({c7:0,rate:null,cpr:null,n:P.days.map(()=>0),s:P.days.map(()=>[0
 const merged=us=>{const r=zero();us.forEach(u=>{const x=P.U[u];if(!x)return;r.c7+=x.c7;x.n.forEach((v,i)=>r.n[i]+=v);x.s.forEach((v,i)=>v.forEach((w,j)=>r.s[i][j]+=w));(x.k||[]).forEach((v,i)=>v.forEach((w,j)=>r.k[i][j]+=w));(x.rt||[]).forEach((v,i)=>v.forEach((w,j)=>r.rt[i][j]+=w))});return r};
 const chipOf=(id,gi)=>{const x=P.X[id];return x?x.chips:{}};
 function keyOf(d){const key=P.futKey[d];return key}
-function dayCells(r,es,max,warn,muted,bt){
+const coOf=(u,day)=>((P.RT&&P.RT.co&&P.RT.co[u])||{})[day]||null;
+const coRows=(u,day)=>{const co=coOf(u,day);return co?Object.entries(co).map(([b,x])=>{const t=x.p.split(';').pop().split(',').map(Number);return{b,n:x.n,age:x.age,c:x.c,a:t[0],r:t[1]}}).sort((p,q)=>p.age-q.age):null};
+function dayCells(r,es,max,warn,muted,bt,id){
   let h='';
   pastDays.forEach((d,j)=>{
     const i=j+START,seg=r.s[i],tot=sum(seg),bn=bt&&bt[P.days[i]],na=P.T.k&&sum(P.T.k[i+1]||[])?sum(P.T.s[i+1])/sum(P.T.k[i+1]):0,hit=bn&&bn[0]>=3&&na?(bn[2]/bn[0]>=na?' hi':' lo'):'';
-    const bars=seg.map((v,b)=>v>0?`<i class="b${b}" style="height:${Math.max(1,v/max*31).toFixed(1)}px"></i>`:'').join('');
-    h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-i="${i}" data-s="${seg.join(',')}" data-k="${r.k?r.k[i].join(','):''}" data-r="${r.rt?r.rt[i].join(','):''}" data-n="${r.n[i]}"${bn?` data-b="${bn.join(',')}" tabindex="0" role="button"`:''}><div class="bar">${bars}</div><div class="cnt${hit}">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
+    const cr=coRows(id,P.days[i]);
+    const bars=cr?cr.filter(x=>x.c>0&&x.c/max*31>=.3).map(x=>`<i style="height:${(x.c/max*31).toFixed(1)}px;background:color-mix(in srgb,var(--b0) ${Math.round((1-Math.min(x.age,15)/15)*100)}%,var(--b3))"></i>`).join(''):seg.map((v,b)=>v>0?`<i class="b${b}" style="height:${Math.max(1,v/max*31).toFixed(1)}px"></i>`:'').join('');
+    h+=`<td class="d p${WE.has(d)?' we':''}" data-d="${d}" data-i="${i}" data-s="${seg.join(',')}" data-k="${r.k?r.k[i].join(','):''}" data-r="${r.rt?r.rt[i].join(','):''}" data-n="${r.n[i]}"${bn?` data-b="${bn.join(',')}" tabindex="0" role="button"`:''}><div class="bar${cr?' bd':''}">${bars}</div><div class="cnt${hit}">${r.n[i]?r.n[i]:'<span class="zero">·</span>'}</div></td>`;
   });
   futDays.forEach(d=>{
     const toks=[];const key=keyOf(d);const w=warn&&warn[key];
@@ -318,14 +318,14 @@ function row(id,code,label,r,es,max,cls,gi){
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}</button></td>
-  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2&&!DIR.has(id),P.B[id])}
+  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2&&!DIR.has(id),P.B[id],id)}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
 const NC=3+all.length+4;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all)}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -485,7 +485,12 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
    const ci=+c.dataset.i,rd=rtDay(ci),rr=c.dataset.r?c.dataset.r.split(',').map(Number):null,bb=c.dataset.b?batchRt(c.closest('tr').dataset.id,P.days[ci]):null;
    html+=` 消耗 ${money(t)}`;if(kk&&sum(kk))html+=`，在跑 ${sum(kk)} 条，平均每条 ${money(t/sum(kk))}`;const uid=c.closest('tr').dataset.id;if(uid&&uid!=='__all'&&rr)html+=`<br>这个方向当天留存 ${rtVs(rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7],ci,rd)}`;if(rd)html+=`<br>当天大盘留存 ${rtTip(rd[0],rd[1],ci)}${ci===P.days.length-2?'，这天还在回传，可能偏低约 1 个点':''}`;
    html+=`<div class="ts"><span class="tl">当天首花</span>${c.dataset.n} 条`;if(c.dataset.b){const[n,up,cc]=c.dataset.b.split(',').map(Number);const ni=+c.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;html+=`，第二天跑起来 ${up} 条<br>第二天平均每条 ${money(cc/n)}${na?(()=>{const df=cc/n-na,up=df>=0,pc=Math.round(Math.abs(df)/na*100);return `，${up?'高于':'低于'}当天大盘 ${money(na)}（${up?'高':'低'} ${pc}%）`})():''}`}if(bb)html+=`<br>新上素材留存 ${rtTip(bb.a0,bb.r0,ci)}`;html+=`</div>`;
-   let bl='';seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}${rr&&rr[j*2]&&ci!==P.days.length-1?`，留存 ${rtPct(rr[j*2],rr[j*2+1])}${rr[j*2]<100?'（样本小）':''}`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`;if(c.dataset.b)html+=`<div class="ts"><span class="tl">点柱子看这批的分析</span></div>`}
+   const cr=coRows(c.closest('tr').dataset.id,P.days[ci]);let bl='';
+   if(cr){const isL=ci===P.days.length-1,txt=x=>`${md(x.b)} 首花 ${money(x.c)}（${t?Math.round(x.c/t*100):0}%），${x.n} 条${x.a&&!isL?`，留存 ${rtPct(x.a,x.r)}${x.a<100?'（样本小）':''}`:''}`;
+     cr.filter(x=>x.c>0||x.a>0).forEach(x=>{bl+=`<br>${txt(x)}`});
+     if(bl)html+=`<div class="ts"><span class="tl">按首花日</span>${bl.slice(4)}</div>`}
+   else{seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}${rr&&rr[j*2]&&ci!==P.days.length-1?`，留存 ${rtPct(rr[j*2],rr[j*2+1])}${rr[j*2]<100?'（样本小）':''}`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`}
+   if(c.dataset.b)html+=`<div class="ts"><span class="tl">点柱子看这批的分析</span></div>`}
   else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
   placeTip(ev.clientX,ev.clientY);
@@ -508,17 +513,13 @@ function bpRt(u,day,cell){
   const base=rd[1]/rd[0]*100,rr=cell.dataset.r?cell.dataset.r.split(',').map(Number):[0,0,0,0,0,0,0,0],bb=batchRt(u,day);
   const cmp=(a,r)=>{if(!a)return '';if(a<100)return '<span class="q">样本小</span>';const d=r/a*100-base,cl=d>=1?'good':d<=-1?'bad':'';return `<span class="${cl}">${d>=0?'高':'低'} ${Math.abs(d).toFixed(1)} 个点</span>`};
   const line=(lab,a,r,c,hp,n)=>`<tr><td class="nm">${lab}</td><td>${n==null?'':n}</td><td>${hp?`<span class="help" data-help="co:${esc(hp)}" tabindex="0">${rtPct(a,r)}</span>`:rtPct(a,r)}</td><td>${a.toLocaleString('en-US')}</td><td>${c||''}</td></tr>`;
-  const co=((P.RT||{}).co&&(P.RT.co[u]||{})[day])||null,isLast=i===P.days.length-1;
-  const byDay=co?Object.entries(co).map(([b,x])=>{const t=x.p.split(';').pop().split(',').map(Number);return{b,n:x.n,age:x.age,a:t[0],r:t[1]}}).sort((p,q)=>p.age-q.age):[];
+  const co=coOf(u,day),isLast=i===P.days.length-1,byDay=coRows(u,day)||[];
   const runN=byDay.reduce((s,x)=>s+x.n,0);
   let rows=line('当天大盘留存',rd[0],rd[1]);
   if(bb){if(!co)rows+=line('新上素材留存（这批首花当天）',bb.a0,bb.r0,cmp(bb.a0,bb.r0));if(bb.at!==bb.a0)rows+=line(`这批到现在（看到 ${md(P.days[P.days.length-2])}）`,bb.at,bb.rt)}
   if(u!=='__all')rows+=line('这个方向当天留存',rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7],cmp(rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7]),'',co?runN:null);
   if(co){
-    let show=byDay,tail=[];
-    if(byDay.length>12){show=byDay.filter(x=>x.a>=30);tail=byDay.filter(x=>x.a<30)}
-    show.forEach(x=>{rows+=line(`首花 ${md(x.b)}${x.age?`（第 ${x.age+1} 天）`:'（当天）'}`,x.a,x.r,cmp(x.a,x.r),isLast||!x.a?'':`${u}|${day}|${x.b}|${md(x.b)}`,x.n)});
-    if(tail.length){const a=tail.reduce((s,x)=>s+x.a,0),r=tail.reduce((s,x)=>s+x.r,0);rows+=line(`其余 ${tail.length} 个首花日（每天激活不到 30）`,a,r,cmp(a,r),'',tail.reduce((s,x)=>s+x.n,0))}
+    byDay.forEach(x=>{rows+=line(`首花 ${md(x.b)}${x.age?`（第 ${x.age+1} 天）`:'（当天）'}`,x.a,x.r,cmp(x.a,x.r),isLast||!x.a?'':`${u}|${day}|${x.b}|${md(x.b)}`,x.n)});
   }else nm.forEach((n,j)=>{if(rr[j*2])rows+=line(`按批次留存 · 首花 ${n}`,rr[j*2],rr[j*2+1],cmp(rr[j*2],rr[j*2+1]))});
   return `<div class="bp-s"><h4>留存（${md(day)} 激活的人）${i===P.days.length-2?'<small class="q">　这天还在回传，可能偏低约 1 个点</small>':''}</h4><table class="bp-t"><thead><tr><th class="nm"></th><th>在跑条数</th><th>次留</th><th>激活</th><th>比当天大盘</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
