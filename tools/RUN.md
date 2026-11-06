@@ -158,7 +158,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 
 次留、成本的趋势卡（Reina 11/6 要）：鼠标放到某一行的次留或成本上，看最近 7 天折线，虚线是大盘。最新一天次留没回传不画，激活不到 30 的天不画，表里「比大盘」按相对比例算。
 
-知定堂星广（Reina 11/6）：新 agency，每周 100 条产能，下周 11/9 起先排 50 条，三档 50/30/20，单独测星广，因为产品新增浏览器操作能力，use case 库要更新，另外 50 条等库更新后再排。排期放 plan 的 ZDT，页面在折叠的「知定堂星广」，不算进排期、本周上新和预警。飞书模板建好后，把表接进 schedule_read、schedule_progress（第三条进度条）和 schedule_output（星广预计加 100）。
+知定堂星广（Reina 11/6）：新 agency，每周 100 条产能，下周 11/9 起先排 50 条，三档 50/30/20，单独测星广；产品新增浏览器操作能力，use case 库要更新，另外 50 条等库更新后再排。排期放他们的飞书表，看板不单独放一块（Reina 11/6），也不写进 schedule_plan.json。飞书表建好后，接进 schedule_read、schedule_progress（第三条进度条）和 schedule_output（星广预计加 100）。
 
 本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、达人合作，累计对比预计和完成度。
 - 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（现在是 11月执行表，每月一张，换月要换 sheet id，存文件名还用 5cypAT.json），存进同一个目录。再读 'Today KOL/KOC 视频'!A1:Z 存成文件。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --koc <视频文件> --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
