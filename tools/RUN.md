@@ -156,6 +156,8 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。只显示，不自动移档：探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。移档要 Reina 定，改 schedule_plan.json 的 GROUPS，并在 MOVED 写从哪档来、哪天，7 天内名字旁标「新进」。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 
+次留、成本的趋势卡（Reina 11/6 要）：鼠标放到某一行的次留或成本上，看最近 7 天折线，虚线是大盘。最新一天次留没回传不画，激活不到 30 的天不画，表里「比大盘」按相对比例算。
+
 本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、达人合作，累计对比预计和完成度。
 - 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（现在是 11月执行表，每月一张，换月要换 sheet id，存文件名还用 5cypAT.json），存进同一个目录。再读 'Today KOL/KOC 视频'!A1:Z 存成文件。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --koc <视频文件> --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
 - 类型（Reina 11/5 定）：水下达人原片都要剪了再投，不当投放素材类型，10 月中的老原片只留在数据里，不算产量。达人合作数的是发布的视频条数，不是投放素材。
