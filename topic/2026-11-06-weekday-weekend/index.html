@@ -111,6 +111,11 @@
 .wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
 .wk .sum .muted { color: var(--color-fg-muted); }
 .wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .hint { position: relative; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; outline: none; }
+.wk .hint-l { text-align: left; }
+.wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
+.wk .hint-l .hint-tip { left: 0; right: auto; }
+.wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
 
 </style>
 </head>
@@ -171,18 +176,19 @@
 
   <section class="card" id="wkret">
     <h2>周末和前后工作日比：哪类次留更好</h2>
-    <p class="note"><span class="dbkey"><i class="o"></i>周中</span>（周末前后工作日次留的中点）　<span class="dbkey"><i class="g"></i>周末更高</span>　<span class="dbkey"><i class="r"></i>周末更低</span>　两个周末（10/24–25、10/31–11/1）按激活数合并</p>
+    <p class="note"><span class="dbkey"><i class="o"></i>周中</span>（周末前后工作日次留的中点）　<span class="dbkey"><i class="g"></i>周末更高</span>　<span class="dbkey"><i class="r"></i>周末更低</span>　两个周末（10/24–25、10/31–11/1）按激活数合并；鼠标放在表头上看每一列是什么意思</p>
 
     <h3 class="sub2">一级分类</h3>
     <div class="dbw">
       <div class="db-row db-head">
-        <div></div><div></div>
-        <div class="num">次留率 周中→周末</div>
-        <div class="num">原始差</div>
-        <div class="num">同一素材、按上新天数调整</div>
-        <div class="num">再剔掉极端素材（95% 范围）</div>
-        <div class="num">周末激活 · 素材数（最大一条占）</div>
-        <div class="num">结论</div>
+        <div></div>
+        <div class="hint-l hint" tabindex="0">○ 周中 → ● 周末<span class="hint-tip" role="tooltip">空心点是周中，实心点是周末，横向位置是次留率。绿色 = 周末更高，红色 = 周末更低。这里画的是原始数，没扣上新天数。</span></div>
+        <div class="num hint" tabindex="0">次留率 周中→周末<span class="hint-tip" role="tooltip">原始次留率。周中 = 周末前后挨着的工作日次留的中点（扣掉大盘一周里往上或往下走的趋势），周末 = 周六日激活的人第二天回来的比例。两个周末按激活数合并。</span></div>
+        <div class="num hint" tabindex="0">原始差<span class="hint-tip" role="tooltip">周末次留率减周中次留率，单位是百分点，负数 = 周末低。没扣上新天数，周末和周中跑的也可能不是同一批素材，只作参考。</span></div>
+        <div class="num hint" tabindex="0">同一素材自己比<span class="hint-tip" role="tooltip">每条素材只拿它自己的周末和它自己的工作日比，同时扣掉「上新第几天」带来的自然下滑（同一条素材第 3 天起次留会明显变低，周末跑的素材平均更老）和大盘趋势，再把这一类所有素材的差按激活加权平均。单位是百分点，负数 = 周末低。</span></div>
+        <div class="num hint" tabindex="0">再剔掉极端素材（95% 范围）<span class="hint-tip" role="tooltip">在左边一列的基础上，去掉次留最高和最低各 5% 的素材（只看激活到 100 的），减少个别素材的影响。括号里是 95% 范围：反复随机抽素材重算，95% 的结果落在这个区间；不跨 0 才算周中、周末真有差别。比如括号两头都是负数，就是周末确实更低。结论按这一列判断。</span></div>
+        <div class="num hint" tabindex="0">周末激活 · 素材数（最大一条占）<span class="hint-tip" role="tooltip">参与左边比较的周末激活数 · 周中周末都在跑的素材条数（括号里是最大一条素材占周末激活的比例）。周末激活不到 500、素材不到 8 条、或者最大一条超过一半，写样本不够，这一行会变浅。</span></div>
+        <div class="num hint" tabindex="0">结论<span class="hint-tip" role="tooltip">周中好 / 周末好：95% 范围不跨 0。可能周中好 / 可能周末好：80% 范围不跨 0。看不出：都跨 0。样本不够：见左边一列。</span></div>
       </div>
       <div class="db-body dash-skeleton" data-draw="dumb" data-level="一级分类" data-source="wk_ret"></div>
     </div>
@@ -190,13 +196,14 @@
     <h3 class="sub2">Use case</h3>
     <div class="dbw">
       <div class="db-row db-head">
-        <div></div><div></div>
-        <div class="num">次留率 周中→周末</div>
-        <div class="num">原始差</div>
-        <div class="num">同一素材、按上新天数调整</div>
-        <div class="num">再剔掉极端素材（95% 范围）</div>
-        <div class="num">周末激活 · 素材数（最大一条占）</div>
-        <div class="num">结论</div>
+        <div></div>
+        <div class="hint-l hint" tabindex="0">○ 周中 → ● 周末<span class="hint-tip" role="tooltip">空心点是周中，实心点是周末，横向位置是次留率。绿色 = 周末更高，红色 = 周末更低。这里画的是原始数，没扣上新天数。</span></div>
+        <div class="num hint" tabindex="0">次留率 周中→周末<span class="hint-tip" role="tooltip">原始次留率。周中 = 周末前后挨着的工作日次留的中点（扣掉大盘一周里往上或往下走的趋势），周末 = 周六日激活的人第二天回来的比例。两个周末按激活数合并。</span></div>
+        <div class="num hint" tabindex="0">原始差<span class="hint-tip" role="tooltip">周末次留率减周中次留率，单位是百分点，负数 = 周末低。没扣上新天数，周末和周中跑的也可能不是同一批素材，只作参考。</span></div>
+        <div class="num hint" tabindex="0">同一素材自己比<span class="hint-tip" role="tooltip">每条素材只拿它自己的周末和它自己的工作日比，同时扣掉「上新第几天」带来的自然下滑（同一条素材第 3 天起次留会明显变低，周末跑的素材平均更老）和大盘趋势，再把这一类所有素材的差按激活加权平均。单位是百分点，负数 = 周末低。</span></div>
+        <div class="num hint" tabindex="0">再剔掉极端素材（95% 范围）<span class="hint-tip" role="tooltip">在左边一列的基础上，去掉次留最高和最低各 5% 的素材（只看激活到 100 的），减少个别素材的影响。括号里是 95% 范围：反复随机抽素材重算，95% 的结果落在这个区间；不跨 0 才算周中、周末真有差别。比如括号两头都是负数，就是周末确实更低。结论按这一列判断。</span></div>
+        <div class="num hint" tabindex="0">周末激活 · 素材数（最大一条占）<span class="hint-tip" role="tooltip">参与左边比较的周末激活数 · 周中周末都在跑的素材条数（括号里是最大一条素材占周末激活的比例）。周末激活不到 500、素材不到 8 条、或者最大一条超过一半，写样本不够，这一行会变浅。</span></div>
+        <div class="num hint" tabindex="0">结论<span class="hint-tip" role="tooltip">周中好 / 周末好：95% 范围不跨 0。可能周中好 / 可能周末好：80% 范围不跨 0。看不出：都跨 0。样本不够：见左边一列。</span></div>
       </div>
       <div class="db-body dash-skeleton" data-draw="dumb" data-level="Use case" data-source="wk_ret"></div>
     </div>
