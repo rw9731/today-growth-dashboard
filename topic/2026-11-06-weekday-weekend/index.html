@@ -107,6 +107,10 @@
 .wk .dbkey .o { border: 1.5px solid var(--color-fg-muted); }
 .wk .dbkey .g { background: var(--color-ok); }
 .wk .dbkey .r { background: var(--color-bad); }
+.wk .sum h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+.wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .sum .muted { color: var(--color-fg-muted); }
+.wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
 
 </style>
 </head>
@@ -126,6 +130,34 @@
     <p class="sub">安卓，从 10/14 开投到 11/5；占比都是消耗占比，按巨量计费时间；数据是 11/6 从「国区投放素材」投放数据_分日导出的</p>
   </header>
 
+  <section class="card sum" id="summary">
+    <h2>结论</h2>
+    <p class="sum-lead"><b>一句话：周末不是留存往下走的原因。</b>整体、一级分类、use case 拆开看，周中和周末的差都很小，大多数方向分不出来；真正的下滑是 10/30 起所有方向一起往下走，和周末无关。</p>
+    <h3>1. 整体：周中和周末</h3>
+    <ul>
+      <li><b>同一周直接比，方向不固定。</b>10/19 那周周中 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w2_wd">—</b>、周末 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w2_we">—</b>；10/26 那周周中 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w3_wd">—</b>、周末 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w3_we">—</b>。10/12 那周安卓刚开投，周末消耗很小、回传也不全，不算。</li>
+      <li><b>扣掉大盘趋势后几乎没差。</b>周末比它前后挨着的工作日：10/24–25 <b data-draw="wkv" data-source="wk_ret_sum" data-field="gap" data-where="weekend=10/24–25">—</b> 个点，10/31–11/1 <b data-draw="wkv" data-source="wk_ret_sum" data-field="gap" data-where="weekend=10/31–11/1">—</b> 个点。</li>
+      <li><b>整体次留在往下走，是所有方向一起。</b>本周周中 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w4_wd">—</b>，上周周中 <b data-draw="wkv" data-source="segs" data-field="ret" data-where="key=w3_wd">—</b>，每个一级分类都掉了，周末之前就开始了。</li>
+    </ul>
+    <h3>2. 按方向拆：每一周都分不出明显的区分</h3>
+    <ul>
+      <li><b>一级分类在同一周里同涨同跌。</b>10/19 那周周末几乎每类都比周中高（学习 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d2" data-where="l1=学习与成长">—</b>、健康 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d2" data-where="l1=健康与运动">—</b>、工作 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d2" data-where="l1=工作沟通与协作">—</b>）；10/26 那周几乎每类都低（工作 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d3" data-where="l1=工作沟通与协作">—</b>、个人日程 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d3" data-where="l1=个人日程与事务助理">—</b>、健康 <b data-draw="wkv" data-source="l1_ret_delta" data-field="d3" data-where="l1=健康与运动">—</b>）。周末的变化是大盘一起动，不是某几类在周末特别差。</li>
+      <li><b>周末的方向结构每周都在变，但对次留几乎没影响。</b>10/19 那周周末个人日程占比 <b data-draw="wkv" data-source="l1_share" data-field="w2_we" data-where="l1=个人日程与事务助理">—</b>（PS03 工作和孩子 <b data-draw="wkv" data-source="uc_share" data-field="w2_we" data-where="uc=PS03 工作和孩子">—</b>），10/26 那周周末健康 <b data-draw="wkv" data-source="l1_share" data-field="w3_we" data-where="l1=健康与运动">—</b>；方向结构变化对 10/31–11/1 周末次留的贡献是 <b data-draw="wkv" data-source="wk_ret_sum" data-field="mix" data-where="weekend=10/31–11/1">—</b> 个点。</li>
+      <li><b>工作没有把周末拉低。</b>周末 <b data-draw="wkv" data-source="wk_ret" data-field="ret_we" data-where="level=一级分类&amp;name=工作沟通与协作">—</b>、周中 <b data-draw="wkv" data-source="wk_ret" data-field="ret_wd" data-where="level=一级分类&amp;name=工作沟通与协作">—</b>，在误差范围内，对整体周末次留的影响是 <b data-draw="wkv" data-source="wk_ret" data-field="impact" data-where="level=一级分类&amp;name=工作沟通与协作">—</b> 个点。use case 层面也一样，大多数分不出来。</li>
+    </ul>
+    <h3>3. 扣掉上新天数、剔掉极端素材后</h3>
+    <ul>
+      <li><b>素材老化是真的，周末跑的素材更老。</b>同一条素材上新第 3 到第 8 天，次留比它自己头两天变化 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=decay_d2">—</b> 到 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=decay_d7">—</b> 个点；10/31–11/1 周末的素材平均已上新 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=age_we">—</b> 天，前一周工作日 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=age_wd_before">—</b> 天。</li>
+      <li><b>调整后整体周末只差一点。</b>每条素材只和自己比，扣掉上新天数和大盘趋势，剔掉 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=trim_mats">—</b> 条极端素材（占激活 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=trim_share">—</b>）后，整体周末比周中 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=all_fe_age_trim">—</b> 个点。</li>
+      <li><b>周中好，站得住的只有 PS03 工作和孩子：</b><b data-draw="wkv" data-source="wk_ret" data-field="trim" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b> 个点（95% 范围 <b data-draw="wkv" data-source="wk_ret" data-field="trim_lo" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b> 到 <b data-draw="wkv" data-source="wk_ret" data-field="trim_hi" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b>），<b data-draw="wkv" data-source="wk_ret" data-field="mats" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b> 条素材、周末 <b data-draw="wkv" data-source="wk_ret" data-field="we_act_fe" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b> 个激活；对整体周末次留的影响是 <b data-draw="wkv" data-source="wk_ret" data-field="impact" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b> 个点。</li>
+      <li><b>周中好但偏弱：</b>AI 综述（AI00）<b data-draw="wkv" data-source="wk_ret" data-field="trim" data-where="level=Use case&amp;name=AI00 AI 助理综述">—</b> 个点，只有 <b data-draw="wkv" data-source="wk_ret" data-field="mats" data-where="level=Use case&amp;name=AI00 AI 助理综述">—</b> 条素材，最大一条占 <b data-draw="wkv" data-source="wk_ret" data-field="top1" data-where="level=Use case&amp;name=AI00 AI 助理综述">—</b>。</li>
+      <li><b>可能周中好：</b>购物 <b data-draw="wkv" data-source="wk_ret" data-field="trim" data-where="level=一级分类&amp;name=购物与生活服务">—</b>。<b>可能周末好：</b>健康 <b data-draw="wkv" data-source="wk_ret" data-field="trim" data-where="level=一级分类&amp;name=健康与运动">—</b>，不剔极端素材时 <b data-draw="wkv" data-source="wk_ret" data-field="adj" data-where="level=一级分类&amp;name=健康与运动">—</b>，靠几条特别好的素材。</li>
+      <li><b>看不出：</b>工作、个人日程、学习；use case 里的 HL02、PS01、LG01、WK01、WK02、WK05、SH01、PS02。</li>
+      <li><b>样本不够，判断不了：</b>出行（周末 <b data-draw="wkv" data-source="wk_ret" data-field="we_act_fe" data-where="level=一级分类&amp;name=出行与旅行">—</b> 个激活）、IN01（周末激活 <b data-draw="wkv" data-source="wk_ret" data-field="top1" data-where="level=Use case&amp;name=IN01 追踪自己关注的事">—</b> 来自一条素材）、财务、LG03、SH04、SH02、HL00、TR01。</li>
+      <li class="muted">结论主要来自 10/31–11/1 一个周末，10/24–25 量小。</li>
+    </ul>
+  </section>
+
   <section class="card" id="wk-overall">
     <h2>最近几周：周中和周末的整体次留</h2>
     <p class="note">同一周的周中（周一到周五）和周末（周六日）直接比，次留按激活当天算；柱子上面是次留率，每组上方是周末减周中；悬停看激活和次留成本。浅色那组是 10/12 那周（安卓 10/14 才开投，回传也不全），只作参考；本周周中次留只算到 11/4，周末还没到。这里没扣上新天数和大盘趋势，下面的哑铃图扣了。</p>
@@ -136,22 +168,10 @@
     <div class="chart dash-skeleton" data-draw="wkbar" data-source="segs" style="min-height: 280px"></div>
   </section>
 
-  <ul class="take">
-    <li><b>周末的方向结构每周都在变，但没有固定方向。</b>10/19 那周周末，个人日程（主要是 PS03 工作和孩子）大幅变多，学习和工作大幅变少；10/26 那周周末反过来，健康（HL02）和学习变多，购物和个人日程变少。</li>
-    <li><b>周末次留没有固定比周中差。</b>10/19 那周周末比周中高；10/26 那周周末比周中低，但几乎每个一级分类都一起低（只有信息检索与追踪、随身记事是周末更高），不是周末换了方向造成的。</li>
-    <li><b>本周周中掉的是整体，不是结构。</b>个人日程回落、学习回升，信息检索与追踪（IN01）的占比是各段里最高的；但每个一级分类的次留都比上周周中低一截。</li>
-    <li class="muted">10/12 那周安卓 10/14 才开投，周末消耗很小，这一周只作参考。</li>
-  </ul>
 
   <section class="card" id="wkret">
     <h2>周末和前后工作日比：哪类次留更好</h2>
     <p class="note"><span class="dbkey"><i class="o"></i>周中</span>（周末前后工作日次留的中点）　<span class="dbkey"><i class="g"></i>周末更高</span>　<span class="dbkey"><i class="r"></i>周末更低</span>　两个周末（10/24–25、10/31–11/1）按激活数合并</p>
-    <div class="say">
-      <p><b>整体看不出周末掉留存。</b>周末比前后工作日：10/24–25 <b data-draw="wkv" data-source="wk_ret_sum" data-field="gap" data-where="weekend=10/24–25">—</b> 个点，10/31–11/1 <b data-draw="wkv" data-source="wk_ret_sum" data-field="gap" data-where="weekend=10/31–11/1">—</b> 个点。10/31–11/1 拆开，方向占比变化 <b data-draw="wkv" data-source="wk_ret_sum" data-field="mix" data-where="weekend=10/31–11/1">—</b> 个点，各方向自己在周末的变化 <b data-draw="wkv" data-source="wk_ret_sum" data-field="within" data-where="weekend=10/31–11/1">—</b> 个点。</p>
-      <p><b>工作看不出周末差，也拉不动整体。</b>工作沟通与协作周末 <b data-draw="wkv" data-source="wk_ret" data-field="ret_we" data-where="level=一级分类&amp;name=工作沟通与协作">—</b>，周中 <b data-draw="wkv" data-source="wk_ret" data-field="ret_wd" data-where="level=一级分类&amp;name=工作沟通与协作">—</b>，原始差 <b data-draw="wkv" data-source="wk_ret" data-field="diff" data-where="level=一级分类&amp;name=工作沟通与协作">—</b> 个点；每条素材只和它自己比、按上新天数调整、再剔掉极端素材后是 <b data-draw="wkv" data-source="wk_ret" data-field="trim" data-where="level=一级分类&amp;name=工作沟通与协作">—</b> 个点（95% 范围 <b data-draw="wkv" data-source="wk_ret" data-field="trim_lo" data-where="level=一级分类&amp;name=工作沟通与协作">—</b> 到 <b data-draw="wkv" data-source="wk_ret" data-field="trim_hi" data-where="level=一级分类&amp;name=工作沟通与协作">—</b>）。它对整体周末次留的影响是 <b data-draw="wkv" data-source="wk_ret" data-field="impact" data-where="level=一级分类&amp;name=工作沟通与协作">—</b> 个点。影响最大的是个人日程与事务助理（<b data-draw="wkv" data-source="wk_ret" data-field="impact" data-where="level=一级分类&amp;name=个人日程与事务助理">—</b>），主要是 PS03 工作和孩子（<b data-draw="wkv" data-source="wk_ret" data-field="impact" data-where="level=Use case&amp;name=PS03 工作和孩子">—</b>）。</p>
-      <p><b>上新天数有影响，但解释不了多少。</b>同一条素材上新第 3 到第 8 天，次留比它自己前两天变化 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=decay_d2">—</b> 到 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=decay_d7">—</b> 个点；周末跑的素材更老，10/31–11/1 平均已上新 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=age_we">—</b> 天，前一周工作日 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=age_wd_before">—</b> 天。所有素材合起来，同一条素材周末比周中 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=all_fe">—</b> 个点，按上新天数调整后 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=all_fe_age">—</b>，再剔掉 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=trim_mats">—</b> 条极端素材（占激活 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=trim_share">—</b>）后 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=all_fe_age_trim">—</b>。出行与旅行从 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=travel_fe">—</b> 变成 <b data-draw="wkv" data-source="wk_age" data-field="value" data-where="item=travel_fe_age">—</b>，一部分是上新天数造成的，剩下的还在。</p>
-      <p><b>调整完，能确定的只有两个周中好。</b>周中好：PS03 工作和孩子、AI 综述（AI00）。可能周中好：购物。可能周末好：健康与运动，剔掉极端素材后变弱。出行与旅行调整后周末还是更低，但周末激活不到 500，判断不了；信息检索与追踪（IN01）、财务与投资也是样本不够。SH04 挑吃什么去哪家原始差很大，但同一条素材自己比几乎没差，是周末跑的素材不一样。其余看不出。结论主要来自 10/31–11/1 一个周末。</p>
-    </div>
 
     <h3 class="sub2">一级分类</h3>
     <div class="dbw">
@@ -626,9 +646,10 @@ dash.draw('wkv', (el) => {
   if (f === 'value') {
     const k = row.kind;
     el.textContent = k === 'day' ? n.toFixed(1) : k === 'n' ? String(n) : k === 'pct' ? n.toFixed(1) + '%' : window.wkSign(n, 1);
-  } else if (/^ret_/.test(f)) el.textContent = n.toFixed(1) + '%';
+  } else if (/^(ret|ret_\w+|w\d_w[de])$/.test(f)) el.textContent = n.toFixed(1) + '%';
+  else if (f === 'top1') el.textContent = n + '%';
   else if (f === 'impact') el.textContent = window.wkSign(n, 2);
-  else if (/^(gap|mix|within|diff|adj|adj_lo|adj_hi|trim|trim_lo|trim_hi)$/.test(f)) el.textContent = window.wkSign(n, 1);
+  else if (/^(gap|mix|within|diff|adj|adj_lo|adj_hi|trim|trim_lo|trim_hi|d\d)$/.test(f)) el.textContent = window.wkSign(n, 1);
   else el.textContent = d3.format(',')(n);
 });
 dash.draw('dumb', (el) => {
