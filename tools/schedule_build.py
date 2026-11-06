@@ -396,6 +396,20 @@ def progress_html(prog, T):
     return rows + f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b></summary><ul>{items}</ul></details>'
 
 
+def zdt_html(plan):
+    """新 agency 的星广排期（Reina 11/6：知定堂每周 100 条产能，下周先排 50 条，三档按 50/30/20，单独测星广）。折叠，不算进上面的排期和上新。"""
+    z = plan.get('ZDT')
+    if not z:
+        return ''
+    tiers = {}
+    for x in z['alloc']:
+        tiers.setdefault(x['t'], []).append(x)
+    rows = ''.join(f'<tr><th>{html.escape(t)}</th><td class="n">{sum(x["n"] for x in L)}</td><td>' + '、'.join(f'{html.escape(x["uc"])} {html.escape(x["name"])} {x["n"]}' for x in L) + '</td></tr>' for t, L in tiers.items())
+    return (f'<details class="more"><summary>{html.escape(z["name"])}星广（{md(dt.date.fromisoformat(z["start"]))} 起，先排 {z["planned"]} 条，产能每周 {z["cap"]}）</summary>'
+            f'<table class="zdt-t"><thead><tr><th>档位</th><th class="n">条数</th><th>use case 和条数</th></tr></thead><tbody>{rows}</tbody></table>'
+            f'<p class="o-note">成片交付 {html.escape(z["due"])}。另外 {z["cap"] - z["planned"]} 条等 use case 库更新后再排。单独测星广，不算进上面的排期和本周上新。</p></details>')
+
+
 def output_html(o):
     """本周实际产出：昨天、累计、预计、完成度。进度条上的竖线是按一周 7 天平摊到昨天该到的位置。"""
     if not o or not o.get('rows'):
@@ -501,6 +515,7 @@ def main():
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
         PROG=progress_html(prog, T),
+        ZDT=zdt_html(plan),
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),

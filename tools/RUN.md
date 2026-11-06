@@ -98,7 +98,7 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
 
 1. 读 `'投放数据_分日'!A1:AB`（日报读过就复用）和 `'素材映射'!A1:J`（J 列是「子方向（PS03）」），get_values 结果存成文件。
 2. `python3 tools/schedule_data.py --sheet <分日文件> --map <素材映射文件> --date D --out-dir /tmp/sched`。输出 `NO_DATA`：表里还没有 D，等 20 分钟再读。有 WARNING（PS03 没标子方向）写进最后回复。
-   补链接：点柱子面板里素材名链到这条投出去的视频，不用博主原帖（原帖在后面单独写「原帖」）。schedule_data 跑完后，`python3 tools/links_js.py /tmp/results.json --out /tmp/linkjs --roi /tmp/sched/roi.json`，在内置浏览器跑 yulan.js，存成 yulan.json，再跑 `python3 tools/links_merge.py /tmp/linkjs`，然后才跑 schedule_build。连不上浏览器就跳过，还没有视频的素材名不带链接。
+   补链接：点柱子面板里素材名链到这条投出去的视频，不用博主原帖（原帖在后面单独写「原帖」）。schedule_data 跑完后，`python3 tools/links_js.py /tmp/results.json --out /tmp/linkjs --roi /tmp/sched/roi.json`，在内置浏览器跑 yulan.js，存成 yulan.json，再跑 `python3 tools/links_merge.py /tmp/linkjs`，然后才跑 schedule_build。唯西日报只覆盖一部分，最近几批经常没有（11/6：11/4 那批 79 条全没有），所以再跑巨量直取：取这些窗口里还没有 video 的素材，用 jl.js 同样的 NEED 在巨量素材页跑，存成 /tmp/linkjs/jl.json 再 links_merge（巨量链接约 2 天过期，每天都要刷新）。扩量之外，星广素材巨量库里常找不到，没有就不带链接。这一步改出来的 tools/links.json 是临时的，schedule_build 之后 git checkout -- tools/links.json，不提交。连不上浏览器就跳过，还没有视频的素材名不带链接。
 3. 进度核对（要用 Reina 电脑上的内置浏览器，只读，不改飞书）。下面 6 个 tab 每个都 navigate 到带 `?sheet=` 的网址（切 tab 只能靠 URL），用 javascript_tool 跑 tools/schedule_read.js 全文，返回值原样存成 /tmp/sched/feishu/<tab id>.json：
    - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
@@ -157,6 +157,8 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 
 次留、成本的趋势卡（Reina 11/6 要）：鼠标放到某一行的次留或成本上，看最近 7 天折线，虚线是大盘。最新一天次留没回传不画，激活不到 30 的天不画，表里「比大盘」按相对比例算。
+
+知定堂星广（Reina 11/6）：新 agency，每周 100 条产能，下周 11/9 起先排 50 条，三档 50/30/20，单独测星广，因为产品新增浏览器操作能力，use case 库要更新，另外 50 条等库更新后再排。排期放 plan 的 ZDT，页面在折叠的「知定堂星广」，不算进排期、本周上新和预警。飞书模板建好后，把表接进 schedule_read、schedule_progress（第三条进度条）和 schedule_output（星广预计加 100）。
 
 本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、达人合作，累计对比预计和完成度。
 - 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（现在是 11月执行表，每月一张，换月要换 sheet id，存文件名还用 5cypAT.json），存进同一个目录。再读 'Today KOL/KOC 视频'!A1:Z 存成文件。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --koc <视频文件> --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
