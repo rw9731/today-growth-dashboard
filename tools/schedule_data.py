@@ -75,6 +75,7 @@ def load_rows(path):
     h = v[0]
     col = {k: h.index(k) for k in ('日期', '素材ID', '素材名', '消耗', '激活', '次留', 'UC_ID')}
     c_src = h.index('来源') if '来源' in h else None
+    c_plat = h.index('平台') if '平台' in h else None
     rows = []
     for r in v[1:]:
         r = r + [''] * (len(h) - len(r))
@@ -89,7 +90,7 @@ def load_rows(path):
                     uc, fuzzy = u, True
                     break
         rows.append(dict(d=dt.date.fromisoformat(r[col['日期']][:10]), id=str(r[col['素材ID']]).strip(), name=name, c=num(r[col['消耗']]),
-                         a=num(r[col['激活']]), r=num(r[col['次留']]), uc=uc, fuzzy=fuzzy, src=(r[c_src] or '').strip() if c_src is not None else ''))
+                         a=num(r[col['激活']]), r=num(r[col['次留']]), uc=uc, fuzzy=fuzzy, src=(r[c_src] or '').strip() if c_src is not None else '', p=(r[c_plat] or '').strip() if c_plat is not None else ''))
     return rows
 
 
@@ -647,7 +648,237 @@ def tier_stats(fams, tot, D):
     return out
 
 
-def make_roi(rows, fams, spend, D, T):
+RT_ALIAS = {'微信': 'PS03', '孩子': 'PS03'}  # 看板上 PS03 合成一行
+RT_TAG = dict(new='新内容差', low='投放：低留存素材还在花', cheap='投放：放量买到便宜量', decay='老素材衰退',
+              co='投放或流量：老素材同一天一起掉', ok='没有单一主因')
+RT_NEXT = dict(new='看这批片子和上一批差在哪，先不加量。', low='这几条先关或限量。', cheap='查当天出价和账户，压便宜量。',
+               decay='别再加钱，换开头或换底稿续上。', co='查当天账户和关停动作，先别改片子。', ok='看下面每条的数，先不动。')
+
+
+def short_name(f):
+    n = re.sub(r'^.*?today ko[cl]_', '', min(sorted(f.names), key=len))
+    m = re.search(r'[A-Z]{1,3}\d{2}-[A-Za-z0-9]+-[A-Za-z]+', n)
+    return m.group(0) if m else (n if len(n) <= 18 else n[:18] + '…')
+
+
+def rt_diagnose(rows, of, D):
+    """点开柱子的「这天留存为什么低」和按批次次留的趋势卡。全部按分日表算，账户层不在里面。
+    比的都是相对当天大盘的差，这样 D-1 没回传完不影响。D 没回传，不算。
+    方向：低于大盘 1 点以上，或比自己前 3 天（相对大盘）掉 3 点以上；激活不到 100 不算。贡献加起来等于总差。"""
+    one = dt.timedelta(days=1)
+    start = D - one * 14
+    fam = {}
+    daily = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0])))  # u -> 日 -> 素材 -> 消耗、激活、次留
+    base = defaultdict(lambda: [0.0, 0.0])
+    plat = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: [0.0, 0.0])))
+    for r in rows:
+        if r['d'] < start - one * 10:
+            continue
+        f = of[r['id']]
+        fam[id(f)] = f
+        u = sub_of_row(r, f)
+        u = RT_ALIAS.get(u, u)
+        for k in (u, '__all'):
+            x = daily[k][r['d']][id(f)]
+            x[0] += r['c']
+            x[1] += r['a']
+            x[2] += r['r']
+            y = plat[k][r['d']][r.get('p', '')]
+            y[0] += r['a']
+            y[1] += r['r']
+        base[r['d']][0] += r['a']
+        base[r['d']][1] += r['r']
+    rate_of = lambda d: base[d][1] / base[d][0] * 100 if base[d][0] else 0
+    pct_s = lambda v: ('+' if v >= 0 else '−') + f'{abs(v):.1f}'
+
+    def prior(u, fid, d):
+        """前 3 天：激活、次留、消耗、按这些激活加权的大盘次留、最高单日花费、有花费的天数。"""
+        pa = pr = pc = pb = peak = nd = 0.0
+        for i in range(1, 4):
+            x = daily[u][d - one * i].get(fid)
+            if x:
+                pa, pr, pc = pa + x[1], pr + x[2], pc + x[0]
+                pb += x[1] * rate_of(d - one * i)
+                peak = max(peak, x[0])
+                nd += 1 if x[0] > 0 else 0
+        return pa, pr, pc, (pb / pa if pa else 0), peak, nd
+
+    def cohort(u, d):
+        co = {}
+        ids = defaultdict(list)
+        for fid, x in daily[u][d].items():
+            if x[1] > 0:
+                ids[bucket((d - fam[fid].batch).days)].append(fid)
+        for b, fs in ids.items():
+            pts = []
+            for i in range(9, -1, -1):
+                day = d - one * i
+                a = sum(daily[u][day][fid][1] for fid in fs if fid in daily[u][day])
+                r = sum(daily[u][day][fid][2] for fid in fs if fid in daily[u][day])
+                pts.append(f'{round(a)},{round(r)}')
+            co[str(b)] = dict(n=len(fs), p=';'.join(pts))
+        return co
+
+    def plat_line(u, d):
+        ps = {k: v for k, v in plat[u][d].items() if k and v[0] >= 50}
+        if len(ps) < 2:
+            return ''
+        (lk, lv), (hk, hv) = sorted(ps.items(), key=lambda kv: kv[1][1] / kv[1][0])[0], sorted(ps.items(), key=lambda kv: kv[1][1] / kv[1][0])[-1]
+        if hv[1] / hv[0] - lv[1] / lv[0] < .05:
+            return ''
+        return f'{lk} {lv[1] / lv[0] * 100:.1f}%（{round(lv[0])} 激活），{hk} {hv[1] / hv[0] * 100:.1f}%。'
+
+    def one_uc(u, d):
+        ms = daily[u][d]
+        A, R = sum(x[1] for x in ms.values()), sum(x[2] for x in ms.values())
+        if A < 100:
+            return None
+        rate, bs = R / A * 100, rate_of(d)
+        gap = rate - bs
+        pa = pb = pr = 0.0
+        for i in range(1, 4):
+            for x in daily[u][d - one * i].values():
+                pa, pr = pa + x[1], pr + x[2]
+                pb += x[1] * rate_of(d - one * i)
+        ex_p = (pr - pb) / pa if pa >= 100 else None
+        below, worse = gap <= -1, ex_p is not None and gap - ex_p <= -3
+        if not below and not worse:
+            return None
+        ref = bs if below else bs + ex_p
+        total = rate - ref
+        label = f'比大盘低 {abs(gap):.1f} 个点' if below else f'比自己前 3 天（相对大盘）掉 {abs(total):.1f} 个点'
+        se = 196 * (rate / 100 * (1 - rate / 100) / A) ** .5
+        if abs(total) < se:
+            return dict(tag='差距在误差内', head=f'{label}，{round(A)} 激活的误差约 ±{se:.1f} 个点，不归因。', lines=[], next='')
+        cats = defaultdict(list)
+        for fid, x in ms.items():
+            c, a, r = x
+            if a <= 0:
+                continue
+            ct = a * (r / a * 100 - ref) / A
+            f = fam[fid]
+            age = (d - f.batch).days
+            qa, qr, qc, qb, peak, nd = prior(u, fid, d)
+            nx = daily[u][d + one].get(fid)
+            info = dict(f=f, a=a, r=r, c=c, ct=ct, age=age, qa=qa, qc=qc, peak=peak, cn=nx[0] if nx else 0)
+            ex_t = r / a * 100 - bs
+            if a < 20:
+                cats['misc'].append(info)
+            elif age <= 3 or qa < 30:
+                cats['new'].append(info)
+            else:
+                ex_q = qr / qa * 100 - qb
+                info.update(ex_t=ex_t, ex_q=ex_q)
+                err = 150 * (.16 / a + .16 / qa) ** .5
+                daily_c = qc / max(nd, 1)
+                if ex_q <= -2 and ex_t <= -2:
+                    cats['low'].append(info)
+                elif ex_t - ex_q <= -3 and ex_t - ex_q <= -err:
+                    cheap = c >= 1.5 * daily_c and c / a <= .85 * (qc / qa)
+                    cats['cheap' if cheap else 'decay'].append(info)
+                else:
+                    cats['ok'].append(info)
+        hit = {k: sum(i['ct'] for i in v) for k, v in cats.items() if k != 'misc'}
+        drag = sorted(((k, v) for k, v in hit.items() if v < 0), key=lambda kv: kv[1])
+        tag = drag[0][0] if drag else 'ok'
+        co = len(cats['decay']) + len(cats['cheap']) >= 3
+        if co and hit.get('decay', 0) + hit.get('cheap', 0) <= (drag[0][1] if drag else 0) * .6:
+            tag = 'co'
+        tags = [tag]
+        if tag != 'co' and len(drag) > 1 and drag[1][1] <= drag[0][1] * .5 and drag[1][0] != 'ok':
+            tags.append(drag[1][0])
+        lines = []
+        cut = lambda i: f"，第二天已降到 ¥{round(i['cn']):,}" if i['cn'] <= .3 * i['c'] else ''
+        def share(k):
+            return sum(i['a'] for i in cats[k]) / A * 100
+        for k in ('low', 'decay', 'cheap'):
+            for i in sorted(cats[k], key=lambda i: i['ct'])[:2]:
+                if i['ct'] > -.2:
+                    continue
+                nm = short_name(i['f'])
+                if k == 'low':
+                    lines.append(f"{nm} 前 3 天就低大盘 {abs(i['ex_q']):.1f} 个点，这天还花 ¥{round(i['c']):,}，占激活 {i['a'] / A * 100:.0f}%，贡献 {pct_s(i['ct'])} 点{cut(i)}。")
+                else:
+                    extra = f"，前面单日最高花到 ¥{round(i['peak']):,}" if i['peak'] >= 2 * i['c'] else ''
+                    cheap_s = f"，激活成本 ¥{round(i['qc'] / i['qa'])} 到 ¥{round(i['c'] / i['a'])}" if k == 'cheap' else ''
+                    lines.append(f"{nm} 相对大盘 {pct_s(i['ex_q'])} 到 {pct_s(i['ex_t'])}{extra}{cheap_s}，贡献 {pct_s(i['ct'])} 点{cut(i)}。")
+        new_s = share('new')
+        if cats['new']:
+            na, nr = sum(i['a'] for i in cats['new']), sum(i['r'] for i in cats['new'])
+            if hit.get('new', 0) < -.2:
+                lines.append(f"首花 3 天内和没历史的 {len(cats['new'])} 条占激活 {new_s:.0f}%，次留 {nr / na * 100:.1f}%，贡献 {pct_s(hit['new'])} 点。")
+        if new_s < 10 and tag != 'new':
+            lines.append('不是新内容：这天几乎没有新素材的量。' if new_s < 1 else f'不是新内容：新素材只占激活 {new_s:.0f}%。')
+        pl = plat_line(u, d)
+        if pl:
+            lines.append(pl)
+        bq = [rate_of(d - one * i) for i in (1, 2, 3) if base[d - one * i][0]]
+        if bq and bs - sum(bq) / len(bq) <= -2:
+            lines.append(f'大盘这天也掉（前 3 天 {sum(bq) / len(bq):.1f}% 到 {bs:.1f}%），上面都是扣掉大盘后的差。')
+        def next_step(ts):
+            bad = [i for t in ('low', 'decay', 'cheap') if t in ts for i in cats[t] if i['ct'] <= -.2]
+            if bad and all(i['cn'] <= .3 * i['c'] for i in bad) and all(t in ('low', 'decay', 'cheap') for t in ts):
+                return '拖累的这几条第二天已经砍了，不用再动。'
+            live = [t for t in ts if t not in ('low', 'decay', 'cheap') or any(i['ct'] <= -.2 and i['cn'] > .3 * i['c'] for i in cats[t])]
+            return ''.join(RT_NEXT[t] for t in live or ts)
+        return dict(tag=' + '.join(RT_TAG[t] for t in tags), head=f'{label}。', lines=lines[:4], next=next_step(tags))
+
+    def one_all(d):
+        ms = daily['__all'][d]
+        A, R = sum(x[1] for x in ms.values()), sum(x[2] for x in ms.values())
+        qa = qr = 0.0
+        for i in range(1, 4):
+            for x in daily['__all'][d - one * i].values():
+                qa, qr = qa + x[1], qr + x[2]
+        if A < 500 or qa < 500:
+            return None
+        rate, q = R / A * 100, qr / qa * 100
+        if rate - q > -1.5:
+            return None
+        within = same = 0.0
+        for fid, x in ms.items():
+            pa, pr, _, _, _, _ = prior('__all', fid, d)
+            if x[1] >= 20 and pa >= 30:
+                within += x[1] * (x[2] / x[1] * 100 - pr / pa * 100) / A
+                same += x[1]
+        rest = rate - q - within
+        dr = []
+        for u in daily:
+            if u == '__all' or d not in daily[u]:
+                continue
+            a, r = sum(x[1] for x in daily[u][d].values()), sum(x[2] for x in daily[u][d].values())
+            if a >= 100:
+                dr.append((a * (r / a * 100 - q) / A, u))
+        dr.sort()
+        lines = [f'同一批老素材自己掉贡献 {pct_s(within)} 点（占激活 {same / A * 100:.0f}%），新素材和结构贡献 {pct_s(rest)} 点。']
+        if dr and dr[0][0] < 0:
+            lines.append('拖得最多：' + '，'.join(f'{u} {pct_s(v)}' for v, u in dr[:3] if v < 0) + ' 点。')
+        pl = plat_line('__all', d)
+        if pl:
+            lines.append(pl)
+        main = within <= (rate - q) * .6
+        return dict(tag='老素材一起掉，不是新内容' if main else '新素材和结构拖的', head=f'比前 3 天低 {q - rate:.1f} 个点（{q:.1f}% 到 {rate:.1f}%）。', lines=lines,
+                    next='查当天投手动作和产品变更，不看单条片子。' if main else '看这天新上的和钱流向了哪些方向。')
+
+    why, co = defaultdict(dict), defaultdict(dict)
+    for u in list(daily):
+        d = start
+        while d < D:
+            if d in daily[u] and any(x[1] > 0 for x in daily[u][d].values()):
+                k = d.strftime('%m-%d')
+                co[u][k] = cohort(u, d)
+                w = one_all(d) if u == '__all' else one_uc(u, d)
+                if w:
+                    why[u][k] = w
+            d += one
+    days, d = [], start - one * 10
+    while d < D:
+        days.append(d)
+        d += one
+    return dict(why=why, co=co, days=[x.strftime('%m-%d') for x in days], base=[[round(base[x][0]), round(base[x][1])] for x in days])
+
+
+def make_roi(rows, fams, spend, D, T, of=None):
     tot = Counter()
     for r in rows:
         tot[r['d']] += r['c']
@@ -672,6 +903,7 @@ def make_roi(rows, fams, spend, D, T):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
     out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(fams, tot, D))
+    out['rt'] = rt_diagnose(rows, of, D)
     keys = list(SUB_KEY.values())
     fs = [f for k in keys for f in groups.get(k, [])]
     batch_fs = [f for f in fs if f in W]
@@ -701,7 +933,7 @@ def main():
     if UNMARKED:
         print(f"WARNING PS03 有 {len(UNMARKED)} 条花过钱的素材映射没标子方向，先算接娃和班级群：" + '；'.join(sorted(next(iter(f.names)) for f in UNMARKED)[:5]))
     spend = make_spend(rows, fams, of, D)
-    roi = make_roi(rows, fams, spend, D, T)
+    roi = make_roi(rows, fams, spend, D, T, of)
     spend['D'], spend['T_day'] = D.isoformat(), T.isoformat()
     os.makedirs(a.out_dir, exist_ok=True)
     json.dump(spend, open(os.path.join(a.out_dir, 'spend.json'), 'w', encoding='utf-8'), ensure_ascii=False)

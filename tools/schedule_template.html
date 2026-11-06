@@ -199,7 +199,7 @@ a{color:var(--link)}
 .tr-lg{float:right;font-size:11px;opacity:.8;margin-left:12px}.tr-lg i{display:inline-block;width:16px;margin:0 4px 3px 8px;vertical-align:middle;border-top:2px solid var(--meter)}.tr-lg i.d{border-top:2px dashed var(--bg)}
 .tr-svg{display:block;margin-top:6px;width:320px;height:100px}.tr-svg .tv{stroke:var(--bg);stroke-opacity:.12;stroke-width:1}.tr-svg text{font-size:10px;fill:var(--bg);opacity:.7;font-variant-numeric:tabular-nums}.tr-svg .tg{stroke:var(--bg);stroke-opacity:.16;stroke-width:1}.tr-svg .tm{fill:none;stroke:var(--meter);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.tr-svg .tb{fill:none;stroke:var(--bg);stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:4 3}
 .tr-t{border-collapse:collapse;table-layout:fixed;width:320px;margin-top:0;font-size:10.5px;font-variant-numeric:tabular-nums}.tr-t th:first-child{width:42px}.tr-t th,.tr-t td{padding:1px 0;text-align:center;font-weight:400;white-space:nowrap}.tr-t tbody th{text-align:left;opacity:.7}.tr-t thead th{opacity:.7}
-.tr-n{margin-top:4px;font-size:10.5px;opacity:.65;line-height:1.4}
+.tr-v{margin-top:5px;font-size:12px;line-height:1.45;font-weight:600}.tr-n{margin-top:4px;font-size:10.5px;opacity:.65;line-height:1.4}
 .dd{display:grid;grid-template-columns:42px minmax(0,1fr);gap:1px 6px;line-height:1.5}.dd b{font-weight:600;font-variant-numeric:tabular-nums}.dd code{font:600 12px var(--mono);margin-right:6px;white-space:nowrap}
 .xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
 .now-tag{line-height:1.6}.now-tag a{color:var(--link)}
@@ -398,6 +398,33 @@ function placeTip(x,y){
 }
 // 悬停次留、成本：最近 7 天的折线，虚线是大盘。最新一天次留没回传不画；激活不到 30 的天不画。
 const TREND_MIN=30;
+function coCard(ha){
+  const[u,day,b,lab]=ha.split('|'),co=P.RT.co[u][day][b],end=P.RT.days.indexOf(day),raw=co.p.split(';').map(x=>x.split(',').map(Number));
+  const pts=raw.map((x,j)=>{const k=end-raw.length+1+j,bs=P.RT.base[k]||[0,0],bv=bs[0]?bs[1]/bs[0]*100:null;return{d:P.RT.days[k],a:x[0],v:x[0]>=TREND_MIN?x[1]/x[0]*100:null,b:bv}});
+  while(pts.length>1&&!pts[0].a)pts.shift();
+  const title=`首花 ${lab} 这 ${co.n} 条 · 次留`,cnt=pts.length,me=pts.filter(x=>x.v!=null);
+  if(me.length<2)return `<b>${esc(title)}</b><br>这 ${co.n} 条每天激活很少，不到 ${TREND_MIN} 的不画，够数的不到 2 天，看不出趋势。`;
+  const vals=[...me.map(x=>x.v),...pts.map(x=>x.b)].filter(v=>v!=null);let lo=Math.min(...vals),hi=Math.max(...vals);const pad=Math.max((hi-lo)*.15,1);lo=Math.max(0,lo-pad);hi+=pad;
+  const W=380,H=100,L=42,T=8,B=6,X=j=>L+(j+.5)*(W-L)/cnt,Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+  const path=k=>{let d='',on=false;pts.forEach((x,j)=>{if(x[k]==null){on=false;return}d+=`${on?'L':'M'}${X(j).toFixed(1)} ${Y(x[k]).toFixed(1)}`;on=true});return d};
+  const dots=pts.map((x,j)=>x.v==null?'':`<circle cx="${X(j).toFixed(1)}" cy="${Y(x.v).toFixed(1)}" r="${j===cnt-1?3.5:2.5}" fill="${j===cnt-1?'var(--ink)':'var(--meter)'}" stroke="var(--meter)" stroke-width="${j===cnt-1?2:0}"/>`).join('');
+  const ticks=[hi,(hi+lo)/2,lo].map(v=>`<line x1="${L}" x2="${W}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="tg"/><text x="${L-5}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end">${v.toFixed(0)}%</text>`).join('');
+  const xl=pts.map((x,j)=>`<line x1="${X(j).toFixed(1)}" x2="${X(j).toFixed(1)}" y1="${T}" y2="${H-B}" class="tv"/>`).join('');
+  const ex=x=>x.v-x.b,sg=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1),last=me[me.length-1],prev=me.slice(0,-1),pe=prev.map(ex),pAvg=pe.reduce((s,v)=>s+v,0)/pe.length,prevLast=pe[pe.length-1];
+  let vd;const lx=last.d===day?ex(last):null;
+  if(lx==null)vd=`${md(day)} 激活不到 ${TREND_MIN}，这天不判断。`;
+  else if(pe.every(v=>v<=-2)&&lx<=-2)vd=`一直低于大盘，不是这天才差：前面平均 ${sg(pAvg)}，这天 ${sg(lx)}。`;
+  else if(lx-prevLast<=-3&&prevLast-pAvg>-2)vd=`这天突然掉：前一天比大盘 ${sg(prevLast)}，这天 ${sg(lx)}。`;
+  else if(lx-pe[0]<=-3)vd=`一路走低：比大盘从 ${sg(pe[0])} 到 ${sg(lx)}，走了 ${me.length-1} 个有量的天。`;
+  else vd=`没有明显恶化：比大盘前面平均 ${sg(pAvg)}，这天 ${sg(lx)}。`;
+  const top=me.reduce((m,x)=>ex(x)>ex(m)?x:m,me[0]);
+  const decay=lx!=null&&top!==last&&ex(top)-lx>=3?`最好是 ${md(top.d)} 比大盘 ${sg(ex(top))}，到 ${md(day)} 掉了 ${(ex(top)-lx).toFixed(1)} 个点。`:'';
+  const svg=`<svg class="tr-svg" style="width:${W}px" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(title)} 趋势">${ticks}${xl}<path d="${path('b')}" class="tb"/><path d="${path('v')}" class="tm"/>${dots}</svg>`;
+  const f=v=>v==null?'·':v.toFixed(0)+'%';
+  const rowsT=`<tr><th>这批</th>${pts.map(x=>`<td>${f(x.v)}</td>`).join('')}</tr><tr><th>大盘</th>${pts.map(x=>`<td>${f(x.b)}</td>`).join('')}</tr><tr><th>激活</th>${pts.map(x=>`<td>${x.a||'·'}</td>`).join('')}</tr>`;
+  const stale=day===P.days[P.days.length-2]?`${md(day)} 还在回传，可能偏低约 1 个点。`:'';
+  return `<b>${esc(title)}</b><span class="tr-lg"><i class="s"></i>这批<i class="d"></i>大盘</span>${svg}<table class="tr-t" style="width:${W}px"><thead><tr><th></th>${pts.map(x=>`<th>${md(x.d)}</th>`).join('')}</tr></thead><tbody>${rowsT}</tbody></table><div class="tr-v">${esc(vd)}${esc(decay)}</div><div class="tr-n">同样这 ${co.n} 条往前看，激活不到 ${TREND_MIN} 的天不画。${stale}</div>`;
+}
 function trendSeries(r,m){const n=P.days.length;const out=[];for(let i=n-8;i<=n-2;i++){if(i<0)continue;const t=(r.rt||[])[i]||[],a=t[0]+t[2]+t[4]+t[6]||0,rr=t[1]+t[3]+t[5]+t[7]||0,c=sum((r.s||[])[i]||[]);let v=null;if(a>=TREND_MIN&&rr>0)v=m==='rate'?rr/a*100:c/rr;out.push({i,a,v})}return out}
 function trendCard(id,m){
   const r=TR[id];if(!r)return '';const isAll=id==='__all',isR=m==='rate',me=trendSeries(r,m),base=trendSeries(P.T,m);
@@ -440,10 +467,11 @@ const HELP={y:yHelp,
   else h+=`<br><br>进跑量少 + 留存好，这几条都要够（最近 ${t.win} 天）：<br>激活 ${t.a}（要 ≥${n.act}）${mark(t.a>=n.act)}<br>次留 ${t.rate==null?'·':t.rate+'%'}，比同日全盘 ${t.gap==null?'·':pt(t.gap)+' 个点'}（要 ≥+${n.gap}）${mark(t.gap!=null&&t.gap>=n.gap)}<br>成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${t.gc}）${mark(t.cpr!=null&&t.cpr<=t.gc)}`;
   return h},
  tr:ha=>{const[id,m]=ha.split('|');return trendCard(id,m)},
+ co:ha=>coCard(ha),
  keep:()=>`<b>维持</b>：这个方向一周要上多少条新素材，才能接住现在的消耗。<br><br><b>怎么算</b>：近 7 天里，首花 7 天内的素材花的钱 ÷ 这个方向每条素材前 7 天平均花的钱。<br><br><b>怎么看</b>：「本周上新」比它少，这个数字会变红，说明这周上的接不住，消耗大概率往下走。多于它，才有机会往上涨。`,
  rule:()=>`<b>条数建议</b>：这个方向这周该多做还是少做，只看最近新上的素材能不能跑量，留存差的素材看回收表，不算到方向上。按顺序看，先中先停：<br>· 条数少不判：不足 5 条，样本不够。<br>· 多加：单条跑量 ≥1.3 倍，去掉最大一条还有 ≥0.8 倍。<br>· 小步复制：单条跑量 ≥0.8 倍，但去掉最大一条 &lt;0.6 倍或最大一条占 60% 以上，靠一条撑着。<br>· 减少：只用于探索这档。单条跑量 &lt;0.6 倍，而且上新占比不低于消耗占比。前两档是验证过的方向，跑不起来先看片。<br>· 不变：其余。<br><br>这是算出来的初值，不是定论。标了「本周方向」的按定的方向加。`,
  warn:()=>`<b>红色警告：预计这天会跌</b>：这天预计掉的比补的多，差额超过 ¥500，也超过这个方向现在消耗的 10%。<br><br><b>掉的</b>：还在跑的素材到第 4 天，通常掉一半。<br><b>补的</b>：这几天上线的新素材。AI 和二创分开算，首花当天约是第二天的一半。<br><br>每天用前一天的实际数重算，前两天刚上的按实际跑量校正。看到它就去看这个方向，是估计，不是准数。`};
-function showHelp(el,x,y){const[hk,ha]=el.dataset.help.split(':');tip.innerHTML=HELP[hk](ha);tip.style.maxWidth=hk==='tr'?'360px':'340px';tip.hidden=false;tip.dataset.h='1';placeTip(x,y)}
+function showHelp(el,x,y){const[hk,ha]=el.dataset.help.split(':');tip.innerHTML=HELP[hk](ha);tip.style.maxWidth=hk==='co'?'420px':hk==='tr'?'360px':'340px';tip.hidden=false;tip.dataset.h='1';placeTip(x,y)}
 document.addEventListener('mousemove',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp){showHelp(hp,ev.clientX,ev.clientY);return}if(tip.dataset.h==='1'){tip.dataset.h='';tip.hidden=true}});
 document.addEventListener('click',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp)showHelp(hp,ev.clientX,ev.clientY)});
 document.addEventListener('focusin',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp){const r=hp.getBoundingClientRect();showHelp(hp,r.left,r.bottom)}});
@@ -479,16 +507,20 @@ function bpRt(u,day,cell){
   const i=+cell.dataset.i,rd=rtDay(i);if(!rd||!rd[0])return '';
   const base=rd[1]/rd[0]*100,rr=cell.dataset.r?cell.dataset.r.split(',').map(Number):[0,0,0,0,0,0,0,0],bb=batchRt(u,day);
   const cmp=(a,r)=>{if(!a)return '';if(a<100)return '<span class="q">样本小</span>';const d=r/a*100-base,cl=d>=1?'good':d<=-1?'bad':'';return `<span class="${cl}">${d>=0?'高':'低'} ${Math.abs(d).toFixed(1)} 个点</span>`};
-  const line=(lab,a,r,c)=>`<tr><td class="nm">${lab}</td><td>${rtPct(a,r)}</td><td>${a.toLocaleString('en-US')}</td><td>${c||''}</td></tr>`;
+  const line=(lab,a,r,c,hp)=>`<tr><td class="nm">${lab}</td><td>${hp?`<span class="help" data-help="co:${esc(hp)}" tabindex="0">${rtPct(a,r)}</span>`:rtPct(a,r)}</td><td>${a.toLocaleString('en-US')}</td><td>${c||''}</td></tr>`;
   let rows=line('当天大盘留存',rd[0],rd[1]);
   if(bb){rows+=line('新上素材留存（这批首花当天）',bb.a0,bb.r0,cmp(bb.a0,bb.r0));if(bb.at!==bb.a0)rows+=line(`这批到现在（看到 ${md(P.days[P.days.length-2])}）`,bb.at,bb.rt)}
   if(u!=='__all')rows+=line('这个方向当天留存',rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7],cmp(rr[0]+rr[2]+rr[4]+rr[6],rr[1]+rr[3]+rr[5]+rr[7]));
-  nm.forEach((n,j)=>{if(rr[j*2])rows+=line(`按批次留存 · 首花 ${n}`,rr[j*2],rr[j*2+1],cmp(rr[j*2],rr[j*2+1]))});
+  nm.forEach((n,j)=>{if(rr[j*2])rows+=line(`按批次留存 · 首花 ${n}`,rr[j*2],rr[j*2+1],cmp(rr[j*2],rr[j*2+1]),((P.RT||{}).co&&((P.RT.co[u]||{})[day]||{})[j])?`${u}|${day}|${j}|${n}`:'')});
   return `<div class="bp-s"><h4>留存（${md(day)} 激活的人）${i===P.days.length-2?'<small class="q">　这天还在回传，可能偏低约 1 个点</small>':''}</h4><table class="bp-t"><thead><tr><th class="nm"></th><th>次留</th><th>激活</th><th>比当天大盘</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function bpWhy(u,day){
+  const w=(((P.RT||{}).why||{})[u]||{})[day];if(!w)return '';
+  return `<div class="bp-s"><h4>这天留存为什么差</h4><p class="bp-z">${esc(w.tag)}。${esc(w.head)}</p>${w.lines.length?`<ul class="bp-u">${w.lines.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${w.next?`<p>下一步：${esc(w.next)}</p>`:''}</div>`;
 }
 function bpBody(u,day,cell){
   const N=(P.BN||{})[u+'|'+day],D=((P.BD||{})[u]||{})[day],ni=+cell.dataset.i+1,nk=P.T.k?sum(P.T.k[ni]||[]):0,na=nk?sum(P.T.s[ni])/nk:0;
-  let h=bpRt(u,day,cell);
+  let h=bpRt(u,day,cell)+bpWhy(u,day);
   if(u==='__all'){
     const dn=(P.BN||{})['__day|'+day];
     if(dn&&dn.op)h+=`<div class="bp-s"><h4>当天投手的操作</h4><p>${para(dn.op)}</p></div>`;
@@ -503,7 +535,7 @@ function bpBody(u,day,cell){
     if(N.bad)h+=`<div class="bp-s"><h4>和之前比，这批内容差在哪</h4>${zf(N.bad)}</div>`;
     if(N.op)h+=`<div class="bp-s"><h4>投手操作和这批的关系</h4>${zf(N.op)}</div>`;
     if(N.next)h+=`<div class="bp-s"><h4>下一步</h4><p>${para(N.next)}</p></div>`;
-  }else if(D&&D.items.length<3){h+=`<div class="bp-s"><p class="q">不到 3 条，不单独分析，看下面每条的数。</p></div>`}
+  }else if(D&&D.items.length<3){h+=`<div class="bp-s"><p class="q">这批不到 3 条，内容不单独分析，看下面每条的数。</p></div>`}
   else h+=`<div class="bp-s"><p class="q">这批的内容分析还没写，先看下面每条的数。</p></div>`;
   if(D){
     const rows=D.items.map(it=>{const[nm,kd,c0,c1,up,rt,a,url,orig]=it;return `<tr><td class="nm">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(nm)}</a>`:esc(nm)}${orig?` <a class="bp-o" href="${esc(orig)}" target="_blank" rel="noopener">原帖</a>`:''}</td><td>${esc(kd)}</td><td>${money(c0)}</td><td class="${up?'good':''}">${money(c1)}</td><td>${na?(c1/na).toFixed(1)+' 倍':''}</td><td title="激活 ${a}">${rt==null?'·':rt.toFixed(1)+'%'}${a<100&&rt!=null?'<small class="q"> 样本小</small>':''}</td></tr>`}).join('');
