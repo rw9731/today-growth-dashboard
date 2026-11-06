@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>专题分析 · 投放素材</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 48px; display: grid; gap: 20px; }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
+  .lx-nav-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg-muted); font-weight: 600; margin-right: 4px; }
+  .lx-nav-label svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .lx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg); text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lx-chip:hover { border-color: var(--color-fg-muted); }
+  .lx-chip[aria-current="page"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-chip .new { font-size: 11px; font-weight: 600; color: var(--color-ok); }
+  .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
+  .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
+  h1 { font-family: var(--font-serif); font-weight: 600; font-size: 32px; margin: 0; }
+  .topics { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .topics li { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: 14px 18px; display: grid; gap: 6px; }
+  .topics a { color: var(--color-fg); font-size: 17px; font-weight: 600; text-decoration: none; }
+  .topics a:hover { text-decoration: underline; }
+  .topics .d { color: var(--color-fg-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .topics p { margin: 0; color: var(--color-fg-muted); font-size: 14px; line-height: 1.55; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>专题分析</h1>
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" aria-current="page" href="./">全部专题</a></span></div>
+  </nav>
+  <ul class="topics">
+    <li><span class="d">11/6</span><a href="2026-11-06-weekday-weekend/">周中和周末：整体次留、一级分类和 use case 的占比与次留、新素材节奏</a><p>安卓 10/14–11/5。最近几周周中和周末的整体次留对比；按周拆周中、周末的消耗占比；每条素材和自己比、扣掉上新天数、剔掉极端素材后，哪些方向周中或周末更好；每段新开始消耗的素材条数。</p></li>
+  </ul>
+</div>
+</body>
+</html>
