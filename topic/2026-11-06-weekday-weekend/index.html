@@ -116,6 +116,10 @@
 .wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
 .wk .hint-l .hint-tip { left: 0; right: auto; }
 .wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
+.wk .ops td { white-space: normal; text-align: left; vertical-align: top; min-width: 16rem; line-height: 1.55; }
+.wk .ops td:first-child { min-width: 0; white-space: nowrap; }
+.wk .ops th { text-align: left; }
+.wk .ops .r { color: var(--color-fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
 
 </style>
 </head>
@@ -158,6 +162,20 @@
     <h3 class="sub2">每天的消耗和次留，两组分开看</h3>
     <p class="note">灰底是周末，悬停看激活和激活成本</p>
     <div class="grid" data-draw="grpday" data-source="grp_day"></div>
+    <h3 class="sub2">两组每天做了什么（投放群记录）</h3>
+    <p class="note">每格最后一行是当天的消耗 · 激活成本 · 次留（巨量口径）</p>
+    <div class="scroll">
+      <table class="ops">
+        <thead><tr><th>日期</th><th>1 组（金铭）</th><th>2 组（熊斌）</th></tr></thead>
+        <tbody>
+          <tr><td>10/30 五</td><td>老项目没做操作，成本涨 20% 到 40%（计费比 0.7–0.8 到 1.05）；关停实时次留低于 22% 的项目；去掉近 7 天次留低于 28% 的素材重新搭建<div class="r">¥5.8 万 · ¥23.0 · 27.4%</div></td><td><b>历史老项目重新拉量，次留出价调到 23% 到 34%</b>；10/29 新素材追加进 10/28 没有数据的项目，跳过冷启动；成本超 ¥23 的项目关停<div class="r">¥9.3 万 · ¥23.4 · 27.5%</div></td></tr>
+          <tr><td>10/31 六</td><td><b>低次留项目上调次留出价 1 到 2pp</b>，小预算跑；低于 18% 的暂停；掉量 30%，新计划增投<div class="r">¥5.5 万 · ¥20.5 · 28.8%</div></td><td>10/29 那批素材再加 20% 基建；22% 到 25% 的项目提 1pp 次留出价，主要靠老项目跑量<div class="r">¥10.5 万 · ¥19.4 · 26.9%</div></td></tr>
+          <tr><td>11/1 日</td><td>继续给 27 号项目提 1 到 2pp 次留出价；19 点一个项目次留出价从 34% 回调到 32%，两小时花了 ¥1.2 万，成本到 ¥26<div class="r">¥7.6 万 · ¥23.2 · 29.1%</div></td><td><b>所有类型基建加 30%</b>；周末白天跑量占比提到 50% 到 60%（2 组自述）；晚上按 27% 卡预算，关停较多<div class="r">¥7.4 万 · ¥17.9 · 22.6%</div></td></tr>
+          <tr><td>11/2 一</td><td>成本超 ¥25 的项目基本控停，晚上量损八成以上<div class="r">¥7.0 万 · ¥22.4 · 27.2%</div></td><td>白天老项目复苏，消耗涨 76%；晚上控停高成本和没数据的项目<div class="r">¥11.1 万 · ¥23.3 · 25.5%</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sum-lead">差别在周末：1 组以收紧为主（提次留出价，激活变贵，次留守在 29% 左右）；2 组放开（老项目拉量、加基建、白天放量，激活变便宜，周日次留掉到 22.6%）。</p>
     <h3 class="sub2">每天上新的那批素材，每天的次留（分日表口径）</h3>
     <p class="note">一行是一天上新的素材，一列是激活日（这批人第二天回访）；颜色越深次留越高，· 是激活不到 100</p>
     <div class="scroll" data-draw="cohheat" data-source="coh_day"></div>
