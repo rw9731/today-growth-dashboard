@@ -8,9 +8,10 @@
 
 怎么算：
 - 扩量素材迭代排期（A 组 kMJdAv、B 组 3KtioB）：日期按合并单元格往下带，「怎么改」里写了「还要做，M/D 交」的按这个日期算。
-  该交 = 条数，实交 = 扩量素材名按换行拆的条数。类型看「怎么改」里的【AI】或【二创/重配】。B 组这个 tab 是空的也能跑。
+  该交 = 条数，实交 = 扩量素材名条数和迭代素材成片附件数取大（成片传了、素材名没填全的不算落下，单独写进 name_gap）。类型看「怎么改」里的【AI】或【二创/重配】。B 组这个 tab 是空的也能跑。
 - 新素材每周排期（A 组 nPw5Dc）：该交 = 注意事项里「拍 N 条」。实交 = 脚本及成片（f18d7b）里同 use case、成片不空、完成时间在这周到 T-1 的条数，按日期从早到晚分给各行。
-- 脚本&成片（B 组 c665d9）、真人素材和ai切片二剪（B 组 EnYgPG）：每行一条，产出日期到期算该交，成片或二创成片不空算实交。
+- 脚本&成片（B 组 c665d9）、真人素材和ai切片二剪（B 组 EnYgPG）：是交片的地方，不是排期。B 组扩量排期第一个到期日之前的行每行算一条；之后只按排期行算该交，不重复算。排期里 AI 行素材名没填的，用同 use case 已有成片的脚本行补实交。这两张表自己的行没写产出日期就不算到期，不往下带。
+- week、today：本周一到周日的该交和实交（提前交的算实交），今天到期的该交和实交，per_day 是后面每天要交多少。页面进度条用。
 - tools/schedule_plan.json 里已经建议拿掉（s = cut）的行，和表里写了「先不拍」「顺延」还没交的行，不算该交，算在 skipped。
 输出 line（页面那一行）、draft（给唯西的提醒草稿，只推给 Reina，不自己发群）。
 """
@@ -81,7 +82,8 @@ def load_cut(plan):
     return out
 
 
-def kx_rows(rows, group, T, since, upto, cut):
+def kx_rows(rows, group, T, since, upto, cut, pool=None):
+    pool = dict(pool or {})
     due, skipped = [], 0
     day = None
     for x in rows:
@@ -99,11 +101,16 @@ def kx_rows(rows, group, T, since, upto, cut):
             continue
         n = int(n_txt)
         got = x.get('扩量素材名') or 0
-        got = len(got) if isinstance(got, list) else int(got)
+        names_n = len(got) if isinstance(got, list) else int(got)
+        got = max(names_n, int(x.get('nf') or 0))
+        if kind_of(how) == 'AI' and got < n and pool.get(uc):  # B 组 AI 成片传在脚本表，素材名可能还没填
+            used = min(pool[uc], n - got)
+            pool[uc] -= used
+            got += used
         if got == 0 and (cut.get((group, 'kx', x['r'])) == uc or '先不做' in how):
             skipped += n
             continue
-        due.append(dict(tab='kx', r=x['r'], uc=uc, n=n, got=min(got, n), extra=max(0, got - n), due=when.isoformat(), kind=kind_of(how)))
+        due.append(dict(tab='kx', r=x['r'], uc=uc, n=n, got=min(got, n), extra=max(0, got - n), due=when.isoformat(), kind=kind_of(how), no_name=max(0, min(got, n) - names_n)))
     return due, skipped
 
 
@@ -151,13 +158,32 @@ def new_rows(rows, sc, T, since, upto, cut):
     return due, skipped, review
 
 
-def one_per_row(rows, group, tab, field, T, since, upto, cut):
-    due, skipped = [], 0
+def first_kx_day(rows, T):
+    """排期第一个真正有条数的日期（表头那行「11/4–11/8」不算）。"""
     day = None
-    for x in rows:
-        d = parse_day(x.get('产出日期'), T)
+    for x in rows or []:
+        d = parse_day(x.get('日期'), T)
         if d:
             day = d
+        if day and is_uc(clean_uc(x.get('UC_ID'))) and re.fullmatch(r'\d+', str(x.get('条数', '')).strip()):
+            return day
+    return None
+
+
+def sc_pool(rows, T, start):
+    pool = {}
+    for x in rows or []:
+        d = parse_day(x.get('产出日期'), T)
+        uc = clean_uc(x.get('UC_ID'))
+        if start and d and d >= start and is_uc(uc) and x.get('成片'):
+            pool[uc] = pool.get(uc, 0) + 1
+    return pool
+
+
+def one_per_row(rows, group, tab, field, T, since, upto, cut):
+    due, skipped = [], 0
+    for x in rows:
+        day = parse_day(x.get('产出日期'), T)  # 没写日期的行还没排到，不带上一行的日期
         uc = clean_uc(x.get('UC_ID'))
         if not is_uc(uc) or not day or day < since or day > upto:
             continue
@@ -183,13 +209,18 @@ def lag_text(x, group, names):
     return f"{group} 组{NAMES[(group, x['tab'])]}第 {x['r']} 行 {uc_label(x['uc'], names)} 差 {x['n'] - x['got']} 条{kind}（{md(x['due'])} 该交）"
 
 
-def make_draft(group, lags, names, upto):
-    if not lags:
+def make_draft(group, lags, names, upto, gaps=()):
+    if not lags and not gaps:
         return ''
-    lines = [f"{group} 组这边，排期表截至 {md(upto.isoformat())} 还有这几行没交齐："]
+    lines = []
+    if lags:
+        lines.append(f"{group} 组这边，排期表截至 {md(upto.isoformat())} 还有这几行没交齐：")
     for x in lags:
         lines.append(f"- {NAMES[(group, x['tab'])]}第 {x['r']} 行，{uc_label(x['uc'], names)}，{md(x['due'])} 该交 {x['n']} 条，交了 {x['got']} 条，还差 {x['n'] - x['got']} 条")
-    lines.append('麻烦看下今天能不能补上。补不上的回一句哪天能交，我们好提前调后面的安排。')
+    if lags:
+        lines.append('麻烦看下今天能不能补上。补不上的回一句哪天能交，我们好提前调后面的安排。')
+    if gaps:
+        lines.append('第 ' + '、'.join(str(x['r']) for x in gaps) + ' 行成片传了，扩量素材名没填全，麻烦补下。')
     return '\n'.join(lines)
 
 
@@ -211,23 +242,40 @@ def main():
     missing = [f'{g} 组 {t}' for g, v in TABS.items() for k, t in v.items() if tabs[g][k] is None]
     out = dict(T=T.isoformat(), since=since.isoformat(), upto=upto.isoformat(), groups={}, missing=missing, draft={})
 
+    def collect(group, end):
+        """这组从 since 到 end 到期的行。"""
+        if group == 'A':
+            d1, s1 = kx_rows(A['kx'], 'A', T, since, end, cut)
+            d2, s2, rv = new_rows(A['new'], A['sc'], T, since, end, cut)
+            return d1 + d2, s1 + s2, rv
+        first = first_kx_day(B['kx'], T)
+        d1, s1 = kx_rows(B['kx'], 'B', T, since, end, cut, sc_pool(B['sc'], T, first))
+        before = (first - dt.timedelta(days=1)) if first else end  # 排期开始之后的只按排期行算，脚本、二创表不重复算
+        d2, s2 = one_per_row(B['sc'], 'B', 'sc', '成片', T, since, min(end, before), cut)
+        d3, s3 = one_per_row(B['ec'], 'B', 'ec', '二创成片', T, since, min(end, before), cut)
+        return d1 + d2 + d3, s1 + s2 + s3, 0
+
     def summarize(group, due, skipped, review=0):
         lags = sorted([x for x in due if x['got'] < x['n']], key=lambda x: (x['due'], x['r']))
         kinds = {k: dict(due=sum(x['n'] for x in due if x['kind'] == k), got=sum(x['got'] for x in due if x['kind'] == k)) for k in sorted({x['kind'] for x in due})}
         out['groups'][group] = dict(due=sum(x['n'] for x in due), got=sum(x['got'] for x in due), skipped=skipped, review=review,
                                     extra=sum(x['extra'] for x in due), rows=len(due), by_kind=kinds, lag=[{**x, 'name': names.get(x['uc'], '')} for x in lags])
-        out['draft'][group] = make_draft(group, lags, names, upto)
+        gaps = [x for x in due if x.get('no_name')]
+        out['groups'][group]['name_gap'] = [dict(r=x['r'], uc=x['uc'], n=x['no_name']) for x in gaps]
+        end = since + dt.timedelta(days=6)
+        wk, _, _ = collect(group, end)
+        w_due, w_got = sum(x['n'] for x in wk), sum(x['got'] for x in wk)
+        td = [x for x in wk if x['due'] == T.isoformat()]
+        left_days = (end - T).days + 1
+        out['groups'][group].update(week=dict(due=w_due, got=w_got), today=dict(due=sum(x['n'] for x in td), got=sum(x['got'] for x in td)),
+                                    per_day=round((w_due - w_got) / left_days) if left_days > 0 else None)
+        out['draft'][group] = make_draft(group, lags, names, upto, gaps)
 
     A, B = tabs['A'], tabs['B']
     if all(A[k] is not None for k in ('kx', 'sc', 'new')):
-        d1, s1 = kx_rows(A['kx'], 'A', T, since, upto, cut)
-        d2, s2, rv = new_rows(A['new'], A['sc'], T, since, upto, cut)
-        summarize('A', d1 + d2, s1 + s2, rv)
+        summarize('A', *collect('A', upto))
     if all(B[k] is not None for k in ('sc', 'ec', 'kx')):
-        d1, s1 = kx_rows(B['kx'], 'B', T, since, upto, cut)
-        d2, s2 = one_per_row(B['sc'], 'B', 'sc', '成片', T, since, upto, cut)
-        d3, s3 = one_per_row(B['ec'], 'B', 'ec', '二创成片', T, since, upto, cut)
-        summarize('B', d1 + d2 + d3, s1 + s2 + s3)
+        summarize('B', *collect('B', upto))
 
     head = []
     for g in ('A', 'B'):

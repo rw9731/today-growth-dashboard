@@ -92,6 +92,10 @@ for (let r = 1; r < __sh.getRowCount(); r++) {
     else if (w === '成片状态') row[k] = t.includes('通过') ? '通过' : t.slice(0, 8);
     else row[k] = t.split('\n')[0].slice(0, 12);
   }
+  if (__name === '扩量素材迭代排期') { // 成片传了但素材名没填全时，进度按成片附件数算
+    const cf = __hdr.findIndex((h) => h.startsWith('迭代素材成片'));
+    if (cf >= 0) { try { const nf = (__sh.getSegmentArray(r, cf) || []).filter((s) => s.type === 'attachment').length; if (nf) row.nf = nf; } catch (e) { /* 这一格没有附件 */ } }
+  }
   if (__name === '星广脚本审核表' && (!row['视频链接'] || __isOld(row['成片完成时间']))) any = false;
   if (__name === '悦普执行表' && (!/已发布/.test(row['稿件进度'] || '') || __isOld(row['发布档期']))) any = false;
   if (__name === '付费达人执行表' && !row['发布时间'] && !row['发布链接']) any = false;

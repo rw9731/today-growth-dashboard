@@ -194,6 +194,7 @@ a{color:var(--link)}
 .tbox h2{margin:0;font-size:15px}.now-sub{margin:0;font-weight:600;line-height:1.45}
 .now-k{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
 .lag summary{cursor:pointer}.lag b{font-weight:700}.lag .ct{color:var(--sub);font-variant-numeric:tabular-nums;margin-left:6px}.lag ul{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--sub);line-height:1.6}
+.pg{min-width:0}.pg .o-cell{gap:8px}.pg .o-track{min-width:80px}.pg .o-pct{min-width:0}.pg small{display:block;font-size:11px;color:var(--mute);line-height:1.4;margin-top:2px}
 .dd{display:grid;grid-template-columns:42px minmax(0,1fr);gap:1px 6px;line-height:1.5}.dd b{font-weight:600;font-variant-numeric:tabular-nums}.dd code{font:600 12px var(--mono);margin-right:6px;white-space:nowrap}
 .xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
 .now-tag{line-height:1.6}.now-tag a{color:var(--link)}
@@ -240,6 +241,7 @@ a{color:var(--link)}
 <details class="more"><summary>规则和口径</summary><div class="rules">
 <p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <p><b>回收：</b>跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。</p>
+<p><b>A、B 组进度：</b>对照唯西排期表。进度条是本周已交占本周排期，竖线是到昨天该交的位置，数字是到昨天实交 / 该交。成片传了、素材名没填全的算交了；B 组扩量排期开始后只按排期行算，脚本表、二剪表不重复算。只算排期行，所以和左边的本周实际产出不是一个数。</p>
 <p><b>要看片：</b>首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。</p>
 <p><b>可能见顶的素材：</b>首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成。</p>
 <p><b>条数建议：</b>看这个方向最近新上的素材，每条带来的消耗比全盘高还是低：高就多加，低就减少，量全靠一条就小步复制。留存差的素材看回收表。</p>
