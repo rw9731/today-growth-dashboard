@@ -268,7 +268,6 @@ const all=pastDays.concat(futDays);
 const WE=new Set(P.WE);
 const YR=P.year||2026,TM=P.today?+P.today.split('/')[0]:11;
 function wk(d){const [m,dd]=d.split('/').map(Number);const y=m-TM>6?YR-1:TM-m>6?YR+1:YR;return '日一二三四五六'[new Date(y,m-1,dd).getDay()];}
-const DIR=new Set(P.DIR);
 const k=v=>v>=10000?(v/10000).toFixed(1)+'万':v>=1000?(v/1000).toFixed(1)+'k':String(Math.round(v));
 const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
 const md=s=>{const[m,d]=s.split('-');return (+m)+'/'+(+d)};
@@ -318,8 +317,8 @@ function row(id,code,label,r,es,max,cls,gi){
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
-  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
-  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2&&!DIR.has(id),P.B[id],id)}
+  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
+  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2,P.B[id],id)}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
 const NC=3+all.length+4;
@@ -356,7 +355,7 @@ for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySe
 document.querySelector('#dt tbody').innerHTML=details;
 const ucName=x=>(x.part?'PS03 '+x.part:x.u+' '+(P.UC[x.u]||''))+'（'+x.t+'）';
 const warnDays=w=>Object.keys(w).sort().map(md).join('、');
-const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&(P.GROUPS.slice(0,2).some(g=>g[1].includes(u))||DIR.has(u))).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
+const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&P.GROUPS.slice(0,2).some(g=>g[1].includes(u))).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
 const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
 const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
 const dayMerged=[];Object.keys(dayRows).sort().forEach(d=>{const k=dayRows[d].join(),l=dayMerged[dayMerged.length-1];if(l&&l.k===k)l.to=d;else dayMerged.push({k,from:d,to:d,us:dayRows[d]})});
@@ -471,7 +470,7 @@ const HELP={y:yHelp,
  tr:ha=>{const[id,m]=ha.split('|');return trendCard(id,m)},
  co:ha=>coCard(ha),
  keep:()=>`<b>维持</b>：这个方向一周要上多少条新素材，才能接住现在的消耗。<br><br><b>怎么算</b>：近 7 天里，首花 7 天内的素材花的钱 ÷ 这个方向每条素材前 7 天平均花的钱。<br><br><b>怎么看</b>：「本周上新」比它少，这个数字会变红，说明这周上的接不住，消耗大概率往下走。多于它，才有机会往上涨。`,
- rule:()=>`<b>条数建议</b>：这个方向这周该多做还是少做，只看最近新上的素材能不能跑量，留存差的素材看回收表，不算到方向上。按顺序看，先中先停：<br>· 条数少不判：不足 5 条，样本不够。<br>· 多加：单条跑量 ≥1.3 倍，去掉最大一条还有 ≥0.8 倍。<br>· 小步复制：单条跑量 ≥0.8 倍，但去掉最大一条 &lt;0.6 倍或最大一条占 60% 以上，靠一条撑着。<br>· 减少：只用于探索这档。单条跑量 &lt;0.6 倍，而且上新占比不低于消耗占比。前两档是验证过的方向，跑不起来先看片。<br>· 不变：其余。<br><br>这是算出来的初值，不是定论。标了「本周方向」的按定的方向加。`,
+ rule:()=>`<b>条数建议</b>：这个方向这周该多做还是少做，只看最近新上的素材能不能跑量，留存差的素材看回收表，不算到方向上。按顺序看，先中先停：<br>· 条数少不判：不足 5 条，样本不够。<br>· 多加：单条跑量 ≥1.3 倍，去掉最大一条还有 ≥0.8 倍。<br>· 小步复制：单条跑量 ≥0.8 倍，但去掉最大一条 &lt;0.6 倍或最大一条占 60% 以上，靠一条撑着。<br>· 减少：只用于探索这档。单条跑量 &lt;0.6 倍，而且上新占比不低于消耗占比。前两档是验证过的方向，跑不起来先看片。<br>· 不变：其余。<br><br>这是算出来的初值，不是定论。`,
  warn:()=>`<b>红色警告：预计这天会跌</b>：这天预计掉的比补的多，差额超过 ¥500，也超过这个方向现在消耗的 10%。<br><br><b>掉的</b>：还在跑的素材到第 4 天，通常掉一半。<br><b>补的</b>：这几天上线的新素材。AI 和二创分开算，首花当天约是第二天的一半。<br><br>每天用前一天的实际数重算，前两天刚上的按实际跑量校正。看到它就去看这个方向，是估计，不是准数。`};
 function showHelp(el,x,y){const[hk,ha]=el.dataset.help.split(':');tip.innerHTML=HELP[hk](ha);tip.style.maxWidth=hk==='co'?'420px':hk==='tr'?'360px':'340px';tip.hidden=false;tip.dataset.h='1';placeTip(x,y)}
 document.addEventListener('mousemove',ev=>{const hp=ev.target.closest&&ev.target.closest('[data-help]');if(hp){showHelp(hp,ev.clientX,ev.clientY);return}if(tip.dataset.h==='1'){tip.dataset.h='';tip.hidden=true}});
