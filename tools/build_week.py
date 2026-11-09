@@ -93,6 +93,14 @@ def main():
         if bad:
             sys.exit('notes 不合格：\n' + '\n'.join(bad))
     res['notes'] = [uc_names(plain(json.load(open(notes_path))), names)] if os.path.exists(notes_path) else [{}]
+    # 第五部分素材产出：唯西自建号的上线投放按 kind 里「唯西自建号」这周第一次有消耗的条数（Reina 11/9）
+    zk = next((k for k in res.get('kind', []) if k.get('kind') == '唯西自建号'), None)
+    out = res['notes'][0].get('output') or {}
+    for row in out.get('rows') or []:
+        if '自建号' in str(row.get('t', '')) and zk is not None:
+            row['live'] = zk.get('n_new', 0)
+    if out and not any('自建号' in str(r.get('t', '')) for r in out.get('rows') or []):
+        print('WARNING notes 的 output 里没有「唯西自建号」这一行（Reina 11/9 要单独列）')
     daily = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     style = re.search(r'<style>\n(.*?)</style>', daily, re.S).group(1)
     tpl = open(os.path.join(ROOT, 'tools', 'week_template.html')).read()
