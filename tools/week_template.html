@@ -109,7 +109,7 @@
     <div class="lx-card"><span class="lx-label">次留率（{{WRET}} 激活）</span><span class="lx-big" data-draw="k-rate">—</span><span class="lx-cmp" data-draw="d-rate"></span></div>
     <div class="lx-card"><span class="lx-label">次留成本</span><span class="lx-big" data-draw="k-cpr">—</span><span class="lx-cmp" data-draw="d-cpr"></span></div>
     <div class="lx-card"><span class="lx-label">连续 3 留率 · 成本（{{WRET3}} 激活）</span><span class="lx-big" data-draw="k-rate3">—</span><span class="lx-cmp" data-draw="d-rate3"></span></div>
-    <div class="lx-card"><span class="lx-label">在跑素材 · 本周新上</span><span class="lx-big" data-draw="k-n">—</span><span class="lx-cmp" data-draw="d-n"></span></div>
+    <div class="lx-card"><span class="lx-label">在跑素材 · 本周首次消耗</span><span class="lx-big" data-draw="k-n">—</span><span class="lx-cmp" data-draw="d-n"></span></div>
   </section>
 
   <section class="lx-sec" id="trend">
@@ -140,7 +140,7 @@
             <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
             <th class="num">连续 3 留率</th>
             <th class="num">连续 3 留成本</th>
-            <th class="num">素材<span class="th-sub">在跑 · 本周新上</span></th>
+            <th class="num">素材<span class="th-sub">在跑 · 本周首次消耗</span></th>
             <th>里面的 use case</th>
             <th>下周</th>
           </tr>
@@ -164,7 +164,7 @@
             <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
             <th class="num">连续 3 留率</th>
             <th class="num">连续 3 留成本</th>
-            <th class="num">素材<span class="th-sub">在跑 · 本周新上</span></th>
+            <th class="num">素材<span class="th-sub">在跑 · 本周首次消耗</span></th>
             <th>各供给<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 最便宜</span></th>
             <th>下一步</th>
           </tr>
@@ -232,7 +232,7 @@
               <th class="num">产出<span class="th-sub">条</span></th>
               <th class="num">计划<span class="th-sub">条</span></th>
               <th class="num">完成</th>
-              <th class="num">上线投放<span class="th-sub">本周首次有消耗</span></th>
+              <th class="num">上线投放<span class="th-sub">按首次消耗日期，本周第一次有消耗</span></th>
             </tr>
           </thead>
           <tbody data-draw="output-rows"></tbody>
@@ -241,8 +241,8 @@
     </div>
     <div class="wk-two">
       <div class="pl-card">
-        <h3>每天上新多少条</h3>
-        <p class="lx-note">按第一天有消耗算上线日。本周新上 <b data-draw="n-new">—</b> 条，上一周 <b data-draw="p-new">—</b> 条。</p>
+        <h3>每天首次消耗多少条（按首次消耗日期）</h3>
+        <p class="lx-note">按首次消耗日期算，不是上传日期。本周首次消耗 <b data-draw="n-new">—</b> 条，上一周 <b data-draw="p-new">—</b> 条。</p>
         <div class="wk-legend" data-draw="prod-legend"></div>
         <div class="wk-chart" data-draw="prod"></div>
       </div>
@@ -257,10 +257,10 @@
         <thead>
           <tr>
             <th>素材类型</th>
-            <th class="num">本周新上<span class="th-sub">条</span></th>
-            <th class="num">上周新上<span class="th-sub">条</span></th>
-            <th class="num">跑起来<span class="th-sub">新上里周消耗 ≥ ¥1,000</span></th>
-            <th class="num">能放量 + 次留好<span class="th-sub">新上里</span></th>
+            <th class="num">本周首次消耗<span class="th-sub">条</span></th>
+            <th class="num">上周首次消耗<span class="th-sub">条</span></th>
+            <th class="num">跑起来<span class="th-sub">本周首次消耗的里面，周消耗 ≥ ¥1,000</span></th>
+            <th class="num">能放量 + 次留好<span class="th-sub">本周首次消耗的里面</span></th>
             <th class="num">在跑<span class="th-sub">条</span></th>
             <th>周消耗<span class="th-sub">占全盘</span></th>
             <th class="num">次留率</th>
@@ -336,7 +336,7 @@
   const spark = (td, days) => { const m = d3.max(days) || 1; const w = document.createElement('span'); w.className = 'wk-spark'; w.title = days.map((v, i) => '周' + '一二三四五六日'[i] + ' ' + fmtY(v)).join('\n'); for (const v of days) { const i = document.createElement('i'); i.style.height = Math.max(1, v / m * 18) + 'px'; w.appendChild(i); } td.appendChild(w); };
   const barCell = (td, v, max, px, label) => { const wrap = document.createElement('div'); wrap.className = 'lx-bar'; const bar = document.createElement('i'); bar.style.width = Math.max(2, (v / max) * px) + 'px'; bar.style.background = COLOR; const lab = document.createElement('span'); lab.textContent = label || fmtY(v); wrap.append(bar, lab); td.appendChild(wrap); return wrap; };
   const links = (td, m) => { td.className = 'short lx-links'; const add = (h, t) => { const a = document.createElement('a'); a.href = h; a.target = '_blank'; a.rel = 'noopener'; a.textContent = t; td.appendChild(a); }; if (m.video) add(m.video, '视频'); if (m.link) add(m.link, m.link_type === '原片' ? '原帖' : m.link_type || '链接'); };
-  const nameCell = (td, m) => { td.className = 'wk-name'; td.append(m.name); const s = document.createElement('span'); s.className = 'sub'; s.textContent = '上线 ' + fmtD(m.first) + (m.is_new ? '（本周新上）' : '') + ' · ID ' + m.id; td.appendChild(s); };
+  const nameCell = (td, m) => { td.className = 'wk-name'; td.append(m.name); const s = document.createElement('span'); s.className = 'sub'; s.textContent = '首次消耗 ' + fmtD(m.first) + (m.is_new ? '（本周首次消耗）' : '') + ' · ID ' + m.id; td.appendChild(s); };
 
   // 顶部导航：日报一行、周报一行。列表都从根目录读，旧页面也会看到最新的。
   const navRow = async (file, key, cur, hrefOf, id, n, unit) => {

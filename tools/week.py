@@ -333,7 +333,7 @@ def main():
             if a1 is not None and lo <= a1 <= hi:
                 out.append({**r, 'cost': 0, 'act': 0, 'r3': 0})
         return out
-    wk['age'] = [{'label': lb, **split(band_rows(lo, hi, RW))} for lb, lo, hi in (('上线 3 天内', 0, 3), ('上线 4 到 7 天', 4, 7), ('上线 8 天以上', 8, 9999))]
+    wk['age'] = [{'label': lb, **split(band_rows(lo, hi, RW))} for lb, lo, hi in (('首次消耗后 3 天内', 0, 3), ('首次消耗后 4 到 7 天', 4, 7), ('首次消耗后 8 天以上', 8, 9999))]
     # 同一批素材过周末：按首投日分批，留存只看当天激活的人
     def batch(a, b):
         ids = {i for i, f in first.items() if a <= f <= b}

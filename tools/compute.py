@@ -680,7 +680,7 @@ def main():
         kt.append({'kind': ZJH_NAME, 'status': '还没消耗', 'n27': 0, 'cost27': 0.0, 'share27': 0.0, 'cost26': 0.0, 'act27': 0,
                    'cost_w': 0.0, 'act_w': 0, 'rate': None, 'cpr': None, 'n_good': 0, **NO3})
 
-    # 单日上线批次
+    # 单日批次（按首次消耗日期）
     tot = {d: S(R, d, 'cost') for d in D}
     coh = []
     for bd in sorted({first[r['id']] for r in R if r['id'] in first}, reverse=True):
@@ -713,18 +713,18 @@ def main():
     if gs['n_drop']:
         take.append(f"这些好素材里 {b(gs['n_drop'])} 条昨天花不到 {b(Y(th['drop']))}，没接上量。")
     if wk:
-        s = f"本周（{lab(dt.date.fromisoformat(th['week']))} 起）上线的新素材昨天占消耗的 {b(P0(shift['week27']))}"
+        s = f"本周（{lab(dt.date.fromisoformat(th['week']))} 起）首次消耗的素材昨天占消耗的 {b(P0(shift['week27']))}"
         if shift['week26'] is not None:
             s += f"（{lab(days[2])} 是 {b(P0(shift['week26']))}）"
         bd3 = gb(D[3])
         if bd3 and nz(bd3.get('share27')) > shift['week27'] / 2:
-            s += f"，主要是 {lab(days[3])} 刚上的"
+            s += f"，主要是 {lab(days[3])} 首次消耗的"
         take.append(s + '。')
     nb = gb(D[2])
     if nb.get('rate') is not None:
         rated = [x for x in coh if x['rate'] is not None]
         best = max(rated, key=lambda x: x['rate'])['first'] == D[2] if rated else False
-        s = f"{lab(days[2])} 上线那批次留率 {b(P0(nb['rate']))}"
+        s = f"{lab(days[2])} 首次消耗那批次留率 {b(P0(nb['rate']))}"
         s += '，是最好的一批' if best else ''
         s += f"，消耗占比从 {b(P0(nb.get('share26')))} 到 {b(P0(nb.get('share27')))}。"
         take.append(s)
