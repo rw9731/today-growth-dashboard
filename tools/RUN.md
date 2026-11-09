@@ -160,6 +160,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 批次回收（schedule_data.py 的 batches）：每个首花日几条、几条跑起来、第二天花多少。柱子下面的条数按它标色：这批第二天平均每条比当天大盘高绿色，低红色，3 条以上才标；页面顶部一行写前天首花这批第二天每条花多少。
 - 在跑：当天花了钱的条数，按批次分，悬停柱子看。
 - 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。可升的直接升（Reina 11/9 定，不用再问）：每天出页面后看有没有 can 为 true 的 use case，有就改 schedule_plan.json 的 GROUPS 升一档，在 MOVED 写从哪档来、哪天，重跑 schedule_build，7 天内名字旁标「新进」，最后回复里写升了哪几个。只升不降，降档还要 Reina 定。在本档里地位危险的标「危险」（Reina 11/9，schedule_build.py 的 tier_view 自动算，只标不降）：两档都看近 7 天（激活 ≥100），次留比全盘低 1.5 个点以上或成本贵 ¥3 以上，就是第二档的退出线；第一档另外看近 7 天占比掉到 3%（RISK_SH）以下。探索没有危险。悬停名字看是哪条线。连续两周危险的，在周报里提给 Reina 定降不降。
+- 点 use case 名字弹出历史素材（Reina 11/9）：schedule_data.py 的 history() 把分日表里所有花过钱的素材按 use case 列出来（推送版、修改版合成一条，总消耗倒序），schedule_build.py 的 hist_view() 配视频和原帖链接，模板里 histOpen() 画弹窗，可按 AI/二创筛、点表头按首花、消耗、次留、成本排。次留和成本只算到 D-1。链接和回收表一样来自 tools/links.json，巨量签名链接 2 天过期，所以只有最新一天的页面链接全。
 - 排期分散（Reina 11/9）：同一个 use case 一天最多 6 条（A、B 两组、AI 和二创合计，含上周留下的存量行），多出来的往后一天挪；不要一天一个方向挤十几条。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 

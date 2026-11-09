@@ -102,6 +102,23 @@ a{color:var(--link)}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
 .rules p{margin:0;max-width:96ch}
 #b .help,.legend .help{cursor:help}#b th.help,#b td.help small,.legend .help{text-decoration:underline dotted;text-underline-offset:3px}
+#hist{width:min(1120px,calc(100vw - 32px));max-height:86vh;padding:0;border:1px solid var(--base);background:var(--panel);color:var(--ink);box-sizing:border-box}
+#hist::backdrop{background:rgba(0,0,0,.35)}
+#hist .hh{position:sticky;top:0;z-index:1;background:var(--panel);padding:12px 14px 8px;border-bottom:1px solid var(--grid);display:grid;gap:6px}
+#hist .hh h3{margin:0;font-size:16px;padding-right:36px}
+#hist .hh p{margin:0;font-size:12px;color:var(--sub)}
+#hist .hx{position:absolute;right:10px;top:8px;border:0;background:none;color:var(--sub);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
+#hist .hf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
+#hist .hf button{font:inherit;border:1px solid var(--base);background:var(--panel);color:var(--ink);padding:2px 9px;cursor:pointer}
+#hist .hf button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#hist .hf .go{margin-left:auto;border:0;color:var(--link);text-decoration:underline;padding:2px 0}
+#hist .hb{padding:0 14px 14px}
+#hist table{width:100%;border-collapse:collapse}
+#hist th.s{cursor:pointer;user-select:none}#hist th.s:hover{color:var(--ink)}
+#hist th[aria-sort="descending"]::after{content:" ↓"}#hist th[aria-sort="ascending"]::after{content:" ↑"}
+#hist td.nm{min-width:260px;max-width:460px;overflow-wrap:anywhere}
+#hist td .good{color:var(--good);font-weight:700}#hist td .bad{color:var(--bad);font-weight:700}#hist td .lt{font-weight:400}
+#hist td small.q{display:block}
 #tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;font-size:12px;line-height:1.5;max-width:340px;font-variant-numeric:tabular-nums}
 #tip .ts{border-top:1px solid color-mix(in srgb,var(--bg) 35%,transparent);margin-top:6px;padding-top:6px}
 #tip .tl{display:block;font-size:11px;opacity:.65;margin-bottom:1px}
@@ -257,6 +274,7 @@ a{color:var(--link)}
 <h3>每个 use case 的排期行</h3>
 <div class="scroll"><table class="dt" id="dt"><thead><tr><th>交付</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
 </div>
+<dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div></dialog>
 <div id="tip" hidden></div>
 <script>
 const P=__P__;
@@ -374,10 +392,40 @@ document.getElementById('bad-note').textContent=`共 ${P.REV.nbad} 条，列影�
 document.querySelector('#bad tbody').innerHTML=P.REV.bad.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${x.act}</td><td class="n">${x.rate.toFixed(1)}%，¥${x.cpr}</td><td class="num">${x.gap.toFixed(1)}</td><td class="nm">${x.base?`<small class="q">${x.base.how}</small> ${lnk(x.base.name,x.base.url)}<small class="q">（${x.base.rate==null?'样本小':x.base.rate.toFixed(1)+'%，¥'+x.base.cpr}，激活 ${x.base.act}）</small>`:'<span class="q">没找到</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有</td></tr>';
 document.getElementById('pk-note').textContent=`共 ${P.REV.npeak} 条，列峰值最高的 8 条。`;
 document.querySelector('#pk tbody').innerHTML=P.REV.peak.map(x=>`<tr><td class="nm">${esc(x.name)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="n">${money(x.pk)}（${md(x.pkd)}）</td><td class="num">${money(x.last2)}</td><td class="num">${x.pct}%</td></tr>`).join('')||'<tr><td colspan="6" class="q">没有</td></tr>';
+// 点 use case 名字：弹出历史上投过的所有素材，按总消耗倒序（Reina 11/9，找 top 素材做小变式扩产）
+function goLines(id){const t=document.querySelector(`#dt tr[data-u="${CSS.escape(id)}"]`);if(!t)return;
+  t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600)}
+const HD=document.getElementById('hist'),HS={u:'',t:'all',k:'c',dir:-1};
+// 行：[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖, use case]
+const ymd=s=>{const[,m,d]=s.split('-');return (+m)+'/'+(+d)};
+const hRate=x=>x[4]?x[5]/x[4]*100:null,hCpr=x=>x[5]?x[6]/x[5]:null;
+const HK={c:x=>x[3],c7:x=>x[7],first:x=>x[2],a:x=>x[4],rate:hRate,cpr:hCpr};
+const hList=id=>(id==='__fold'?P.FOLD:[id]).flatMap(u=>((P.HIST||{}).U||{})[u]?.map(x=>[...x,u])||[]);
+function histDraw(){
+  const id=HS.u,all=hList(id),fold=id==='__fold';
+  let rs=HS.t==='all'?all:all.filter(x=>x[1]===HS.t);
+  const f=HK[HS.k];rs=[...rs].sort((p,q)=>{const a=f(p),b=f(q);if(a==null&&b==null)return q[3]-p[3];if(a==null)return 1;if(b==null)return -1;return a<b?-HS.dir:a>b?HS.dir:q[3]-p[3]});
+  const nAI=all.filter(x=>x[1]==='AI').length,c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
+  document.getElementById('hist-h').textContent=fold?`其余 ${P.FOLD.length} 个方向：历史投过的素材`:`${id} ${P.UC[id]||''}：历史投过的素材`;
+  document.getElementById('hist-n').textContent=`${ymd(P.HIST.start)} 起花过钱的 ${all.length} 条（AI ${nAI}，二创 ${all.length-nAI}），共 ${money(all.reduce((s,x)=>s+x[3],0))}。总消耗算到 ${P.HIST.d}；次留、次留成本只算到 ${P.HIST.d1}（最新一天没回传完），颜色和全盘近 7 天比（${P.T.rate.toFixed(1)}%，¥${P.T.cpr}），激活不到 100 是浅色。推送版、修改版合成一条。`;
+  document.getElementById('hist-f').innerHTML=['all','AI','二创'].map(t=>`<button data-t="${t}" aria-pressed="${HS.t===t}">${t==='all'?'全部':t}</button>`).join('')+`<button class="go" data-lines="${esc(id)}">看本周排期行</button>`;
+  const cols=[['#',''],['素材',''],['类型',''],['首花','first'],['总消耗','c'],['近 7 天','c7'],['激活','a'],['次留','rate'],['次留成本','cpr'],['原帖','']].concat(fold?[['use case','']]:[]);
+  HD.querySelector('thead').innerHTML='<tr>'+cols.map(([n,k])=>k?`<th class="s" data-k="${k}"${HS.k===k?` aria-sort="${HS.dir<0?'descending':'ascending'}"`:''}>${n}</th>`:`<th>${n}</th>`).join('')+'</tr>';
+  HD.querySelector('tbody').innerHTML=rs.map((x,i)=>{const r=hRate(x),cp=hCpr(x),lt=x[4]<100?' lt':'';
+    return `<tr><td class="num q">${i+1}</td><td class="nm">${x[8]?`<a href="${esc(x[8])}" target="_blank" rel="noopener">${esc(x[0])}</a>`:esc(x[0])+'<small class="q">还没找到视频</small>'}</td><td class="n">${x[1]}</td><td class="n">${ymd(x[2])}</td><td class="num"><b>${money(x[3])}</b></td><td class="num${x[7]?'':' q'}">${x[7]?money(x[7]):'·'}</td><td class="num">${x[4].toLocaleString('en-US')}</td>`+
+      `<td class="num">${r==null?'<span class="q">·</span>':`<span class="${c(r-P.T.rate,1)}${lt}">${r.toFixed(1)}%</span>`}</td><td class="num">${cp==null?'<span class="q">·</span>':`<span class="${c(P.T.cpr-cp,3)}${lt}">¥${Math.round(cp)}</span>`}</td>`+
+      `<td class="n">${x[9]?`<a href="${esc(x[9])}" target="_blank" rel="noopener">原帖</a>`:''}</td>${fold?`<td class="n">${esc(x[10])}</td>`:''}</tr>`}).join('')||`<tr><td colspan="${cols.length}" class="q">${ymd(P.HIST.start)} 起没有花过钱的素材</td></tr>`;
+}
+function histOpen(id){HS.u=id;HS.t='all';HS.k='c';HS.dir=-1;histDraw();setTimeout(()=>{tip.hidden=true;tip.dataset.h=''},0);HD.querySelector('.hb').scrollTop=0;HD.showModal()}
+HD.addEventListener('click',ev=>{
+  if(ev.target===HD||ev.target.closest('.hx')){HD.close();return}
+  const t=ev.target.closest('[data-t]');if(t){HS.t=t.dataset.t;histDraw();return}
+  const s=ev.target.closest('th[data-k]');if(s){const k=s.dataset.k;HS.dir=HS.k===k?-HS.dir:(k==='cpr'?1:-1);HS.k=k;histDraw();return}
+  const g=ev.target.closest('[data-lines]');if(g){HD.close();goLines(g.dataset.lines)}
+});
 document.querySelector('#b').addEventListener('click',ev=>{
   const btn=ev.target.closest('button[data-go]');if(!btn)return;
-  const t=document.querySelector(`#dt tr[data-u="${CSS.escape(btn.dataset.go)}"]`);if(!t)return;
-  t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600);
+  if(P.HIST&&P.HIST.U)histOpen(btn.dataset.go);else goLines(btn.dataset.go);
 });
 const tip=document.getElementById('tip');
 const nm=['0–3 天','4–7 天','8–14 天','15 天以上'];
@@ -466,7 +514,7 @@ const HELP={y:yHelp,
   if(t.g===0)h+=`<br><br>这一档的线（档位每周改一次，连续两周不够才降）：<br>`+upLines(t);
   else if(t.g===1)h+=`<br><br>升到能放量 + 留存好，这几条都要够：<br>`+upLines(t);
   else h+=`<br><br>进跑量少 + 留存好，这几条都要够（最近 ${t.win} 天）：<br>激活 ${t.a}（要 ≥${n.act}）${mark(t.a>=n.act)}<br>次留 ${t.rate==null?'·':t.rate+'%'}，比同日全盘 ${t.gap==null?'·':pt(t.gap)+' 个点'}（要 ≥+${n.gap}）${mark(t.gap!=null&&t.gap>=n.gap)}<br>成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${t.gc}）${mark(t.cpr!=null&&t.cpr<=t.gc)}`;
-  return h},
+  return h+'<br><br><span style="opacity:.75">点名字看这个方向历史投过的所有素材。</span>'},
  tr:ha=>{const[id,m]=ha.split('|');return trendCard(id,m)},
  co:ha=>coCard(ha),
  keep:()=>`<b>维持</b>：这个方向一周要上多少条新素材，才能接住现在的消耗。<br><br><b>怎么算</b>：近 7 天里，首花 7 天内的素材花的钱 ÷ 这个方向每条素材前 7 天平均花的钱。<br><br><b>怎么看</b>：「本周上新」比它少，这个数字会变红，说明这周上的接不住，消耗大概率往下走。多于它，才有机会往上涨。`,

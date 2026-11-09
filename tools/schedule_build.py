@@ -217,6 +217,24 @@ def batch_detail(R):
     return out
 
 
+def hist_view(R, D):
+    """点 use case 名字弹出的历史素材：配上视频和原帖链接。[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖]"""
+    links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    out = {}
+    for u, items in R.get('hist', {}).items():
+        rows = []
+        for ids, name, *rest in items:
+            video, orig = '', ''
+            for i in ids:
+                v, o = material_urls(links, i, name)
+                video, orig = video or v, orig or o
+                if video and orig:
+                    break
+            rows.append([name] + rest + [video, orig])
+        out[u] = rows
+    return dict(U=out, start=R.get('hist_from', ''), d=md(D), d1=md(D - dt.timedelta(days=1)))
+
+
 def why_rows(why, notes, B, names, total, days):
     """回收那一节的表：前天首花这批，每批一行，从 notes/batches.json 取。"""
     if not why:
@@ -503,7 +521,7 @@ def main():
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
-             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [])
+             DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D))
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:

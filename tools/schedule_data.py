@@ -879,6 +879,31 @@ def rt_diagnose(rows, of, D):
     return dict(why=why, co=co, days=[x.strftime('%m-%d') for x in days], base=[[round(base[x][0]), round(base[x][1])] for x in days])
 
 
+def history(rows, fams, D):
+    """点 use case 名字看的历史素材（Reina 11/9）：表里所有花过钱的，按总消耗倒序。
+    每条：[素材ID（按消耗排，最多 3 个，给链接找视频用）, 素材名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天消耗]。
+    次留和次留成本只算到 D-1（D 没回传完），所以另给一个「消耗到前天」算成本。"""
+    one = dt.timedelta(days=1)
+    idc, idn = Counter(), {}
+    for r in rows:
+        idc[r['id']] += r['c']
+        if r['id'] not in idn or r['c'] > 0:
+            idn[r['id']] = r['name']
+    out = defaultdict(list)
+    for f in fams:
+        if not f.spent:
+            continue
+        ids = sorted(f.ids, key=lambda i: -idc[i])
+        a = sum(v for d, v in f.a.items() if d < D)
+        r = sum(v for d, v in f.r.items() if d < D)
+        cb = sum(v for d, v in f.c.items() if d < D)
+        c7 = sum(f.c[D - one * k] for k in range(7))
+        out[f.uc].append([ids[:3], idn[ids[0]], f.kind, f.batch.isoformat(), round(sum(f.c.values())), round(a), round(r), round(cb), round(c7)])
+    for v in out.values():
+        v.sort(key=lambda x: -x[4])
+    return dict(out)
+
+
 def make_roi(rows, fams, spend, D, T, of=None):
     tot = Counter()
     for r in rows:
@@ -905,6 +930,8 @@ def make_roi(rows, fams, spend, D, T, of=None):
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
     out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(fams, tot, D))
     out['rt'] = rt_diagnose(rows, of, D)
+    out['hist'] = history(rows, fams, D)
+    out['hist_from'] = min(r['d'] for r in rows).isoformat()
     keys = list(SUB_KEY.values())
     fs = [f for k in keys for f in groups.get(k, [])]
     batch_fs = [f for f in fs if f in W]
