@@ -470,7 +470,7 @@ function histDraw(){
     `<div class="cvl" role="list"><div class="cvr cvhd"><span></span><span>细分场景（Use case 库）</span><span>测了几条</span><span class="r">消耗</span><span class="r">次留</span></div>`+
     cv.chips.map(x=>`<button class="cvr${x.m?'':' none'}" data-s="${esc(x.k)}" aria-pressed="${HS.s===x.k}"${x.m?'':' disabled'} title="${esc(x.t)}"><span class="scn">${fold?esc(x.u)+' ':''}${x.n}</span><span class="nm">${esc(x.t)}</span><span class="cb">${x.m?`<i style="width:${Math.max(4,x.m/mxm*100)}%"></i><em>${x.m}</em>`:'<em class="q">没测</em>'}</span><span class="r">${x.m?money(x.c):''}</span><span class="r">${x.rate!=null?`<span class="${x.rate-P.T.rate>=1?'good':x.rate-P.T.rate<=-1?'bad':''}">${x.rate.toFixed(1)}%</span>`:x.m?'<span class="q">样本小</span>':''}</span></button>`).join('')+
     (cv.tbd+cv.none+cv.un?`<button class="cvr" data-s="tbd" aria-pressed="${HS.s==='tbd'}"><span class="scn">?</span><span class="nm">待看片、库里没有</span><span class="cb"><i class="o" style="width:${Math.max(4,(cv.tbd+cv.none+cv.un)/mxm*100)}%"></i><em>${cv.tbd+cv.none+cv.un}</em></span><span></span><span></span></button>`:'')+`</div><small class="q cvn">场景按 Use case 库「可包装的场景」，${ymd(P.HIST.start)} 起全部历史；次留激活不到 100 写「样本小」。点一行只看这个场景的素材，再点一次取消。</small>`:'<small class="q">Use case 库里这个方向还没列细分场景</small>';
-  document.getElementById('hist-n').textContent=`${ymd(P.HIST.start)} 起花过钱的 ${all.length} 条（AI ${nAI}，二创 ${all.length-nAI}），共 ${money(all.reduce((s,x)=>s+x[3],0))}。总消耗算到 ${P.HIST.d}；次留、次留成本只算到 ${P.HIST.d1}（最新一天没回传完），颜色和全盘近 7 天比（${P.T.rate.toFixed(1)}%，¥${P.T.cpr}），激活不到 100 是浅色。推送版、修改版合成一条。鼠标放在总消耗、次留上看逐日趋势。`;
+  document.getElementById('hist-n').textContent=`${ymd(P.HIST.start)} 起花过钱的 ${all.length} 条（AI ${nAI}，二创 ${all.length-nAI}），共 ${money(all.reduce((s,x)=>s+x[3],0))}。总消耗算到 ${P.HIST.d}；次留、次留成本只算到 ${P.HIST.d1}（最新一天没回传完），颜色和全盘近 7 天比（${P.T.rate.toFixed(1)}%，¥${P.T.cpr}），激活不到 100 是浅色。推送版、修改版合成一条。鼠标放在总消耗、次留上看逐日消耗和次留（同一张图）。`;
   document.getElementById('hist-f').innerHTML=['all','AI','二创'].map(t=>`<button data-t="${t}" aria-pressed="${HS.t===t}">${t==='all'?'全部':t}</button>`).join('')+(HS.s?`<button data-s="" aria-pressed="true">场景筛选 ×</button>`:'')+`<button class="go" data-lines="${esc(id)}">看本周排期行</button>`;
   const cols=[['#',''],['素材',''],['细分场景','sc'],['类型',''],['首花','first'],['总消耗','c'],['近 7 天','c7'],['激活','a'],['次留','rate'],['次留成本','cpr'],['原帖','']].concat(fold?[['use case','']]:[]);
   HD.querySelector('thead').innerHTML='<tr>'+cols.map(([n,k])=>k?`<th class="s" data-k="${k}"${HS.k===k?` aria-sort="${HS.dir<0?'descending':'ascending'}"`:''}>${n}</th>`:`<th>${n}</th>`).join('')+'</tr>';
@@ -484,6 +484,30 @@ let HR=[];
 // 悬停小卡：总消耗 = 逐日消耗柱状图（第一天到最近一天）；次留 = 逐日次留折线，虚线是大盘
 const HT=document.getElementById('htip');
 const dayOf=k=>{const d=new Date(P.HIST.start+'T00:00:00');d.setDate(d.getDate()+k);return (d.getMonth()+1)+'/'+d.getDate()};
+// 消耗和次留合在一张图（Reina 11/9）：柱子是每天消耗（右轴），蓝线是这条素材每天激活的次留（左轴），虚线是大盘次留
+function comboCard(x){
+  const[o,cs,as,rs]=x[11],m=cs.length,n=m-1;
+  const pts=cs.map((c,j)=>{const b=P.HIST.base[o+j]||[0,0];return{d:dayOf(o+j),c,a:as[j],v:j<n&&as[j]>=HMIN?rs[j]/as[j]*100:null,b:j<n&&b[0]?b[1]/b[0]*100:null}});
+  const vs=pts.flatMap(p=>[p.v,p.b]).filter(v=>v!=null);
+  const st=vs.length&&Math.max(...vs)-Math.min(...vs)>30?10:5,lo=vs.length?Math.max(0,Math.floor(Math.min(...vs)/st)*st):0,hi=vs.length?Math.max(lo+st,Math.ceil(Math.max(...vs)/st)*st):40;
+  const cmax=Math.max(1,...cs),L=34,R=44,T=16,H=130,cw=Math.min(40,400/Math.max(1,m)),W=L+R+cw*m;
+  const X=j=>L+cw*j+cw/2,Y=v=>T+H-(v-lo)/(hi-lo)*H,YC=c=>T+H-c/cmax*H;
+  let g='';for(let v=lo;v<=hi+1e-9;v+=st)g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="currentColor" opacity="${v===lo?.35:.13}"/><text x="${L-5}" y="${Y(v)+3.5}" font-size="10" text-anchor="end" fill="var(--meter)">${v}%</text>`;
+  [cmax,cmax/2].forEach(c=>g+=`<text x="${W-R+5}" y="${YC(c)+3.5}" font-size="10" fill="currentColor" opacity=".65">${k(c)}</text>`);
+  const pk=cs.indexOf(cmax);
+  const bars=pts.map((p,j)=>`<rect x="${(X(j)-cw*.36).toFixed(1)}" y="${YC(p.c).toFixed(1)}" width="${(cw*.72).toFixed(1)}" height="${(T+H-YC(p.c)).toFixed(1)}" fill="currentColor" opacity="${j===pk?.42:.24}"/>`).join('')+`<text x="${X(pk)}" y="${YC(cmax)-3}" font-size="10" text-anchor="middle" fill="currentColor" opacity=".8">¥${k(cmax)}</text>`;
+  const every=cw<22?2:1,ev2=cw<14?3:every;
+  const xt=pts.map((p,j)=>(j%ev2===0||j===m-1)?`<text x="${X(j)}" y="${T+H+13}" font-size="10" text-anchor="middle" fill="currentColor" opacity=".7">${p.d}</text>`:'').join('');
+  const path=key=>{let d='',pen=false;pts.forEach((p,j)=>{if(p[key]==null){pen=false;return}d+=(pen?'L':'M')+X(j).toFixed(1)+' '+Y(p[key]).toFixed(1);pen=true});return d};
+  const lab=pts.map((p,j)=>p.v==null?'':`<circle cx="${X(j).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="3" fill="var(--meter)"/>${(j%every===0||j===n-1)?`<text x="${X(j).toFixed(1)}" y="${(Y(p.v)-6).toFixed(1)}" font-size="10" font-weight="600" text-anchor="middle" fill="currentColor">${Math.round(p.v)}</text>`:''}`).join('');
+  // 同不同向：激活够的天里，每天消耗和次留的相关系数
+  const q=pts.filter(p=>p.v!=null);let trend='';
+  if(q.length>=4){const mc=q.reduce((s,p)=>s+p.c,0)/q.length,mv=q.reduce((s,p)=>s+p.v,0)/q.length;let sxy=0,sx=0,sy=0;q.forEach(p=>{sxy+=(p.c-mc)*(p.v-mv);sx+=(p.c-mc)**2;sy+=(p.v-mv)**2});const r=sx&&sy?sxy/Math.sqrt(sx*sy):0;
+    trend=r>=.3?`同向：花得多的那几天，次留也高（相关 ${r.toFixed(2)}）`:r<=-.3?`反向：花得多的那几天，次留反而低，放量买到的人留得差（相关 ${r.toFixed(2)}）`:`看不出同向还是反向（相关 ${r.toFixed(2)}）`}
+  else trend=`激活够 ${HMIN} 的天不到 4 天，看不出同不同向`;
+  const skip=pts.filter((p,j)=>j<n&&p.a>0&&p.v==null).length;
+  return `<b>${esc(x[0])}</b><span class="tl">${pts[0].d}–${pts[n].d}：灰柱是每天消耗（右轴），蓝线和点上的数字是当天激活的次留（左轴），虚线是大盘次留；最新一天次留没回传完不画</span><svg width="${W}" height="${T+H+18}" viewBox="0 0 ${W} ${T+H+18}">${g}${bars}<path d="${path('b')}" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity=".6"/><path d="${path('v')}" fill="none" stroke="var(--meter)" stroke-width="2"/>${lab}${xt}</svg><span class="tl">共 ${money(x[3])}，峰值 ${money(cmax)}（${pts[pk].d}），最近一天 ${money(cs[n])}；合计次留 ${hRate(x)==null?'·':hRate(x).toFixed(1)+'%'}${skip?`；${skip} 天激活不到 ${HMIN} 没画次留`:''}</span><span class="tl" style="opacity:1;font-weight:600">${trend}</span>`;
+}
 function costCard(x){
   const[o,cs]=x[11],W=Math.max(220,Math.min(420,cs.length*14)),H=96,mx=Math.max(1,...cs),bw=W/cs.length;
   const pk=cs.indexOf(Math.max(...cs));
@@ -508,7 +532,7 @@ function rateCard(x){
   const skip=pts.filter(p=>p.a>0&&p.v==null).length,lb=pts.filter(p=>p.b!=null).pop();
   return `<b>${esc(x[0])}</b><span class="tl">每天激活的次留（%），${pts[0].d}–${pts[n-1].d}，点上的数字是当天次留；最新一天没回传完不画</span><svg width="${W}" height="${T+H+18}" viewBox="0 0 ${W} ${T+H+18}">${g}<path d="${path('b')}" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity=".6"/><path d="${path('v')}" fill="none" stroke="var(--meter)" stroke-width="2"/>${lab}${xt}</svg><span class="tl"><i class="lg s"></i>这条素材，合计 ${hRate(x).toFixed(1)}%　<i class="lg d"></i>大盘${lb?`，最近一天 ${lb.b.toFixed(1)}%`:''}${skip?`；${skip} 天激活不到 ${HMIN} 没画`:''}</span>`;
 }
-function htShow(el,cx,cy){const i=el.dataset.hc??el.dataset.hr,x=HR[+i];if(!x)return;HT.innerHTML=el.dataset.hc!=null?costCard(x):rateCard(x);HT.hidden=false;
+function htShow(el,cx,cy){const i=el.dataset.hc??el.dataset.hr,x=HR[+i];if(!x)return;HT.innerHTML=comboCard(x);HT.hidden=false;
   const w=HT.offsetWidth,h=HT.offsetHeight;HT.style.left=Math.max(8,Math.min(innerWidth-w-8,cx+12))+'px';HT.style.top=(cy-h-10>=8?cy-h-10:Math.min(innerHeight-h-8,cy+16))+'px'}
 HD.addEventListener('mousemove',ev=>{const el=ev.target.closest('[data-hc],[data-hr]');if(el)htShow(el,ev.clientX,ev.clientY);else HT.hidden=true});
 HD.addEventListener('focusin',ev=>{const el=ev.target.closest('[data-hc],[data-hr]');if(el){const r=el.getBoundingClientRect();htShow(el,r.left,r.bottom)}});
