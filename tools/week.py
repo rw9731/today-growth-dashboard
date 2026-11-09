@@ -279,6 +279,10 @@ def main():
                    'n_new': len(nw), 'n_new_run': sum(1 for i in nw if week_spend[i] >= WTH['run']),
                    'n_new_top': len(nw & good_ids), 'new_spend': sum(week_spend[i] for i in nw), 'p_n_new': len(np_)})
     kt.sort(key=lambda x: -x['spend'])
+    if not any(k['kind'] == C.ZJH_NAME for k in kt):
+        # 唯西自建号一直列出来（Reina 11/9），这周没花钱也留一行
+        kt.append({'kind': C.ZJH_NAME, 'share': 0.0, 'spend': 0.0, 'act_r': 0, 'rate': None, 'cpr': None, 'act3': 0, 'rate3': None, 'cpr3': None,
+                   'n_run': 0, 'n_new': 0, 'n_new_run': 0, 'n_new_top': 0, 'new_spend': 0.0, 'p_n_new': 0})
 
     # 按天上新（按渠道）
     prod = []

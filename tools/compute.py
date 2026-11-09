@@ -60,12 +60,18 @@ def pick_video(lk, now=None):
 
 GAIFA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gaifa.json')
 GAIFA = json.load(open(GAIFA_PATH)) if os.path.exists(GAIFA_PATH) else {}
+ZJH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zijianhao.json')
+ZJH = (json.load(open(ZJH_PATH)).get('ids') or {}) if os.path.exists(ZJH_PATH) else {}
+ZJH_NAME = '唯西自建号'
 
 
 def kind_of(src, track, name, mid=None, kl=True):
-    """素材类型 = 来源 · 改法（原片 / 只剪辑 / 换开头 / 全片重配 / AI 重拍）。
+    """素材类型 = 来源 · 改法（原片 / 只剪辑 / 换开头 / 全片重配 / AI 重拍）；唯西自建号单独一类。
     改法以 tools/gaifa.json（对过字幕的）为准；没对过的二剪写「二剪（未核对）」。kl=True 时名字里有「扩量」再加「· 扩量」。"""
     src, track, name = (src or '').strip(), (track or '').strip(), name or ''
+    if (mid and mid in ZJH) or src in (ZJH_NAME, '自建号'):
+        # 唯西自建号（Reina 11/9）：视频挂在星广任务里，来源会写星广，按 tools/zijianhao.json 的素材ID 单独算一类
+        return ZJH_NAME
     if src == 'AIGC' or 'AI短剧' in track:
         base = 'AI 短剧'
         dft = 'AI 重拍' if '照真人' in name else ('改法未核对' if '扩量' in name else '原片')
@@ -588,6 +594,10 @@ def main():
                    'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if kind_id.get(m['id']) == k)})
         kt[-1].update(kind_3.get(k, NO3))
     kt.sort(key=lambda x: -x['cost27'])
+    if not any(k['kind'] == ZJH_NAME for k in kt):
+        # 唯西自建号一直列出来（Reina 11/9），没花钱时写「还没消耗」
+        kt.append({'kind': ZJH_NAME, 'status': '还没消耗', 'n27': 0, 'cost27': 0.0, 'share27': 0.0, 'cost26': 0.0, 'act27': 0,
+                   'cost_w': 0.0, 'act_w': 0, 'rate': None, 'cpr': None, 'n_good': 0, **NO3})
 
     # 单日上线批次
     tot = {d: S(R, d, 'cost') for d in D}
