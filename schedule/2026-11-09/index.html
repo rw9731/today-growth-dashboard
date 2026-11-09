@@ -59,7 +59,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 .st b{font-weight:600}
 .st small{color:inherit;font-size:11px;display:block;line-height:1.2}
 .st .q{color:var(--mute)}
-.st b.good,.st small.good{color:var(--good)}.st b.bad,.st small.bad{color:var(--bad)}.cnt.hi{color:var(--good)}.cnt.lo{color:var(--bad)}#b tr.grp .ti.help{text-decoration:underline dotted;text-underline-offset:4px;width:fit-content}
+.st b.good,.st small.good{color:var(--good)}.st b.bad,.st small.bad{color:var(--bad)}.st .lt{color:var(--mute)}.st .lt.good{color:color-mix(in srgb,var(--good) 55%,var(--mute))}.st .lt.bad{color:color-mix(in srgb,var(--bad) 55%,var(--mute))}.st small.smp{color:var(--mute);font-size:10px;white-space:nowrap}.cnt.hi{color:var(--good)}.cnt.lo{color:var(--bad)}#b tr.grp .ti.help{text-decoration:underline dotted;text-underline-offset:4px;width:fit-content}
 .good{color:var(--good)}.bad{color:var(--bad)}.short{color:var(--bad);font-weight:600}
 .d{text-align:center;vertical-align:bottom}
 .d.p{min-width:25px;width:25px}
@@ -261,7 +261,7 @@ html,body{margin:0}
 <p class="rev-note" id="pk-note"></p>
 <div class="scroll"><table class="dt" id="pk"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>峰值</th><th>最近 2 天日均</th><th>占峰值</th></tr></thead><tbody></tbody></table></div>
 <details class="more"><summary>规则和口径</summary><div class="rules">
-<p><b>怎么看这张表：</b>消耗到 11/8，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">11/2–7</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的是灰色。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。</p>
+<p><b>怎么看这张表：</b>消耗到 11/8，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">11/2–7</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。</p>
 <p><b>回收：</b>跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。</p>
 <p><b>A、B 组进度：</b>对照唯西排期表。进度条是本周已交占本周排期，竖线是到昨天该交的位置，数字是到昨天实交 / 该交。成片传了、素材名没填全的算交了；B 组扩量排期开始后只按排期行算，脚本表、二剪表不重复算。只算排期行，所以和左边的本周实际产出不是一个数。</p>
 <p><b>要看片：</b>首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。</p>
@@ -325,8 +325,9 @@ function rateCell(r,id){
   if(r.rate==null)return '<td class="st q">·</td>';
   const tid=id||'__all';TR[tid]=r;
   const hp=m=>r.rt?` data-help="tr:${esc(tid)}|${m}" tabindex="0"`:'';
-  if(r.a!=null&&r.a<100)return `<td class="st q"><b class="trend"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small></td>`;
   const c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
+  // 激活不到 100（Reina 11/9）：照样按全盘标浅绿、浅红，再写一行激活数和「样本小」，不再整格灰掉
+  if(r.a!=null&&r.a<100)return `<td class="st"><b class="trend lt ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend lt ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small><small class="smp">样本小 ${r.a}</small></td>`;
   return `<td class="st"><b class="trend ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small></td>`;
 }
 const tagOf=(x,gi)=>x.tag==='减'&&gi<2?'持平':x.tag;
@@ -475,7 +476,7 @@ const upLines=t=>{const u=P.TIER.up,r=P.T.rate-u.gap;return [
  `次留 ${t.rate}%（要 ≥${r.toFixed(1)}%）${mark(t.rate!=null&&t.rate>=r)}`,
  `成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${P.T.cpr+3}）${mark(t.cpr!=null&&t.cpr<=P.T.cpr+3)}`].join('<br>')};
 const HELP={y:yHelp,
- ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 灰色是激活不到 100 个，样本太小，高低都不算数。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
+ ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 激活不到 100 个的照样按这两条标，但颜色浅一些，下面写着「样本小」和激活数：样本太小，只当参考，不拿来定档和下结论。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
  g:i=>{const u=P.TIER.up,n=P.TIER.inn;return [
   `<b>能放量 + 留存好</b>：钱花得出去，留存不比全盘差，新素材接得上。这几条都够才进：<br>· 近 7 天占全盘 ≥${u.sh}%<br>· 7 天里至少 ${u.d5} 天占当天全盘 ≥3%<br>· 最大一条不超过这个方向 7 天消耗的 ${u.top}%<br>· 最近 7 天至少 ${u.nb} 个上线日有新素材跑起来（第二天比当天大盘平均每条花得多）<br>· 次留 ≥全盘 −${u.gap} 个点，成本不比全盘贵 ¥3 以上<br><br>档位每周周报改一次，不跟单日或一批素材变。连续两周不够才降。近 7 天次留低于全盘 ${u.gap} 个点以上、成本贵 ¥3 以上（激活 ≥${n.act}），或占比掉到 ${P.TIER.risk_sh}% 以下的，名字旁标「危险」。把鼠标放到某个 use case 名字上，看它现在够不够。`,
   `<b>跑量少 + 留存好</b>：量还没起来，但留存明显好，值得多给产能去测能不能放量。这几条都够才进：<br>· 最近 7 天或 14 天激活 ≥${n.act}<br>· 次留比同样这些天的全盘高 ${n.gap} 个点以上<br>· 成本不比全盘贵 ¥3 以上<br><br>连续两周次留低于同日全盘 ${u.gap} 个点以上，或成本比全盘贵 ¥3 以上，回探索。近 7 天已经碰到这条线的（激活 ≥${n.act}），名字旁标「危险」。升到能放量 + 留存好的条件，看上面那一档的说明，或把鼠标放到 use case 名字上。`,
