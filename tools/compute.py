@@ -85,6 +85,33 @@ def kind_of(src, track, name, mid=None, kl=True):
     return k + (' · 扩量' if kl and '扩量' in name else '')
 
 
+def up_day(i):
+    """素材ID 里带的上传时间（右移 32 位是 unix 秒），按北京时间取日期。"""
+    try:
+        return (dt.datetime.utcfromtimestamp(int(i) >> 32) + dt.timedelta(hours=8)).date().isoformat()
+    except (ValueError, OverflowError, OSError):
+        return ''
+
+
+def up_time(i):
+    try:
+        return (dt.datetime.utcfromtimestamp(int(i) >> 32) + dt.timedelta(hours=8)).strftime('%Y-%m-%d %H:%M')
+    except (ValueError, OverflowError, OSError):
+        return ''
+
+
+def made_day(name):
+    """素材名最后的日期当制作日（20261106 或 261106）；没有就空。"""
+    m = re.findall(r'(?<!\d)(20\d{6}|2[5-9]\d{4})(?!\d)', name or '')
+    if not m:
+        return ''
+    x = m[-1] if len(m[-1]) == 8 else '20' + m[-1]
+    try:
+        return dt.date(int(x[:4]), int(x[4:6]), int(x[6:])).isoformat()
+    except ValueError:
+        return ''
+
+
 def base_name(n):
     n = re.sub(r'^推送视频_', '', n.strip())
     n = re.sub(r'\s*\(\d+\)$', '', n)
@@ -324,6 +351,7 @@ def main():
     ap.add_argument('--date', required=True)
     ap.add_argument('--out', required=True)
     ap.add_argument('--linklib', help="get_values dump of '素材链接库'!A1:D (optional preview links)")
+    ap.add_argument('--uploads', help='up_js.py 读出来的巨量当天上传清单（默认 notes/uploads-D.json），用来补上没花钱的新素材')
     a = ap.parse_args()
 
     Dd = dt.date.fromisoformat(a.date)
@@ -571,21 +599,44 @@ def main():
     for m in mat:
         m.update(streak.get(m['id'], {}))
 
-    # 昨天上新：D 第一次有消耗的全部素材，不设消耗门槛（Reina 11/9）
+    # 昨天上新 = D 上传到巨量的全部素材（Reina 11/9 改成按上传算，团队要看 制作 -> 上传 -> 消耗）。
+    # 上传时间取素材ID 里带的时间；没花钱的素材投放表里没有，从巨量素材库清单（notes/uploads-D.json）补。
+    up_path = a.uploads or os.path.join(os.path.dirname(HERE), 'notes', f'uploads-{D[3]}.json')
+    upl = json.load(open(up_path)) if os.path.exists(up_path) else None
+    rows_by_id = defaultdict(list)
+    for r in allrows:
+        if r['date'] <= D[3]:
+            rows_by_id[r['id']].append(r)
+    U = {i for i in rows_by_id if up_day(i) == D[3]} | set((upl or {}).get('items', {}))
     newd = []
-    for i, rs in by_id.items():
-        if first.get(i) != D[3]:
-            continue
+    for i in U:
+        rs = rows_by_id.get(i, [])
+        name = names.get(i) or (upl or {}).get('items', {}).get(i, i)
         rd = [r for r in rs if r['date'] == D[3]]
         lk = links.get(i, {})
         ltype = lk.get('type', '')
         link = '' if ltype == '预览' else lk.get('link', '')
-        uc = rs[0]['uc']
-        newd.append({'id': i, 'name': names.get(i, i), 'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i), i),
-                     'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'l1': rs[0]['l1'],
+        if rs:
+            uc, l1, src, track = rs[0]['uc'], rs[0]['l1'], rs[0]['src'], rs[0]['track']
+        else:
+            mu = [c for c in re.findall(r'(?<![A-Z])([A-Z]{2}\d{2})(?!\d)', name) if c in ucs]
+            uc = mu[0] if mu else '库外'
+            l1 = ucs.get(uc, {}).get('l1', '')
+            low = name.lower().replace('_', ' ')
+            src = 'KOC' if 'today koc' in low or 'todaykoc' in low else 'KOL' if 'today kol' in low or 'todaykol' in low else 'AIGC'
+            track = ''
+        newd.append({'id': i, 'name': name, 'kind': kind_of(src, track, name, i), 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'l1': l1,
+                     'made': made_day(name), 'up': up_time(i), 'first': first.get(i, ''),
                      'cost27': sum(r['cost'] for r in rd), 'act27': sum(r['act'] for r in rd),
-                     'ios': sum(r['cost'] for r in rd if r['platform'] == 'iOS'),
                      'link': link, 'link_type': ltype if link else '', 'video': pick_video(lk)})
+    # 之前上传、D 才第一次花钱的，只在汇总里按上传日数一下
+    early = defaultdict(lambda: [0, 0.0])
+    for i, f in first.items():
+        if f == D[3] and up_day(i) < D[3]:
+            e = early[up_day(i)]
+            e[0] += 1
+            e[1] += sum(r['cost'] for r in rows_by_id[i] if r['date'] == D[3])
+    newd_meta = {'uploads': bool(upl), 'up_n': (upl or {}).get('n'), 'early': [{'up': d, 'n': n, 'cost27': c} for d, (n, c) in sorted(early.items())]}
     # 没找到视频的「推送视频_X」用同一条成片 X 的视频（推送是同一个视频换了素材 ID）
     strip = lambda n: re.sub(r'_20\d{6}$', '', n.replace('推送视频_', '', 1)).strip()
     by_strip = defaultdict(list)
@@ -599,7 +650,7 @@ def main():
             if j != m['id'] and v:
                 m['video'] = v
                 break
-    newd.sort(key=lambda x: -x['cost27'])
+    newd.sort(key=lambda x: (-x['cost27'], x['up']))
 
     # 素材类型
     kind_id = {}
@@ -688,13 +739,13 @@ def main():
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd,
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta],
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
-                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl), 'new_D': len(newd),
+                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl), 'new_D': len(newd), 'new_D_spent': sum(1 for m in newd if m['first']), 'uploads_file': bool(upl),
                       'uc_lib_check': '',
                       'uc_banned': [k for k, v in ucs.items() if any(w in v.get('short', '') for w in ucs.get('_meta', {}).get('banned', []))]}, ensure_ascii=False))
 
