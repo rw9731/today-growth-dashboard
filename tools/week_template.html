@@ -197,12 +197,6 @@
         <tbody data-draw="top-rows"></tbody>
       </table>
     </div>
-    <div class="lx-kl-wrap" id="angles" data-draw="angwrap" hidden>
-      <h3 class="lx-h3">扩量角度建议</h3>
-      <p class="lx-note">能放量或次留好的 use case，接着往没拍过的人群和时刻拓。选角度看三点：<b>人够多</b>（大多数人都会遇到，不限某个职业）；<b>有明天回来的理由</b>（天天或每周都有）；<b>下载当天就能演出片里那一下</b>。下面是方向，开头和拍法可以自己发挥。占 = {{LABEL}} 周消耗占比，次留率和次留成本看 {{WRET}} 激活。</p>
-      <p class="lx-note" data-draw="ang-forms"></p>
-      <div class="lx-ang" data-draw="angrows"></div>
-    </div>
     <h3 class="lx-h3">拖后腿的素材</h3>
     <p class="lx-note"><b>次留差</b> = 激活 50 以上，次留率低于全盘 85%，或次留成本超过全盘 1.2 倍。按「多花的钱」排：这条的次留如果按全盘次留成本买，能省下多少。</p>
     <div class="lx-card lx-scroll">
@@ -638,37 +632,6 @@
 
   fill('patterns', (box) => drawPatterns(box, one('patterns'), rw, cw));
   // 五、总结和 to-do（notes/week-<周一>.json）
-  // 扩量角度建议
-  fill('angrows', (box) => {
-    const A = (one('notes') || {}).angles || [];
-    if (!A.length) return;
-    document.querySelector('[data-draw="angwrap"]').hidden = false;
-    const uc = new Map(data('uc').map((u) => [u.uc, u]));
-    const SUP = {ai: 'AI', ec: '二创', yp: '原片'};
-    const pat = (one('patterns') || {}).dims || [];
-    const line = (key) => { const d = pat.find((x) => x.key === key); if (!d) return ''; return d.groups.filter((g) => g.n >= 5 && g.v !== '其他').sort((a, b) => b.rate - a.rate).map((g) => g.v + ' ' + g.n + ' 条 ' + d3.format('.1%')(g.rate) + '、¥' + d3.format(',.0f')(g.cpr)).join('；'); };
-    const fm = line('form'), hk = line('hook_type');
-    if (fm || hk) fill('ang-forms', (p) => { p.textContent = '素材类型：' + (fm ? '形式 ' + fm + '。' : '') + (hk ? '开头 ' + hk + '。' : '') + '只比相对高低。'; });
-    for (const a of A) {
-      const u = uc.get(a.uc) || {};
-      const div = document.createElement('div'); div.className = 'lx-ang-item';
-      const h = document.createElement('h4'); h.textContent = a.uc + ' ' + (u.short || ''); div.appendChild(h);
-      const nums = document.createElement('div'); nums.className = 'nums';
-      const sup = Object.entries(u.ch || {}).filter(([, c]) => (c.act_r || 0) >= 100 && c.rate != null).map(([k, c]) => SUP[k] + ' ' + d3.format('.1%')(c.rate) + '、¥' + d3.format(',.0f')(c.cpr)).join('；');
-      nums.innerHTML = '占 <b>' + d3.format('.0%')(u.share || 0) + '</b>，' + (u.rate == null ? '激活太少，次留还看不出' : '次留率 <b>' + d3.format('.1%')(u.rate) + '</b>，次留成本 <b>¥' + d3.format(',.0f')(u.cpr) + '</b>') + (sup ? '。按供给：' + sup : '');
-      div.appendChild(nums);
-      for (const [lab, txt] of [['判断：', a.why], ['已拍过：', a.shot]]) { if (!txt) continue; const p = document.createElement('div'); const b = document.createElement('span'); b.className = 'k'; b.textContent = lab; p.append(b, document.createTextNode(txt)); div.appendChild(p); }
-      const ol = document.createElement('ol');
-      for (const it of a.items || []) {
-        const li = document.createElement('li'); const b = document.createElement('b'); b.textContent = it.s; li.appendChild(b);
-        li.append((it.sup ? '（' + it.sup + '）' : '') + (it.d ? '：' + it.d : '') + ' ');
-        const tag = document.createElement('span'); tag.className = 'lx-ang-tag' + (it.sched ? '' : ' new'); tag.textContent = it.sched ? '已排 ' + it.sched : '还没排'; li.appendChild(tag);
-        ol.appendChild(li);
-      }
-      const k = document.createElement('div'); k.className = 'k'; k.textContent = '还能拍：'; div.append(k, ol);
-      box.appendChild(div);
-    }
-  });
 
   const list = (name, items, who) => fill(name, (ol) => {
     if (!items || !items.length) { const li = document.createElement('li'); li.className = 'muted'; li.textContent = '这周没有。'; ol.appendChild(li); return; }

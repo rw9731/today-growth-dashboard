@@ -93,8 +93,6 @@ def main():
         if bad:
             sys.exit('notes 不合格：\n' + '\n'.join(bad))
     res['notes'] = [uc_names(plain(json.load(open(notes_path))), names)] if os.path.exists(notes_path) else [{}]
-    if meta['week'] >= '2026-11-02' and not res['notes'][0].get('angles'):
-        print('WARNING notes 里没有 angles：扩量角度建议每周都要写，见 tools/RUN.md「扩量角度建议」（Reina 11/3）')
     daily = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     style = re.search(r'<style>\n(.*?)</style>', daily, re.S).group(1)
     tpl = open(os.path.join(ROOT, 'tools', 'week_template.html')).read()

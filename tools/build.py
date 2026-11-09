@@ -63,8 +63,6 @@ def main():
         txt = txt.replace(name, '')
     if '重排' in txt:
         print('WARNING notes 里有「重排」：除素材原名和字幕原话外不要写这个词（Reina 11/3）')
-    if meta['date'] >= '2026-11-03' and not res['plan'][0].get('angles'):
-        print('WARNING notes 里没有 angles：扩量角度建议每天都要写，见 tools/RUN.md「扩量角度建议」（Reina 11/3）')
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)
