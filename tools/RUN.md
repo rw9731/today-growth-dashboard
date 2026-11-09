@@ -215,3 +215,8 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - 每条：先 `__v.start('thumbs', 链接, [0.5,3,6,10,15,20,30,40,50], '标签')` 看整画面（字幕在多高、形式、Today 第几秒出现）；再 `__v.start('script', 链接, '标签', step, y0, y1, 3)` 读全片字幕，y0、y1 按字幕高度取，字幕一秒一换的 step 用 1；截图只有约 750 像素高，画布更高就 `__v.page(1)`、`__v.page(2)` 每次下翻 700 像素再截。链接用 `__jl.res[ID].u`，没有就用 todo.json 的 video_permanent。
 - note 里写看到的问题：字幕打码、「审核」「DEMO」「样片」或平台水印（第几秒）、Today 界面露出 bug 或内部字样、App 名不是 Today、隐私露出、素材名和内容对不上、活动口径（永久免费、送 Token、Pro 权益）。
 - 做完 resize_window preset desktop，关掉自己的 tab。
+
+
+## 悬浮目录（Reina 11/9：所有页面都要有）
+
+日报模板 tools/template.html 自带目录（id="toc"）。周报、排期、专题页用 tools/toc_snippet.html（id="gtoc"，按页面 h2 自动生成），已经插进 tools/week_template.html、tools/schedule_template.html 和现有页面；新做的专题页或别的手写页面跑一次 `python3 tools/add_toc.py <页面>`。改目录样式改 toc_snippet.html 后，再对所有页面跑 add_toc.py 换成新版。

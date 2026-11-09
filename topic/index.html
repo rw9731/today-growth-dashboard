@@ -63,5 +63,59 @@
     <li><span class="d">11/6</span><a href="2026-11-06-weekday-weekend/">周中和周末：整体次留、一级分类和 use case 的占比与次留、新素材节奏</a><p>安卓 10/14–11/5。最近几周周中和周末的整体次留对比；按周拆周中、周末的消耗占比；每条素材和自己比、扣掉上新天数、剔掉极端素材后，哪些方向周中或周末更好；每段新开始消耗的素材条数。</p></li>
   </ul>
 </div>
+<!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
+<style id="gtoc-style">
+  .gtoc-anchor { scroll-margin-top: 12px; }
+  #gtoc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20; box-sizing: border-box;
+    background: var(--color-panel, #fff); color: var(--color-fg, #1f1f1d); border: 1px solid var(--color-border-line, #e4e2dc); border-radius: 12px; padding: 10px 8px; font-size: 13px; }
+  #gtoc[hidden], #gtoc-btn[hidden] { display: none !important; }
+  #gtoc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted, #6b6a66); font-weight: 600; }
+  #gtoc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  #gtoc a { display: block; padding: 5px 8px; border-radius: 8px; color: inherit; text-decoration: none; line-height: 1.35; }
+  #gtoc a.sub { padding-left: 18px; color: var(--color-fg-muted, #6b6a66); }
+  #gtoc a:hover { background: var(--color-bg, #f7f6f2); }
+  #gtoc a[aria-current="true"] { background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); font-weight: 600; }
+  #gtoc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { body.gtoc-on .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { #gtoc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    #gtoc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    #gtoc.open { display: block; }
+    #gtoc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line, #e4e2dc); background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { #gtoc, #gtoc-btn { display: none !important; } body.gtoc-on .wrap { margin-left: auto !important; } }
+</style>
+<nav id="gtoc" aria-label="目录" hidden><h4>目录</h4><ol></ol></nav>
+<button id="gtoc-btn" type="button" aria-controls="gtoc" aria-expanded="false" hidden>目录</button>
+<script id="gtoc-script">
+addEventListener('load', () => {
+  const toc = document.getElementById('gtoc'), ol = toc.querySelector('ol'), btn = document.getElementById('gtoc-btn');
+  const root = document.querySelector('.wrap') || document.body;
+  const visible = (el) => !el.closest('[hidden]') && el.getClientRects().length > 0;
+  const heads = [...root.querySelectorAll('h2')].filter(visible);
+  if (heads.length < 2) return;
+  const items = [];
+  const top = document.querySelector('h1');
+  if (top) { if (!top.id) top.id = 'top'; top.classList.add('gtoc-anchor'); items.push([top, '总览', false]); }
+  let group = '';
+  const seen = {};
+  heads.forEach((h, i) => {
+    const t = h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim();
+    if (h.classList.contains('sec')) group = t;
+    if (!h.id) h.id = 'sec-' + (i + 1);
+    h.classList.add('gtoc-anchor');
+    seen[t] = (seen[t] || 0) + 1;
+    const dup = heads.filter((x) => x.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim() === t).length > 1;
+    items.push([h, dup && group && !h.classList.contains('sec') ? t + '（' + group + '）' : t, !!group && !h.classList.contains('sec')]);
+  });
+  const links = items.map(([el, t, sub]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + el.id; a.textContent = t; if (sub) a.className = 'sub'; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.hidden = false; btn.hidden = false; document.body.classList.add('gtoc-on');
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const mark = () => { let k = 0; items.forEach(([el], i) => { if (el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
 </body>
 </html>

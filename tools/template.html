@@ -757,6 +757,7 @@
 
   // 昨天上新的素材（Reina 11/9）
   fill('newd-sum', (el) => {
+    if (!one('newd_meta')) { const sec = document.getElementById('newd'); if (sec) sec.hidden = true; return; }
     const rows = data('newd'), nm = one('newd_meta') || {};
     const md = (d) => +d.slice(5, 7) + '/' + +d.slice(8, 10);
     if (!rows.length) { el.textContent = '{{D}} 没有新上传的素材。'; return; }

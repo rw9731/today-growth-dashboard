@@ -128,7 +128,7 @@
   .lx-ang-tag.new { border-color: var(--bar); color: var(--bar); }
   .lx-links a + a { margin-left: 6px; }
   .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
-  /* 七、核心 insight 和下一步 */
+  /* 八、核心 insight 和下一步 */
   :root { --t1: var(--color-ok); --t2: var(--bar); --t3: var(--color-warn); --t0: var(--cds-chart-reference); }
   .lx-jump { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--bar); text-decoration: none; }
   .lx-jump:hover { text-decoration: underline; }
@@ -192,9 +192,30 @@
   .sc-pat td { padding: 3px 4px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
   .sc-pat td.num { text-align: right; }
   .sc-pat .small td { color: var(--color-fg-muted); }
+  /* 左侧目录（Reina 11/9） */
+  .lx-sec, .lx-kpis, #top { scroll-margin-top: 12px; }
+  .lx-toc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20;
+    background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 12px; padding: 10px 8px; font-size: 13px; box-sizing: border-box; }
+  .lx-toc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted); font-weight: 600; }
+  .lx-toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  .lx-toc a { display: block; padding: 5px 8px; border-radius: 8px; color: var(--color-fg); text-decoration: none; line-height: 1.35; }
+  .lx-toc a:hover { background: var(--color-bg); }
+  .lx-toc a[aria-current="true"] { background: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-toc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { .has-toc .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { .lx-toc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    .lx-toc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    .lx-toc.open { display: block; }
+    .lx-toc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line); background: var(--color-fg); color: var(--color-bg); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { .lx-toc, .lx-toc-btn { display: none !important; } .wrap { margin-left: auto !important; } }
 </style>
 </head>
-<body>
+<body class="has-toc">
+<nav class="lx-toc" id="toc" aria-label="目录"><h4>目录</h4><ol></ol></nav>
+<button class="lx-toc-btn" id="toc-btn" type="button" aria-controls="toc" aria-expanded="false">目录</button>
 <div class="wrap">
 <div class="lx">
   <header class="lx-head">
@@ -336,7 +357,7 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 前天或昨天才开始花，次留两格先空着。绿底 = 本周（10/26 起）上线。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（10/26 起）。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -345,7 +366,7 @@
             <th>判差<span class="th-sub">连续第几天</span></th>
             <th>素材</th>
             <th>素材类型</th>
-            <th>上线<span class="th-sub">第一天有消耗</span></th>
+            <th>首次消耗<span class="th-sub">按首次消耗日期</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">10/27（按这列排）</span></th>
             <th>最近 7 天消耗<span class="th-sub">深色是 10/27，每行按自己最高那天</span></th>
@@ -371,8 +392,33 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="newd">
+    <h2 class="lx-h2">五、昨天上新的素材（按上传日期）</h2>
+    <p class="lx-note"><span data-draw="newd-sum"></span></p>
+    <p class="lx-note">这一节按上传日期算，其他几节的「新上线」「首次消耗」「批次」都按首次消耗日期。<b>上传</b> = 素材ID 里带的时间（第一次传到巨量）；<b>制作</b> = 素材名最后的日期；<b>第一次消耗</b> = 投放表里第一天有消耗。没花钱的素材从巨量素材库常用的 3 个账户里补，星图、星广的素材可能不全。按昨天消耗排，次留要 10/28 才有，之后在四、七里看。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>素材</th>
+            <th>素材类型</th>
+            <th>Use case</th>
+            <th>制作</th>
+            <th>上传</th>
+            <th>第一次消耗</th>
+            <th>消耗<span class="th-sub">10/27（按这列排）</span></th>
+            <th class="num">激活<span class="th-sub">10/27</span></th>
+            <th class="num">激活成本<span class="th-sub">10/27</span></th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="newdrows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="bad">
-    <h2 class="lx-h2">五、拖后腿的素材</h2>
+    <h2 class="lx-h2">六、拖后腿的素材</h2>
     <h3 class="lx-h3">判差 3 天以上还在花<span class="lx-note" style="margin-left:8px;font-weight:400" data-draw="stuck-sum"></span></h3>
     <p class="lx-note">判差 = 最近 3 个激活日合计至少 50 人，且次留率低于同期全盘的 80%，或次留成本高于同期全盘的 1.25 倍。周一激活的人周三上午才看得到次留，所以第 1 天从看得到那天上午算；第 1、2 天常有翻回来的，不算拖，第 3 天起还花 ¥200 以上列在这里。判差后多花 = 第一次判差那天到昨天的消耗。这里只看消耗，看不到开关状态：掉量可能是关了，也可能是系统不跑了。</p>
     <div class="lx-card lx-scroll">
@@ -382,7 +428,7 @@
       </table>
     </div>
     <h3 class="lx-h3">拖后腿的素材</h3>
-    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 本周新素材。</p>
+    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 首次消耗在本周。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -390,7 +436,7 @@
             <th>标签</th>
             <th>素材</th>
             <th>素材类型</th>
-            <th>上线<span class="th-sub">第一天有消耗</span></th>
+            <th>首次消耗<span class="th-sub">按首次消耗日期</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">10/27（按这列排）</span></th>
             <th>最近 7 天消耗<span class="th-sub">深色是 10/27，每行按自己最高那天</span></th>
@@ -412,13 +458,13 @@
   </section>
 
   <section class="lx-sec" id="cohort">
-    <h2 class="lx-h2">六、昨天的钱花在哪批素材上</h2>
-    <p class="lx-note">按素材第一天花钱的日期分批，一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没上线。</p>
+    <h2 class="lx-h2">七、昨天的钱花在哪批素材上（按首次消耗分批）</h2>
+    <p class="lx-note">按首次消耗日期分批（不是上传日期），一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没开始花。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
-            <th>上线日<span class="th-sub">第一天有消耗</span></th>
+            <th>首次消耗日<span class="th-sub">按首次消耗日期</span></th>
             <th class="num">在跑素材<span class="th-sub">10/27</span></th>
             <th>消耗<span class="th-sub">10/27</span></th>
             <th class="num">激活成本<span class="th-sub">10/27</span></th>
@@ -426,7 +472,7 @@
             <th class="num">消耗占比<span class="th-sub">10/26</span></th>
             <th class="num">消耗占比<span class="th-sub">10/25</span></th>
             <th class="num">消耗占比<span class="th-sub">10/24</span></th>
-            <th class="num">次留率<span class="th-sub">10/26 激活（各批统一比这天，10/27 上线的明天才有）</span></th>
+            <th class="num">次留率<span class="th-sub">10/26 激活（各批统一比这天，10/27 首次消耗的明天才有）</span></th>
             <th class="num">次留成本<span class="th-sub">10/26</span></th>
           </tr>
         </thead>
@@ -436,7 +482,7 @@
   </section>
 
   <section class="lx-sec" id="plan" hidden>
-    <h2 class="lx-h2">七、核心 insight 和下一步</h2>
+    <h2 class="lx-h2">八、核心 insight 和下一步</h2>
     <p class="pl-headline" data-draw="pl-headline" hidden></p>
     <div class="pl-quad4">
       <div class="pl-blk" style="--bc:var(--color-fg)"><h3>全局 insight<span>整盘看，钱和次留在往哪走</span></h3><ol data-draw="pl-global"></ol></div>
@@ -709,6 +755,45 @@
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
   matTable('badrows', (v) => /次留差/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''), 'spark');
 
+  // 昨天上新的素材（Reina 11/9）
+  fill('newd-sum', (el) => {
+    if (!one('newd_meta')) { const sec = document.getElementById('newd'); if (sec) sec.hidden = true; return; }
+    const rows = data('newd'), nm = one('newd_meta') || {};
+    const md = (d) => +d.slice(5, 7) + '/' + +d.slice(8, 10);
+    if (!rows.length) { el.textContent = '10/27 没有新上传的素材。'; return; }
+    const spent = rows.filter((r) => r.first), c = d3.sum(rows, (r) => r.cost27);
+    const by = d3.rollups(rows, (v) => v.length, (r) => (r.kind || '').split(' · ')[0]).sort((a, b) => b[1] - a[1]);
+    let h = '10/27 上传到巨量 <b>' + rows.length + '</b> 条（' + by.map(([k, n]) => k + ' ' + n).join('、') + '），已有消耗 <b>' + spent.length + '</b> 条，昨天合计 <b>' + fmtY(c) + '</b>，占全盘 <b>' + fmtP0(c / (o.cost27 || 1)) + '</b>';
+    h += rows.length > spent.length ? '；还没消耗 <b>' + (rows.length - spent.length) + '</b> 条。' : '。';
+    const e = nm.early || [];
+    if (e.length) h += '另有 <b>' + d3.sum(e, (x) => x.n) + '</b> 条是之前上传、昨天才第一次花钱：' + e.map((x) => md(x.up) + ' 上传 ' + x.n + ' 条（' + fmtY(x.cost27) + '）').join('、') + '。';
+    if (!nm.uploads) h += '<b>今天没读到巨量素材库，只列了有消耗的。</b>';
+    el.innerHTML = h;
+  });
+  fill('newdrows', (tb) => {
+    const rows = data('newd'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    if (!rows.length) { const wrap = tb.closest('.lx-card'); if (wrap) wrap.hidden = true; return; }
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      { const nc = td('name'); nc.textContent = r.name; nc.style.whiteSpace = 'normal'; nc.style.minWidth = '12rem'; }
+      { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
+      stack(td(), r.short || r.uc, r.l1);
+      td('date').textContent = r.made ? fmtD(r.made) : '—';
+      { const c = td('date'); c.textContent = r.up ? fmtD(r.up.slice(0, 10)) + ' ' + r.up.slice(11) : '—'; c.style.whiteSpace = 'nowrap'; }
+      { const c = td('date'); if (r.first) c.textContent = fmtD(r.first); else { c.textContent = '还没消耗'; c.style.color = 'var(--color-fg-muted)'; } c.style.whiteSpace = 'nowrap'; }
+      if (r.cost27 > 0) barCell(td(), r.cost27, max, 50); else { const c = td('num muted'); c.textContent = '—'; c.style.textAlign = 'left'; }
+      td('num').textContent = fmtN(r.act27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+      const lc = td('short lx-links');
+      const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
+      const vid = r.video || (r.link_type === '预览' ? r.link : '');
+      if (vid) addLink(vid, '视频');
+      if (r.link && r.link_type !== '预览') addLink(r.link, r.link_type === '原片' ? '原帖' : r.link_type);
+      if (!lc.children.length) { lc.textContent = '巨量和唯西表都没找到 · ID ' + r.id; lc.style.color = 'var(--color-fg-muted)'; lc.style.whiteSpace = 'nowrap'; }
+      tb.appendChild(tr);
+    }
+  });
+
   // 判差 3 天还在花（Reina 11/4 定）
   fill('stuckrows', (tb) => {
     const rows = data('mat').filter((r) => (r.bad_n || 0) >= (t.stuck_n || 3) && r.cost27 >= (t.stuck_cost || 200)).sort((a, b) => b.bad_n - a.bad_n || b.cost27 - a.cost27);
@@ -759,7 +844,7 @@
   });
 
 
-  // 七、核心 insight 和下一步
+  // 八、核心 insight 和下一步
   (() => {
     const ucs = data('plan_uc'), pm = one('plan_meta');
     if (!ucs.length || !pm) return;
@@ -936,5 +1021,19 @@
   });
 </script>
 <script>addEventListener('load', () => document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); }));</script>
+<script>
+// 左侧目录：按页面上显示出来的各节标题生成，点了跳过去，滚动时高亮当前一节（Reina 11/9）
+addEventListener('load', () => {
+  const toc = document.getElementById('toc'), ol = toc.querySelector('ol'), btn = document.getElementById('toc-btn');
+  const items = [['top', '总览']];
+  document.querySelectorAll('section.lx-sec[id]').forEach((s) => { const h = s.querySelector('h2'); if (!s.hidden && h) items.push([s.id, h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim()]); });
+  const links = items.map(([id, t]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + id; a.textContent = t; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const targets = items.map(([id]) => document.getElementById(id));
+  const mark = () => { let k = 0; targets.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
 </body>
 </html>
