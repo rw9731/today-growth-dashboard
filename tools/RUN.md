@@ -60,6 +60,8 @@ compute.py 的 bad_streak 自动算，每条素材写进 bad_n、bad_first、bad
 - 没花钱的素材投放表里没有，要从巨量素材库补：在第 2 步之前跑 `python3 tools/up_js.py --date D --out /tmp/linkjs`，在巨量素材页（同 jl.js 的页面，网址里有 login 就停）用 javascript_tool 跑 up.js 全文，返回的 JSON 原样存成 notes/uploads-D.json（字段 date、hubs、n、items：{素材ID: [名字, is_cost]}；存的时候可以只留 items 的名字），和页面一起提交。compute.py 默认读 notes/uploads-D.json，没有就只列有消耗的，页面上会写「今天没读到巨量素材库」。电脑连不上就跳过，最后回复里说一句。
 - 每条都要有能打开的链接：links_js.py、jl_js.py、relink.py 都把 newd 算进要找链接的素材（没花钱的也算）；唯西日报当天通常还没有这批，靠巨量直取（jl.js）补视频，KOC/KOL 再用原片表补原帖。「推送视频_X」巨量里找不到时，compute.py 用同名成片 X（去掉日期）的视频。build.py 输出「五、昨天上新的素材有 N 条没有链接」时要补完再提交，补不到的写进最后回复。
 - 只读：up.js 只调素材列表接口，不点按钮。
+- 投放账户数和账户跑起来率（Reina 11/9：放日报第五节，不放专题）：在第 2 步之前跑 `python3 tools/acct_js.py --date D --out /tmp/linkjs`，打开 https://business.oceanengine.com/ebp/material/analysis/video?ebpid=1878449164572746（巨量升级版工作台，跳到登录页就停，不输账号密码），用 javascript_tool 跑 acct.js 全文（返回 started），再反复跑 `await __acctWait()` 到 st 是 done；把返回值原样存成 /tmp/linkjs/acct_wait.json，再依次跑 `__acctGet(0)`、`__acctGet(1)`……每次返回值原样存成 /tmp/linkjs/acct_k.json，直到 d 是空字符串；然后 `python3 tools/acct_save.py --date D --wait /tmp/linkjs/acct_wait.json /tmp/linkjs/acct_*.json` 存成 notes/acct-D.json，和页面一起提交。compute.py 默认读这个文件，没有就第五节的投放账户数显示「—」、最近 10 个上传日那张表不出。只调查询接口，不点任何按钮，不点「体验智擎版」。err 里有「只拿到」说明分页没拿全，写进最后回复。
+- 口径：投放账户数 = 该素材有展示的账户数（同一账户多个项目算一个，是被建次数的下限）；账户跑起来 = 在该账户第一次有展示后 3 天内花到 ¥100；账户跑起来率 = 跑起来的账户 ÷ 投放账户，只算上传满 3 天的批次。
 - 之后的拖后腿、批次、核心 insight 依次是六、七、八。
 
 ## 八、核心 insight 和下一步（Reina 10/31 定，日报口径，不排每周产能）

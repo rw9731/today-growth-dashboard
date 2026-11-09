@@ -393,7 +393,8 @@
   </section>
 
   <section class="lx-sec" id="newd">
-    <h2 class="lx-h2">五、昨天上新的素材（按上传日期）</h2>
+    <h2 class="lx-h2">五、上新的素材（按上传日期）</h2>
+    <h3 class="lx-h3">昨天上传的</h3>
     <p class="lx-note"><span data-draw="newd-sum"></span></p>
     <p class="lx-note">这一节按上传日期算，其他几节的「新上线」「首次消耗」「批次」都按首次消耗日期。<b>上传</b> = 素材ID 里带的时间（第一次传到巨量）；<b>制作</b> = 素材名最后的日期；<b>第一次消耗</b> = 投放表里第一天有消耗。没花钱的素材从巨量素材库常用的 3 个账户里补，星图、星广的素材可能不全。按昨天消耗排，次留要 {{T}} 才有，之后在四、七里看。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
     <div class="lx-card lx-scroll">
@@ -406,6 +407,7 @@
             <th>制作</th>
             <th>上传</th>
             <th>第一次消耗</th>
+            <th class="num">投放账户数<span class="th-sub">{{D}} 有展示</span></th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
             <th class="num">激活<span class="th-sub">{{D}}</span></th>
             <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
@@ -414,6 +416,35 @@
         </thead>
         <tbody data-draw="newdrows"></tbody>
       </table>
+    </div>
+    <div data-draw="rampwrap">
+      <h3 class="lx-h3">最近 10 个上传日：投进几个账户、跑起来没有</h3>
+      <p class="lx-note" data-draw="ramp-sum"></p>
+      <p class="lx-note"><b>投放账户数</b> = 素材在多少个巨量账户里有过展示（巨量升级版工作台视频分析，按 天 × 素材 × 账户）。巨量单元层的数据看不到，先用它近似「被建次数」，同一账户建几个单元只算一次，是下限。<b>账户跑起来率</b> = 在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。<b>头 3 天消耗</b> = 投放表里首次消耗当天起 3 天。只算花过钱的素材；上传不满 3 天的批次跑起来率和头 3 天先空着。试算口径，门槛可以改。</p>
+      <div class="lx-card lx-scroll">
+        <table class="lx-table">
+          <thead>
+            <tr>
+              <th>上传日</th>
+              <th class="num">花过钱的条数</th>
+              <th class="num">平均投放账户数</th>
+              <th class="num">账户跑起来率<span class="th-sub">3 天花到 ¥100</span></th>
+              <th class="num">至少一个账户跑起来<span class="th-sub">素材占比</span></th>
+              <th class="num">头 3 天消耗<span class="th-sub">中位</span></th>
+              <th class="num">单日过 ¥1,000<span class="th-sub">素材占比</span></th>
+              <th class="num">累计消耗<span class="th-sub">截至 {{D}}</span></th>
+            </tr>
+          </thead>
+          <tbody data-draw="rampbatch"></tbody>
+        </table>
+      </div>
+      <details class="lx-card" style="margin-top:10px">
+        <summary style="cursor:pointer;font-weight:600">每条素材（<span data-draw="ramp-n"></span> 条，点表头排序）</summary>
+        <p class="lx-note" style="margin:8px 0">绿色 = 账户跑起来率不低于这几批的平均；红色 = 投了 10 个以上账户、一个都没跑起来。上传不满 3 天的显示「—」。</p>
+        <div class="lx-scroll" style="max-height:70vh">
+          <table class="lx-table" data-draw="rampmats"></table>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -781,6 +812,7 @@
       td('date').textContent = r.made ? fmtD(r.made) : '—';
       { const c = td('date'); c.textContent = r.up ? fmtD(r.up.slice(0, 10)) + ' ' + r.up.slice(11) : '—'; c.style.whiteSpace = 'nowrap'; }
       { const c = td('date'); if (r.first) c.textContent = fmtD(r.first); else { c.textContent = '还没消耗'; c.style.color = 'var(--color-fg-muted)'; } c.style.whiteSpace = 'nowrap'; }
+      { const c = td('num'); c.textContent = r.acc_show == null ? '—' : fmtN(r.acc_show); }
       if (r.cost27 > 0) barCell(td(), r.cost27, max, 50); else { const c = td('num muted'); c.textContent = '—'; c.style.textAlign = 'left'; }
       td('num').textContent = fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
@@ -793,6 +825,55 @@
       tb.appendChild(tr);
     }
   });
+
+  // 最近 10 个上传日：投进几个账户、跑起来没有（Reina 11/9）
+  {
+    const B = data('ramp_batches'), R = data('ramp_mats'), nm = one('newd_meta') || {};
+    const wrap = document.querySelector('[data-draw="rampwrap"]');
+    if (!B.length || !nm.acct) { if (wrap) wrap.hidden = !B.length; }
+    const P1 = (v) => v == null ? '—' : d3.format('.1~%')(v);
+    const full = B.filter((b) => b.full && b.pass != null);
+    const sumShow = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_show), sum100 = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_100 || 0);
+    const avgPass = sumShow ? sum100 / sumShow : null;
+    fill('ramp-sum', (el) => {
+      if (!nm.acct) { el.innerHTML = '<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>'; return; }
+      if (!full.length) return;
+      el.innerHTML = '满 3 天的 ' + full.length + ' 批里，账户跑起来率 ' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；这几批合起来 <b>' + P1(avgPass) + '</b>。';
+    });
+    fill('rampbatch', (tb) => {
+      for (const b of B) {
+        const tr = document.createElement('tr'); const td = cellMaker(tr);
+        { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.full ? '' : ' <span class="lx-note">不满 3 天</span>'); }
+        td('num').textContent = b.n;
+        td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
+        { const c = td('num'); c.textContent = P1(b.pass); if (b.pass != null && avgPass != null) c.className = 'num ' + (b.pass >= avgPass ? 'lx-good' : 'lx-badv'); }
+        td('num').textContent = b.any == null ? '—' : fmtP0(b.any);
+        td('num').textContent = b.c3_med == null ? '—' : fmtY(b.c3_med);
+        td('num').textContent = fmtP0(b.k1);
+        td('num muted').textContent = fmtY(b.tot);
+        tb.appendChild(tr);
+      }
+    });
+    fill('ramp-n', (el) => { el.textContent = R.length; });
+    const cols = [['name', '素材'], ['kind', '类型'], ['short', 'Use case'], ['made', '制作'], ['up', '上传'], ['first', '首次消耗'], ['acc_show', '投放账户数', 1], ['acc_100', '跑起来账户', 1, '3 天 ≥ ¥100'], ['rate', '跑起来率', 1], ['c3', '头 3 天消耗', 1], ['c7', '头 7 天消耗', 1], ['peak', '单日最高', 1], ['d1k', '第几天过 ¥1,000', 1], ['tot', '累计消耗', 1], ['link', '链接']];
+    R.forEach((m) => { m.rate = m.acc_ok && m.acc_show ? (m.acc_100 || 0) / m.acc_show : null; });
+    let key = 'c3', dir = -1;
+    const draw = () => {
+      const tb = document.querySelector('[data-draw="rampmats"]'); if (!tb) return;
+      const rows = R.slice().sort((a, b) => { const x = a[key], y = b[key]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * dir; });
+      const max = d3.max(rows, (m) => m.c3 || 0) || 1;
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
+      tb.innerHTML = '<thead><tr>' + cols.map((c) => '<th class="' + (c[2] ? 'num' : '') + '" data-k="' + c[0] + '" style="cursor:' + (c[0] === 'link' ? 'default' : 'pointer') + '">' + c[1] + (c[3] ? '<span class="th-sub">' + c[3] + '</span>' : '') + (key === c[0] ? (dir < 0 ? ' ↓' : ' ↑') : '') + '</th>').join('') + '</tr></thead><tbody>' + rows.map((m) => {
+        const cls = m.rate != null && avgPass != null && m.rate >= avgPass ? 'lx-good' : (m.acc_ok && m.acc_show >= 10 && !m.acc_100 ? 'lx-badv' : '');
+        const lk = [m.video ? '<a href="' + esc(m.video) + '" target="_blank" rel="noopener">视频</a>' : '', m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + (m.link_type === '原片' ? '原帖' : esc(m.link_type || '链接')) + '</a>' : ''].filter(Boolean).join(' ');
+        return '<tr><td class="name" style="white-space:normal;min-width:14rem">' + esc(m.name) + '</td><td>' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td class="date">' + fmtD(m.made) + '</td><td class="date" style="white-space:nowrap">' + fmtD(m.up.slice(0, 10)) + ' ' + m.up.slice(11) + '</td><td class="date">' + fmtD(m.first) + '</td>'
+          + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_ok ? (m.acc_100 || 0) : '—') + '</td><td class="num ' + cls + '">' + (m.rate == null ? '—' : fmtP0(m.rate)) + '</td>'
+          + '<td class="num" style="white-space:nowrap">' + (m.c3 == null ? '—' : '<span style="display:inline-block;height:8px;border-radius:2px;background:var(--bar);vertical-align:middle;margin-right:6px;width:' + Math.round(m.c3 / max * 60) + 'px"></span>' + fmtY(m.c3)) + '</td><td class="num">' + (m.c7 == null ? '—' : fmtY(m.c7)) + '</td><td class="num">' + fmtY(m.peak) + '</td><td class="num">' + (m.d1k ? '第 ' + m.d1k + ' 天' : '—') + '</td><td class="num">' + fmtY(m.tot) + '</td><td class="short lx-links">' + (lk || '—') + '</td></tr>';
+      }).join('') + '</tbody>';
+      tb.querySelectorAll('th[data-k]').forEach((th) => th.addEventListener('click', () => { const k = th.dataset.k; if (k === 'link') return; if (key === k) dir = -dir; else { key = k; dir = ['name', 'kind', 'short', 'made', 'up', 'first'].includes(k) ? 1 : -1; } draw(); }));
+    };
+    draw();
+  }
 
   // 判差 3 天还在花（Reina 11/4 定）
   fill('stuckrows', (tb) => {

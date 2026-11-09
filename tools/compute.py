@@ -352,6 +352,7 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--linklib', help="get_values dump of '素材链接库'!A1:D (optional preview links)")
     ap.add_argument('--uploads', help='up_js.py 读出来的巨量当天上传清单（默认 notes/uploads-D.json），用来补上没花钱的新素材')
+    ap.add_argument('--acct', help='acct_save.py 存的素材 × 账户汇总（默认 notes/acct-D.json），用来算投放账户数和账户跑起来率')
     a = ap.parse_args()
 
     Dd = dt.date.fromisoformat(a.date)
@@ -652,6 +653,61 @@ def main():
                 break
     newd.sort(key=lambda x: (-x['cost27'], x['up']))
 
+    # 被建和带量（Reina 11/9 放进日报第五节）：投放账户数 = 有展示的账户数（近似被建次数的下限）；
+    # 账户跑起来 = 该账户首次展示后 3 天内花到 ¥100；带量 = 投放表里首次消耗起头 3 天、7 天的消耗、单日最高、第几天过 ¥1,000。
+    acct_path = a.acct or os.path.join(os.path.dirname(HERE), 'notes', f'acct-{D[3]}.json')
+    acct = json.load(open(acct_path)) if os.path.exists(acct_path) else None
+    AI = (acct or {}).get('items', {})
+    for m in newd:
+        x = AI.get(m['id'])
+        m['acc_show'] = x[1] if x else (0 if acct else None)
+        m['acc_d'] = x[6] if x else (0 if acct else None)
+    cost_by = defaultdict(lambda: defaultdict(float))
+    for r in allrows:
+        if r['date'] <= D[3]:
+            cost_by[r['id']][r['date']] += r['cost']
+    rdays = [(Dd - dt.timedelta(days=k)).isoformat() for k in range(9, -1, -1)]
+    recent = []
+    for i, dd in cost_by.items():
+        u = up_day(i)
+        if u not in rdays:
+            continue
+        spent = sorted(d for d, c in dd.items() if c > 0)
+        if not spent:
+            continue
+        f = spent[0]
+        obs = (Dd - dt.date.fromisoformat(f)).days + 1
+        seq = [dd.get((dt.date.fromisoformat(f) + dt.timedelta(days=k)).isoformat(), 0.0) for k in range(min(obs, 14))]
+        r0 = rows_by_id[i][0] if rows_by_id.get(i) else None
+        nm = names.get(i, i)
+        x = AI.get(i)
+        lk = links.get(i, {})
+        recent.append({'id': i, 'name': nm, 'kind': kind_of(r0['src'], r0['track'], nm, i).split(' · ')[0] if r0 else '',
+                       'uc': r0['uc'] if r0 else '', 'short': ucs.get(r0['uc'], {}).get('short', '') if r0 else '',
+                       'made': made_day(nm), 'up': up_time(i), 'first': f, 'obs': obs,
+                       'c3': round(sum(seq[:3])) if obs >= 3 else None, 'c7': round(sum(seq[:7])) if obs >= 7 else None,
+                       'peak': round(max(seq)), 'd1k': next((k + 1 for k, c in enumerate(seq) if c >= 1000), None), 'tot': round(sum(dd.values())),
+                       'acc_show': x[1] if x else None, 'acc_spend': x[2] if x else None, 'acc_100': x[3] if x else None,
+                       'acc_ok': bool(x) and (Dd - dt.date.fromisoformat(x[0])).days >= 2,
+                       'video': pick_video(lk), 'link': '' if lk.get('type') == '预览' else lk.get('link', ''), 'link_type': lk.get('type', '')})
+    recent.sort(key=lambda m: (-(m['c3'] or 0), -m['tot']))
+    batches = []
+    for u in rdays:
+        g = [m for m in recent if m['up'][:10] == u]
+        if not g:
+            continue
+        sh = [m for m in g if m['acc_show']]
+        s_show = sum(m['acc_show'] for m in sh)
+        full = (Dd - dt.date.fromisoformat(u)).days >= 2
+        c3s = [m['c3'] for m in g if m['c3'] is not None]
+        batches.append({'up': u, 'n': len(g), 'full': full, 'acc_mean': round(s_show / len(sh), 1) if sh else None,
+                        'pass': (sum(m['acc_100'] for m in sh) / s_show) if s_show and full else None,
+                        'any': (sum(1 for m in g if (m['acc_100'] or 0) > 0) / len(g)) if full and acct else None,
+                        'c3_med': sorted(c3s)[len(c3s) // 2] if full and c3s else None,
+                        'k1': sum(1 for m in g if m['d1k']) / len(g), 'tot': sum(m['tot'] for m in g)})
+    newd_meta['acct'] = bool(acct)
+    newd_meta['acct_err'] = (acct or {}).get('err', [])
+
     # 素材类型
     kind_id = {}
     for r in R + R3:
@@ -739,7 +795,7 @@ def main():
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta],
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
