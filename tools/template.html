@@ -788,6 +788,7 @@
       const vid = r.video || (r.link_type === '预览' ? r.link : '');
       if (vid) addLink(vid, '视频');
       if (r.link && r.link_type !== '预览') addLink(r.link, r.link_type === '原片' ? '原帖' : r.link_type);
+      if (!lc.children.length) { lc.textContent = '巨量和唯西表都没找到 · ID ' + r.id; lc.style.color = 'var(--color-fg-muted)'; lc.style.whiteSpace = 'nowrap'; }
       tb.appendChild(tr);
     }
   });
