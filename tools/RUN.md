@@ -157,7 +157,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 要看片的素材（recover 的 bad）：首花 7 天内，激活 ≥100，次留比同样这些天的全盘低 5 个点以上，配底稿。Reina 11/5 定：use case 的性质不因一批素材改，新素材差要下钻内容，不打在 use case 上。下钻顺序见项目文档 claude/new-batch-retention-drill-1105.md。
 - 批次回收（schedule_data.py 的 batches）：每个首花日几条、几条跑起来、第二天花多少。柱子下面的条数按它标色：这批第二天平均每条比当天大盘高绿色，低红色，3 条以上才标；页面顶部一行写前天首花这批第二天每条花多少。
 - 在跑：当天花了钱的条数，按批次分，悬停柱子看。
-- 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。只显示，不自动移档：探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。移档要 Reina 定，改 schedule_plan.json 的 GROUPS，并在 MOVED 写从哪档来、哪天，7 天内名字旁标「新进」。
+- 分档（schedule_data.py 的 tier_stats，schedule_build.py 的 tier_view）：线写在 schedule_build.py 的 UP_*、IN_*，定义见 claude/usecase-tiers-1104.md。探索过线标「可升」，跑量少 + 留存好过升级线也标「可升」。可升的直接升（Reina 11/9 定，不用再问）：每天出页面后看有没有 can 为 true 的 use case，有就改 schedule_plan.json 的 GROUPS 升一档，在 MOVED 写从哪档来、哪天，重跑 schedule_build，7 天内名字旁标「新进」，最后回复里写升了哪几个。只升不降，降档还要 Reina 定。
 - 条数建议只看能不能跑量，不看留存。阈值在 schedule_build.py 的 rule_rows，和 11/4 定的一样，先跑 1–2 周。schedule_build 输出的 all 是全盘预警的天，red 是 {use case: 预警的天}。
 
 次留、成本的趋势卡（Reina 11/6 要）：鼠标放到某一行的次留或成本上，看最近 7 天折线，虚线是大盘。最新一天次留没回传不画，激活不到 30 的天不画，表里「比大盘」按相对比例算。
