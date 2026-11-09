@@ -62,6 +62,10 @@ compute.py 的 bad_streak 自动算，每条素材写进 bad_n、bad_first、bad
 - 只读：up.js 只调素材列表接口，不点按钮。
 - 投放账户数和账户跑起来率（Reina 11/9：放日报第五节，不放专题）：在第 2 步之前跑 `python3 tools/acct_js.py --date D --out /tmp/linkjs`，打开 https://business.oceanengine.com/ebp/material/analysis/video?ebpid=1878449164572746（巨量升级版工作台，跳到登录页就停，不输账号密码），用 javascript_tool 跑 acct.js 全文（返回 started），再反复跑 `await __acctWait()` 到 st 是 done；把返回值原样存成 /tmp/linkjs/acct_wait.json，再依次跑 `__acctGet(0)`、`__acctGet(1)`……每次返回值原样存成 /tmp/linkjs/acct_k.json，直到 d 是空字符串；然后 `python3 tools/acct_save.py --date D --wait /tmp/linkjs/acct_wait.json /tmp/linkjs/acct_*.json` 存成 notes/acct-D.json，和页面一起提交。compute.py 默认读这个文件，没有就第五节的投放账户数显示「—」、最近 10 个上传日那张表不出。只调查询接口，不点任何按钮，不点「体验智擎版」。err 里有「只拿到」说明分页没拿全，写进最后回复。
 - 口径：投放账户数 = 该素材有展示的账户数（同一账户多个项目算一个，是被建次数的下限）；账户跑起来 = 在该账户第一次有展示后 3 天内花到 ¥100；账户跑起来率 = 跑起来的账户 ÷ 投放账户，只算上传满 3 天的批次。
+- 细分场景（Reina 11/9：每条素材对应 Use case 库「可包装的场景」里第几条，上面汇总测了多少场景、覆盖率多少）：场景清单在 tools/scenes.json，库改了「可包装的场景」就用 Google Sheets 读 '✅ Use case 库'!A1:K200 存成文件，`python3 tools/scene_sync.py <文件>` 同步（输出 changed 不为空时，scene-map 里这些 UC 的旧标要按新编号重打）。每天在第 2 步之后跑 `python3 tools/scene_todo.py /tmp/results.json --out /tmp/scene_todo.json`，列出还没打标的素材，按下面的规则打标，结果存成 {素材ID: {"uc","s","by","why"}}，`python3 tools/scene_merge.py --date T <结果>` 并进 notes/scene-map.json，再跑一次第 2 步，和页面一起提交。超过 60 条拆批用 Agent 并行。
+  - 每条只选它主要拍的那一个场景。有自己的字幕（hook、lines、demo）按字幕判断，by=script，Today 实际做的那一下最重要，开头痛点其次；没有就看 sibling_scripts（同一条原片的其他剪辑版本），by=sibling，几个版本场景不一样就 s=0、why 写「版本场景不一样」；都没有按素材名，by=name，名字里看不出具体场景就 s=0、why 写「名字看不出」（算待看片）。
+  - 内容明确不在这个 UC 的任何一条场景里：s=0，why 写一句讲的是什么（算库里没有，页面会显示）。综述类 UC（WK00、HL00、PS02、FN00、TR00、LG00、AI00）的场景按人群切，按主角是哪类人选。拿不准宁可 0，不猜。
+  - 当天读全片字幕的素材（读全片脚本那一节）里有待看片的，读完会自动进 scene_todo 重打。
 - 之后的拖后腿、批次、核心 insight 依次是六、七、八。
 
 ## 八、核心 insight 和下一步（Reina 10/31 定，日报口径，不排每周产能）
