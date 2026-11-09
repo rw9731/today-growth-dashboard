@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>素材被建和带量 · 试算</title>
+<style>{{STYLE}}
+  h2 { font-size: 18px; margin: 0; padding-left: 10px; border-left: 4px solid var(--bar); }
+  .sec { display: grid; gap: 10px; }
+  .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--radius); padding: 14px 16px; }
+  .note { color: var(--color-fg-muted); font-size: 13px; line-height: 1.6; margin: 0; }
+  .note b, .lead b { color: var(--color-fg); }
+  .lead { font-size: 16px; line-height: 1.7; margin: 0; }
+  .lead li { margin: 4px 0; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; color: var(--color-fg-muted); font-weight: 600; padding: 8px 6px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; vertical-align: bottom; position: sticky; top: 0; background: var(--color-panel); cursor: default; }
+  th .s { display: block; font-weight: 400; font-size: 11px; }
+  th.sort { cursor: pointer; }
+  th.sort:hover { color: var(--color-fg); }
+  td { padding: 7px 6px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+  td.num, th.num { text-align: right; }
+  td.name { min-width: 15rem; max-width: 26rem; }
+  td .sub { display: block; color: var(--color-fg-muted); font-size: 12px; }
+  .bar { display: inline-block; height: 8px; border-radius: 2px; background: var(--bar); vertical-align: middle; margin-right: 6px; }
+  .good { color: var(--color-ok); font-weight: 600; }
+  .bad { color: var(--color-bad); }
+  .muted { color: var(--color-fg-muted); }
+  .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+  .ctl input, .ctl select { font: inherit; padding: 5px 10px; border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); color: var(--color-fg); }
+  .lag { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .lag table td:first-child { white-space: nowrap; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>素材被建和带量（试算）</h1>
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" href="../">全部专题</a></span></div>
+  </nav>
+
+  <section class="sec" id="sum">
+    <h2>先看结论</h2>
+    <div class="card"><ul class="lead" data-draw="lead"></ul></div>
+  </section>
+
+  <section class="sec" id="def">
+    <h2>一、口径（试算，待定）</h2>
+    <div class="card"><p class="note" data-draw="def"></p></div>
+  </section>
+
+  <section class="sec" id="kind">
+    <h2>二、按素材类型</h2>
+    <p class="note">每类素材平均投进几个账户、在多少比例的账户里跑起来、头 3 天带了多少量。少于 5 条的类型不列。</p>
+    <div class="card scroll"><table data-draw="kindtbl"></table></div>
+  </section>
+
+  <section class="sec" id="up">
+    <h2>三、按上传日（批次）</h2>
+    <p class="note" data-draw="upnote"></p>
+    <div class="card scroll"><table data-draw="uptbl"></table></div>
+  </section>
+
+  <section class="sec" id="lag">
+    <h2>四、制作、上传、首次消耗隔了几天</h2>
+    <p class="note">制作 = 素材名最后的日期；上传 = 素材ID 里带的时间；首次消耗 = 投放表第一天有消耗。</p>
+    <div class="lag">
+      <div class="card"><b>制作 → 上传</b><table data-draw="lagmu"></table></div>
+      <div class="card"><b>上传 → 首次消耗</b><table data-draw="laguf"></table></div>
+    </div>
+  </section>
+
+  <section class="sec" id="mats">
+    <h2>五、每条素材</h2>
+    <div class="ctl">
+      <select data-draw="fkind"><option value="">全部类型</option></select>
+      <input type="search" placeholder="搜素材名、use case 或 ID" data-draw="fq">
+      <span class="muted" data-draw="fcount"></span>
+    </div>
+    <p class="note">点表头排序。默认按「头 3 天消耗」从高到低。绿色 = 账户跑起来率不低于全部素材的平均；红色 = 投了 10 个以上账户、一个都没跑起来。</p>
+    <div class="card scroll" style="max-height: 80vh"><table data-draw="mattbl"></table></div>
+  </section>
+</div>
+<script type="application/json" id="data">{{DATA}}</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const q = (k) => document.querySelector('[data-draw="' + k + '"]');
+  const md = (s) => s ? (+s.slice(5, 7)) + '/' + (+s.slice(8, 10)) : '—';
+  const Y = (v) => v == null ? '—' : '¥' + Math.round(v).toLocaleString('en-US');
+  const P = (v) => v == null ? '—' : (v * 100).toFixed(1).replace(/\.0$/, '') + '%';
+  const P0 = (v) => v == null ? '—' : Math.round(v * 100) + '%';
+  const A = DATA.all, M = DATA.meta;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+  // 结论（只陈述数）
+  const ks = DATA.kind.slice().sort((a, b) => b.pass - a.pass);
+  const ups = DATA.up;
+  const first = ups[0], last = ups[ups.length - 1];
+  const lagmu = Object.fromEntries(DATA.lag_mu), laguf = Object.fromEntries(DATA.lag_uf);
+  const nmu = DATA.lag_mu.reduce((s, x) => s + x[1], 0), nuf = DATA.lag_uf.reduce((s, x) => s + x[1], 0);
+  const lead = [
+    md(M.frm) + '–' + md(M.to) + ' 上传、已经花过钱的 <b>' + M.n + '</b> 条素材，平均每条投进 <b>' + A.acc_mean + '</b> 个账户（中位 ' + A.acc_med + '），但只有 <b>' + P(A.pass) + '</b> 的账户在头 3 天里花到 ¥100；<b>' + P0(1 - A.any) + '</b> 的素材一个账户都没跑起来。',
+    '按类型：' + ks.map((k) => k.k + ' 跑起来率 <b>' + P(k.pass) + '</b>、头 3 天消耗中位 ' + Y(k.c3_med)).join('；') + '。类型之间的差别比批次之间小。',
+    '按上传日（20 条以上的批次）看跑起来率：' + ups.filter((u) => u.n >= 20).map((u) => md(u.k) + ' <b>' + P(u.pass) + '</b>').join('、') + '。11/4 那批的头 3 天正好碰上 11/5 起全盘日耗下降（19.7 万 → 7.6 万 → 3.9 万），这一批偏低有预算的原因；但 10/29–11/3 这几批上线时全盘日耗还在 9 万到 18 万，跑起来率也一路往下走，这段不是预算的原因。',
+    '制作到上传：' + P0(((lagmu[0] || 0) + (lagmu[1] || 0)) / nmu) + ' 是当天或第二天就传了；上传到首次消耗（只算花过钱的素材）：' + P0((laguf[0] || 0) / nuf) + ' 是当天。',
+  ];
+  q('lead').innerHTML = lead.map((t) => '<li>' + t + '</li>').join('');
+
+  q('def').innerHTML = [
+    '<b>范围</b>：' + md(M.frm) + '–' + md(M.to) + ' 上传到巨量（按素材ID 里的时间）、截至 ' + md(M.end) + ' 已经有消耗的素材。没花过钱的不在这里（日报第五节有）。',
+    '<b>投放账户数</b>：这条素材在多少个巨量账户里有过展示，跨账户算，来自巨量升级版工作台的视频分析（按天 × 素材 × 账户）。巨量单元层的数据这个登录看不到，先用账户数近似「被建次数」：每个账户至少建了一个单元，同一账户里建多个单元的算一次，所以是<b>下限</b>。',
+    '<b>账户跑起来率</b>：在该账户第一次有展示后的 3 天内，这条素材在这个账户里花到 ¥100 的账户数 ÷ 投放账户数。¥100 是试算门槛，可以改。',
+    '<b>带量能力</b>：来自投放数据表。头 3 天、头 7 天 = 首次消耗当天起 3 天、7 天的累计消耗；单日最高；第几天第一次单日过 ¥1,000（日报「能放量」那条线）。上传晚的素材 7 天还没满，显示「—」。',
+    '<b>推送版</b>：推送出去的素材是新 ID，这里按各自的 ID 算，没有合并。',
+  ].join('<br>');
+
+  const head = (cols) => '<thead><tr>' + cols.map((c) => '<th class="' + (c[2] || '') + '">' + c[0] + (c[1] ? '<span class="s">' + c[1] + '</span>' : '') + '</th>').join('') + '</tr></thead>';
+  const grpCols = [['', ''], ['条数', '', 'num'], ['平均投放账户数', '中位', 'num'], ['账户跑起来率', '3 天花到 ¥100', 'num'], ['至少一个账户跑起来', '素材占比', 'num'], ['头 3 天消耗', '中位', 'num'], ['头 3 天消耗 ÷ 投放账户数', '每个账户', 'num'], ['单日过 ¥1,000', '素材占比', 'num'], ['头 3 天消耗合计', '', 'num']];
+  const grpRow = (r, label) => '<tr><td><b>' + label + '</b></td><td class="num">' + r.n + '</td><td class="num">' + r.acc_mean + ' <span class="muted">（' + r.acc_med + '）</span></td><td class="num ' + (r.pass >= A.pass ? 'good' : '') + '">' + P(r.pass) + '</td><td class="num">' + P0(r.any) + '</td><td class="num">' + Y(r.c3_med) + '</td><td class="num">' + Y(r.c3_per_acc) + '</td><td class="num">' + P0(r.k1) + '</td><td class="num">' + Y(r.c3_sum) + '</td></tr>';
+  q('kindtbl').innerHTML = head(grpCols) + '<tbody>' + DATA.kind.map((r) => grpRow(r, r.k)).join('') + grpRow(A, '全部') + '</tbody>';
+  q('uptbl').innerHTML = head(grpCols.concat([['全盘消耗', '上传当天起 3 天', 'num']])) + '<tbody>' + DATA.up.map((r) => grpRow(r, md(r.k)).replace('</tr>', '<td class="num muted">' + Y(r.tot3) + '</td></tr>')).join('') + '</tbody>';
+  q('upnote').innerHTML = '每个上传日一行。最后一列是同一时段全盘消耗，用来看整体预算在变：全盘日耗 ' + Object.entries(DATA.tot_day).map(([d, v]) => md(d) + ' ' + (v >= 10000 ? (v / 10000).toFixed(1) + ' 万' : Y(v))).join('、') + '。';
+  const lagTbl = (rows, n) => '<tbody>' + rows.map(([d, c]) => '<tr><td>' + (d === 0 ? '当天' : d + ' 天后') + '</td><td class="num">' + c + ' 条</td><td style="width:60%"><span class="bar" style="width:' + Math.round(c / n * 100) + '%"></span>' + P0(c / n) + '</td></tr>').join('') + '</tbody>';
+  q('lagmu').innerHTML = lagTbl(DATA.lag_mu, nmu);
+  q('laguf').innerHTML = lagTbl(DATA.lag_uf, nuf);
+
+  // 每条素材
+  const kinds = [...new Set(DATA.mats.map((m) => m.kind))];
+  q('fkind').innerHTML += kinds.map((k) => '<option>' + esc(k) + '</option>').join('');
+  const cols = [
+    ['name', '素材', ''], ['kind', '类型', ''], ['uc', 'Use case', ''], ['made', '制作', ''], ['up', '上传', ''], ['first', '首次消耗', ''],
+    ['n_show', '投放账户数', 'num'], ['n100', '跑起来账户', '3 天 ≥ ¥100', 'num'], ['rate', '跑起来率', 'num'],
+    ['c3', '头 3 天消耗', 'num'], ['c7', '头 7 天消耗', 'num'], ['peak', '单日最高', 'num'], ['d1k', '第几天过 ¥1,000', 'num'], ['tot', '累计消耗', 'num'], ['link', '链接', ''],
+  ].map((c) => c.length === 3 ? [c[0], c[1], '', c[2]] : c);
+  DATA.mats.forEach((m) => { m.rate = m.n_show ? m.n100 / m.n_show : null; });
+  let sortKey = 'c3', sortDir = -1;
+  const draw = () => {
+    const fk = q('fkind').value, fq = q('fq').value.trim().toLowerCase();
+    const rows = DATA.mats.filter((m) => (!fk || m.kind === fk) && (!fq || (m.name + ' ' + m.uc + ' ' + m.short + ' ' + m.id).toLowerCase().includes(fq)))
+      .sort((a, b) => { const x = a[sortKey], y = b[sortKey]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
+    q('fcount').textContent = rows.length + ' 条';
+    const max = Math.max(1, ...rows.map((m) => m.c3));
+    q('mattbl').innerHTML = '<thead><tr>' + cols.map((c) => '<th class="sort ' + c[3] + '" data-k="' + c[0] + '">' + c[1] + (c[2] ? '<span class="s">' + c[2] + '</span>' : '') + (sortKey === c[0] ? (sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>').join('') + '</tr></thead><tbody>' + rows.map((m) => {
+      const cls = m.rate != null && m.rate >= A.pass ? 'good' : (m.n_show >= 10 && !m.n100 ? 'bad' : '');
+      const lk = [m.video ? '<a href="' + esc(m.video) + '" target="_blank" rel="noopener">视频</a>' : '', m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + (m.link_type === '原片' ? '原帖' : esc(m.link_type || '链接')) + '</a>' : ''].filter(Boolean).join(' ');
+      return '<tr><td class="name">' + esc(m.name) + '<span class="sub">ID ' + m.id + '</span></td><td>' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td>' + md(m.made) + '</td><td style="white-space:nowrap">' + md(m.up) + ' ' + m.up.slice(11) + '</td><td>' + md(m.first) + '</td>'
+        + '<td class="num">' + m.n_show + '</td><td class="num">' + m.n100 + '</td><td class="num ' + cls + '">' + P0(m.rate) + '</td>'
+        + '<td class="num" style="white-space:nowrap"><span class="bar" style="width:' + Math.round(m.c3 / max * 60) + 'px"></span>' + Y(m.c3) + '</td><td class="num">' + Y(m.c7) + '</td><td class="num">' + Y(m.peak) + '</td><td class="num">' + (m.d1k ? '第 ' + m.d1k + ' 天' : '—') + '</td><td class="num">' + Y(m.tot) + '</td><td>' + (lk || '<span class="muted">—</span>') + '</td></tr>';
+    }).join('') + '</tbody>';
+    q('mattbl').querySelectorAll('th.sort').forEach((th) => th.addEventListener('click', () => { const k = th.dataset.k; if (k === 'link') return; if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = ['name', 'kind', 'uc', 'made', 'up', 'first'].includes(k) ? 1 : -1; } draw(); }));
+  };
+  q('fkind').addEventListener('change', draw);
+  q('fq').addEventListener('input', draw);
+  draw();
+})();
+</script>
+</body>
+</html>
