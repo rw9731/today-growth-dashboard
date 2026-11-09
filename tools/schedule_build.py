@@ -218,21 +218,34 @@ def batch_detail(R):
 
 
 def hist_view(R, D):
-    """点 use case 名字弹出的历史素材：配上视频和原帖链接。[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖]"""
+    """点 use case 名字弹出的历史素材：配上视频、原帖链接和细分场景（Reina 11/9）。
+    行：[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖, 场景, 序列]。
+    场景取 notes/scene-map.json（同一条素材任一版本打过就算）：编号 ≥1；0 待看片；-1 库里没有；None 还没打。"""
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    p = os.path.join(ROOT, 'notes', 'scene-map.json')
+    SM = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+    SC = json.load(open(os.path.join(ROOT, 'tools', 'scenes.json'), encoding='utf-8'))
+    H = R.get('hist', {})
+    if 'U' not in H:  # 旧格式
+        H = dict(U=H, base=[])
     out = {}
-    for u, items in R.get('hist', {}).items():
+    for u, items in H['U'].items():
         rows = []
         for ids, name, *rest in items:
+            stats, ser = rest[:7], (rest[7] if len(rest) > 7 else None)
             video, orig = '', ''
             for i in ids:
                 v, o = material_urls(links, i, name)
                 video, orig = video or v, orig or o
                 if video and orig:
                     break
-            rows.append([name] + rest + [video, orig])
+            tags = [SM[i] for i in ids if i in SM]
+            ok = [t for t in tags if t.get('st') == 'ok' and t.get('s')]
+            sc = ok[0]['s'] if ok else (-1 if any(t.get('st') == 'none' for t in tags) else 0 if tags else None)
+            rows.append([name] + stats + [video, orig, sc, ser])
         out[u] = rows
-    return dict(U=out, start=R.get('hist_from', ''), d=md(D), d1=md(D - dt.timedelta(days=1)))
+    scenes = {u: [[s['n'], s['t']] for s in SC[u]['scenes']] for u in SC if SC[u].get('scenes')}
+    return dict(U=out, base=H.get('base', []), SC=scenes, start=R.get('hist_from', ''), d=md(D), d1=md(D - dt.timedelta(days=1)))
 
 
 def why_rows(why, notes, B, names, total, days):

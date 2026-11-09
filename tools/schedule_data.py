@@ -881,7 +881,8 @@ def rt_diagnose(rows, of, D):
 
 def history(rows, fams, D):
     """点 use case 名字看的历史素材（Reina 11/9）：表里所有花过钱的，按总消耗倒序。
-    每条：[素材ID（按消耗排，最多 3 个，给链接找视频用）, 素材名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天消耗]。
+    每条：[素材ID（按消耗排，最多 3 个，给链接找视频用）, 素材名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天消耗, [第一天花钱离表首日几天, 逐日消耗, 逐日激活, 逐日次留]]。
+    base 是全盘逐日 [激活, 次留]，从表首日到 D，画次留趋势的大盘线。
     次留和次留成本只算到 D-1（D 没回传完），所以另给一个「消耗到前天」算成本。"""
     one = dt.timedelta(days=1)
     idc, idn = Counter(), {}
@@ -889,6 +890,7 @@ def history(rows, fams, D):
         idc[r['id']] += r['c']
         if r['id'] not in idn or r['c'] > 0:
             idn[r['id']] = r['name']
+    start = min(r['d'] for r in rows)
     out = defaultdict(list)
     for f in fams:
         if not f.spent:
@@ -898,10 +900,19 @@ def history(rows, fams, D):
         r = sum(v for d, v in f.r.items() if d < D)
         cb = sum(v for d, v in f.c.items() if d < D)
         c7 = sum(f.c[D - one * k] for k in range(7))
-        out[f.uc].append([ids[:3], idn[ids[0]], f.kind, f.batch.isoformat(), round(sum(f.c.values())), round(a), round(r), round(cb), round(c7)])
+        d0 = min(d for d, v in f.c.items() if v > 0)
+        days = [d0 + one * k for k in range((D - d0).days + 1)]
+        # 悬停小卡用的逐日序列：从第一天花钱到 D，消耗、激活、次留
+        ser = [(d0 - start).days, [round(f.c[d]) for d in days], [round(f.a[d]) for d in days], [round(f.r[d]) for d in days]]
+        out[f.uc].append([ids[:3], idn[ids[0]], f.kind, f.batch.isoformat(), round(sum(f.c.values())), round(a), round(r), round(cb), round(c7), ser])
     for v in out.values():
         v.sort(key=lambda x: -x[4])
-    return dict(out)
+    A, Rr = Counter(), Counter()
+    for r in rows:
+        A[r['d']] += r['a']
+        Rr[r['d']] += r['r']
+    base = [[round(A[start + one * k]), round(Rr[start + one * k])] for k in range((D - start).days + 1)]
+    return dict(U=dict(out), base=base)
 
 
 def make_roi(rows, fams, spend, D, T, of=None):

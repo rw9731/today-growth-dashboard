@@ -102,9 +102,9 @@ a{color:var(--link)}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
 .rules p{margin:0;max-width:96ch}
 #b .help,.legend .help{cursor:help}#b th.help,#b td.help small,.legend .help{text-decoration:underline dotted;text-underline-offset:3px}
-#hist{width:min(1120px,calc(100vw - 32px));max-height:86vh;padding:0;border:1px solid var(--base);background:var(--panel);color:var(--ink);box-sizing:border-box}
+#hist{width:min(1120px,calc(100vw - 32px));max-height:88vh;overflow:auto;padding:0;border:1px solid var(--base);background:var(--panel);color:var(--ink);box-sizing:border-box}
 #hist::backdrop{background:rgba(0,0,0,.35)}
-#hist .hh{position:sticky;top:0;z-index:1;background:var(--panel);padding:12px 14px 8px;border-bottom:1px solid var(--grid);display:grid;gap:6px}
+#hist .hh{position:relative;background:var(--panel);padding:12px 14px 8px;border-bottom:1px solid var(--grid);display:grid;gap:6px}
 #hist .hh h3{margin:0;font-size:16px;padding-right:36px}
 #hist .hh p{margin:0;font-size:12px;color:var(--sub)}
 #hist .hx{position:absolute;right:10px;top:8px;border:0;background:none;color:var(--sub);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
@@ -119,6 +119,21 @@ a{color:var(--link)}
 #hist td.nm{min-width:260px;max-width:460px;overflow-wrap:anywhere}
 #hist td .good{color:var(--good);font-weight:700}#hist td .bad{color:var(--bad);font-weight:700}#hist td .lt{font-weight:400}
 #hist td small.q{display:block}
+#hist .cvh{display:grid;grid-template-columns:auto 160px;gap:4px 10px;align-items:center;font-size:13px}
+#hist .cvh small{grid-column:1/-1;font-size:12px}
+#hist .cvbar{height:8px;background:var(--band);box-shadow:inset 0 0 0 1px var(--grid);display:block}#hist .cvbar i{display:block;height:100%;background:var(--t1)}
+#hist .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+#hist .chip{font:inherit;font-size:12px;text-align:left;border:1px solid var(--base);background:var(--panel);color:var(--ink);padding:2px 7px;cursor:pointer;max-width:260px;line-height:1.35}
+#hist .chip small{display:block;color:var(--sub);font-size:11px}
+#hist .chip.none{color:var(--mute);border-style:dashed;cursor:default;background:var(--band)}
+#hist .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}#hist .chip[aria-pressed="true"] small{color:var(--bg);opacity:.8}
+#hist .scn{display:inline-block;min-width:16px;font-weight:700;margin-right:4px;color:var(--t1)}
+#hist .chip[aria-pressed="true"] .scn{color:var(--bg)}
+#hist td.sc{min-width:120px;max-width:200px;font-size:12px}
+#hist .hv{cursor:help;border-bottom:1px dotted currentColor}
+#htip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:7px 10px;font-size:12px;line-height:1.5;max-width:460px;font-variant-numeric:tabular-nums}
+#htip b{display:block;font-weight:600;max-width:420px;overflow-wrap:anywhere}#htip .tl{display:block;font-size:11px;opacity:.75}#htip svg{display:block;margin:4px 0;overflow:visible}
+#htip .lg{display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:3px}#htip .lg.s{border-top:2px solid var(--meter)}#htip .lg.d{border-top:1px dashed currentColor;opacity:.7}
 #tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;font-size:12px;line-height:1.5;max-width:340px;font-variant-numeric:tabular-nums}
 #tip .ts{border-top:1px solid color-mix(in srgb,var(--bg) 35%,transparent);margin-top:6px;padding-top:6px}
 #tip .tl{display:block;font-size:11px;opacity:.65;margin-bottom:1px}
@@ -274,7 +289,7 @@ a{color:var(--link)}
 <h3>每个 use case 的排期行</h3>
 <div class="scroll"><table class="dt" id="dt"><thead><tr><th>交付</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
 </div>
-<dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div></dialog>
+<dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><div id="hist-cv"></div><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div><div id="htip" hidden></div></dialog>
 <div id="tip" hidden></div>
 <script>
 const P=__P__;
@@ -395,32 +410,82 @@ document.querySelector('#pk tbody').innerHTML=P.REV.peak.map(x=>`<tr><td class="
 // 点 use case 名字：弹出历史上投过的所有素材，按总消耗倒序（Reina 11/9，找 top 素材做小变式扩产）
 function goLines(id){const t=document.querySelector(`#dt tr[data-u="${CSS.escape(id)}"]`);if(!t)return;
   t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600)}
-const HD=document.getElementById('hist'),HS={u:'',t:'all',k:'c',dir:-1};
-// 行：[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖, use case]
+const HD=document.getElementById('hist'),HS={u:'',t:'all',k:'c',dir:-1,s:null};
+// 行：[名, 类型, 首花, 总消耗, 激活, 次留, 消耗到前天, 近 7 天, 视频, 原帖, 场景, 序列, use case]
+// 场景：≥1 是 Use case 库「可包装的场景」第几条；0 待看片；-1 库里没有；null 还没打。序列：[离表首日几天, 逐日消耗, 逐日激活, 逐日次留]
 const ymd=s=>{const[,m,d]=s.split('-');return (+m)+'/'+(+d)};
 const hRate=x=>x[4]?x[5]/x[4]*100:null,hCpr=x=>x[5]?x[6]/x[5]:null;
-const HK={c:x=>x[3],c7:x=>x[7],first:x=>x[2],a:x=>x[4],rate:hRate,cpr:hCpr};
+const HK={c:x=>x[3],c7:x=>x[7],first:x=>x[2],a:x=>x[4],rate:hRate,cpr:hCpr,sc:x=>x[10]==null?999:x[10]<=0?998-x[10]:x[10]};
 const hList=id=>(id==='__fold'?P.FOLD:[id]).flatMap(u=>((P.HIST||{}).U||{})[u]?.map(x=>[...x,u])||[]);
+const scName=(u,n)=>{const s=((P.HIST.SC||{})[u]||[]).find(z=>z[0]===n);return s?s[1]:''};
+const scKey=x=>x[12]+'|'+x[10];
+function scCell(x){const s=x[10];if(s==null)return '<span class="q">还没打</span>';if(s===0)return '<span class="q">待看片</span>';if(s<0)return '<span class="q">库里没有</span>';return `<span class="scn">${s}</span>${esc(scName(x[12],s))}`}
+// 细分场景覆盖：用 Use case 库的场景数做分母，测过 = 至少一条素材标到这个场景
+function coverage(id,all){
+  const us=id==='__fold'?P.FOLD:[id];let tot=0,hit=0;const chips=[];
+  for(const u of us){const sc=(P.HIST.SC||{})[u]||[];tot+=sc.length;
+    for(const[n,t]of sc){const ms=all.filter(x=>x[12]===u&&x[10]===n);if(ms.length)hit++;
+      const c=ms.reduce((s,x)=>s+x[3],0),a=ms.reduce((s,x)=>s+x[4],0),r=ms.reduce((s,x)=>s+x[5],0);
+      chips.push({k:u+'|'+n,u,n,t,m:ms.length,c,rate:a>=100?r/a*100:null})}}
+  const st=k=>all.filter(x=>k(x[10])).length;
+  return {tot,hit,chips,ok:st(s=>s>0),tbd:st(s=>s===0),none:st(s=>s<0),un:st(s=>s==null)};
+}
 function histDraw(){
-  const id=HS.u,all=hList(id),fold=id==='__fold';
+  const id=HS.u,all=hList(id),fold=id==='__fold',cv=coverage(id,all);
   let rs=HS.t==='all'?all:all.filter(x=>x[1]===HS.t);
+  if(HS.s)rs=rs.filter(x=>HS.s==='tbd'?!(x[10]>0):scKey(x)===HS.s);
   const f=HK[HS.k];rs=[...rs].sort((p,q)=>{const a=f(p),b=f(q);if(a==null&&b==null)return q[3]-p[3];if(a==null)return 1;if(b==null)return -1;return a<b?-HS.dir:a>b?HS.dir:q[3]-p[3]});
   const nAI=all.filter(x=>x[1]==='AI').length,c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
   document.getElementById('hist-h').textContent=fold?`其余 ${P.FOLD.length} 个方向：历史投过的素材`:`${id} ${P.UC[id]||''}：历史投过的素材`;
-  document.getElementById('hist-n').textContent=`${ymd(P.HIST.start)} 起花过钱的 ${all.length} 条（AI ${nAI}，二创 ${all.length-nAI}），共 ${money(all.reduce((s,x)=>s+x[3],0))}。总消耗算到 ${P.HIST.d}；次留、次留成本只算到 ${P.HIST.d1}（最新一天没回传完），颜色和全盘近 7 天比（${P.T.rate.toFixed(1)}%，¥${P.T.cpr}），激活不到 100 是浅色。推送版、修改版合成一条。`;
-  document.getElementById('hist-f').innerHTML=['all','AI','二创'].map(t=>`<button data-t="${t}" aria-pressed="${HS.t===t}">${t==='all'?'全部':t}</button>`).join('')+`<button class="go" data-lines="${esc(id)}">看本周排期行</button>`;
-  const cols=[['#',''],['素材',''],['类型',''],['首花','first'],['总消耗','c'],['近 7 天','c7'],['激活','a'],['次留','rate'],['次留成本','cpr'],['原帖','']].concat(fold?[['use case','']]:[]);
+  const pc=cv.tot?Math.round(cv.hit/cv.tot*100):0;
+  document.getElementById('hist-cv').innerHTML=cv.tot?`<div class="cvh"><b>细分场景测了 ${cv.hit} / ${cv.tot} 个，覆盖率 ${pc}%</b><span class="cvbar"><i style="width:${pc}%"></i></span><small class="q">素材 ${all.length} 条：打上场景 ${cv.ok}，待看片 ${cv.tbd}，库里没有 ${cv.none}${cv.un?'，还没打 '+cv.un:''}。场景按 Use case 库「可包装的场景」，${ymd(P.HIST.start)} 起全部历史。点场景只看这个场景的素材。</small></div><div class="chips">`+
+    cv.chips.map(x=>`<button class="chip${x.m?'':' none'}" data-s="${esc(x.k)}" aria-pressed="${HS.s===x.k}"${x.m?'':' disabled'} title="${esc(x.t)}"><span class="scn">${fold?esc(x.u)+' ':''}${x.n}</span>${esc(x.t)}<small>${x.m?`${x.m} 条 · ${money(x.c)}${x.rate!=null?' · '+x.rate.toFixed(1)+'%':''}`:'没测'}</small></button>`).join('')+
+    (cv.tbd+cv.none+cv.un?`<button class="chip" data-s="tbd" aria-pressed="${HS.s==='tbd'}"><span class="scn">?</span>待看片、库里没有<small>${cv.tbd+cv.none+cv.un} 条</small></button>`:'')+'</div>':'<small class="q">Use case 库里这个方向还没列细分场景</small>';
+  document.getElementById('hist-n').textContent=`${ymd(P.HIST.start)} 起花过钱的 ${all.length} 条（AI ${nAI}，二创 ${all.length-nAI}），共 ${money(all.reduce((s,x)=>s+x[3],0))}。总消耗算到 ${P.HIST.d}；次留、次留成本只算到 ${P.HIST.d1}（最新一天没回传完），颜色和全盘近 7 天比（${P.T.rate.toFixed(1)}%，¥${P.T.cpr}），激活不到 100 是浅色。推送版、修改版合成一条。鼠标放在总消耗、次留上看逐日趋势。`;
+  document.getElementById('hist-f').innerHTML=['all','AI','二创'].map(t=>`<button data-t="${t}" aria-pressed="${HS.t===t}">${t==='all'?'全部':t}</button>`).join('')+(HS.s?`<button data-s="" aria-pressed="true">场景筛选 ×</button>`:'')+`<button class="go" data-lines="${esc(id)}">看本周排期行</button>`;
+  const cols=[['#',''],['素材',''],['细分场景','sc'],['类型',''],['首花','first'],['总消耗','c'],['近 7 天','c7'],['激活','a'],['次留','rate'],['次留成本','cpr'],['原帖','']].concat(fold?[['use case','']]:[]);
   HD.querySelector('thead').innerHTML='<tr>'+cols.map(([n,k])=>k?`<th class="s" data-k="${k}"${HS.k===k?` aria-sort="${HS.dir<0?'descending':'ascending'}"`:''}>${n}</th>`:`<th>${n}</th>`).join('')+'</tr>';
-  HD.querySelector('tbody').innerHTML=rs.map((x,i)=>{const r=hRate(x),cp=hCpr(x),lt=x[4]<100?' lt':'';
-    return `<tr><td class="num q">${i+1}</td><td class="nm">${x[8]?`<a href="${esc(x[8])}" target="_blank" rel="noopener">${esc(x[0])}</a>`:esc(x[0])+'<small class="q">还没找到视频</small>'}</td><td class="n">${x[1]}</td><td class="n">${ymd(x[2])}</td><td class="num"><b>${money(x[3])}</b></td><td class="num${x[7]?'':' q'}">${x[7]?money(x[7]):'·'}</td><td class="num">${x[4].toLocaleString('en-US')}</td>`+
-      `<td class="num">${r==null?'<span class="q">·</span>':`<span class="${c(r-P.T.rate,1)}${lt}">${r.toFixed(1)}%</span>`}</td><td class="num">${cp==null?'<span class="q">·</span>':`<span class="${c(P.T.cpr-cp,3)}${lt}">¥${Math.round(cp)}</span>`}</td>`+
-      `<td class="n">${x[9]?`<a href="${esc(x[9])}" target="_blank" rel="noopener">原帖</a>`:''}</td>${fold?`<td class="n">${esc(x[10])}</td>`:''}</tr>`}).join('')||`<tr><td colspan="${cols.length}" class="q">${ymd(P.HIST.start)} 起没有花过钱的素材</td></tr>`;
+  HR=rs;
+  HD.querySelector('tbody').innerHTML=rs.map((x,i)=>{const r=hRate(x),cp=hCpr(x),lt=x[4]<100?' lt':'',sr=x[11]?` data-hc="${i}" tabindex="0"`:'';
+    return `<tr><td class="num q">${i+1}</td><td class="nm">${x[8]?`<a href="${esc(x[8])}" target="_blank" rel="noopener">${esc(x[0])}</a>`:esc(x[0])+'<small class="q">还没找到视频</small>'}</td><td class="sc">${scCell(x)}</td><td class="n">${x[1]}</td><td class="n">${ymd(x[2])}</td><td class="num"><b class="hv"${sr}>${money(x[3])}</b></td><td class="num${x[7]?'':' q'}">${x[7]?money(x[7]):'·'}</td><td class="num">${x[4].toLocaleString('en-US')}</td>`+
+      `<td class="num">${r==null?'<span class="q">·</span>':`<span class="hv ${c(r-P.T.rate,1)}${lt}"${x[11]?` data-hr="${i}" tabindex="0"`:''}>${r.toFixed(1)}%</span>`}</td><td class="num">${cp==null?'<span class="q">·</span>':`<span class="${c(P.T.cpr-cp,3)}${lt}">¥${Math.round(cp)}</span>`}</td>`+
+      `<td class="n">${x[9]?`<a href="${esc(x[9])}" target="_blank" rel="noopener">原帖</a>`:''}</td>${fold?`<td class="n">${esc(x[12])}</td>`:''}</tr>`}).join('')||`<tr><td colspan="${cols.length}" class="q">没有符合的素材</td></tr>`;
 }
-function histOpen(id){HS.u=id;HS.t='all';HS.k='c';HS.dir=-1;histDraw();setTimeout(()=>{tip.hidden=true;tip.dataset.h=''},0);HD.querySelector('.hb').scrollTop=0;HD.showModal()}
+let HR=[];
+// 悬停小卡：总消耗 = 逐日消耗柱状图（第一天到最近一天）；次留 = 逐日次留折线，虚线是大盘
+const HT=document.getElementById('htip');
+const dayOf=k=>{const d=new Date(P.HIST.start+'T00:00:00');d.setDate(d.getDate()+k);return (d.getMonth()+1)+'/'+d.getDate()};
+function costCard(x){
+  const[o,cs]=x[11],W=Math.max(220,Math.min(420,cs.length*14)),H=96,mx=Math.max(1,...cs),bw=W/cs.length;
+  const pk=cs.indexOf(Math.max(...cs));
+  const bars=cs.map((v,j)=>`<rect x="${(j*bw+bw*.15).toFixed(1)}" y="${(H-v/mx*H).toFixed(1)}" width="${(bw*.7).toFixed(1)}" height="${(v/mx*H).toFixed(1)}" fill="${j===cs.length-1?'var(--todo)':'var(--meter)'}"><title>${dayOf(o+j)}：${money(v)}</title></rect>`).join('');
+  return `<b>${esc(x[0])}</b><span class="tl">每天消耗，${dayOf(o)}–${dayOf(o+cs.length-1)}，共 ${money(x[3])}</span><svg width="${W}" height="${H+14}" viewBox="0 0 ${W} ${H+14}">${bars}<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="currentColor" opacity=".3"/><text x="0" y="${H+12}" font-size="10" fill="currentColor" opacity=".7">${dayOf(o)}</text><text x="${W}" y="${H+12}" font-size="10" fill="currentColor" opacity=".7" text-anchor="end">${dayOf(o+cs.length-1)}</text></svg><span class="tl">峰值 ${money(cs[pk])}（${dayOf(o+pk)}），最近一天 ${money(cs[cs.length-1])}${cs[cs.length-1]&&cs.length>1?'':''}</span>`;
+}
+const HMIN=20;
+function rateCard(x){
+  const[o,,as,rs]=x[11],n=as.length-1,W=Math.max(220,Math.min(420,n*16)),H=90;
+  if(n<1)return `<b>${esc(x[0])}</b><span class="tl">只花了一天，次留还没回传</span>`;
+  const pts=[];for(let j=0;j<n;j++){const b=P.HIST.base[o+j]||[0,0];pts.push({d:dayOf(o+j),a:as[j],v:as[j]>=HMIN?rs[j]/as[j]*100:null,b:b[0]?b[1]/b[0]*100:null})}
+  const vs=pts.flatMap(p=>[p.v,p.b]).filter(v=>v!=null),lo=Math.max(0,Math.floor(Math.min(...vs)/5)*5),hi=Math.ceil(Math.max(...vs,lo+5)/5)*5;
+  const X=j=>n===1?W/2:j/(n-1)*W,Y=v=>H-(v-lo)/(hi-lo)*H;
+  const path=k=>{let d='',pen=false;pts.forEach((p,j)=>{if(p[k]==null){pen=false;return}d+=(pen?'L':'M')+X(j).toFixed(1)+' '+Y(p[k]).toFixed(1);pen=true});return d};
+  const dots=pts.map((p,j)=>p.v==null?'':`<circle cx="${X(j).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="2.5" fill="var(--meter)"><title>${p.d}：${p.v.toFixed(1)}%（激活 ${p.a}）；大盘 ${p.b==null?'·':p.b.toFixed(1)+'%'}</title></circle>`).join('');
+  const skip=pts.filter(p=>p.a>0&&p.v==null).length;
+  return `<b>${esc(x[0])}</b><span class="tl">每天激活的次留，${pts[0].d}–${pts[n-1].d}（最新一天没回传完不画）</span><svg width="${W}" height="${H+14}" viewBox="0 -4 ${W} ${H+18}"><text x="0" y="6" font-size="10" fill="currentColor" opacity=".6">${hi}%</text><text x="0" y="${H}" font-size="10" fill="currentColor" opacity=".6">${lo}%</text><path d="${path('b')}" fill="none" stroke="currentColor" stroke-dasharray="3 3" opacity=".55"/><path d="${path('v')}" fill="none" stroke="var(--meter)" stroke-width="2"/>${dots}<text x="0" y="${H+12}" font-size="10" fill="currentColor" opacity=".7">${pts[0].d}</text><text x="${W}" y="${H+12}" font-size="10" fill="currentColor" opacity=".7" text-anchor="end">${pts[n-1].d}</text></svg><span class="tl"><i class="lg s"></i>这条素材　<i class="lg d"></i>大盘　合计 ${hRate(x).toFixed(1)}%${skip?`；${skip} 天激活不到 ${HMIN} 没画`:''}</span>`;
+}
+function htShow(el,cx,cy){const i=el.dataset.hc??el.dataset.hr,x=HR[+i];if(!x)return;HT.innerHTML=el.dataset.hc!=null?costCard(x):rateCard(x);HT.hidden=false;
+  const w=HT.offsetWidth,h=HT.offsetHeight;HT.style.left=Math.max(8,Math.min(innerWidth-w-8,cx+12))+'px';HT.style.top=(cy-h-10>=8?cy-h-10:Math.min(innerHeight-h-8,cy+16))+'px'}
+HD.addEventListener('mousemove',ev=>{const el=ev.target.closest('[data-hc],[data-hr]');if(el)htShow(el,ev.clientX,ev.clientY);else HT.hidden=true});
+HD.addEventListener('focusin',ev=>{const el=ev.target.closest('[data-hc],[data-hr]');if(el){const r=el.getBoundingClientRect();htShow(el,r.left,r.bottom)}});
+HD.addEventListener('focusout',()=>{HT.hidden=true});
+HD.addEventListener('close',()=>{HT.hidden=true});
+function histOpen(id){HS.u=id;HS.t='all';HS.k='c';HS.dir=-1;HS.s=null;histDraw();setTimeout(()=>{tip.hidden=true;tip.dataset.h=''},0);HD.showModal();HD.scrollTop=0}
 HD.addEventListener('click',ev=>{
   if(ev.target===HD||ev.target.closest('.hx')){HD.close();return}
   const t=ev.target.closest('[data-t]');if(t){HS.t=t.dataset.t;histDraw();return}
-  const s=ev.target.closest('th[data-k]');if(s){const k=s.dataset.k;HS.dir=HS.k===k?-HS.dir:(k==='cpr'?1:-1);HS.k=k;histDraw();return}
+  const sc=ev.target.closest('[data-s]');if(sc){const k=sc.dataset.s;HS.s=!k||HS.s===k?null:k;histDraw();return}
+  const s=ev.target.closest('th[data-k]');if(s){const k=s.dataset.k;HS.dir=HS.k===k?-HS.dir:(k==='cpr'||k==='sc'?1:-1);HS.k=k;histDraw();return}
+  const hv=ev.target.closest('[data-hc],[data-hr]');if(hv){const r=hv.getBoundingClientRect();htShow(hv,r.left,r.bottom);return}
   const g=ev.target.closest('[data-lines]');if(g){HD.close();goLines(g.dataset.lines)}
 });
 document.querySelector('#b').addEventListener('click',ev=>{
