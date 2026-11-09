@@ -586,6 +586,19 @@ def main():
                      'cost27': sum(r['cost'] for r in rd), 'act27': sum(r['act'] for r in rd),
                      'ios': sum(r['cost'] for r in rd if r['platform'] == 'iOS'),
                      'link': link, 'link_type': ltype if link else '', 'video': pick_video(lk)})
+    # 没找到视频的「推送视频_X」用同一条成片 X 的视频（推送是同一个视频换了素材 ID）
+    strip = lambda n: re.sub(r'_20\d{6}$', '', n.replace('推送视频_', '', 1)).strip()
+    by_strip = defaultdict(list)
+    for i, n in names.items():
+        by_strip[strip(n)].append(i)
+    for m in newd:
+        if m['video']:
+            continue
+        for j in by_strip.get(strip(m['name']), []):
+            v = pick_video(links.get(j, {}))
+            if j != m['id'] and v:
+                m['video'] = v
+                break
     newd.sort(key=lambda x: -x['cost27'])
 
     # 素材类型

@@ -56,7 +56,7 @@ def main():
     links = json.load(open(os.path.join(HERE, 'links.json')))
     hubs = json.load(open(os.path.join(HERE, 'jl_hubs.json')))
     now = time.time()
-    ids = {m['id'] for m in res['mat']} | {i for k in res.get('kl', []) for i in k.get('src_ids', [])}
+    ids = {m['id'] for m in res['mat'] + res.get('newd', [])} | {i for k in res.get('kl', []) for i in k.get('src_ids', [])}
     # 往期页面上还在用巨量链接的也一起刷新（巨量链接 2 天过期）
     ids |= {i for i, lk in links.items() if lk.get('jl') and not lk.get('video')}
     if a.sheet:

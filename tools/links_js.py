@@ -53,6 +53,9 @@ def main():
     a = ap.parse_args()
     res = json.load(open(a.results))
     mats = {m['id']: m for m in res['mat']}
+    # 五、昨天上新的素材每条都要有链接（Reina 11/9）
+    for m in res.get('newd', []):
+        mats.setdefault(m['id'], m)
     need = [m for m in mats.values() if m.get('link_type') not in ('原片', '成片')]
     os.makedirs(a.out, exist_ok=True)
     koc = [[m['id'], m['name']] for m in need if 'today koc' in m['name'] or 'today kol' in m['name'] or 'todaykoc' in m['name']]

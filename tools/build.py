@@ -63,6 +63,9 @@ def main():
         txt = txt.replace(name, '')
     if '重排' in txt:
         print('WARNING notes 里有「重排」：除素材原名和字幕原话外不要写这个词（Reina 11/3）')
+    miss = [m['name'] for m in res.get('newd', []) if not m.get('video') and not m.get('link')]
+    if miss:
+        print(f'WARNING 五、昨天上新的素材有 {len(miss)} 条没有链接（Reina 11/9 要每条都能打开），补完再发：' + '；'.join(miss[:5]))
     tpl = open(os.path.join(ROOT, 'tools', 'template.html')).read()
     day_dir = os.path.join(ROOT, meta['date'])
     os.makedirs(day_dir, exist_ok=True)

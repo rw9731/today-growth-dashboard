@@ -31,7 +31,7 @@ def main():
                 r = info[m['id']]
                 m['kind'] = kind_of(r['src'], r['track'], m['name'], m['id'])
     from compute import pick_video
-    for m in res['mat']:
+    for m in res['mat'] + res.get('newd', []):
         lk = links.get(m['id'], {})
         ltype = lk.get('type', '')
         video = pick_video(lk)
@@ -44,7 +44,8 @@ def main():
         json.dump(res, f, ensure_ascii=False)
     subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'build.py'), f.name], check=True)
     missing = sum(1 for m in res['mat'] if not m.get('video'))
-    print(json.dumps({'date': day, 'updated': n, 'still_missing': missing}))
+    missing_new = sum(1 for m in res.get('newd', []) if not m.get('video') and not m.get('link'))
+    print(json.dumps({'date': day, 'updated': n, 'still_missing': missing, 'newd_no_link': missing_new}))
 
 
 if __name__ == '__main__':
