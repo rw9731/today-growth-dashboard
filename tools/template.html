@@ -128,7 +128,7 @@
   .lx-ang-tag.new { border-color: var(--bar); color: var(--bar); }
   .lx-links a + a { margin-left: 6px; }
   .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
-  /* 七、核心 insight 和下一步 */
+  /* 八、核心 insight 和下一步 */
   :root { --t1: var(--color-ok); --t2: var(--bar); --t3: var(--color-warn); --t0: var(--cds-chart-reference); }
   .lx-jump { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--bar); text-decoration: none; }
   .lx-jump:hover { text-decoration: underline; }
@@ -371,8 +371,29 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="newd">
+    <h2 class="lx-h2">五、昨天上新的素材</h2>
+    <p class="lx-note">{{D}} 第一次有消耗的全部素材，不设消耗门槛，按昨天消耗排。<span data-draw="newd-sum"></span>次留要 {{T}} 才有，之后在四、七里看。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>素材</th>
+            <th>素材类型</th>
+            <th>Use case</th>
+            <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
+            <th class="num">激活<span class="th-sub">{{D}}</span></th>
+            <th class="num">激活成本<span class="th-sub">{{D}}</span></th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody data-draw="newdrows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="bad">
-    <h2 class="lx-h2">五、拖后腿的素材</h2>
+    <h2 class="lx-h2">六、拖后腿的素材</h2>
     <h3 class="lx-h3">判差 3 天以上还在花<span class="lx-note" style="margin-left:8px;font-weight:400" data-draw="stuck-sum"></span></h3>
     <p class="lx-note">判差 = 最近 3 个激活日合计至少 50 人，且次留率低于同期全盘的 80%，或次留成本高于同期全盘的 1.25 倍。周一激活的人周三上午才看得到次留，所以第 1 天从看得到那天上午算；第 1、2 天常有翻回来的，不算拖，第 3 天起还花 ¥200 以上列在这里。判差后多花 = 第一次判差那天到昨天的消耗。这里只看消耗，看不到开关状态：掉量可能是关了，也可能是系统不跑了。</p>
     <div class="lx-card lx-scroll">
@@ -412,7 +433,7 @@
   </section>
 
   <section class="lx-sec" id="cohort">
-    <h2 class="lx-h2">六、昨天的钱花在哪批素材上</h2>
+    <h2 class="lx-h2">七、昨天的钱花在哪批素材上</h2>
     <p class="lx-note">按素材第一天花钱的日期分批，一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没上线。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -436,7 +457,7 @@
   </section>
 
   <section class="lx-sec" id="plan" hidden>
-    <h2 class="lx-h2">七、核心 insight 和下一步</h2>
+    <h2 class="lx-h2">八、核心 insight 和下一步</h2>
     <p class="pl-headline" data-draw="pl-headline" hidden></p>
     <div class="pl-quad4">
       <div class="pl-blk" style="--bc:var(--color-fg)"><h3>全局 insight<span>整盘看，钱和次留在往哪走</span></h3><ol data-draw="pl-global"></ol></div>
@@ -709,6 +730,32 @@
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
   matTable('badrows', (v) => /次留差/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''), 'spark');
 
+  // 昨天上新的素材（Reina 11/9）
+  fill('newd-sum', (el) => {
+    const rows = data('newd'); if (!rows.length) { el.textContent = '昨天没有新素材开始花。'; return; }
+    const c = d3.sum(rows, (r) => r.cost27); const by = d3.rollups(rows, (v) => v.length, (r) => (r.kind || '').split(' · ')[0]).sort((a, b) => b[1] - a[1]);
+    el.innerHTML = '共 <b>' + rows.length + '</b> 条（' + by.map(([k, n]) => k + ' ' + n).join('、') + '），昨天合计 <b>' + fmtY(c) + '</b>，占全盘 <b>' + fmtP0(c / (o.cost27 || 1)) + '</b>。';
+  });
+  fill('newdrows', (tb) => {
+    const rows = data('newd'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    if (!rows.length) { const wrap = tb.closest('.lx-card'); if (wrap) wrap.hidden = true; return; }
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      { const nc = td('name'); nc.textContent = r.name; nc.style.whiteSpace = 'normal'; nc.style.minWidth = '12rem'; }
+      { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
+      stack(td(), r.short || r.uc, r.l1);
+      barCell(td(), r.cost27, max, 50);
+      td('num').textContent = fmtN(r.act27);
+      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+      const lc = td('short lx-links');
+      const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
+      const vid = r.video || (r.link_type === '预览' ? r.link : '');
+      if (vid) addLink(vid, '视频');
+      if (r.link && r.link_type !== '预览') addLink(r.link, r.link_type === '原片' ? '原帖' : r.link_type);
+      tb.appendChild(tr);
+    }
+  });
+
   // 判差 3 天还在花（Reina 11/4 定）
   fill('stuckrows', (tb) => {
     const rows = data('mat').filter((r) => (r.bad_n || 0) >= (t.stuck_n || 3) && r.cost27 >= (t.stuck_cost || 200)).sort((a, b) => b.bad_n - a.bad_n || b.cost27 - a.cost27);
@@ -759,7 +806,7 @@
   });
 
 
-  // 七、核心 insight 和下一步
+  // 八、核心 insight 和下一步
   (() => {
     const ucs = data('plan_uc'), pm = one('plan_meta');
     if (!ucs.length || !pm) return;

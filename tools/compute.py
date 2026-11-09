@@ -138,7 +138,7 @@ def shift_ret(rows):
     return sorted(rows + extra, key=lambda r: r['date'])
 
 
-# 七、核心 insight 和下一步：use case 分层（Reina 10/31 定的逻辑）
+# 八、核心 insight 和下一步：use case 分层（Reina 10/31 定的逻辑）
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
@@ -571,6 +571,23 @@ def main():
     for m in mat:
         m.update(streak.get(m['id'], {}))
 
+    # 昨天上新：D 第一次有消耗的全部素材，不设消耗门槛（Reina 11/9）
+    newd = []
+    for i, rs in by_id.items():
+        if first.get(i) != D[3]:
+            continue
+        rd = [r for r in rs if r['date'] == D[3]]
+        lk = links.get(i, {})
+        ltype = lk.get('type', '')
+        link = '' if ltype == '预览' else lk.get('link', '')
+        uc = rs[0]['uc']
+        newd.append({'id': i, 'name': names.get(i, i), 'kind': kind_of(rs[0]['src'], rs[0]['track'], names.get(i, i), i),
+                     'uc': uc, 'short': ucs.get(uc, {}).get('short', ''), 'l1': rs[0]['l1'],
+                     'cost27': sum(r['cost'] for r in rd), 'act27': sum(r['act'] for r in rd),
+                     'ios': sum(r['cost'] for r in rd if r['platform'] == 'iOS'),
+                     'link': link, 'link_type': ltype if link else '', 'video': pick_video(lk)})
+    newd.sort(key=lambda x: -x['cost27'])
+
     # 素材类型
     kind_id = {}
     for r in R + R3:
@@ -658,13 +675,13 @@ def main():
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift],
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
-                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl),
+                      'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl), 'new_D': len(newd),
                       'uc_lib_check': '',
                       'uc_banned': [k for k, v in ucs.items() if any(w in v.get('short', '') for w in ucs.get('_meta', {}).get('banned', []))]}, ensure_ascii=False))
 
