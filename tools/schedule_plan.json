@@ -7,7 +7,7 @@
  "meters": [
   [
    "A 组 AI",
-   99,
+   96,
    150
   ],
   [
@@ -17,7 +17,7 @@
   ],
   [
    "B 组 AI",
-   56,
+   59,
    100
   ],
   [
@@ -1989,6 +1989,39 @@
    "to": ""
   },
   {
+   "uc": "IN01",
+   "d": "2026-11-12",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 33 行：追球队和球员（NBA）",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-12",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 34 行：综艺嘉宾后续",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-12",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 35 行：金饰克价",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
    "uc": "LG03",
    "d": "2026-11-10",
    "g": "A",
@@ -2083,7 +2116,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 174 行：头部模板变式（恩泽贝拉兴趣课·换对象+换人设）",
+   "src": "A 组扩量第 157 行：头部模板变式（恩泽贝拉兴趣课·换对象+换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2094,7 +2127,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 175 行：头部模板变式（W11 约多人会议·换身份+场景）",
+   "src": "A 组扩量第 174 行：头部模板变式（W11 约多人会议·换身份+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2105,7 +2138,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 176 行：头部模板变式（W11 约多人会议·换细分场景）",
+   "src": "A 组扩量第 175 行：头部模板变式（W11 约多人会议·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2116,7 +2149,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 177 行：头部模板变式（说来惭愧·换细分场景）",
+   "src": "A 组扩量第 158 行：头部模板变式（说来惭愧·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2127,7 +2160,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 178 行：头部模板变式（说来惭愧·换人设）",
+   "src": "A 组扩量第 176 行：头部模板变式（说来惭愧·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2138,7 +2171,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 179 行：头部模板变式（W01 会后跟进·换细分场景）",
+   "src": "A 组扩量第 177 行：头部模板变式（W01 会后跟进·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2149,7 +2182,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 180 行：头部模板变式（S16 追赛·换对象+人设：追剧追番）",
+   "src": "A 组扩量第 178 行：头部模板变式（S16 追赛·换对象+人设：追剧追番）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2160,7 +2193,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 181 行：头部模板变式（S16 追赛·换对象：乒乓、羽毛球）",
+   "src": "A 组扩量第 179 行：头部模板变式（S16 追赛·换对象：乒乓、羽毛球）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2171,7 +2204,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 182 行：头部模板变式（S16 追赛·换对象+人设：追星）",
+   "src": "A 组扩量第 180 行：头部模板变式（S16 追赛·换对象+人设：追星）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2182,7 +2215,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 183 行：头部模板变式（英语口语·换身份+场景）",
+   "src": "A 组扩量第 149 行：头部模板变式（英语口语·换身份+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2193,7 +2226,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 184 行：头部模板变式（英语口语·换身份+场景）",
+   "src": "A 组扩量第 181 行：头部模板变式（英语口语·换身份+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2204,7 +2237,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 185 行：头部模板变式（英语口语·换对象）",
+   "src": "A 组扩量第 182 行：头部模板变式（英语口语·换对象）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2215,7 +2248,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 186 行：头部模板变式（恩泽贝拉兴趣课·换细分场景）",
+   "src": "A 组扩量第 183 行：头部模板变式（恩泽贝拉兴趣课·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2226,7 +2259,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 187 行：头部模板变式（恩泽贝拉兴趣课·换对象）",
+   "src": "A 组扩量第 184 行：头部模板变式（恩泽贝拉兴趣课·换对象）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2237,7 +2270,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 188 行：头部模板变式（恩泽贝拉兴趣课·换场景）",
+   "src": "A 组扩量第 185 行：头部模板变式（恩泽贝拉兴趣课·换场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2248,7 +2281,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 189 行：头部模板变式（W11 约多人会议·换人设）",
+   "src": "A 组扩量第 186 行：头部模板变式（W11 约多人会议·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2259,7 +2292,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 190 行：头部模板变式（W11 约多人会议·换人设）",
+   "src": "A 组扩量第 187 行：头部模板变式（W11 约多人会议·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2270,7 +2303,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 191 行：头部模板变式（说来惭愧·换细分场景）",
+   "src": "A 组扩量第 188 行：头部模板变式（说来惭愧·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2281,7 +2314,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 192 行：头部模板变式（说来惭愧·换对象）",
+   "src": "A 组扩量第 189 行：头部模板变式（说来惭愧·换对象）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2292,7 +2325,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "A 组扩量第 193 行：头部模板变式（W01 会后跟进·换身份+场景）",
+   "src": "A 组扩量第 190 行：头部模板变式（W01 会后跟进·换身份+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2301,9 +2334,9 @@
    "d": "2026-11-12",
    "g": "A",
    "t": "AI",
-   "n": 2,
+   "n": 1,
    "s": "todo",
-   "src": "A 组扩量第 194 行：头部模板变式（S16 追赛·换对象：游戏版本）",
+   "src": "A 组扩量第 103 行：头部模板变式（S16 追赛·换对象：游戏版本）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2312,9 +2345,9 @@
    "d": "2026-11-12",
    "g": "A",
    "t": "AI",
-   "n": 2,
+   "n": 1,
    "s": "todo",
-   "src": "A 组扩量第 195 行：头部模板变式（S16 追赛·换对象：篮球）",
+   "src": "A 组扩量第 191 行：头部模板变式（S16 追赛·换对象：篮球）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2323,9 +2356,9 @@
    "d": "2026-11-12",
    "g": "A",
    "t": "AI",
-   "n": 2,
+   "n": 1,
    "s": "todo",
-   "src": "A 组扩量第 196 行：头部模板变式（S16 追赛·同对象换赛事节点）",
+   "src": "A 组扩量第 192 行：头部模板变式（S16 追赛·同对象换赛事节点）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
    "to": ""
   },
@@ -2380,7 +2413,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 72 行：头部模板变式（微信转发通知·换人设）",
+   "src": "B 组扩量第 57 行：头部模板变式（微信转发通知·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2391,7 +2424,18 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 73 行：头部模板变式（微信转发通知·换身份+场景）",
+   "src": "B 组扩量第 72 行：头部模板变式（微信转发通知·换身份+场景）",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS03",
+   "d": "2026-11-11",
+   "g": "B",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 73 行：头部模板变式（微信转发通知·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2407,13 +2451,13 @@
    "to": ""
   },
   {
-   "uc": "PS03",
+   "uc": "WK05",
    "d": "2026-11-11",
    "g": "B",
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 75 行：头部模板变式（微信转发通知·换人设）",
+   "src": "B 组扩量第 58 行：头部模板变式（发票报销 kol·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2424,18 +2468,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 76 行：头部模板变式（发票报销 kol·换细分场景）",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
-   "uc": "WK05",
-   "d": "2026-11-11",
-   "g": "B",
-   "t": "AI",
-   "n": 2,
-   "s": "todo",
-   "src": "B 组扩量第 77 行：头部模板变式（发票报销 kol·换细分场景）",
+   "src": "B 组扩量第 75 行：头部模板变式（发票报销 kol·换细分场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2446,7 +2479,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 78 行：头部模板变式（微信转发通知·换人设）",
+   "src": "B 组扩量第 76 行：头部模板变式（微信转发通知·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2457,7 +2490,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 79 行：头部模板变式（发票报销 kol·换人设）",
+   "src": "B 组扩量第 77 行：头部模板变式（发票报销 kol·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2468,7 +2501,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 80 行：头部模板变式（发票报销 kol·换人设+场景）",
+   "src": "B 组扩量第 78 行：头部模板变式（发票报销 kol·换人设+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2479,7 +2512,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 81 行：头部模板变式（neko 健康·换人设）",
+   "src": "B 组扩量第 79 行：头部模板变式（neko 健康·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2490,7 +2523,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 82 行：头部模板变式（neko 健康·换人设）",
+   "src": "B 组扩量第 80 行：头部模板变式（neko 健康·换人设）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   },
@@ -2501,7 +2534,7 @@
    "t": "AI",
    "n": 2,
    "s": "todo",
-   "src": "B 组扩量第 83 行：头部模板变式（neko 健康·换身份+场景）",
+   "src": "B 组扩量第 81 行：头部模板变式（neko 健康·换身份+场景）",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
    "to": ""
   }
