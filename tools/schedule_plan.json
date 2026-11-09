@@ -1,29 +1,29 @@
 {
  "_note": "排期看板的 plan，schedule_build.py 只从这里读。排期变了（Reina 确认调整、写进飞书、下周新排期）就改这个文件。E 的 s：done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加；已上线的条数从数据算，不写在这里。week 是这份排期对应那周的周一，到下一周要换。",
- "week": "2026-11-02",
- "asof": "2026-11-04",
+ "week": "2026-11-09",
+ "asof": "2026-11-09",
  "bars": 14,
- "sub": "B 组这周排了 100 条，到 11/4 交 11 条，11/5–11/8 每天要做约 22 条，是 11/4 的 2 倍，要确认实际速度。",
+ "sub": "这周先排了 11/9、11/10 两天（11/11 B 组 PS06 5 条），后面看数据再排。A 组上周还有 IN01、LG01 等没交的行，去留等 Reina 定。",
  "meters": [
   [
    "A 组 AI",
-   150,
+   28,
    150
   ],
   [
    "A 组二创",
-   98,
+   28,
    100
   ],
   [
    "B 组 AI",
-   50,
-   50
+   23,
+   100
   ],
   [
    "B 组二创",
-   40,
-   50
+   28,
+   100
   ]
  ],
  "foot_note": "PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。",
@@ -118,10 +118,11 @@
  ],
  "FOLD": [],
  "DIR": [
-  "PS06",
-  "WK03",
-  "SH03",
-  "HL02"
+  "WK02",
+  "WK05",
+  "PS02",
+  "IN01",
+  "HL00"
  ],
  "MT": {
   "LG01": 24,
@@ -1048,17 +1049,6 @@
    "to": ""
   },
   {
-   "uc": "PS06",
-   "d": "2026-11-11",
-   "g": "B",
-   "t": "AI",
-   "n": 5,
-   "s": "todo",
-   "src": "B 组扩量排期第 30 行，周三交、周四上线",
-   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
-   "to": ""
-  },
-  {
    "uc": "IN01",
    "d": "2026-11-05",
    "g": "B",
@@ -1244,6 +1234,589 @@
    "to": "",
    "src": "B 组扩量排期第 29 行，新写脚本",
    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB"
+  },
+  {
+   "uc": "WK02",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 4,
+   "s": "todo",
+   "src": "A 组扩量第 133 行：被质疑的身份",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "PS02",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 134 行：课外班撞时间",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "PS02",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 135 行：老人来带娃",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "HL00",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 3,
+   "s": "todo",
+   "src": "A 组扩量第 136 行：加班后的训练",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK04",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 137 行：半路接手项目",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "SH01",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "二创",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 138 行：查自动扣费",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK02",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "AI",
+   "n": 3,
+   "s": "todo",
+   "src": "A 组扩量第 139 行：每天早上清邮件",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "SH03",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 140 行：试用期忘了取消",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-09",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 141 行：提前备好老板要的数",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK05",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 4,
+   "s": "todo",
+   "src": "A 组扩量第 142 行：财务催报销",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 143 行：追剧追番更新",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK00",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 144 行：一天工作快切",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK02",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 145 行：老板在群里随口一句",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "PS01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 146 行：临时被拉会撞私事",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "TR00",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 147 行：周五回爸妈家",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK05",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 3,
+   "s": "todo",
+   "src": "A 组扩量第 148 行：财务群催报销",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 149 行：游戏版本和新赛季",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 150 行：油价调价窗口",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "WK08",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 151 行：新员工配电脑",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "NT02",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 152 行：随口记",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "FN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 153 行：持仓公告",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "SH03",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 154 行：外卖显示送达没收到",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "HL04",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "A 组扩量第 155 行：每个月的驱虫日",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 99 行：已有客户的动静",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 100 行：潜在客户的机会",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 101 行：对手的动静",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 102 行：招投标公告",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "A",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "A 组扩量第 103 行：自己公司（建议换掉）",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv",
+   "to": ""
+  },
+  {
+   "uc": "PS01",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 4,
+   "s": "todo",
+   "src": "B 组扩量第 38 行：会议撞私事",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "WK00",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 3,
+   "s": "todo",
+   "src": "B 组扩量第 39 行：工作要用的书",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS05",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 40 行：孩子生日会",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS01",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 41 行：一个人住",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "AI00",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 42 行：下班前一句话交代",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "NT01",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "二创",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 43 行：长辈生日",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "SH03",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 44 行：海外酒店多扣一晚",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 45 行：乒乓、羽毛球、斯诺克的选手",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-09",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 46 行：自家产品的公开评论",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "WK02",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 47 行：被质疑的身份",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "TR01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 3,
+   "s": "todo",
+   "src": "B 组扩量第 48 行：周末短途",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "FN00",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 3,
+   "s": "todo",
+   "src": "B 组扩量第 49 行：这个月替我省了多少",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS04",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 50 行：老人来住",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS02",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 51 行：周末一家出去玩",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "WK04",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "二创",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 52 行：周会汇报",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "HL00",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 3,
+   "s": "todo",
+   "src": "B 组扩量第 53 行：熬夜后的第二天",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "TR00",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 54 行：每周出差",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS07",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 55 行：产假结束回去上班",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "WK07",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 2,
+   "s": "todo",
+   "src": "B 组扩量第 56 行：一面刚结束二面约在下周",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 31 行：行业政策和动态：AI 行业",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 32 行：行业政策和动态：外贸",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 33 行：追球队和球员（NBA）",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 34 行：综艺嘉宾后续",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "IN01",
+   "d": "2026-11-10",
+   "g": "B",
+   "t": "AI",
+   "n": 1,
+   "s": "todo",
+   "src": "B 组扩量第 35 行：金饰克价",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
+  },
+  {
+   "uc": "PS06",
+   "d": "2026-11-11",
+   "g": "B",
+   "t": "AI",
+   "n": 5,
+   "s": "todo",
+   "src": "B 组扩量第 30 行：周末去哪玩，周三交、周四上线",
+   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB",
+   "to": ""
   }
  ],
  "MOVED": {
@@ -1276,5 +1849,10 @@
    "d": "2026-11-06"
   }
  },
- "output_targets": {"ai": 150, "ec": 50, "xg": 15, "kol": 65}
+ "output_targets": {
+  "ai": 250,
+  "ec": 200,
+  "xg": 15,
+  "kol": 65
+ }
 }
