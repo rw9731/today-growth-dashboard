@@ -54,7 +54,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 .name button:focus-visible,a:focus-visible{outline:2px solid var(--link);outline-offset:2px}
 .name code{font:600 12px var(--mono);margin-right:4px}
 .name span{color:var(--sub);font-size:12px;line-height:1.25}
-.name em{font-style:normal;font-size:11px;color:var(--ink);background:var(--band);box-shadow:inset 0 0 0 1px var(--base);padding:0 3px;margin-left:3px;white-space:nowrap}
+.name em{font-style:normal;font-size:11px;color:var(--ink);background:var(--band);box-shadow:inset 0 0 0 1px var(--base);padding:0 3px;margin-left:3px;white-space:nowrap}.name em.risk{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
 .st{text-align:right;padding:2px 6px;white-space:nowrap;vertical-align:middle;font-variant-numeric:tabular-nums;font-size:12px}
 .st b{font-weight:600}
 .st small{color:inherit;font-size:11px;display:block;line-height:1.2}
@@ -317,7 +317,7 @@ function row(id,code,label,r,es,max,cls,gi){
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
-  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}</button></td>
+  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${DIR.has(id)?'<em>本周方向</em>':''}${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2&&!DIR.has(id),P.B[id],id)}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
@@ -457,11 +457,12 @@ const upLines=t=>{const u=P.TIER.up,r=P.T.rate-u.gap;return [
 const HELP={y:yHelp,
  ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 灰色是激活不到 100 个，样本太小，高低都不算数。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
  g:i=>{const u=P.TIER.up,n=P.TIER.inn;return [
-  `<b>能放量 + 留存好</b>：钱花得出去，留存不比全盘差，新素材接得上。这几条都够才进：<br>· 近 7 天占全盘 ≥${u.sh}%<br>· 7 天里至少 ${u.d5} 天占当天全盘 ≥3%<br>· 最大一条不超过这个方向 7 天消耗的 ${u.top}%<br>· 最近 7 天至少 ${u.nb} 个上线日有新素材跑起来（第二天比当天大盘平均每条花得多）<br>· 次留 ≥全盘 −${u.gap} 个点，成本不比全盘贵 ¥3 以上<br><br>档位每周周报改一次，不跟单日或一批素材变。连续两周不够才降。把鼠标放到某个 use case 名字上，看它现在够不够。`,
-  `<b>跑量少 + 留存好</b>：量还没起来，但留存明显好，值得多给产能去测能不能放量。这几条都够才进：<br>· 最近 7 天或 14 天激活 ≥${n.act}<br>· 次留比同样这些天的全盘高 ${n.gap} 个点以上<br>· 成本不比全盘贵 ¥3 以上<br><br>连续两周次留低于同日全盘 ${u.gap} 个点以上，或成本比全盘贵 ¥3 以上，回探索。升到能放量 + 留存好的条件，看上面那一档的说明，或把鼠标放到 use case 名字上。`,
+  `<b>能放量 + 留存好</b>：钱花得出去，留存不比全盘差，新素材接得上。这几条都够才进：<br>· 近 7 天占全盘 ≥${u.sh}%<br>· 7 天里至少 ${u.d5} 天占当天全盘 ≥3%<br>· 最大一条不超过这个方向 7 天消耗的 ${u.top}%<br>· 最近 7 天至少 ${u.nb} 个上线日有新素材跑起来（第二天比当天大盘平均每条花得多）<br>· 次留 ≥全盘 −${u.gap} 个点，成本不比全盘贵 ¥3 以上<br><br>档位每周周报改一次，不跟单日或一批素材变。连续两周不够才降。近 7 天次留低于全盘 ${u.gap} 个点以上、成本贵 ¥3 以上（激活 ≥${n.act}），或占比掉到 ${P.TIER.risk_sh}% 以下的，名字旁标「危险」。把鼠标放到某个 use case 名字上，看它现在够不够。`,
+  `<b>跑量少 + 留存好</b>：量还没起来，但留存明显好，值得多给产能去测能不能放量。这几条都够才进：<br>· 最近 7 天或 14 天激活 ≥${n.act}<br>· 次留比同样这些天的全盘高 ${n.gap} 个点以上<br>· 成本不比全盘贵 ¥3 以上<br><br>连续两周次留低于同日全盘 ${u.gap} 个点以上，或成本比全盘贵 ¥3 以上，回探索。近 7 天已经碰到这条线的（激活 ≥${n.act}），名字旁标「危险」。升到能放量 + 留存好的条件，看上面那一档的说明，或把鼠标放到 use case 名字上。`,
   `<b>探索</b>：还没有结论。量和留存都不够的新方向，或者量大但留存差的方向。新方向每个先上 5 条；累计 30 套还没有信号就写「差」。<br><br>留存看着高不一定能进上一档，先看样本：激活不到 ${n.act} 个的，次留高低都不算数。`][+i]},
  u:id=>{const t=P.TIER.U[id],n=P.TIER.inn,title=P.GROUPS[t.g][0];let h=`<b>${esc(id)} ${esc(P.UC[id]||'')}</b>：${esc(title)}`;
   if(t.from)h+=`<br>${t.md} 从${esc(t.from)}进来。`;
+  if(t.risk)h+=`<br><br><b class="bad">危险</b>：在这一档里不稳，只标不降（连续两周不够才降）：<br>· `+t.risk.map(esc).join('<br>· ');
   if(t.g===0)h+=`<br><br>这一档的线（档位每周改一次，连续两周不够才降）：<br>`+upLines(t);
   else if(t.g===1)h+=`<br><br>升到能放量 + 留存好，这几条都要够：<br>`+upLines(t);
   else h+=`<br><br>进跑量少 + 留存好，这几条都要够（最近 ${t.win} 天）：<br>激活 ${t.a}（要 ≥${n.act}）${mark(t.a>=n.act)}<br>次留 ${t.rate==null?'·':t.rate+'%'}，比同日全盘 ${t.gap==null?'·':pt(t.gap)+' 个点'}（要 ≥+${n.gap}）${mark(t.gap!=null&&t.gap>=n.gap)}<br>成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${t.gc}）${mark(t.cpr!=null&&t.cpr<=t.gc)}`;

@@ -268,6 +268,7 @@ def batch_line(B, groups, D, total, days):
 UP_SH, UP_D5, UP_TOP, UP_NB, UP_GAP = 5, 5, 33, 2, 1.5
 COST_OK = 3  # 成本差 ¥3 以内算和全盘差不多，和页面标色一致。第一档占全盘一半以上，卡死 ≤全盘就是 ¥1 定档
 IN_ACT, IN_GAP = 100, 3
+RISK_SH = 3  # 第一档近 7 天占比掉到 3% 以下标危险（进来的线是 5%）
 
 
 def tier_view(R, groups, total, plan, T):
@@ -285,6 +286,17 @@ def tier_view(R, groups, total, plan, T):
             w7, w14 = t['w7'], t['w14']
             if gi < 2:
                 x.update(rate=w7['rate'], cpr=w7['cpr'])
+                # 危险（Reina 11/9）：在本档里地位不稳。只标不降，降档还是连续两周不够、Reina 定。
+                # 两档都看近 7 天留存（激活 ≥IN_ACT 才算）：次留低于全盘 UP_GAP 点以上，或成本比全盘贵 COST_OK 以上，就是第二档的退出线；第一档再看量，近 7 天占比掉到 RISK_SH 以下。
+                risk = []
+                if w7.get('a', 0) >= IN_ACT and w7['rate'] is not None and w7['rate'] < total['rate'] - UP_GAP:
+                    risk.append('近 7 天次留 %s%%，比全盘低 %.1f 个点（线是低 %s 个点）' % (w7['rate'], total['rate'] - w7['rate'], UP_GAP))
+                if w7.get('a', 0) >= IN_ACT and w7['cpr'] is not None and w7['cpr'] > total['cpr'] + COST_OK:
+                    risk.append('近 7 天成本 ¥%s，比全盘贵 ¥%s（线是贵 ¥%s）' % (w7['cpr'], w7['cpr'] - total['cpr'], COST_OK))
+                if gi == 0 and t['sh'] < RISK_SH:
+                    risk.append('近 7 天占全盘 %s%%，掉到 %s%% 以下' % (t['sh'], RISK_SH))
+                if risk:
+                    x['risk'] = risk
                 x['can'] = gi == 1 and t['sh'] >= UP_SH and t['d5'] >= UP_D5 and t['top'] <= UP_TOP and t['nb'] >= UP_NB and w7['rate'] is not None and w7['rate'] >= total['rate'] - UP_GAP and (w7['cpr'] or 999) <= total['cpr'] + COST_OK
             else:
                 ok = lambda w, k: w['a'] >= IN_ACT and w['gap'] is not None and w['gap'] >= IN_GAP and (w['cpr'] or 999) <= gl.get(k, {}).get('cpr', 0) + COST_OK
@@ -297,7 +309,7 @@ def tier_view(R, groups, total, plan, T):
                 x['md'] = md(d)
                 x['fresh'] = (T - d).days <= 7
             out[u] = x
-    return dict(U=out, up=dict(sh=UP_SH, d5=UP_D5, top=UP_TOP, nb=UP_NB, gap=UP_GAP), inn=dict(act=IN_ACT, gap=IN_GAP))
+    return dict(U=out, up=dict(sh=UP_SH, d5=UP_D5, top=UP_TOP, nb=UP_NB, gap=UP_GAP), inn=dict(act=IN_ACT, gap=IN_GAP), risk_sh=RISK_SH)
 
 
 def rule_rows(RU, U, E, GL, W, T):
