@@ -708,34 +708,6 @@ def main():
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
-    # 细分场景（Reina 11/9）：每条素材对应 Use case 库「可包装的场景」里的第几条，存在 notes/scene-map.json（看片或看名字打的标）；
-    # 场景清单 tools/scenes.json 从 Use case 库同步。覆盖率 = 有素材测过的场景数 ÷ 库里在用 use case 的场景总数。
-    SC = json.load(open(os.path.join(HERE, 'scenes.json')))
-    smp = os.path.join(os.path.dirname(HERE), 'notes', 'scene-map.json')
-    SM = json.load(open(smp)) if os.path.exists(smp) else {}
-    pool = {}
-    for m in recent + newd:
-        t = SM.get(m['id'])
-        uc = (t or {}).get('uc') or m.get('uc') or ''
-        sc = next((s for s in SC.get(uc, {}).get('scenes', []) if t and s['n'] == t['s']), None)
-        m['scene'] = ('%s-%d %s' % (uc, sc['n'], sc['t'])) if sc else ''
-        m['scene_st'] = 'ok' if sc else ((t or {}).get('st') or 'tbd')
-        m['scene_why'] = (t or {}).get('why', '')
-        m['scene_by'] = (t or {}).get('by', '')
-        pool.setdefault(m['id'], (uc, sc['n'] if sc else 0, m['scene_st'], m.get('tot') or m.get('cost27') or 0))
-    cov = []
-    for uc, v in SC.items():
-        ms = [p for p in pool.values() if p[0] == uc]
-        per = [{'n': s['n'], 't': s['t'], 'g': s.get('g', ''), 'cnt': sum(1 for p in ms if p[1] == s['n']),
-                'cost': round(sum(p[3] for p in ms if p[1] == s['n']))} for s in v['scenes']]
-        cov.append({'uc': uc, 'name': v['name'], 'l1': v['l1'], 'n_sc': len(per), 'n_cov': sum(1 for x in per if x['cnt']),
-                    'n_mat': len(ms), 'n_tbd': sum(1 for p in ms if p[2] == 'tbd'), 'n_none': sum(1 for p in ms if p[2] == 'none'), 'sc': per})
-    cov.sort(key=lambda c: (-c['n_mat'], c['uc']))
-    newd_meta['scene'] = {'n_sc': sum(c['n_sc'] for c in cov), 'n_cov': sum(c['n_cov'] for c in cov), 'n_uc': len(cov),
-                          'n_uc_tested': sum(1 for c in cov if c['n_mat']), 'n_mat': len(pool),
-                          'n_ok': sum(1 for p in pool.values() if p[2] == 'ok'), 'n_tbd': sum(1 for p in pool.values() if p[2] == 'tbd'),
-                          'n_none': sum(1 for p in pool.values() if p[2] == 'none'), 'n_noucs': sum(1 for p in pool.values() if p[0] not in SC),
-                          'map': bool(SM)}
 
     # 素材类型
     kind_id = {}
@@ -824,7 +796,7 @@ def main():
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'scene_cov': cov,
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
