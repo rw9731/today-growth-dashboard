@@ -75,6 +75,10 @@ def load_koc(path):
 
 
 def targets_of(plan, mon):
+    # 过去那周的目标存在 targets_by_week（周一看上周时用，换周后 meters 和 output_targets 已经是新一周的了）
+    old = plan.get('targets_by_week', {}).get(mon.isoformat())
+    if old and plan.get('week') != mon.isoformat():
+        return {**old, 'from_plan': True}
     t = dict(plan.get('output_targets', {}))
     if plan.get('week') == mon.isoformat() and plan.get('meters'):
         t['ai'] = sum(m[1] for m in plan['meters'] if 'AI' in m[0])

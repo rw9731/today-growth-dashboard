@@ -141,7 +141,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - E 是排期条目：d 交付日、g 组、t 类型、n 条数、s 状态（done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加）、src 和 link 是飞书位置、to 是拿掉后怎么办。已上线的条数从数据算，不写在这里。
 - Reina 确认调整、写进飞书之后，把对应条目改掉（add 改 todo，cut 删掉或换 uc），MOVES 也跟着改，asof 改成当天。
 - 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
-- 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
+- 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。换之前先把上一周的产出目标（ai、ec 取上一周 meters 的合计，xg、kol 取 output_targets）写进 targets_by_week[上周一]，周一页面看上周产出时用它，不然会拿新一周的目标去比。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
 - schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
 
 页面日期都按 D 和 T 算：柱子是 D 往前 14 天，排期列是 T 到 T+4。过了日子的 todo、cut、add 不再算进后面的供给，看进度那一行；已交没花钱的挪到今天，asof 之后上线的条数扣掉。
@@ -162,13 +162,13 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 
 次留、成本的趋势卡（Reina 11/6 要）：鼠标放到某一行的次留或成本上，看最近 7 天折线，虚线是大盘。最新一天次留没回传不画，激活不到 30 的天不画，表里「比大盘」按相对比例算。
 
-知定堂星广（Reina 11/6）：新 agency，每周 100 条产能，下周 11/9 起先排 50 条，三档 50/30/20，单独测星广；产品新增浏览器操作能力，use case 库要更新，另外 50 条等库更新后再排。排期放他们的飞书表，看板不单独放一块（Reina 11/6），也不写进 schedule_plan.json。飞书表建好后，接进 schedule_read、schedule_progress（第三条进度条）和 schedule_output（星广预计加 100）。
+知定堂星广（Reina 11/6，11/9 更新）：新 agency，KPI 每周 80 条（Reina 11/9），从 11/9 这周起星广目标在原来的 15 条上加 80，output_targets 的 xg 是 95；三档 50/30/20，单独测星广；产品新增浏览器操作能力，use case 库要更新，另外 50 条等库更新后再排。排期放他们的飞书表，看板不单独放一块（Reina 11/6），也不写进 schedule_plan.json。飞书表建好后，接进 schedule_read、schedule_progress（第三条进度条）和 schedule_output（星广预计已按 95 算，知定堂的成片要读进来才算完成）。
 
 本周实际产出（Reina 11/5 要，在页面最上面）：昨天和本周累计，四类 AI 素材、真人二创、星广、达人合作，累计对比预计和完成度。
 - 除了上面 6 个 tab，schedule_read.js 还要跑 A 组 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（现在是 11月执行表，每月一张，换月要换 sheet id，存文件名还用 5cypAT.json），存进同一个目录。再读 'Today KOL/KOC 视频'!A1:Z 存成文件。然后 `python3 tools/schedule_output.py --dir /tmp/sched/feishu --koc <视频文件> --date T --out /tmp/sched/output.json`，schedule_build 加 `--output /tmp/sched/output.json`。
 - 类型（Reina 11/5 定）：水下达人原片都要剪了再投，不当投放素材类型，10 月中的老原片只留在数据里，不算产量。达人合作数的是发布的视频条数，不是投放素材。
 - 按实际产出日算，不按排期日期：AI 和二创看完成时间和文件名最后一个日期，再空看产出日期；星广看成片完成时间；达人看发布日期（唯西发布时间、悦普已发布的发布档期、其余代理商「Today KOL/KOC 视频」），图文不算。类型看扩量表「怎么改」的【AI】【二创/重配】，没写的老行看文件名。文件名没有日期的行写进 output.json 的 undated。
-- 预计：AI、真人二创用这周排期（plan 的 meters，已排条数）；星广 15、达人 65（外部 50 + 唯西 15）在 plan 的 output_targets，取自素材产出日报。meters 的 week 对不上时 AI、二创退回 150、50。
+- 预计：AI、真人二创用这周排期（plan 的 meters，已排条数）；星广 95（唯西 15 + 知定堂 80，11/9 起）、达人 65（外部 50 + 唯西 15）在 plan 的 output_targets，取自素材产出日报。meters 的 week 对不上时 AI、二创退回 150、50。
 - 水上：合作形式以「星图」开头的抖音合作，只算唯西和悦普；AnyMedia 的表没读，不知道水上水下。
 - 和素材产出日报的数会不一样：日报的 AI 只算 A 组脚本及成片，不算扩量表和 B 组，不算二创，外部 agency 没有悦普，发出后补填的日期也不回改。
 
