@@ -248,3 +248,8 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 ## 悬浮目录（Reina 11/9：所有页面都要有）
 
 日报模板 tools/template.html 自带目录（id="toc"）。周报、排期、专题页用 tools/toc_snippet.html（id="gtoc"，按页面 h2 自动生成），已经插进 tools/week_template.html、tools/schedule_template.html 和现有页面；新做的专题页或别的手写页面跑一次 `python3 tools/add_toc.py <页面>`。改目录样式改 toc_snippet.html 后，再对所有页面跑 add_toc.py 换成新版。
+
+### 扩量排期表按日期摆（Reina 11/10）
+- 改排期时新行插回对应那天的块里，不往表底下追加新的一块；同一天只有一个日期标题，标题写「M/D 周X（AI a 条、二创 b 条，共 n 条；其中头部模板变式 v 条）」，那天在上面别处还有行就写「另有上面第 N 行 …」。
+- 已经乱了就用 tools/schedule_reorder.js 重排：只动从某行起（A 组 kMJdAv 第 147 行、B 组 3KtioB 第 57 行）还没开工的行，按 11/9 → 11/10 → 11/11 … → 下周 排，标「顺延到下周」的放进「下周」块，说明行放在第一个未来日之前；有附件/素材名/成片状态的行它会停下不动。先 WRITE=false 看映射，再写；写完等 10 秒以上再刷新核对（刷得太快会看到旧数据）。写完按它返回的「旧行>新行」改 schedule_plan.json 的 src 行号，并按 UC 逐条核对。
+- 唯西也会在表里插行删行（11/10 上午 A 组第 104–131 行之间少了 2 行），所以每次动表前先按 UC 核对 schedule_plan.json 里的行号。
