@@ -78,7 +78,7 @@ for (let r = 1; r < __sh.getRowCount(); r++) {
     any = true;
     const k = w.replace('?', '');
     if (w === '扩量素材名') { // 条数，加上每条文件名里的日期（实际产出按它算）
-      const L = t.split('\n').filter((s) => s.trim());
+      const L = t.split('\n').filter((s) => s.trim() && !/换前贴/.test(s)); // Reina 11/10：只换前贴（开头 hook 画面）的版本不算产量
       row[k] = L.length;
       row.ds = L.map(__fd);
       row.nec = L.filter((x) => /二创/.test(x)).length; // 文件名含二创的条数，这一行没写类型时用
