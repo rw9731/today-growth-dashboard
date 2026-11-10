@@ -6,7 +6,7 @@
 --dir 里是 tools/schedule_read.js 跑出来的结果，除了排期进度的 6 个 tab，还要 lheDJa（星广脚本审核表）、L1c0HC（付费达人执行表）、5cypAT（悦普执行表）。
 <视频文件> 是 'Today KOL/KOC 视频'!A1:Z 的 get_values 结果。
 T = 看板当天，D = T-1。本周 = D 所在的周一到周日。
-预计（Reina 11/5 定）：AI、真人二创用这周排期（plan 的 meters）；星广、达人用 plan 的 output_targets（素材产出日报的每周目标）。
+预计（Reina 11/5 定，11/10 改）：AI、真人二创用这周产能（plan 的 meters 第三列：11/9 这周起 A 组 AI 150、二创 100，B 组 AI 100、二创 100）；星广、达人用 plan 的 output_targets（素材产出日报的每周目标）。
 
 怎么算（Reina 11/5 要，按实际产出时间算，不按排期日期，也不按上线日期）：
 - AI：A 组脚本及成片（完成时间）、B 组脚本&成片（完成时间，空着看文件名日期，再空看产出日期）、两组扩量表里类型是【AI】的（文件名日期）。
@@ -81,8 +81,8 @@ def targets_of(plan, mon):
         return {**old, 'from_plan': True}
     t = dict(plan.get('output_targets', {}))
     if plan.get('week') == mon.isoformat() and plan.get('meters'):
-        t['ai'] = sum(m[1] for m in plan['meters'] if 'AI' in m[0])
-        t['ec'] = sum(m[1] for m in plan['meters'] if '二创' in m[0])
+        t['ai'] = sum(m[2] for m in plan['meters'] if 'AI' in m[0])  # Reina 11/10：按每周产能算，不按已排条数
+        t['ec'] = sum(m[2] for m in plan['meters'] if '二创' in m[0])
         t['from_plan'] = True
     return t
 
