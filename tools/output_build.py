@@ -249,8 +249,9 @@ def main():
                 t = next((y['t'] for y in scenes[s['uc']]['scenes'] if y['n'] == s.get('s')), '')
                 if t:
                     x['sc'] = t
-    for x in store.values():  # 成片直接链视频：投出去的用巨量/唯西日报的永久视频，没投的用飞书附件的直链（要登录飞书），都没有才退回表里那一格
-        x['link'] = x.get('video') or (STREAM.format(x['tok']) if x.get('tok') else x.get('cell') or x.get('link', ''))
+    for x in store.values():  # 投出去的直接链巨量/唯西日报的永久视频；没投的链飞书表里成片那一格（附件直链飞书会做 Referer 校验，从看板点开报「Referer check fail」，11/10 试过）
+        x['link'] = x.get('video') or x.get('cell') or x.get('link', '')
+        x['lk'] = 'v' if x.get('video') else 'f'
     json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
     mon = T - dt.timedelta(days=T.weekday())
