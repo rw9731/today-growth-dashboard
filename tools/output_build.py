@@ -186,7 +186,7 @@ def main():
         w0 = dt.date.fromisoformat(wk)
         items = sorted([x for x in store.values() if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g'], x['k'], x['uc']))
         data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, kinds=KIND_NAME, weeks=weeks,
-                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()})
+                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}))
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
         for path in [os.path.join(ROOT, 'output', wk, 'index.html')] + ([os.path.join(ROOT, 'output', 'index.html')] if w0 == mon else []):
             os.makedirs(os.path.dirname(path), exist_ok=True)

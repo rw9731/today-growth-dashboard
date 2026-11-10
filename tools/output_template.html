@@ -70,6 +70,13 @@ tr.we td{color:var(--sub)}
 #bt tr.dh{cursor:pointer}#bt tr.dh td{background:var(--bg);border-top:2px solid var(--line);padding:9px 8px}#bt tr.dh td::before{content:"▸ ";color:var(--sub)}#bt tr.dh.open td::before{content:"▾ "}
 #bt tr.sub td{background:var(--bg);font-size:12px}#bt tr.sub ul{margin:0;padding-left:18px}#bt tr.sub li{margin:2px 0;overflow-wrap:anywhere}
 .mini{display:inline-flex;gap:1px;vertical-align:middle;margin-left:6px}.mini i{display:inline-block;width:6px;height:10px;background:var(--line)}.mini i.on{background:var(--v)}
+.legend{display:grid;gap:6px;font-size:12px;color:var(--sub);padding:10px 14px}
+.legend .lr{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center}.legend b{color:var(--fg)}.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}.legend .pl{display:inline-block;width:14px;height:9px;border:1.5px solid var(--fg);opacity:.5;margin-right:5px;vertical-align:-1px}.legend .m{display:inline-block;width:0;height:11px;border-left:1px dashed var(--fg);margin:0 6px 0 2px;vertical-align:-1px}
+.tot{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.tot b{font-size:40px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.tot span{font-size:14px;color:var(--sub)}
+.prog{position:relative;height:12px;background:var(--line);margin:12px 0 6px}.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--fg);opacity:.85}.prog .pace{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--bad)}
+.pn{font-size:12px;color:var(--sub)}
+.l2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.l2 div{display:grid}.l2 b{font-size:16px;font-variant-numeric:tabular-nums}.l2 span{font-size:12px;color:var(--sub)}.l2 small{font-size:12px;color:var(--sub);font-weight:400}
+.fl a{margin-right:6px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -77,23 +84,21 @@ tr.we td{color:var(--sub)}
 <nav><a href="{{REL}}">← 素材看板</a><a href="{{REL}}schedule/">素材排期</a><span class="cur">素材产出</span><select id="wk" aria-label="选周"></select></nav>
 <h1>素材产出</h1>
 <p class="sub" id="sub"></p>
+<div class="legend card" id="legend"></div>
 
-<h2>本周两组交了多少</h2>
+<h2>本周交了多少</h2>
 <div class="kpis" id="kpis"></div>
-<p class="note">头部模板变式 = 照「头部素材结构提取和变式（11/9）」22 个模板做的变式和同脚本换画面，目标占 70%，每天至少 20 条；新测试 = 其余新脚本、新角度、其他原片的二创，约 30%。只换前贴（只换开头 hook 画面）的不算数。按成片文件名里的日期算交付日。</p>
 
 <h2>每天交了多少</h2>
 <div class="dg" id="days"></div>
-<p class="note">每一行是一天交的素材：蓝色是头部模板变式，紫色是同脚本换画面，黄色是新测试；空心框是这天排了多少条，虚线是每天至少 20 条变式。右边「交了/排了」。最新的日期在最上面，周末灰色。</p>
 
-<h2>生产批次：排了什么、交了什么</h2>
+<h2>生产批次</h2>
 <div class="filters" id="bf"></div>
 <div class="scroll list"><table id="bt"></table></div>
-<p class="note">排期表里的一行是一个批次。扩量表交上来的成片按行号挂到这一行；脚本表、二剪表交上来的，按组、use case、AI/二创、是不是变式，挂到交付日当天或前两天的排期行上，对不上的列为「排期外」。每天一组，点日期展开这天的批次，再点某一批看交了哪几条；默认展开今天和昨天。</p>
 
 <h2>按维度看</h2>
 <div class="dim" id="dims"></div>
-<p class="note">点某一行只看这一类素材。</p>
+
 
 <h2>成片清单</h2>
 <div class="filters" id="filters"></div>
@@ -108,22 +113,26 @@ const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
 const IT=D.items, CNT=x=>x.k!=='X';
 const isVar=x=>x.k==='V'||x.k==='S';
 const KC={V:'var(--v)',S:'var(--s)',N:'var(--n)',X:'var(--x)'};
-document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周，A、B 两组每天交的素材（读飞书扩量排期、脚本表、二剪表），数据截至 ${md(D.T)}。每条都能点开飞书里的成片，已经投出去的带巨量视频和累计消耗。`;
+document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周两组的生产批次和实际成片，数据截至 ${md(D.T)}。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
 // KPI
+const YD=(()=>{const t=new Date(D.T+'T00:00:00');t.setDate(t.getDate()-1);return t.toISOString().slice(0,10)})();
+const TG=D.target||{A:150,B:150};
+const wdays=D.days.filter(d=>d<D.T&&![0,6].includes(new Date(d+'T00:00:00').getDay())).length;
+document.getElementById('legend').innerHTML=`<div class="lr"><b>目标</b><span>A 组一周 ${TG.A} 条、B 组一周 ${TG.B} 条（AI 和真人二创都算），按周一到周五排，看总数</span><span>其中头部模板变式约 70%、每天至少 20 条，新测试约 30%</span></div>
+<div class="lr"><b>颜色</b><span><i style="background:var(--v)"></i>头部模板变式：照「头部素材结构提取和变式（11/9）」22 个模板做的</span><span><i style="background:var(--s)"></i>同脚本换画面：台词照原片，只换人设和画面</span><span><i style="background:var(--n)"></i>新测试：其余新脚本、新角度、其他原片二创</span></div>
+<div class="lr"><b>说明</b><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><span class="pl"></span>空心框 = 这天排了多少</span><span><span class="m"></span>虚线 = 20 条变式</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
 document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
-  const L=IT.filter(x=>x.g===g),C=L.filter(CNT),v=C.filter(x=>x.k==='V').length,s=C.filter(x=>x.k==='S').length,n=C.filter(x=>x.k==='N').length,xx=L.length-C.length,ai=C.filter(x=>x.t==='A').length,vs=v+s;
-  const p=C.length?Math.round(vs/C.length*100):0,need=Math.max(0,Math.ceil(0.7*C.length-vs)),ok=C.length&&p>=70;
-  const chip=!C.length?'<span class="chip mu">还没交</span>':ok?'<span class="chip ok">变式达标</span>':'<span class="chip no">变式不够</span>';
-  const gap=!C.length?'这周还没有交的素材':ok?`已经到 70%，多 ${Math.floor(vs-0.7*C.length)} 条`:`要到 70%，还要再交 <b>${need}</b> 条变式（不加新测试）`;
-  const w=x=>C.length?x/C.length*100:0;
-  return `<div class="card"><div class="hd"><h3>${g} 组</h3>${chip}</div>
-  <div class="hero"><b class="${C.length?(ok?'good':'bad'):''}">${p}%</b><span>头部模板变式占比 · 目标 70%</span></div>
-  <p class="gap">${gap}</p>
-  <div class="cbar" title="变式 ${v}，同脚本换画面 ${s}，新测试 ${n}"><i style="width:${w(v)}%;background:var(--v)"></i><i style="width:${w(s)}%;background:var(--s)"></i><i style="width:${w(n)}%;background:var(--n)"></i><span class="tg" style="left:70%"></span><span class="tl" style="left:70%">70%</span></div>
-  <div class="stats"><div><b>${C.length}</b><span>交了（AI ${ai} · 二创 ${C.length-ai}）</span></div><div><b>${v}</b><span><i style="background:var(--v)"></i>头部模板变式</span></div><div><b>${s}</b><span><i style="background:var(--s)"></i>同脚本换画面</span></div><div><b>${n}</b><span><i style="background:var(--n)"></i>新测试</span></div></div>
-  ${xx?`<p class="note">另有 ${xx} 条只换前贴，不计数。</p>`:''}</div>`}).join('');
+  const L=IT.filter(x=>x.g===g),C=L.filter(CNT),vs=C.filter(isVar).length,n=C.length-vs,ai=C.filter(x=>x.t==='A').length,tg=TG[g]||150;
+  const Y=C.filter(x=>x.d===YD),yv=Y.filter(isVar).length,yp=D.batches.filter(b=>b.g===g&&b.d===YD&&b.n!=null).reduce((a,b)=>a+b.n,0);
+  const pace=Math.round(tg*wdays/5),pc=x=>C.length?Math.round(x/C.length*100):0;
+  return `<div class="card"><div class="hd"><h3>${g} 组</h3>${C.length>=pace?'<span class="chip ok">进度够</span>':`<span class="chip no">落后 ${pace-C.length} 条</span>`}</div>
+  <div class="tot"><b>${C.length}</b><span>/ ${tg} 条 · 本周已交</span></div>
+  <div class="prog"><i style="width:${Math.min(100,C.length/tg*100)}%"></i><span class="pace" style="left:${Math.min(100,pace/tg*100)}%" title="按工作日算到昨天应交 ${pace} 条"></span></div>
+  <div class="pn">到昨天应交约 ${pace} 条（${wdays} 个工作日）</div>
+  <div class="l2"><div><b>${Y.length}${yp?`<small> / 排 ${yp}</small>`:''}</b><span>昨天 ${md(YD)} 交了</span></div><div><b>${vs} <small>${pc(vs)}%</small></b><span>头部模板变式</span></div><div><b>${n} <small>${pc(n)}%</small></b><span>新测试</span></div><div><b>${ai} / ${C.length-ai}</b><span>AI / 二创</span></div></div>
+  ${L.length-C.length?`<p class="note">另有 ${L.length-C.length} 条只换前贴，不计数。</p>`:''}</div>`}).join('');
 // 每天
 const DESC=[...D.days].filter(d=>d<=D.T).reverse();
 const PLAN=(g,d)=>D.batches.filter(b=>b.g===g&&b.d===d&&b.n!=null).reduce((a,b)=>a+b.n,0);
@@ -176,10 +185,10 @@ function bdraw(){
   document.getElementById('bcnt').textContent=`${L.length} 批，排了 ${L.reduce((a,b)=>a+(b.n||0),0)} 条，交了 ${L.reduce((a,b)=>a+b.got,0)} 条；到日子没交齐 ${due.length} 批`;
   const stc=s=>s==='交齐'?'st-ok':/^差|没交/.test(s)?'st-bad':'st-mu';
   const days=[...new Set(L.map(b=>b.d))];
-  document.getElementById('bt').innerHTML=`<thead><tr><th>交付日</th><th>组</th><th>分类</th><th>Use case</th><th>细分场景 / 做什么</th><th class="n">排了</th><th class="n">交了</th><th>状态</th><th>表里位置</th></tr></thead><tbody>${days.map(d=>{const DL=L.filter(b=>b.d===d),op=DOPEN.has(d);const sm=g=>{const G=DL.filter(b=>b.g===g);if(!G.length)return '';const n=G.reduce((a,b)=>a+(b.n||0),0),got=G.reduce((a,b)=>a+b.got,0);return `<span style="margin-right:18px">${g} 组 排 <b>${n}</b> · 交 <b class="${d<=D.T&&got<n?'st-bad':got>=n&&n?'st-ok':''}">${got}</b></span>`};
+  document.getElementById('bt').innerHTML=`<thead><tr><th>交付日</th><th>组</th><th>分类</th><th>Use case</th><th>细分场景 / 做什么</th><th class="n">排了</th><th class="n">交了</th><th>状态</th><th>成片</th></tr></thead><tbody>${days.map(d=>{const DL=L.filter(b=>b.d===d),op=DOPEN.has(d);const sm=g=>{const G=DL.filter(b=>b.g===g);if(!G.length)return '';const n=G.reduce((a,b)=>a+(b.n||0),0),got=G.reduce((a,b)=>a+b.got,0);return `<span style="margin-right:18px">${g} 组 排 <b>${n}</b> · 交 <b class="${d<=D.T&&got<n?'st-bad':got>=n&&n?'st-ok':''}">${got}</b></span>`};
    return `<tr class="dh${op?' open':''}" data-d="${d}"><td colspan="9"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'（今天）':d>D.T?'（还没到）':''}<span style="margin-left:16px">${sm('A')}${sm('B')}</span><span class="st-mu">${DL.length} 批，点开看</span></td></tr>`+(op?DL.map((b,i)=>{const id=b.g+b.tab+b.row,k=bk(b),bo=OPEN.has(id);
     const mini=b.n?`<span class="mini">${Array.from({length:Math.min(b.n,8)},(_,j)=>`<i class="${j<b.got?'on':''}"></i>`).join('')}</span>`:'';
-    return `<tr class="b${bo?' open':''}" data-id="${id}"><td class="nw">${md(b.d)} 周${wd(b.d)}</td><td>${b.g}</td><td><span class="k k${k}">${D.kinds[k]}</span></td><td class="nw">${b.uc?`<code>${esc(b.uc)}</code> ${esc(UCN[b.uc]||'')}`:''}</td><td>${esc(b.sc||'')}${b.how?`<small class="note" style="display:block;margin:2px 0 0">${esc(b.how)}</small>`:''}</td><td class="n">${b.n??'—'}</td><td class="n">${b.got}${mini}</td><td class="nw ${stc(b.st)}">${b.st}</td><td class="nw"><a href="${esc(b.link)}" target="_blank" rel="noopener">${b.src.startsWith('排期外')?esc(b.src.slice(4)):b.g+' 组扩量'}第 ${b.row} 行</a></td></tr>`+
+    return `<tr class="b${bo?' open':''}" data-id="${id}"><td class="nw">${md(b.d)} 周${wd(b.d)}</td><td>${b.g}</td><td><span class="k k${k}">${D.kinds[k]}</span></td><td class="nw">${b.uc?`<code>${esc(b.uc)}</code> ${esc(UCN[b.uc]||'')}`:''}</td><td>${esc(b.sc||'')}${b.how?`<small class="note" style="display:block;margin:2px 0 0">${esc(b.how)}</small>`:''}</td><td class="n">${b.n??'—'}</td><td class="n">${b.got}${mini}</td><td class="nw ${stc(b.st)}">${b.st}</td><td class="fl">${b.items.length?b.items.map((x,j)=>`<a href="${esc(x.link)}" target="_blank" rel="noopener" title="${esc(x.name)}">成片 ${j+1}</a>`).join(''):'<span class="st-mu">还没有</span>'}</td></tr>`+
     (bo?`<tr class="sub"><td colspan="9">${b.items.length?`<ul>${b.items.map(x=>`<li><span class="k k${x.k||'N'}">${D.kinds[x.k||'N']}</span> <a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a></li>`).join('')}</ul>`:'这批还没有交上来的成片'}</td></tr>`:'')}).join(''):'')}).join('')}</tbody>`;
 }
 document.getElementById('bt').addEventListener('click',ev=>{if(ev.target.closest('a'))return;const h=ev.target.closest('tr.dh');if(h){const d=h.dataset.d;DOPEN.has(d)?DOPEN.delete(d):DOPEN.add(d);bdraw();return}const r=ev.target.closest('tr.b');if(!r)return;const id=r.dataset.id;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);bdraw()});
