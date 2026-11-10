@@ -111,10 +111,11 @@ def load_tsv(folder, year):
             g, tab, row, col, md, uc, sc, kind, t, name = f[:10]
             how = f[10].strip() if len(f) > 10 else ''
             tok = f[11].strip() if len(f) > 11 else ''
+            st = f[12].strip() if len(f) > 12 else ''
             name = name.strip()
             if not re.search(r'[_-]', name) or len(name) < 10:
                 continue
-            out.append(dict(g=g, tab=tab, row=int(row), col=col, d=f'{year}-{md[:2]}-{md[2:]}', uc=uc.strip(), sc=sc.strip(), k=kind, t=t, name=name, how=how, tok=tok))
+            out.append(dict(g=g, tab=tab, row=int(row), col=col, d=f'{year}-{md[:2]}-{md[2:]}', uc=uc.strip(), sc=sc.strip(), k=kind, t=t, name=name, how=how, tok=tok, st=st))
     return out
 
 
@@ -217,8 +218,12 @@ def main():
         key = x['g'] + '|' + norm(x['name'])
         if key in seen:  # 同一条素材在扩量表和脚本表都登记了：留扩量表那条，脚本表的链接放 alt
             seen[key].setdefault('alt', []).append(cell_link(x['g'], x['tab'], x['col'], x['row']))
-            if not seen[key].get('tok') and x.get('tok'):
-                seen[key]['tok'] = x['tok']
+            p = seen[key]
+            if x.get('st') and ('通过' == x['st'] or not p.get('st')):  # B 组扩量表没有「成片状态」列，审核结果在脚本表/二剪表那条上
+                p['st'] = x['st']
+            if not p.get('tok') and x.get('tok'):  # 成片附件在脚本表那一格：链到那一格
+                p['tok'] = x['tok']
+                p['cell'] = cell_link(x['g'], x['tab'], x['col'], x['row'])
             continue
         x['cell'] = cell_link(x['g'], x['tab'], x['col'], x['row'])
         x['where'] = f"{TABS.get(x['tab'], x['tab'])}第 {x['row']} 行"
@@ -250,7 +255,8 @@ def main():
                 if t:
                     x['sc'] = t
     for x in store.values():  # 投出去的直接链巨量/唯西日报的永久视频；没投的链飞书表里成片那一格（附件直链飞书会做 Referer 校验，从看板点开报「Referer check fail」，11/10 试过）
-        x['link'] = x.get('video') or x.get('cell') or x.get('link', '')
+        x['ok'] = x.get('st') == '通过'  # 只有「成片状态」写了通过的才算数、才放链接；需修改/修改后待审核/待审核/没填的都不算（Reina 11/10）
+        x['link'] = (x.get('video') or x.get('cell') or '') if x['ok'] else ''
         x['lk'] = 'v' if x.get('video') else 'f'
     json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
@@ -262,8 +268,10 @@ def main():
         if wk < (mon - dt.timedelta(days=7)).isoformat():
             continue  # 只重算这周和上周
         w0 = dt.date.fromisoformat(wk)
-        items = sorted([x for x in store.values() if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g'], x['k'], x['uc']))
-        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, kinds=KIND_NAME, weeks=weeks,
+        wk_all = sorted([x for x in store.values() if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g'], x['k'], x['uc']))
+        items = [x for x in wk_all if x.get('ok')]
+        pend = [dict(g=x['g'], d=x['d'], k=x['k'], t=x['t'], uc=x.get('uc', ''), ucn=x.get('ucn', ''), name=x['name'], st=x.get('st') or '还没审') for x in wk_all if not x.get('ok')]
+        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks,
                     batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}))
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
         for path in [os.path.join(ROOT, 'output', wk, 'index.html')] + ([os.path.join(ROOT, 'output', 'index.html')] if w0 == mon else []):
@@ -271,7 +279,7 @@ def main():
             rel = '../../' if path.endswith(os.path.join(wk, 'index.html')) else '../'
             open(path, 'w', encoding='utf-8').write(html.replace('{{REL}}', rel))
     json.dump([dict(week=w) for w in weeks], open(os.path.join(ROOT, 'outputs.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    cnt = {g: {k: sum(1 for x in store.values() if x['g'] == g and x['k'] == k and x['d'] >= mon.isoformat()) for k in 'VSNX'} for g in 'AB'}
+    cnt = {g: {k: sum(1 for x in store.values() if x['g'] == g and x['k'] == k and x.get('ok') and x['d'] >= mon.isoformat()) for k in 'VSNX'} for g in 'AB'}
     print(json.dumps(dict(items=len(new), kept=len(seen), store=len(store), week=mon.isoformat(), count=cnt), ensure_ascii=False))
 
 
