@@ -102,6 +102,20 @@ a{color:var(--link)}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
 .rules p{margin:0;max-width:96ch}
 #b .help,.legend .help{cursor:help}#b th.help,#b td.help small,.legend .help{text-decoration:underline dotted;text-underline-offset:3px}
+#pd{width:min(1120px,calc(100vw - 32px));max-height:88vh;overflow:auto;padding:0;border:1px solid var(--base);background:var(--panel);color:var(--ink);box-sizing:border-box}
+#pd::backdrop{background:rgba(0,0,0,.35)}
+#pd .hh{position:relative;background:var(--panel);padding:12px 14px 8px;border-bottom:1px solid var(--grid);display:grid;gap:6px}
+#pd .hh h3{margin:0;font-size:16px;padding-right:36px}
+#pd .hx{position:absolute;right:10px;top:8px;border:0;background:none;color:var(--sub);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
+#pd .gs{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:12px;color:var(--sub)}#pd .gs b{display:block;font-size:22px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+#pd .hb{padding:4px 14px 14px}
+#pd h4{margin:12px 0 4px;font-size:13px}
+#pd .pw{overflow-x:auto}#pd table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px}
+#pd th{text-align:left;color:var(--sub);font-weight:600;border-bottom:1px solid var(--grid);padding:4px 6px;white-space:nowrap}
+#pd td{border-bottom:1px solid var(--grid);padding:5px 6px;vertical-align:top}
+#pd td.n{white-space:nowrap}#pd td.how{min-width:300px;overflow-wrap:anywhere}#pd td.how small{display:block;color:var(--sub)}
+#pd .k{display:inline-block;font-size:11px;font-weight:700;padding:0 5px;margin-right:4px;box-shadow:inset 0 0 0 1px var(--base)}#pd .k.v{color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}#pd .k.s{color:var(--link);box-shadow:inset 0 0 0 1px var(--link)}
+td.d.f[data-fi]{cursor:pointer}
 #hist{width:min(1120px,calc(100vw - 32px));max-height:88vh;overflow:auto;padding:0;border:1px solid var(--base);background:var(--panel);color:var(--ink);box-sizing:border-box}
 #hist::backdrop{background:rgba(0,0,0,.35)}
 #hist .hh{position:relative;background:var(--panel);padding:12px 14px 8px;border-bottom:1px solid var(--grid);display:grid;gap:6px}
@@ -296,6 +310,7 @@ a{color:var(--link)}
 <h3>每个 use case 的排期行</h3>
 <div class="scroll"><table class="dt" id="dt"><thead><tr><th>交付</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
 </div>
+<dialog id="pd" aria-labelledby="pd-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="pd-h"></h3><div class="gs" id="pd-g"></div></div><div class="hb" id="pd-b"></div></dialog>
 <dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><div id="hist-cv"></div><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div><div id="htip" hidden></div></dialog>
 <div id="tip" hidden></div>
 <script>
@@ -323,6 +338,7 @@ const chipOf=(id,gi)=>{const x=P.X[id];return x?x.chips:{}};
 function keyOf(d){const key=P.futKey[d];return key}
 const coOf=(u,day)=>((P.RT&&P.RT.co&&P.RT.co[u])||{})[day]||null;
 const coRows=(u,day)=>{const co=coOf(u,day);return co?Object.entries(co).map(([b,x])=>{const t=x.p.split(';').pop().split(',').map(Number);return{b,n:x.n,age:x.age,c:x.c,a:t[0],r:t[1]}}).sort((p,q)=>p.age-q.age):null};
+const FUT=[];
 function dayCells(r,es,max,warn,muted,bt,id){
   let h='';
   pastDays.forEach((d,j)=>{
@@ -335,7 +351,8 @@ function dayCells(r,es,max,warn,muted,bt,id){
     const toks=[];const key=keyOf(d);const w=warn&&warn[key];
     if(w)toks.push(`<span class="t-warn${muted?' m':''}" data-flow="1">!</span>`);
     ['done','todo','cut','add'].forEach(s=>{const n=sum(es.filter(e=>e.d===d&&e.s===s).map(e=>e.n));if(n)toks.push(`<span class="t-${s}">${s==='add'?'+':''}${n}</span>`)});
-    h+=`<td class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}" data-d="${d}"${w?` data-warn="${w}"`:''}><div class="plan">${toks.join('')}</div></td>`;
+    const fe=es.filter(e=>e.d===d&&e.s!=='live');let fi='';if(fe.length){FUT.push({id,d,es:fe});fi=` data-fi="${FUT.length-1}" tabindex="0" role="button"`}
+    h+=`<td class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}" data-d="${d}"${w?` data-warn="${w}"`:''}${fi}><div class="plan">${toks.join('')}</div></td>`;
   });
   return h;
 }
@@ -644,7 +661,7 @@ document.querySelector('#b').addEventListener('mousemove',ev=>{
      if(bl)html+=`<div class="ts"><span class="tl">按首花日</span>${bl.slice(4)}</div>`}
    else{seg.forEach((v,j)=>{if(v>0||(kk&&kk[j]))bl+=`<br>${nm[j]} ${money(v)}（${t?Math.round(v/t*100):0}%）${kk?`，${kk[j]} 条`:''}${rr&&rr[j*2]&&ci!==P.days.length-1?`，留存 ${rtPct(rr[j*2],rr[j*2+1])}${rr[j*2]<100?'（样本小）':''}`:''}`});if(bl)html+=`<div class="ts"><span class="tl">按批次</span>${bl.slice(4)}</div>`}
    if(c.dataset.b)html+=`<div class="ts"><span class="tl">点柱子看这批的分析</span></div>`}
-  else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>'):'<br>没有排期'}
+  else{const lab={'t-done':'已交没花钱','t-todo':'待交','t-add':'建议加','t-cut':'建议拿掉'};const tx=[...c.querySelectorAll('.plan span')].filter(s=>!s.dataset.flow).map(s=>lab[s.className]+' '+s.textContent.replace('+','')+' 条');if(c.dataset.warn)tx.unshift(`预计这天会跌，约 ${money(+c.dataset.warn)}/天`);html+=tx.length?'<br>'+tx.join('<br>')+(c.dataset.fi?'<div class="ts"><span class="tl">点开看排了什么、A B 组各几条</span></div>':''):'<br>没有排期'}
   tip.innerHTML=html;tip.hidden=false;
   placeTip(ev.clientX,ev.clientY);
 });
@@ -721,6 +738,32 @@ document.querySelector('#b').addEventListener('click',ev=>{
   const c=ev.target.closest('td.d.p');if(c&&c.dataset.b&&!ev.target.closest('[data-help]'))bpOpen(c);
 });
 document.querySelector('#b').addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches&&ev.target.matches('td.d.p[data-b]')){ev.preventDefault();bpOpen(ev.target)}});
+const PD=document.getElementById('pd');
+function pdOpen(c){
+  const f=FUT[+c.dataset.fi];if(!f)return;
+  const tr=c.closest('tr'),nm=tr.querySelector('td.name');const who=f.id==='__all'?'全盘':(P.UC[f.id]?f.id+' '+P.UC[f.id]:(nm?nm.querySelector('code')?.textContent||f.id:f.id));
+  document.getElementById('pd-h').textContent=`${who} · ${f.d} 周${wk(f.d)} 的排期`;
+  const st2={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
+  const sumN=L=>L.reduce((a,e)=>a+e.n,0);
+  const gs=['A','B'].map(g=>{const L=f.es.filter(e=>e.g===g);if(!L.length)return '';const v=sumN(L.filter(e=>e.k==='变式')),ss=sumN(L.filter(e=>e.k==='同脚本换画面')),fr=sumN(L.filter(e=>e.k==='自己发挥')),ai=sumN(L.filter(e=>e.t==='AI')),ec=sumN(L)-ai;
+    return `<div>${g} 组<b>${sumN(L)} 条</b>${[ai?`AI ${ai}`:'',ec?`二创 ${ec}`:''].filter(Boolean).join('、')}${v||ss?`；其中头部模板变式 ${v}${ss?`、同脚本换画面 ${ss}`:''}`:''}${fr?`、自己发挥 ${fr}`:''}</div>`}).join('');
+  const other=f.es.filter(e=>e.g!=='A'&&e.g!=='B');
+  document.getElementById('pd-g').innerHTML=gs+(other.length?`<div>其他<b>${sumN(other)} 条</b></div>`:'')+`<div>合计<b>${sumN(f.es)} 条</b></div>`;
+  const showUc=new Set(f.es.map(e=>e.uc)).size>1;
+  let h='';
+  for(const g of ['A','B','']){const L=f.es.filter(e=>g?e.g===g:(e.g!=='A'&&e.g!=='B'));if(!L.length)continue;
+    L.sort((x,y)=>(x.k?0:1)-(y.k?0:1)||String(x.uc).localeCompare(y.uc));
+    h+=`<h4>${g?g+' 组':'其他'}（${sumN(L)} 条）</h4><div class="pw"><table><thead><tr>${showUc?'<th>方向</th>':''}<th>类型</th><th>条数</th><th>状态</th><th>细分场景</th><th>做什么</th><th>表里位置</th></tr></thead><tbody>`;
+    for(const e of L){const kk=e.k==='变式'?'<span class="k v">变式</span>':e.k==='同脚本换画面'?'<span class="k s">同脚本换画面</span>':e.k==='自己发挥'?'<span class="k">自己发挥</span>':'';
+      const how=e.k?`${kk}${esc(e.how||'')}${e.tpl?`<small>照：${esc(e.tpl)}</small>`:''}`:esc(e.how||'');
+      h+=`<tr>${showUc?`<td class="n">${e.uc==='自选'?'自选':`<code>${esc(e.uc)}</code> ${esc(P.UC[e.uc]||'')}`}</td>`:''}<td class="n">${esc(e.t||'')}</td><td class="n">${e.n}</td><td class="n">${st2[e.s]||esc(e.s)}${e.to?'：'+esc(e.to):''}</td><td>${esc(e.sc||'')}</td><td class="how">${how||'<span class="q">没写</span>'}</td><td class="n">${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc((e.src||'').split('：')[0])}</a>`:esc((e.src||'').split('：')[0])}</td></tr>`}
+    h+='</tbody></table></div>'}
+  document.getElementById('pd-b').innerHTML=h;
+  setTimeout(()=>{tip.hidden=true;tip.dataset.h=''},0);PD.showModal();PD.scrollTop=0;
+}
+PD.addEventListener('click',ev=>{if(ev.target===PD||ev.target.closest('.hx'))PD.close()});
+document.querySelector('#b').addEventListener('click',ev=>{const c=ev.target.closest('td.d.f[data-fi]');if(c&&!ev.target.closest('[data-flow]'))pdOpen(c)});
+document.querySelector('#b').addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches&&ev.target.matches('td.d.f[data-fi]')){ev.preventDefault();pdOpen(ev.target)}});
 const M=P.meters;
 document.getElementById('meters').innerHTML=!M.length?'':'<span style="font-weight:600">已排 / 本周产能</span>'+M.map(x=>`<span class="m ${x[1]>x[2]?'over':''}"><span>${x[0]}</span><span class="track"><span class="fill" style="width:${Math.min(100,x[1]/x[2]*100)}%"></span></span><b>${x[1]} / ${x[2]}</b></span>`).join('');
 </script>
