@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>素材产出</title>
+<style>
+:root{--fg:#1f1f1d;--sub:#6b6a66;--bg:#f7f6f2;--panel:#fff;--line:#e4e2dc;--ok:#1f7a4d;--bad:#c0362c;--v:#3d6fd8;--s:#7c5cc4;--n:#c9a14a;--x:#b8b5ad;--link:#2a5bc4;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fg:#ecebe6;--sub:#a3a19a;--bg:#1b1b19;--panel:#242422;--line:#3a3936;--ok:#5fc48f;--bad:#ef6b5f;--v:#7da2ef;--s:#a98be6;--n:#d9b35e;--x:#5a5853;--link:#8fb0f5}}
+:root[data-theme="dark"]{--fg:#ecebe6;--sub:#a3a19a;--bg:#1b1b19;--panel:#242422;--line:#3a3936;--ok:#5fc48f;--bad:#ef6b5f;--v:#7da2ef;--s:#a98be6;--n:#d9b35e;--x:#5a5853;--link:#8fb0f5}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 var(--sans)}
+.wrap{max-width:1280px;margin:0 auto;padding:14px 16px 48px}
+a{color:var(--link)}
+nav{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;margin-bottom:10px}
+nav .cur{font-weight:700}
+nav select{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:2px 6px}
+h1{font-size:24px;margin:4px 0 2px}
+.sub{color:var(--sub);font-size:13px;margin:0 0 14px;max-width:90ch}
+h2{font-size:16px;margin:22px 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:14px}
+.big{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:flex-end}
+.big div{display:grid}.big b{font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}.big span{font-size:12px;color:var(--sub)}
+.bar{display:flex;height:10px;margin:10px 0 4px;background:var(--line);position:relative}
+.bar i{display:block;height:100%}.bar .tg{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--fg)}
+.lg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--sub)}.lg i{display:inline-block;width:9px;height:9px;margin-right:4px;vertical-align:-1px}
+.good{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
+.scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600;white-space:nowrap;background:var(--panel);position:sticky;top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.nw{white-space:nowrap}
+td.nm{min-width:280px;max-width:520px;overflow-wrap:anywhere}
+.k{display:inline-block;font-size:11px;font-weight:700;padding:0 5px;white-space:nowrap}
+.kV{color:var(--v);box-shadow:inset 0 0 0 1px var(--v)}.kS{color:var(--s);box-shadow:inset 0 0 0 1px var(--s)}.kN{color:var(--n);box-shadow:inset 0 0 0 1px var(--n)}.kX{color:var(--sub);box-shadow:inset 0 0 0 1px var(--x)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 8px;font-size:13px}
+.filters select,.filters input{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:3px 6px;max-width:220px}
+.filters .cnt{margin-left:auto;color:var(--sub)}
+tr.we td{color:var(--sub)}
+.dim{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.dim .row{display:grid;grid-template-columns:minmax(90px,150px) 1fr 44px;gap:8px;align-items:center;font-size:12px;padding:2px 0;cursor:pointer}
+.dim .row:hover{background:var(--bg)}
+.dim .row .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dim .row .b{display:flex;height:8px;background:var(--line)}.dim .row .b i{display:block;height:100%}
+.note{font-size:12px;color:var(--sub);margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="{{REL}}">← 素材看板</a><a href="{{REL}}schedule/">素材排期</a><span class="cur">素材产出</span><select id="wk" aria-label="选周"></select></nav>
+<h1>素材产出</h1>
+<p class="sub" id="sub"></p>
+
+<h2>本周两组交了多少</h2>
+<div class="kpis" id="kpis"></div>
+<p class="note">头部模板变式 = 照「头部素材结构提取和变式（11/9）」22 个模板做的变式和同脚本换画面，目标占 70%，每天至少 20 条；新测试 = 其余新脚本、新角度、其他原片的二创，约 30%。只换前贴（只换开头 hook 画面）的不算数。按成片文件名里的日期算交付日。</p>
+
+<h2>每天</h2>
+<div class="scroll"><table id="days"></table></div>
+
+<h2>按维度看</h2>
+<div class="dim" id="dims"></div>
+<p class="note">点某一行只看这一类素材。</p>
+
+<h2>素材清单</h2>
+<div class="filters" id="filters"></div>
+<div class="scroll" style="max-height:80vh;overflow:auto"><table id="list"></table></div>
+</div>
+<script>
+const D={{DATA}};
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const md=s=>{const[,m,d]=s.split('-');return (+m)+'/'+(+d)};
+const wd=s=>'日一二三四五六'[new Date(s+'T00:00:00').getDay()];
+const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
+const IT=D.items, CNT=x=>x.k!=='X';
+const isVar=x=>x.k==='V'||x.k==='S';
+const KC={V:'var(--v)',S:'var(--s)',N:'var(--n)',X:'var(--x)'};
+document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周，A、B 两组每天交的素材（读飞书扩量排期、脚本表、二剪表），数据截至 ${md(D.T)}。每条都能点开飞书里的成片，已经投出去的带巨量视频和累计消耗。`;
+const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
+wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
+// KPI
+document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
+  const L=IT.filter(x=>x.g===g),C=L.filter(CNT),v=C.filter(x=>x.k==='V').length,s=C.filter(x=>x.k==='S').length,n=C.filter(x=>x.k==='N').length,xx=L.length-C.length,ai=C.filter(x=>x.t==='A').length;
+  const p=C.length?Math.round((v+s)/C.length*100):0;
+  return `<div class="card"><h3>${g} 组</h3><div class="big"><div><b>${C.length}</b><span>交了（AI ${ai}、二创 ${C.length-ai}）</span></div><div><b class="${C.length?(p>=70?'good':'bad'):''}">${p}%</b><span>头部模板变式占比，目标 70%</span></div><div><b>${v+s}</b><span>变式（同脚本换画面 ${s}）</span></div><div><b>${n}</b><span>新测试</span></div>${xx?`<div><b>${xx}</b><span>只换前贴，不计</span></div>`:''}</div>
+  <div class="bar" title="变式 ${v+s}，新测试 ${n}">${C.length?`<i style="width:${v/C.length*100}%;background:var(--v)"></i><i style="width:${s/C.length*100}%;background:var(--s)"></i><i style="width:${n/C.length*100}%;background:var(--n)"></i>`:''}<span class="tg" style="left:70%"></span></div>
+  <div class="lg"><span><i style="background:var(--v)"></i>头部模板变式</span><span><i style="background:var(--s)"></i>同脚本换画面</span><span><i style="background:var(--n)"></i>新测试</span><span>竖线 = 70%</span></div></div>`}).join('');
+// 每天
+const dayRow=d=>{const we=[0,6].includes(new Date(d+'T00:00:00').getDay());return `<tr class="${we?'we':''}"><td class="nw">${md(d)} 周${wd(d)}</td>${['A','B'].map(g=>{const C=IT.filter(x=>x.g===g&&x.d===d&&CNT(x)),v=C.filter(isVar).length,n=C.length-v,p=C.length?Math.round(v/C.length*100):null;
+  const low=C.length&&!we&&v<20;return `<td class="n">${C.length||'·'}</td><td class="n${low?' bad':''}" ${low?'title="变式不到 20 条"':''}>${C.length?v:'·'}</td><td class="n">${C.length?n:'·'}</td><td class="n${p!==null&&p<70?' bad':''}">${p===null?'·':p+'%'}</td>`}).join('')}</tr>`};
+document.getElementById('days').innerHTML=`<thead><tr><th rowspan="2">日期</th><th colspan="4" style="text-align:center">A 组</th><th colspan="4" style="text-align:center">B 组</th></tr><tr>${'<th class="n">交了</th><th class="n">变式</th><th class="n">新测试</th><th class="n">变式占比</th>'.repeat(2)}</tr></thead><tbody>${D.days.map(dayRow).join('')}</tbody>`;
+// 维度
+const F={g:'',d:'',k:'',t:'',l1:'',uc:'',sc:'',q:''};
+function dimBlock(title,key,lab){const m={};IT.filter(CNT).forEach(x=>{const k=x[key]||'（没标）';(m[k]??={V:0,S:0,N:0,n:0});m[k][x.k]++;m[k].n++});
+  const rows=Object.entries(m).sort((a,b)=>b[1].n-a[1].n);const mx=Math.max(1,...rows.map(r=>r[1].n));
+  return `<div class="card"><h3>${title}</h3>${rows.map(([k,c])=>`<div class="row" data-f="${key}" data-v="${esc(k==='（没标）'?'':k)}" title="变式 ${c.V+c.S}，新测试 ${c.N}"><span class="t">${esc(lab?lab(k):k)}</span><span class="b" style="width:${c.n/mx*100}%"><i style="width:${c.V/c.n*100}%;background:var(--v)"></i><i style="width:${c.S/c.n*100}%;background:var(--s)"></i><i style="width:${c.N/c.n*100}%;background:var(--n)"></i></span><span class="n">${c.n}</span></div>`).join('')}</div>`}
+const UCN={};IT.forEach(x=>{if(x.uc)UCN[x.uc]=x.ucn||''});
+document.getElementById('dims').innerHTML=dimBlock('一级分类','l1')+dimBlock('Use case','uc',k=>k+(UCN[k]?' '+UCN[k]:''))+dimBlock('细分场景','sc');
+document.getElementById('dims').addEventListener('click',ev=>{const r=ev.target.closest('.row');if(!r)return;F[r.dataset.f]=r.dataset.v;syncF();draw();document.getElementById('list').scrollIntoView({behavior:'smooth'})});
+// 筛选
+const opts=(key,lab)=>[...new Set(IT.map(x=>x[key]).filter(Boolean))].sort().map(v=>`<option value="${esc(v)}">${esc(lab?lab(v):v)}</option>`).join('');
+document.getElementById('filters').innerHTML=`<select data-f="g"><option value="">两组</option><option>A</option><option>B</option></select>
+<select data-f="d"><option value="">全周</option>${D.days.map(d=>`<option value="${d}">${md(d)} 周${wd(d)}</option>`).join('')}</select>
+<select data-f="k"><option value="">全部分类</option>${Object.entries(D.kinds).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}<option value="VS">变式合计</option></select>
+<select data-f="t"><option value="">AI 和二创</option><option value="A">AI</option><option value="E">二创</option></select>
+<select data-f="l1"><option value="">全部一级分类</option>${opts('l1')}</select>
+<select data-f="uc"><option value="">全部 use case</option>${opts('uc',k=>k+(UCN[k]?' '+UCN[k]:''))}</select>
+<select data-f="sc"><option value="">全部细分场景</option>${opts('sc')}</select>
+<input data-f="q" type="search" placeholder="搜素材名">
+<span class="cnt" id="cnt"></span>`;
+const syncF=()=>document.querySelectorAll('#filters [data-f]').forEach(e=>{e.value=F[e.dataset.f]});
+document.getElementById('filters').addEventListener('input',ev=>{const e=ev.target.closest('[data-f]');if(!e)return;F[e.dataset.f]=e.value;draw()});
+function draw(){
+  const L=IT.filter(x=>(!F.g||x.g===F.g)&&(!F.d||x.d===F.d)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.t||x.t===F.t)&&(!F.l1||x.l1===F.l1)&&(!F.uc||x.uc===F.uc)&&(!F.sc||x.sc===F.sc)&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase())));
+  const v=L.filter(x=>isVar(x)).length,c=L.filter(CNT).length;
+  document.getElementById('cnt').textContent=`${L.length} 条，变式占 ${c?Math.round(v/c*100):0}%`;
+  document.getElementById('list').innerHTML=`<thead><tr><th>交付</th><th>组</th><th>分类</th><th>类型</th><th>一级分类</th><th>Use case</th><th>细分场景</th><th>素材名</th><th>链接</th><th class="n">累计消耗</th></tr></thead><tbody>${L.map(x=>`<tr><td class="nw">${md(x.d)} 周${wd(x.d)}</td><td>${x.g}</td><td><span class="k k${x.k}">${D.kinds[x.k]}</span></td><td class="nw">${x.t==='A'?'AI':'二创'}</td><td class="nw">${esc(x.l1)}</td><td class="nw">${x.uc?`<code>${esc(x.uc)}</code> ${esc(x.ucn)}`:''}</td><td>${esc(x.sc)}</td><td class="nm">${esc(x.name)}</td><td class="nw"><a href="${esc(x.link)}" target="_blank" rel="noopener" title="${esc(x.where)}">飞书成片</a>${x.video?` · <a href="${esc(x.video)}" target="_blank" rel="noopener">视频</a>`:''}</td><td class="n">${x.cost?money(x.cost):x.mid?'¥0':'没上线'}</td></tr>`).join('')}</tbody>`;
+}
+draw();
+</script>
+</body>
+</html>
