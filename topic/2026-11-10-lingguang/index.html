@@ -157,6 +157,19 @@
   .lg .sum ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; line-height: 1.6; font-size: 15px; }
   .lg h3.sub2 { font-size: 15px; margin: 18px 0 4px; }
   .lg .scroll { max-height: 46rem; }
+  .lg .scn { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr)); gap: 12px; margin-top: 6px; }
+  .lg .scn .it { border: 1px solid var(--color-border-line); border-radius: 8px; padding: 12px 14px; }
+  .lg .scn .hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
+  .lg .scn .hd b { font-size: 16px; }
+  .lg .scn .hd span { color: var(--color-fg-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .lg .scn dl { display: grid; grid-template-columns: 5.2rem 1fr; gap: 5px 10px; margin: 0; font-size: 14px; line-height: 1.55; }
+  .lg .scn dt { color: var(--color-fg-muted); }
+  .lg .scn dd { margin: 0; }
+  .lg .scn ul.apps { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  .lg .scn ul.apps .tag { margin-right: 6px; }
+  .lg .scn .rp a { color: inherit; }
+  .lg .capd { margin-top: 14px; }
+  .lg .capd summary { font-size: 15px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -216,16 +229,88 @@
       <li><b>11/4–11/5</b><span>快手联盟集中上新 765 组（宠物、亲子、学技能、出行等）；抖音 23 组（多是官号原生）；话题 #灵光超会生活的 一批达人和 UGC；媒体稿：40 项服务连接（麦当劳、哈啰打车、夸克、微信读书等）、首周托管 116 万项事务、用户破 2,000 万、秋招超 6 成应届生用 AI</span></li>
       <li><b>11/6–11/10</b><span>新上素材很少；前 1,000 组里 917 组到 11/8 后还在投</span></li>
     </ul></section><section class="card" id="scene">
-    <h2>主要场景（按出现次数排）</h2>
-    <p class="note">快手联盟按有脚本的 211 组算（曝光占比是占这 211 组的）；抖音是 2.0 全部 58 组；自然流只算讲具体用法的 51 条</p>
-    <div class="scroll"><table>
-      <thead><tr><th>场景</th><th>快手联盟组数</th><th>曝光占比</th><th>抖音组数</th><th>自然流条数</th><th>自然流点赞</th><th class="txt">讲的是什么</th></tr></thead><tbody><tr><td>宠物</td><td>86</td><td>39.5%</td><td>8</td><td>1</td><td>4.8 万</td><td class="wrap">快手联盟：宠物驱虫补货 22、多宠健康管理 12、猫咪搬家应激 9、狗粮囤货 9、猫传腹治疗 8；抖音：3 个月幼猫独自在家 4、第一次养猫 3、买狗粮 1；自然流：家里养几百只异宠，每天要阻止多少（4.8 万）</td></tr><tr><td>购物省钱</td><td>11</td><td>5.7%</td><td>18</td><td>5</td><td>3.2 万</td><td class="wrap">快手联盟：盯餐饮团购券 8、喝咖啡省钱 1、杭州消费券 1、午饭省钱 1；抖音：换冰箱 11、各种优惠券记不住 4、说清冰箱的容量、能效、预算等 1、午饭 1；自然流：省钱好搭子也就我和灵光这样了吧🥳（2.7 万）、这才是普通人用AI的样子，灵光A（2,228）、家人们，你们都这样吗？（951）</td></tr><tr><td>出行旅游</td><td>22</td><td>9.9%</td><td></td><td>11</td><td>29.8 万</td><td class="wrap">快手联盟：日本圣地巡礼 7、跨年滑雪 4、带娃海岛/三亚游 4、赏秋旅行 2、跨年滑雪 2；自然流：Vlog｜在韩国把韩币当欢乐豆花（19.5 万）、每个数字都是那么的善良 加在一起（5 万）、当一个网红去跟风打卡了杭州的5大（2.3 万）</td></tr><tr><td>亲子育儿</td><td>25</td><td>11.4%</td><td>2</td><td>4</td><td>8,009</td><td class="wrap">快手联盟：大促囤母婴用品 8、孩子课表兴趣班 4、孩子作业巩固 4、亲子看展 3、宝宝睡前故事 3；抖音：养娃花费是否超标 2；自然流：听，是接住这个世界的声音，说，是（4,005）、我们可能是最后一代，要亲自带娃的（1,665）、终于悟了！再也不追求做满分妈妈了（1,317）</td></tr><tr><td>求职</td><td>3</td><td>1.3%</td><td>13</td><td>3</td><td>4,944</td><td class="wrap">快手联盟：找工作 3；抖音：找工作事情太散 7、找工作怕断联 3、找工作 2、明天面试今晚才准备 1；自然流：秋招求职有了AI新玩法！灵光2.（2,391）、秋招尾声来临，不少应届生使用灵光（1,611）、从AI筛岗位到主动管进度！灵光2（942）</td></tr><tr><td>学技能</td><td>17</td><td>9.2%</td><td>1</td><td></td><td></td><td class="wrap">快手联盟：学跳舞 12、零基础学吉他 5；抖音：学跳舞 1</td></tr><tr><td>用车加油</td><td>13</td><td>5.5%</td><td>2</td><td>1</td><td>2,832</td><td class="wrap">快手联盟：找便宜加油站 6、自驾停车充电 6、盯油价 1；抖音：油价 2；自然流：这样的房车营地生活是你想要的吗（2,832）</td></tr><tr><td>做饭吃饭</td><td>10</td><td>4.0%</td><td>2</td><td></td><td></td><td class="wrap">快手联盟：孩子早餐 5、今晚吃什么 2、晚餐方案 1、宝宝辅食 1、孩子早餐 1；抖音：冰箱剩菜不浪费 1、晚饭交给灵光 1</td></tr><tr><td>追星追赛</td><td>1</td><td>0.4%</td><td></td><td>11</td><td>1.8 万</td><td class="wrap">快手联盟：追英雄联盟S16 1；自然流：老薛，这下不能抢不到票了吧。作为（4,777）、盆栽哥吉隆坡站有没有一起抢的。很（2,620）、我想问JJ你多久开新巡演啊。网上（2,545）</td></tr><tr><td>孕产</td><td>8</td><td>3.5%</td><td>1</td><td>1</td><td>3,187</td><td class="wrap">快手联盟：孕期产检 4、顺产产后康复 2、孕期控糖食谱 1、孕期饮食 1；抖音：产后康复 1；自然流：从待产包到“浙里办”全搞定，新手（3,187）</td></tr><tr><td>租房</td><td>2</td><td>0.8%</td><td>5</td><td></td><td></td><td class="wrap">快手联盟：租房 2；抖音：租房从找房跟到搬家 2、租房算通勤 2、租房 1</td></tr><tr><td>送礼祝福</td><td>5</td><td>2.3%</td><td>1</td><td></td><td></td><td class="wrap">快手联盟：给家人挑礼物发祝福 5；抖音：给亲近的人买礼物不知道买什么 1</td></tr><tr><td>账单理财</td><td>3</td><td>1.3%</td><td>1</td><td>1</td><td>7,718</td><td class="wrap">快手联盟：工资花哪了 3；抖音：多账户消费汇总 1；自然流：实习vlog｜家里快供不起我上班（7,718）</td></tr><tr><td>工作办公</td><td></td><td></td><td></td><td>5</td><td>2.8 万</td><td class="wrap">自然流：当村长有了AI助理（1 万）、几百条群聊，灵光帮我理成一张待办（8,849）、群消息懒得看但不影响干活beli（3,730）</td></tr><tr><td>发布稿口吻</td><td>1</td><td>3.2%</td><td>1</td><td>2</td><td>4,863</td><td class="wrap">快手联盟：灵光2.0发布 1；抖音：灵光 2.0 1；自然流：灵光之前不知道你是这样的私人助理（3,577）、灵光之前不知道你是这样的私人助理（1,286）</td></tr><tr><td>寄快递</td><td>4</td><td>1.9%</td><td></td><td></td><td></td><td class="wrap">快手联盟：寄大件快递 4</td></tr><tr><td>生活综合</td><td></td><td></td><td></td><td>3</td><td>2.5 万</td><td class="wrap">自然流：月入6位的我如何让AI接管生活（（1.4 万）、一个人住久了，才慢慢把日子过明白（5,917）、现在普通人也能配上24小时“私人（4,880）</td></tr><tr><td>家务服务</td><td></td><td></td><td>1</td><td></td><td></td><td class="wrap">抖音：找保洁比价 1</td></tr><tr><td>工作副业</td><td></td><td></td><td>1</td><td></td><td></td><td class="wrap">抖音：零成本做母婴博主 1</td></tr><tr><td>社交约饭</td><td></td><td></td><td>1</td><td></td><td></td><td class="wrap">抖音：约饭 1</td></tr><tr><td>居家装修</td><td></td><td></td><td></td><td>1</td><td>2,584</td><td class="wrap">自然流：#媒体原创 装修界的邪修来了，这（2,584）</td></tr><tr><td>其他</td><td></td><td></td><td></td><td>1</td><td>1,784</td><td class="wrap">自然流：灵光ai变聪明了😭（1,784）</td></tr><tr><td>出行打车</td><td></td><td></td><td></td><td>1</td><td>8,837</td><td class="wrap">自然流：这样的 AI 管家用起来就是不烧（8,837）</td></tr></tbody></table></div></section><section class="card" id="cap">
-    <h2>主打的产品能力（按出现次数排）</h2>
+    <h2>场景和能力：解决什么问题，灵光怎么帮</h2>
+    <p class="note">按出现次数排（快手联盟有脚本的 211 组 + 抖音 58 组 + 自然流讲具体用法的 51 条）；曝光占比是占快手联盟这 211 组的。外部 App 的标签：蓝框是蚂蚁自家，橙框是阿里</p>
+    <div class="scn"><div class="it"><div class="hd"><b>宠物</b><span>快手联盟 86 组（曝光 39.5%） · 抖音 8 组 · 自然流 1 条</span></div>
+      <dl><dt>解决什么</dt><dd>补货、驱虫、疫苗、体检的日子记不住；猫生病要每天打针喂药；新手养猫、搬家后猫应激不知道该做什么；狗粮价格忽高忽低</dd>
+      <dt>灵光怎么帮</dt><dd>读支付宝里宠物用品的购买记录，推算下次驱虫和补货时间；几只宠物分别建档，排进日历提前提醒；按天出照护或适应计划，每天定时提醒，按反馈调整；算好狗粮吃完的日子，盯双 11 各平台价格，到价才通知</dd>
+      <dt>用户自己做</dt><dd>下单补货、带去打针体检、照护</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ant">支付宝购买记录 · 蚂蚁</span>读宠物用品订单算补货时间</li><li><span class="tag ali">钉钉日历 · 阿里</span>读日程避开加班出差，把待办写进去</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7702375535339590630" target="_blank" rel="noopener">自然流：家里养几百只异宠，每天要阻止多少致命（4.8 万 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1435819446" target="_blank" rel="noopener">快手联盟：宠物驱虫补货（22 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1431329708" target="_blank" rel="noopener">抖音：第一次养猫</a></dd></dl></div><div class="it"><div class="hd"><b>购物省钱</b><span>快手联盟 11 组（曝光 5.7%） · 抖音 18 组 · 自然流 5 条</span></div>
+      <dl><dt>解决什么</dt><dd>想买的东西（冰箱、咖啡机、双 11 清单）价格一天一个样，蹲好价费时间；团购券、消费券、会员权益记不住、过期</dd>
+      <dt>灵光怎么帮</dt><dd>说清条件，先挑出当下符合的，挂成任务定时比价，到价或创新低才推，附到手价和链接；盯附近团购和消费券，每天推合适的；读支付宝里已领和能领的券，对照日历提醒；读会员页截图，找出快过期的权益</dd>
+      <dt>用户自己做</dt><dd>下单、领券（灵光不加购物车、不付款）</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ant">支付宝券 · 蚂蚁</span>读已领和能领的券</li><li><span class="tag ali">天猫 · 阿里</span>比价渠道之一，只读公开价格，不是连接</li><li><span class="tag ">京东、拼多多、抖音商城 · 第三方</span>比价渠道，只读价格</li><li><span class="tag ali">淘宝 88VIP · 阿里</span>用户截图发给灵光读，不是连接</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704277377748881339" target="_blank" rel="noopener">自然流：省钱好搭子也就我和灵光这样了吧🥳（2.7 万 赞）</a> · <a href="https://www.douyin.com/video/7704213994986343723" target="_blank" rel="noopener">自然流：这才是普通人用AI的样子，灵光AI （2,228 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1434577487" target="_blank" rel="noopener">快手联盟：盯餐饮团购券（8 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1427682683" target="_blank" rel="noopener">抖音：换冰箱</a></dd></dl></div><div class="it"><div class="hd"><b>出行旅游</b><span>快手联盟 22 组（曝光 9.9%） · 自然流 11 条</span></div>
+      <dl><dt>解决什么</dt><dd>机票酒店价格波动，买完降价就亏；做攻略费时间；行程、天气变化顾不过来；换汇不知道什么时候换</dd>
+      <dt>灵光怎么帮</dt><dd>盯想买或已买的机票、酒店价格（每天或每几小时查），低于你给的价就推送；排行程和旅行地图，把签证、机票、旅馆列成待办到点提醒；出发前按天气再提醒；盯汇率给换不换的建议。官方发布片里，酒店降价后点「退旧订新」能直接改订</dd>
+      <dt>用户自己做</dt><dd>订票订酒店、退差价、换汇</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ">去哪儿、携程 · 第三方（携程系）</span>查价或跳转下单；一个达人视频里让灵光联系携程客服取消门票</li><li><span class="tag ">小红书 · 公开信息</span>扒公开攻略做参考，不是连接</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7703848533534821673" target="_blank" rel="noopener">自然流：Vlog｜在韩国把韩币当欢乐豆花是什（19.5 万 赞）</a> · <a href="https://www.douyin.com/video/7702301175878881721" target="_blank" rel="noopener">自然流：每个数字都是那么的善良 加在一起竟然（5 万 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1428599474" target="_blank" rel="noopener">快手联盟：日本圣地巡礼（7 组）</a></dd></dl></div><div class="it"><div class="hd"><b>亲子育儿</b><span>快手联盟 25 组（曝光 11.4%） · 抖音 2 组 · 自然流 4 条</span></div>
+      <dl><dt>解决什么</dt><dd>课表、兴趣班、家长会、老师群通知太多容易漏；辅导作业找不到薄弱点；母婴用品跨平台比价、领券麻烦；周末带娃去哪</dd>
+      <dt>灵光怎么帮</dt><dd>读钉钉家校群通知，每天整理成作业单和待办，用邮件发到家里打印机；排日程、到点提醒，爸妈出差和补课冲突提前预警；批改作业找出薄弱点，每天定时推巩固题；母婴大促选款比价、写清怎么领券；排周末带娃计划和睡前故事</dd>
+      <dt>用户自己做</dt><dd>签字、接送、辅导、下单</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ali">钉钉家校群 · 阿里</span>读老师通知整理作业单</li><li><span class="tag ant">支付宝账单 · 蚂蚁</span>算养娃花费</li><li><span class="tag ">米家 · 第三方（小米）</span>一个家长视频里说联动了台灯</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704211857964707322" target="_blank" rel="noopener">自然流：听，是接住这个世界的声音，说，是向世（4,005 赞）</a> · <a href="https://www.douyin.com/video/7702391856432205065" target="_blank" rel="noopener">自然流：我们可能是最后一代，要亲自带娃的家长（1,665 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1428544412" target="_blank" rel="noopener">快手联盟：大促囤母婴用品（8 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1445433036" target="_blank" rel="noopener">抖音：养娃花费是否超标</a></dd></dl></div><div class="it"><div class="hd"><b>求职</b><span>快手联盟 3 组（曝光 1.3%） · 抖音 13 组 · 自然流 3 条</span></div>
+      <dl><dt>解决什么</dt><dd>秋招事情太散：改简历、筛岗位、记投递和面试进度、准备面试，容易断联</dd>
+      <dt>灵光怎么帮</dt><dd>读简历给修改建议；岗位按冲刺、匹配、保底分档；记投递和面试进度，按节点提醒，有新岗位就推；面试前查公司、出自我介绍和高频问题</dd>
+      <dt>用户自己做</dt><dd>投递、面试、和 HR 沟通</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li class="m">不连外部 App</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704650990952374266" target="_blank" rel="noopener">自然流：秋招求职有了AI新玩法！灵光2.0升（2,391 赞）</a> · <a href="https://www.douyin.com/video/7704649980317621925" target="_blank" rel="noopener">自然流：秋招尾声来临，不少应届生使用灵光2.（1,611 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1435819008" target="_blank" rel="noopener">快手联盟：找工作（3 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1428177970" target="_blank" rel="noopener">抖音：找工作事情太散</a></dd></dl></div><div class="it"><div class="hd"><b>学技能</b><span>快手联盟 17 组（曝光 9.2%） · 抖音 1 组</span></div>
+      <dl><dt>解决什么</dt><dd>想学舞、学吉他，工作忙、时间不固定，自学很难坚持</dd>
+      <dt>灵光怎么帮</dt><dd>拆成约 12 周的分阶段计划，弹性排课，练前提醒，加班或身体不适后按反馈调整</dd>
+      <dt>用户自己做</dt><dd>自己练</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li class="m">不连外部 App</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://adxray-app.dataeye.com/creative/material/1426287501" target="_blank" rel="noopener">快手联盟：学跳舞（12 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1435712336" target="_blank" rel="noopener">抖音：学跳舞</a></dd></dl></div><div class="it"><div class="hd"><b>用车加油</b><span>快手联盟 13 组（曝光 5.5%） · 抖音 2 组 · 自然流 1 条</span></div>
+      <dl><dt>解决什么</dt><dd>不知道附近哪家油便宜、什么时候调价；带娃自驾到景区找不到车位和充电桩</dd>
+      <dt>灵光怎么帮</dt><dd>读位置找周边 5 公里最便宜的加油站，每天推；盯油价和机构预测，确定上调才通知、算出能省多少；查景区停车位和快充桩，到点提醒出发并发起导航</dd>
+      <dt>用户自己做</dt><dd>去加油、开车</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ">导航 · 没说是哪家</span>素材里没点名用哪家地图</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7703431438422557795" target="_blank" rel="noopener">自然流：这样的房车营地生活是你想要的吗（2,832 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1435982264" target="_blank" rel="noopener">快手联盟：找便宜加油站（6 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1447639460" target="_blank" rel="noopener">抖音：油价</a></dd></dl></div><div class="it"><div class="hd"><b>做饭吃饭</b><span>快手联盟 10 组（曝光 4.0%） · 抖音 2 组</span></div>
+      <dl><dt>解决什么</dt><dd>每天吃什么、孩子早餐来不及、预算和剩菜不好安排</dd>
+      <dt>灵光怎么帮</dt><dd>按预算和口味每天定时推菜单、采购量和做法，把剩菜排进下一顿，加班改快手版；到点提醒采购</dd>
+      <dt>用户自己做</dt><dd>买菜、做饭</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ali">盒马 · 阿里</span>快手联盟 1 组口播说让灵光在盒马下单食材，媒体实测没见过</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://adxray-app.dataeye.com/creative/material/1440499991" target="_blank" rel="noopener">快手联盟：孩子早餐（5 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1440609666" target="_blank" rel="noopener">抖音：冰箱剩菜不浪费</a></dd></dl></div><div class="it"><div class="hd"><b>追星追赛</b><span>快手联盟 1 组（曝光 0.4%） · 自然流 11 条</span></div>
+      <dl><dt>解决什么</dt><dd>演唱会开票、艺人动态、赛程消息总是晚一步，抢票错过</dd>
+      <dt>灵光怎么帮</dt><dd>建追踪任务，每天查官宣、开票、新歌和赛程，有消息才推；整理抢票攻略和场次表；一次性做歌单、红毯相册</dd>
+      <dt>用户自己做</dt><dd>自己去大麦、猫眼或官方票务抢票</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ali">大麦 · 阿里</span>只是提醒去大麦抢，没有连接</li><li><span class="tag ">猫眼 · 第三方</span>同上</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7702290994171983227" target="_blank" rel="noopener">自然流：老薛，这下不能抢不到票了吧。作为资深（4,777 赞）</a> · <a href="https://www.douyin.com/video/7702355946613780200" target="_blank" rel="noopener">自然流：盆栽哥吉隆坡站有没有一起抢的。很喜欢（2,620 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1428706384" target="_blank" rel="noopener">快手联盟：追英雄联盟S16（1 组）</a></dd></dl></div><div class="it"><div class="hd"><b>孕产</b><span>快手联盟 8 组（曝光 3.5%） · 抖音 1 组 · 自然流 1 条</span></div>
+      <dl><dt>解决什么</dt><dd>产检时间和准备事项记不住；孕期饮食、控糖拿不准；待产和出院手续一大堆</dd>
+      <dt>灵光怎么帮</dt><dd>算孕周和预产期，排产检时间线和清单，到点提醒，按你说的预约时间改提醒；排每周菜单和孕期禁忌；产后康复训练节奏；待产任务卡：核对待产包、证件、住院押金，提醒产假申请，说明出院后跑哪些窗口</dd>
+      <dt>用户自己做</dt><dd>约医院、去产检、办手续</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ">浙里办 · 浙江政务平台</span>只告诉你去哪个窗口办，不是连接</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704589520628485402" target="_blank" rel="noopener">自然流：从待产包到“浙里办”全搞定，新手奶爸（3,187 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1436281383" target="_blank" rel="noopener">快手联盟：孕期产检（4 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1447639196" target="_blank" rel="noopener">抖音：产后康复</a></dd></dl></div><div class="it"><div class="hd"><b>租房</b><span>快手联盟 2 组（曝光 0.8%） · 抖音 5 组</span></div>
+      <dl><dt>解决什么</dt><dd>找房要在好几个平台反复刷，通勤和房租不好一起算</dd>
+      <dt>灵光怎么帮</dt><dd>按预算、通勤、户型整理候选房源（租金、面积、地铁距离、链接），每晚盯新上架和低于参考价的，备砍价话术、看押金和合同</dd>
+      <dt>用户自己做</dt><dd>联系房东或中介、看房、签约</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ">小红书、抖音、贝壳 · 公开信息</span>引用公开房源帖子，不是连接</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://adxray-app.dataeye.com/creative/material/1436250009" target="_blank" rel="noopener">快手联盟：租房（2 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1437921545" target="_blank" rel="noopener">抖音：租房从找房跟到搬家</a></dd></dl></div><div class="it"><div class="hd"><b>送礼祝福</b><span>快手联盟 5 组（曝光 2.3%） · 抖音 1 组</span></div>
+      <dl><dt>解决什么</dt><dd>家人朋友的生日节日记不住，不知道送什么</dd>
+      <dt>灵光怎么帮</dt><dd>记住每个人的喜好和日子，提前提醒，附商品链接和几版祝福文案</dd>
+      <dt>用户自己做</dt><dd>下单买礼物、发祝福</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li class="m">不连外部 App</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://adxray-app.dataeye.com/creative/material/1428512151" target="_blank" rel="noopener">快手联盟：给家人挑礼物发祝福（5 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1442091523" target="_blank" rel="noopener">抖音：给亲近的人买礼物不知道买什么</a></dd></dl></div><div class="it"><div class="hd"><b>账单理财</b><span>快手联盟 3 组（曝光 1.3%） · 抖音 1 组 · 自然流 1 条</span></div>
+      <dl><dt>解决什么</dt><dd>不知道钱花哪了，忘关的自动续费、会员到期在悄悄扣钱</dd>
+      <dt>灵光怎么帮</dt><dd>读支付宝账单和花呗，按类汇总、标大额、找出自动续费和免密支付，按月复查，到期前提醒</dd>
+      <dt>用户自己做</dt><dd>退订、调整消费</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ant">支付宝、花呗 · 蚂蚁</span>读账单、找自动续费</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7702088390096031464" target="_blank" rel="noopener">自然流：实习vlog｜家里快供不起我上班了…（7,718 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1438203016" target="_blank" rel="noopener">快手联盟：工资花哪了（3 组）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1435712466" target="_blank" rel="noopener">抖音：多账户消费汇总</a></dd></dl></div><div class="it"><div class="hd"><b>工作办公</b><span>自然流 5 条</span></div>
+      <dl><dt>解决什么</dt><dd>工作群消息太多看不过来，工作计划总被打乱，要写日报</dd>
+      <dt>灵光怎么帮</dt><dd>读钉钉或飞书群消息，定时汇总成待办和日报草稿，标出要你拍板的事，排今天最优先的三件，起草同步消息；记住一周安排，有变化接着管</dd>
+      <dt>用户自己做</dt><dd>发消息、做事</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ali">钉钉 · 阿里</span>读群消息出日报；授权时自己选组织</li><li><span class="tag ">飞书 · 第三方（字节）</span>只读群消息，同步消息要你自己发</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704952107052387625" target="_blank" rel="noopener">自然流：当村长有了AI助理（1 万 赞）</a> · <a href="https://www.douyin.com/video/7704511102810009701" target="_blank" rel="noopener">自然流：几百条群聊，灵光帮我理成一张待办！（8,849 赞）</a></dd></dl></div><div class="it"><div class="hd"><b>寄快递</b><span>快手联盟 4 组（曝光 1.9%）</span></div>
+      <dl><dt>解决什么</dt><dd>寄大件不知道哪家快递便宜</dd>
+      <dt>灵光怎么帮</dt><dd>按重量和体积比几家快递报价，确认后下单、约快递员上门</dd>
+      <dt>用户自己做</dt><dd>确认寄件信息、交件</dd>
+      <dt>外部 App</dt><dd><ul class="apps"><li><span class="tag ">快递 · 没说是哪家</span>快手联盟口播，媒体实测没见过</li></ul></dd>
+      <dt>代表视频</dt><dd class="rp"><a href="https://adxray-app.dataeye.com/creative/material/1435982275" target="_blank" rel="noopener">快手联盟：寄大件快递（4 组）</a></dd></dl></div><div class="it"><div class="hd"><b>其他（各 1–3 条）</b><span>抖音 3 组 · 自然流 6 条</span></div><dl><dt>讲了什么</dt><dd>找保洁比价、钉钉群定时发约饭消息（阿里）、叫顺风车（11/5 接入的哈啰，蚂蚁是第一大股东）、装修进度管理、查芝麻信用（蚂蚁）免押租相机、综合测评（连支付宝、QQ 邮箱、苹果健康、训记、飞书）</dd><dt>代表视频</dt><dd class="rp"><a href="https://www.douyin.com/video/7704690949682629930" target="_blank" rel="noopener">自然流：月入6位的我如何让AI接管生活（跟练（1.4 万 赞）</a> · <a href="https://www.douyin.com/video/7704891234943177907" target="_blank" rel="noopener">自然流：这样的 AI 管家用起来就是不烧心啊（8,837 赞）</a> · <a href="https://adxray-app.dataeye.com/creative/material/1447484877" target="_blank" rel="noopener">抖音：找保洁比价</a></dd></dl></div></div><h3 class="sub2">怎么用（素材里的统一套路）</h3>
+    <p class="note" style="font-size:14px;color:var(--color-fg)">打开灵光，首页语音或打字说一句，说清「管什么、管到哪天、什么情况找我」→ 灵光先给一版结果 → 挂进「帮我管」变成任务卡（进度、已办、待办、下次检查时间）→ 到点或有变化推送 → 用户只做决定。快手联盟素材的结尾口号几乎都是「琐事灵光来处理，重要的事由你决定」。</p><details class="capd"><summary>按能力看：各能力出现次数和做到哪一步</summary>
     <p class="note">一条素材常同时用到几种能力，所以每列加起来会超过总数</p>
     <div class="scroll"><table>
-      <thead><tr><th>能力</th><th>快手联盟组数</th><th>曝光占比</th><th>抖音组数</th><th>自然流条数</th><th class="txt">做到哪一步 / 要用户自己做</th></tr></thead><tbody><tr><td>帮我管：拆计划、定时提醒、按反馈调整</td><td>161</td><td>77.8%</td><td>30</td><td>24</td><td class="wrap">出方案、拆成每周要做的事、到点推送、按你的反馈改；执行都是用户自己</td></tr><tr><td>盯价格或盯消息，到条件才推送</td><td>68</td><td>32.9%</td><td>36</td><td>26</td><td class="wrap">先挑出当下符合条件的，挂成任务定时查，到价或有新消息才推，附型号、到手价、链接；不下单</td></tr><tr><td>读支付宝账单、购买记录、券</td><td>25</td><td>10.9%</td><td>8</td><td>7</td><td class="wrap">读支付宝（蚂蚁自家）账单、购买记录、已领和能领的券，分类、算周期、找自动续费，按月复查；退订、领券、补货是用户自己。账单只有支付宝，不含微信支付和银行卡</td></tr><tr><td>排行程、做旅行地图</td><td>22</td><td>9.9%</td><td></td><td>4</td><td class="wrap">按出发地、预算出行程和旅行地图，签证、机票、旅馆列成待办；订票是用户自己，媒体实测查到机票后跳携程</td></tr><tr><td>写日历（钉钉、系统日历）</td><td>18</td><td>7.9%</td><td></td><td>1</td><td class="wrap">把待办写进钉钉日历（阿里）或 iPhone 日历，会避开已有安排</td></tr><tr><td>一次性整理或生成（清单、歌单、方案、小应用）</td><td>2</td><td>0.9%</td><td></td><td>8</td><td class="wrap">一次性给清单、歌单、菜谱、控糖食谱，或用老功能闪应用做个小工具；不挂长期任务</td></tr><tr><td>替你下单、叫车、寄件、发群消息（要你确认）</td><td>5</td><td>2.2%</td><td>1</td><td>3</td><td class="wrap">叫顺风车（达人视频，下单前给你看起终点、车型、价格）；官方发布片里酒店降价后点「退旧订新」直接改订；钉钉群定时发约饭消息（抖音 1 组）；作业单用邮件发到家里打印机；一个达人视频里联系携程客服取消门票；寄快递下单和盒马下单食材只在快手联盟口播里（媒体实测没见过）。都要用户点头</td></tr><tr><td>读其他账号（钉钉和飞书群消息、邮箱、苹果健康、训记）</td><td></td><td></td><td></td><td>4</td><td class="wrap">读钉钉（阿里）家校群、工作群和飞书（字节，只读）群消息，整理成作业单、日报、待办；读 QQ 邮箱、苹果健康、训记出提醒和计划；飞书里的同步消息要用户自己发</td></tr></tbody></table></div>
-    <h3 class="sub2">怎么用（素材里的统一套路）</h3>
-    <p class="note" style="font-size:14px;color:var(--color-fg)">打开灵光，首页语音或打字说一句，说清「管什么、管到哪天、什么情况找我」→ 灵光先给一版结果 → 挂进「帮我管」变成任务卡（进度、已办、待办、下次检查时间）→ 到点或有变化推送 → 用户只做决定。快手联盟素材的结尾口号几乎都是「琐事灵光来处理，重要的事由你决定」。</p>
+      <thead><tr><th>能力</th><th>快手联盟组数</th><th>曝光占比</th><th>抖音组数</th><th>自然流条数</th><th class="txt">做到哪一步 / 要用户自己做</th></tr></thead><tbody><tr><td>帮我管：拆计划、定时提醒、按反馈调整</td><td>161</td><td>77.8%</td><td>30</td><td>24</td><td class="wrap">出方案、拆成每周要做的事、到点推送、按你的反馈改；执行都是用户自己</td></tr><tr><td>盯价格或盯消息，到条件才推送</td><td>68</td><td>32.9%</td><td>36</td><td>26</td><td class="wrap">先挑出当下符合条件的，挂成任务定时查，到价或有新消息才推，附型号、到手价、链接；不下单</td></tr><tr><td>读支付宝账单、购买记录、券</td><td>25</td><td>10.9%</td><td>8</td><td>7</td><td class="wrap">读支付宝（蚂蚁自家）账单、购买记录、已领和能领的券，分类、算周期、找自动续费，按月复查；退订、领券、补货是用户自己。账单只有支付宝，不含微信支付和银行卡</td></tr><tr><td>排行程、做旅行地图</td><td>22</td><td>9.9%</td><td></td><td>4</td><td class="wrap">按出发地、预算出行程和旅行地图，签证、机票、旅馆列成待办；订票是用户自己，媒体实测查到机票后跳携程</td></tr><tr><td>写日历（钉钉、系统日历）</td><td>18</td><td>7.9%</td><td></td><td>1</td><td class="wrap">把待办写进钉钉日历（阿里）或 iPhone 日历，会避开已有安排</td></tr><tr><td>一次性整理或生成（清单、歌单、方案、小应用）</td><td>2</td><td>0.9%</td><td></td><td>8</td><td class="wrap">一次性给清单、歌单、菜谱、控糖食谱，或用老功能闪应用做个小工具；不挂长期任务</td></tr><tr><td>替你下单、叫车、寄件、发群消息（要你确认）</td><td>5</td><td>2.2%</td><td>1</td><td>3</td><td class="wrap">叫顺风车（达人视频，下单前给你看起终点、车型、价格）；官方发布片里酒店降价后点「退旧订新」直接改订；钉钉群定时发约饭消息（抖音 1 组）；作业单用邮件发到家里打印机；一个达人视频里联系携程客服取消门票；寄快递下单和盒马下单食材只在快手联盟口播里（媒体实测没见过）。都要用户点头</td></tr><tr><td>读其他账号（钉钉和飞书群消息、邮箱、苹果健康、训记）</td><td></td><td></td><td></td><td>4</td><td class="wrap">读钉钉（阿里）家校群、工作群和飞书（字节，只读）群消息，整理成作业单、日报、待办；读 QQ 邮箱、苹果健康、训记出提醒和计划；飞书里的同步消息要用户自己发</td></tr></tbody></table></div></details>
   </section><section class="card" id="eco">
     <h2>涉及的其他 App，是不是阿里、蚂蚁自己的</h2>
     <p class="note">组数和条数是素材里明确出现这个 App 的；「做到哪一步」合并了素材和媒体实测</p>
