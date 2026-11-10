@@ -77,6 +77,8 @@ tr.we td{color:var(--sub)}
 .pn{font-size:12px;color:var(--sub)}
 .l2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.l2 div{display:grid}.l2 b{font-size:16px;font-variant-numeric:tabular-nums}.l2 span{font-size:12px;color:var(--sub)}.l2 small{font-size:12px;color:var(--sub);font-weight:400}
 .fl a{margin-right:6px;white-space:nowrap}
+.day{margin:0 0 18px}.dayh{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;padding:8px 0 6px;border-bottom:2px solid var(--line);margin-bottom:6px;font-size:13px}.dayh b{font-size:15px}.dayh span b{font-size:14px}
+.plan{margin-top:6px}.plan .ph{cursor:pointer;font-size:12px;color:var(--sub);padding:6px 8px;background:var(--panel);border:1px dashed var(--line)}.plan .ph:hover{color:var(--fg)}.plan.open .ph{border-bottom:0}
 </style>
 </head>
 <body>
@@ -92,17 +94,13 @@ tr.we td{color:var(--sub)}
 <h2>每天交了多少</h2>
 <div class="dg" id="days"></div>
 
-<h2>生产批次</h2>
-<div class="filters" id="bf"></div>
-<div class="scroll list"><table id="bt"></table></div>
-
 <h2>按维度看</h2>
 <div class="dim" id="dims"></div>
 
 
-<h2>成片清单</h2>
+<h2>每天的成片</h2>
 <div class="filters" id="filters"></div>
-<div class="scroll list"><table id="list"></table></div>
+<div id="list"></div>
 </div>
 <script>
 const D={{DATA}};
@@ -113,7 +111,7 @@ const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
 const IT=D.items, CNT=x=>x.k!=='X';
 const isVar=x=>x.k==='V'||x.k==='S';
 const KC={V:'var(--v)',S:'var(--s)',N:'var(--n)',X:'var(--x)'};
-document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周两组的生产批次和实际成片，数据截至 ${md(D.T)}。`;
+document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周两组实际交的成片，数据截至 ${md(D.T)}。每天下面折叠着这天还排着、没交的。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
 // KPI
@@ -153,7 +151,6 @@ document.getElementById('dims').addEventListener('click',ev=>{const r=ev.target.
 // 筛选
 const opts=(key,lab)=>[...new Set(IT.map(x=>x[key]).filter(Boolean))].sort().map(v=>`<option value="${esc(v)}">${esc(lab?lab(v):v)}</option>`).join('');
 document.getElementById('filters').innerHTML=`<select data-f="g"><option value="">两组</option><option>A</option><option>B</option></select>
-<select data-f="d"><option value="">全周</option>${[...D.days].reverse().map(d=>`<option value="${d}">${md(d)} 周${wd(d)}</option>`).join('')}</select>
 <select data-f="k"><option value="">全部分类</option>${Object.entries(D.kinds).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}<option value="VS">变式合计</option></select>
 <select data-f="t"><option value="">AI 和二创</option><option value="A">AI</option><option value="E">二创</option></select>
 <select data-f="l1"><option value="">全部一级分类</option>${opts('l1')}</select>
@@ -163,36 +160,28 @@ document.getElementById('filters').innerHTML=`<select data-f="g"><option value="
 <span class="cnt" id="cnt"></span>`;
 const syncF=()=>document.querySelectorAll('#filters [data-f]').forEach(e=>{e.value=F[e.dataset.f]});
 document.getElementById('filters').addEventListener('input',ev=>{const e=ev.target.closest('[data-f]');if(!e)return;F[e.dataset.f]=e.value;draw()});
-function draw(){
-  const L=[...IT].sort((a,b)=>b.d.localeCompare(a.d)||a.g.localeCompare(b.g)).filter(x=>(!F.g||x.g===F.g)&&(!F.d||x.d===F.d)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.t||x.t===F.t)&&(!F.l1||x.l1===F.l1)&&(!F.uc||x.uc===F.uc)&&(!F.sc||x.sc===F.sc)&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase())));
-  const v=L.filter(x=>isVar(x)).length,c=L.filter(CNT).length;
-  document.getElementById('cnt').textContent=`${L.length} 条，变式占 ${c?Math.round(v/c*100):0}%`;
-  document.getElementById('list').innerHTML=`<thead><tr><th>交付</th><th>组</th><th>分类</th><th>类型</th><th>一级分类</th><th>Use case</th><th>细分场景</th><th>素材名</th><th>链接</th><th class="n">累计消耗</th></tr></thead><tbody>${L.map(x=>`<tr><td class="nw">${md(x.d)} 周${wd(x.d)}</td><td>${x.g}</td><td><span class="k k${x.k}">${D.kinds[x.k]}</span></td><td class="nw">${x.t==='A'?'AI':'二创'}</td><td class="nw">${esc(x.l1)}</td><td class="nw">${x.uc?`<code>${esc(x.uc)}</code> ${esc(x.ucn)}`:''}</td><td>${esc(x.sc)}</td><td class="nm">${esc(x.name)}</td><td class="nw"><a href="${esc(x.link)}" target="_blank" rel="noopener" title="${esc(x.where)}">飞书成片</a>${x.video?` · <a href="${esc(x.video)}" target="_blank" rel="noopener">视频</a>`:''}</td><td class="n">${x.cost?money(x.cost):x.mid?'¥0':'没上线'}</td></tr>`).join('')}</tbody>`;
-}
-draw();
-// 生产批次
-const BF={g:'',st:'',k:''};
 const KB={'变式':'V','同脚本换画面':'S','自己发挥':'N','':'N'};
-document.getElementById('bf').innerHTML=`<select data-b="g"><option value="">两组</option><option>A</option><option>B</option></select>
-<select data-b="st"><option value="">全部状态</option><option value="due">到日子了还没交齐</option><option value="交齐">交齐</option><option value="今天交">今天交</option><option value="还没到">还没到日子</option><option value="排期外">排期外</option></select>
-<select data-b="k"><option value="">全部分类</option><option value="V">头部模板变式</option><option value="S">同脚本换画面</option><option value="N">新测试</option></select><span class="cnt" id="bcnt"></span>`;
-document.getElementById('bf').addEventListener('input',ev=>{const e=ev.target.closest('[data-b]');if(e){BF[e.dataset.b]=e.value;bdraw()}});
-const OPEN=new Set();const DOPEN=new Set(D.days.filter(d=>d<=D.T).slice(-2));
-function bk(b){return b.n==null?(b.items.some(x=>x.k==='V'||x.k==='S')?(b.items.some(x=>x.k==='S')?'S':'V'):'N'):KB[b.k]??'N'}
-function bdraw(){
-  const L=D.batches.filter(b=>(!BF.g||b.g===BF.g)&&(!BF.k||bk(b)===BF.k)&&(!BF.st||(BF.st==='due'?/^差|没交/.test(b.st):b.st===BF.st)));
-  const due=L.filter(b=>/^差|没交/.test(b.st));
-  document.getElementById('bcnt').textContent=`${L.length} 批，排了 ${L.reduce((a,b)=>a+(b.n||0),0)} 条，交了 ${L.reduce((a,b)=>a+b.got,0)} 条；到日子没交齐 ${due.length} 批`;
-  const stc=s=>s==='交齐'?'st-ok':/^差|没交/.test(s)?'st-bad':'st-mu';
-  const days=[...new Set(L.map(b=>b.d))];
-  document.getElementById('bt').innerHTML=`<thead><tr><th>交付日</th><th>组</th><th>分类</th><th>Use case</th><th>细分场景 / 做什么</th><th class="n">排了</th><th class="n">交了</th><th>状态</th><th>成片</th></tr></thead><tbody>${days.map(d=>{const DL=L.filter(b=>b.d===d),op=DOPEN.has(d);const sm=g=>{const G=DL.filter(b=>b.g===g);if(!G.length)return '';const n=G.reduce((a,b)=>a+(b.n||0),0),got=G.reduce((a,b)=>a+b.got,0);return `<span style="margin-right:18px">${g} 组 排 <b>${n}</b> · 交 <b class="${d<=D.T&&got<n?'st-bad':got>=n&&n?'st-ok':''}">${got}</b></span>`};
-   return `<tr class="dh${op?' open':''}" data-d="${d}"><td colspan="9"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'（今天）':d>D.T?'（还没到）':''}<span style="margin-left:16px">${sm('A')}${sm('B')}</span><span class="st-mu">${DL.length} 批，点开看</span></td></tr>`+(op?DL.map((b,i)=>{const id=b.g+b.tab+b.row,k=bk(b),bo=OPEN.has(id);
-    const mini=b.n?`<span class="mini">${Array.from({length:Math.min(b.n,8)},(_,j)=>`<i class="${j<b.got?'on':''}"></i>`).join('')}</span>`:'';
-    return `<tr class="b${bo?' open':''}" data-id="${id}"><td class="nw">${md(b.d)} 周${wd(b.d)}</td><td>${b.g}</td><td><span class="k k${k}">${D.kinds[k]}</span></td><td class="nw">${b.uc?`<code>${esc(b.uc)}</code> ${esc(UCN[b.uc]||'')}`:''}</td><td>${esc(b.sc||'')}${b.how?`<small class="note" style="display:block;margin:2px 0 0">${esc(b.how)}</small>`:''}</td><td class="n">${b.n??'—'}</td><td class="n">${b.got}${mini}</td><td class="nw ${stc(b.st)}">${b.st}</td><td class="fl">${b.items.length?b.items.map((x,j)=>`<a href="${esc(x.link)}" target="_blank" rel="noopener" title="${esc(x.name)}">成片 ${j+1}</a>`).join(''):'<span class="st-mu">还没有</span>'}</td></tr>`+
-    (bo?`<tr class="sub"><td colspan="9">${b.items.length?`<ul>${b.items.map(x=>`<li><span class="k k${x.k||'N'}">${D.kinds[x.k||'N']}</span> <a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a></li>`).join('')}</ul>`:'这批还没有交上来的成片'}</td></tr>`:'')}).join(''):'')}).join('')}</tbody>`;
+const bk=b=>b.n==null?'N':KB[b.k]??'N';
+const OPEN=new Set();
+function draw(){
+  const pass=x=>(!F.g||x.g===F.g)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.t||x.t===F.t)&&(!F.l1||x.l1===F.l1)&&(!F.uc||x.uc===F.uc)&&(!F.sc||x.sc===F.sc)&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase()));
+  const passB=b=>b.n!=null&&(!F.g||b.g===F.g)&&(!F.k||(F.k==='VS'?['V','S'].includes(bk(b)):bk(b)===F.k))&&(!F.uc||b.uc===F.uc)&&(!F.q);
+  const L=IT.filter(pass),v=L.filter(isVar).length,c=L.filter(CNT).length;
+  document.getElementById('cnt').textContent=`${L.length} 条成片，变式占 ${c?Math.round(v/c*100):0}%`;
+  const days=[...D.days].reverse();
+  document.getElementById('list').innerHTML=days.map(d=>{
+    const X=L.filter(x=>x.d===d).sort((a,b)=>a.g.localeCompare(b.g)||a.k.localeCompare(b.k)||String(a.uc).localeCompare(b.uc));
+    const P=D.batches.filter(b=>b.d===d&&passB(b)),open=P.filter(b=>b.got<b.n).sort((a,b)=>a.g.localeCompare(b.g)||bk(a).localeCompare(bk(b))||String(a.uc).localeCompare(b.uc));
+    if(!X.length&&!P.length)return '';
+    const sm=g=>{const n=X.filter(x=>x.g===g&&CNT(x)).length,pl=P.filter(b=>b.g===g).reduce((a,b)=>a+b.n,0);return (n||pl)?`<span>${g} 组 交 <b>${n}</b>${pl?` / 排 ${pl}`:''}</span>`:''};
+    const head=`<div class="dayh"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'<span class="st-mu">今天</span>':d>D.T?'<span class="st-mu">还没到</span>':''}${sm('A')}${sm('B')}</div>`;
+    const tbl=X.length?`<div class="scroll list"><table><thead><tr><th>组</th><th>分类</th><th>类型</th><th>一级分类</th><th>Use case</th><th>细分场景</th><th>成片</th><th class="n">累计消耗</th></tr></thead><tbody>${X.map(x=>`<tr><td>${x.g}</td><td><span class="k k${x.k}">${D.kinds[x.k]}</span></td><td class="nw">${x.t==='A'?'AI':'二创'}</td><td class="nw">${esc(x.l1)}</td><td class="nw">${x.uc?`<code>${esc(x.uc)}</code> ${esc(x.ucn)}`:''}</td><td>${esc(x.sc)}</td><td class="nm"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a>${x.video?` · <a href="${esc(x.video)}" target="_blank" rel="noopener">巨量视频</a>`:''}</td><td class="n">${x.cost?money(x.cost):x.mid?'¥0':'没上线'}</td></tr>`).join('')}</tbody></table></div>`:(d<=D.T?'<p class="note">这天还没有交上来的成片。</p>':'');
+    const op=OPEN.has(d);
+    const plan=open.length?`<div class="plan${op?' open':''}" data-d="${d}"><div class="ph">${op?'▾':'▸'} 这天还排着没交的：${open.length} 项、${open.reduce((a,b)=>a+b.n-b.got,0)} 条</div>${op?`<div class="scroll list"><table><thead><tr><th>组</th><th>分类</th><th>Use case</th><th>细分场景 / 做什么</th><th class="n">排了</th><th class="n">已交</th></tr></thead><tbody>${open.map(b=>`<tr><td>${b.g}</td><td><span class="k k${bk(b)}">${D.kinds[bk(b)]}</span></td><td class="nw">${b.uc&&b.uc!=='自选'?`<code>${esc(b.uc)}</code> ${esc(UCN[b.uc]||'')}`:'自选'}</td><td>${esc(b.sc||'')}${b.how?`<small class="note" style="display:block;margin:2px 0 0">${esc(b.how)}</small>`:''}</td><td class="n">${b.n}</td><td class="n">${b.got}</td></tr>`).join('')}</tbody></table></div>`:''}</div>`:'';
+    return `<section class="day">${head}${tbl}${plan}</section>`}).join('');
 }
-document.getElementById('bt').addEventListener('click',ev=>{if(ev.target.closest('a'))return;const h=ev.target.closest('tr.dh');if(h){const d=h.dataset.d;DOPEN.has(d)?DOPEN.delete(d):DOPEN.add(d);bdraw();return}const r=ev.target.closest('tr.b');if(!r)return;const id=r.dataset.id;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);bdraw()});
-bdraw();
+document.getElementById('list').addEventListener('click',ev=>{const h=ev.target.closest('.plan .ph');if(!h)return;const d=h.parentElement.dataset.d;OPEN.has(d)?OPEN.delete(d):OPEN.add(d);draw()});
+draw();
 </script>
 </body>
 </html>
