@@ -54,6 +54,39 @@ def tpl_of_label(label):
             return dict(tn=short, tl=tpl_link(row))
     return {}
 
+STREAM = 'https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/all/{}/'
+UCS = json.load(open(os.path.join(ROOT, 'tools/ucs.json'), encoding='utf-8'))
+TPLJ = json.load(open(os.path.join(ROOT, 'tools/templates.json'), encoding='utf-8'))
+STOP = re.compile(r'^(扩量|二创|新剪|精剪|精简|AI素材|AI重拍|照真人|同脚本换画面|新角度|换角度|原片|推送视频|修改|合规|KOC非原生|KOL非原生|全文重配|只剪辑|[ABab]组|今天|新拍|重配|today|koc|kol)')
+EDITORS = {'叮叮', '小月', '耶耶', '小李', '包子', '叮当'}
+
+
+def variable(x):
+    """头部模板变式这一条换的是什么：先看素材名里写的变量，再看「换角度+NN」对上模板的第几个角度，再看排期行里写的，最后退回原片的场景。"""
+    name = x['name']
+    for row, short, keys in TEMPLATES:
+        k = next((k for k in keys if k in name), None)
+        if not k:
+            continue
+        m = re.search(r'换角度\+?0?(\d+)', name)
+        ang = TPLJ.get(str(row), {}).get('angles', [])
+        if m and 0 < int(m.group(1)) <= len(ang):
+            return ang[int(m.group(1)) - 1].replace('｜', '：')
+        tail = name.split(k, 1)[1]
+        toks = [t for t in re.split(r'[_\-【】\[\]（）()\s]+', tail) if re.search(r'[一-龥]', t) and not STOP.match(t) and t not in EDITORS and 2 <= len(t) <= 14]
+        if toks:
+            return '·'.join(toks[:2])
+        h = x.get('how', '')
+        if re.search(r'换|新场景|新人群', h):
+            return h
+        if x.get('sc'):
+            return x['sc']
+        if x.get('uc') and x['uc'] != short[:4]:
+            return f"换 use case：{x['uc']} {UCS.get(x['uc'], {}).get('short', '')}（名字和排期没写具体变量）"
+        sc = TPLJ.get(str(row), {}).get('scene', '')
+        return ('同脚本换画面，原片场景：' if x['k'] == 'S' else '没写变量，原片场景：') + sc
+    return x.get('sc', '')
+
 
 def norm(n):
     n = re.sub(r'\.(mp4|mov|m4v)$', '', n.strip(), flags=re.I)
@@ -76,10 +109,12 @@ def load_tsv(folder, year):
             if len(f) < 10 or not f[0] in ('A', 'B'):
                 continue
             g, tab, row, col, md, uc, sc, kind, t, name = f[:10]
+            how = f[10].strip() if len(f) > 10 else ''
+            tok = f[11].strip() if len(f) > 11 else ''
             name = name.strip()
             if not re.search(r'[_-]', name) or len(name) < 10:
                 continue
-            out.append(dict(g=g, tab=tab, row=int(row), col=col, d=f'{year}-{md[:2]}-{md[2:]}', uc=uc.strip(), sc=sc.strip(), k=kind, t=t, name=name))
+            out.append(dict(g=g, tab=tab, row=int(row), col=col, d=f'{year}-{md[:2]}-{md[2:]}', uc=uc.strip(), sc=sc.strip(), k=kind, t=t, name=name, how=how, tok=tok))
     return out
 
 
@@ -182,14 +217,18 @@ def main():
         key = x['g'] + '|' + norm(x['name'])
         if key in seen:  # 同一条素材在扩量表和脚本表都登记了：留扩量表那条，脚本表的链接放 alt
             seen[key].setdefault('alt', []).append(cell_link(x['g'], x['tab'], x['col'], x['row']))
+            if not seen[key].get('tok') and x.get('tok'):
+                seen[key]['tok'] = x['tok']
             continue
-        x['link'] = cell_link(x['g'], x['tab'], x['col'], x['row'])
+        x['cell'] = cell_link(x['g'], x['tab'], x['col'], x['row'])
         x['where'] = f"{TABS.get(x['tab'], x['tab'])}第 {x['row']} 行"
         seen[key] = x
     for key, x in seen.items():
         old = store.get(key, {})
         x['k'] = classify(x)
         x.update(tpl_of_name(x['name']) if x['k'] in ('V', 'S') else {})
+        if x['k'] in ('V', 'S'):
+            x['var'] = variable(x)
         store[key] = {**old, **x}
 
     # 补维度和投放数据
@@ -210,6 +249,8 @@ def main():
                 t = next((y['t'] for y in scenes[s['uc']]['scenes'] if y['n'] == s.get('s')), '')
                 if t:
                     x['sc'] = t
+    for x in store.values():  # 成片直接链视频：投出去的用巨量/唯西日报的永久视频，没投的用飞书附件的直链（要登录飞书），都没有才退回表里那一格
+        x['link'] = x.get('video') or (STREAM.format(x['tok']) if x.get('tok') else x.get('cell') or x.get('link', ''))
     json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
     mon = T - dt.timedelta(days=T.weekday())

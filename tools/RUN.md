@@ -197,6 +197,8 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 3. 提交 output/、outputs.json、notes/output-items.json。
 - 分类规则：扩量表那一行「怎么改」或「依据」写了「头部模板」的算变式；名字带「同脚本换画面」的算同脚本换画面；名字带 22 个模板原片标识（output_build.py 的 TEMPLATE_KEYS）的也算变式；其余算新测试。新加头部模板时把它的原片标识加进 TEMPLATE_KEYS。
 - 细分场景：扩量表取那一行的细分场景；脚本表没有这一列，投出去以后从 notes/scene-map.json 补。
+- 头部模板变式的「细分场景」写换了什么（Reina 11/10）：先取素材名里模板标识后面的变量（如「LOL比赛」），再按「换角度+NN」对上 tools/templates.json 里这个模板的第几个角度，再取排期行「怎么改」里写的「这次换（…）」，都没有就写「没写变量，原片场景：…」。换了 use case 的写「换 use case：…」。
+- 成片链接直接给视频（Reina 11/10）：投出去的用巨量/唯西日报的永久视频；没投的用飞书附件直链 internal-api-drive-stream.feishu.cn/space/api/box/stream/download/all/<fileToken>/（要登录飞书，点开会下载或播放 mp4）。output_read.js 第 12 列是附件的 fileToken。
 - 这页是统一管生产批次和实际成片的地方（Reina 11/10）。「每天的成片」按天倒序列实际交的成片（素材名直接链到飞书成片），每天下面折叠着这天还排着没交的计划，不放表里行号。计划的数据来源： schedule_plan.json 里这周的排期行当批次（排了几条、哪天交），扩量表交的成片按行号挂上；脚本表、二剪表交的按组、use case、AI/二创、是不是变式，挂到交付日当天或前两天的排期行，对不上的算「排期外」。所以往飞书排期加行时，E 一定要同步加，不然这里对不上。
 
 ## 周报（每周一，Reina 11/1 定）
