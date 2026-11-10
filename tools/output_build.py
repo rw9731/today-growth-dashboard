@@ -21,6 +21,39 @@ TEMPLATE_KEYS = ['英语口语陪练与个性化带学', '在微信里直接跟T
                  'A05-03', 'M01-05', '按训练和做饭时间安排一日三餐_02', 'F06_陈忙忙', 'SH03-07', 'F02-02', 'TR00-01']
 KIND_NAME = {'V': '头部模板变式', 'S': '同脚本换画面', 'N': '新测试', 'X': '只换前贴（不计）'}
 
+# 头部模板：表里行号、简称、原片标识（名字里带这些就是照这个模板做的）。链到「头部素材结构提取和变式（11/9）」那一行的代表素材格
+TPL_SHEET = 'https://my.feishu.cn/sheets/VEBUs3HTjh3dHqtojlsckJzmnqS?sheet=24e18e'
+TEMPLATES = [
+    (2, 'LG03 学语言', ['英语口语陪练与个性化带学']), (3, 'PS03 微信转发通知', ['在微信里直接跟Today对话']), (4, 'PS02 恩泽贝拉选课', ['恩泽哥哥和贝拉妹妹']),
+    (5, 'WK01 约多人会议', ['W11-ljq-01', '约多人会议：查空档']), (6, 'NT01 说来惭愧', ['NT01-说来惭愧']), (7, 'WK01 会后跟进', ['W01-zl-07', '开完会整理行动项']),
+    (8, 'WK05 发票报销 kol', ['整理电子发票和差旅报销_01']), (9, 'HL00 neko 健康', ['H08_neko']), (10, 'IN01 S 赛追战队', ['A18-06']),
+    (11, 'PS03 接娃撞车', ['提前协调工作与接娃安排_01']), (12, 'PS01 每天一张卡', ['每天一张卡看清日程和待办_01']), (13, 'LG01 查资料给出处', ['L06-05']),
+    (14, 'WK02 97 年大学老师', ['找出工作邮箱里遗漏的重要邮件']), (15, 'LG01 囤书不读', ['个性化读书与自我提升计划_02']), (16, 'LG01 论文 100 篇', ['LG01-03-zl']),
+    (17, 'SH04 下班吃什么', ['A05-03']), (18, 'SH01 自动扣费分手梗', ['M01-05']), (19, 'HL02 一日三餐 vlog', ['按训练和做饭时间安排一日三餐_02']),
+    (20, 'PS02 陈忙忙双职工', ['F06_陈忙忙']), (21, 'SH03 钱被多扣', ['SH03-07']), (22, 'PS03 门口漏通知', ['F02-02']), (23, 'TR00 回爸妈家不急', ['TR00-01']),
+]
+
+
+def tpl_link(row):
+    return TPL_SHEET + '&range=' + base64.b64encode(f'F{row}'.encode()).decode().rstrip('=')
+
+
+def tpl_of_name(name):
+    for row, short, keys in TEMPLATES:
+        if any(k in name for k in keys):
+            return dict(tn=short, tl=tpl_link(row))
+    return {}
+
+
+ALIAS = {4: ['PS02 恩泽贝拉'], 9: ['HL00 neko'], 20: ['PS02 陈忙忙'], 3: ['PS03 微信转发'], 11: ['PS03 接娃撞车'], 12: ['PS01 每天一张卡'], 15: ['LG01 囤书不读'], 14: ['WK02 97 年大学老师'], 8: ['WK05 发票报销'], 19: ['HL02 一日三餐']}
+
+
+def tpl_of_label(label):
+    for row, short, keys in TEMPLATES:
+        if any(a in (label or '') for a in [short] + ALIAS.get(row, [])):
+            return dict(tn=short, tl=tpl_link(row))
+    return {}
+
 
 def norm(n):
     n = re.sub(r'\.(mp4|mov|m4v)$', '', n.strip(), flags=re.I)
@@ -79,6 +112,8 @@ def batches(plan, items, w0, T):
         b = out.setdefault(key, dict(g=g, tab=KX[g], row=row, d=e['d'], uc=e['uc'], sc=e.get('sc', ''), k=e.get('k', ''), t=e.get('t', ''), n=0,
                                      how=e.get('how', ''), tpl=e.get('tpl', ''), src=e.get('src', '').split('：', 1)[-1], link=cell_link(g, KX[g], 'K', row), items=[]))
         b['n'] += e['n']
+        if not b.get('tn'):
+            b.update(tpl_of_label((e.get('tpl') or '') + ' ' + e.get('src', '')))
     def day(s):
         return dt.date.fromisoformat(s)
     rest = []
@@ -154,6 +189,7 @@ def main():
     for key, x in seen.items():
         old = store.get(key, {})
         x['k'] = classify(x)
+        x.update(tpl_of_name(x['name']) if x['k'] in ('V', 'S') else {})
         store[key] = {**old, **x}
 
     # 补维度和投放数据
