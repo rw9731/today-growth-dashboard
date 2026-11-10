@@ -60,6 +60,57 @@ def classify(x):
     return 'N'
 
 
+KX = {'A': 'kMJdAv', 'B': '3KtioB'}
+
+
+def batches(plan, items, w0, T):
+    """生产批次：排期表里的一行是一个批次（排了几条、哪天交），把这行交上来的成片挂上去；脚本表、二剪表里没在扩量排期登记的成片按表和行单独成批。"""
+    w1 = w0 + dt.timedelta(days=6)
+    out = {}
+    for e in plan.get('E', []):
+        d = dt.date.fromisoformat(e['d'])
+        if not (w0 <= d <= w1) or e.get('s') == 'cut':
+            continue
+        m = re.search(r'([AB]) 组(?:扩量)?第 ?(\d+)', e.get('src', ''))
+        if not m:
+            continue
+        g, row = m.group(1), int(m.group(2))
+        key = f'{g}|{KX[g]}|{row}'
+        b = out.setdefault(key, dict(g=g, tab=KX[g], row=row, d=e['d'], uc=e['uc'], sc=e.get('sc', ''), k=e.get('k', ''), t=e.get('t', ''), n=0,
+                                     how=e.get('how', ''), tpl=e.get('tpl', ''), src=e.get('src', '').split('：', 1)[-1], link=cell_link(g, KX[g], 'K', row), items=[]))
+        b['n'] += e['n']
+    def day(s):
+        return dt.date.fromisoformat(s)
+    rest = []
+    for x in items:  # 先按扩量表行号对上
+        key = f"{x['g']}|{x['tab']}|{x['row']}"
+        if key in out and out[key]['n'] is not None:
+            out[key]['items'].append(dict(name=x['name'], link=x.get('link', ''), k=x.get('k', '')))
+            x['_b'] = key
+        else:
+            rest.append(x)
+    for x in rest:  # 脚本表、二剪表交上来的：按组、use case、AI/二创、是不是变式对上排期行（交付日在排期日当天到后两天），没交满的优先
+        isv = x.get('k') in ('V', 'S')
+        c = [b for b in out.values() if b['n'] is not None and b['g'] == x['g'] and b['uc'] and b['uc'] == x.get('uc')
+             and 0 <= (day(x['d']) - day(b['d'])).days <= 2  # 交付日在排期日当天或之后两天内，不往后面的排期上挂
+             and (b.get('k') in ('变式', '同脚本换画面')) == isv and (b.get('t') == ('AI' if x['t'] == 'A' else '二创'))]
+        c.sort(key=lambda b: (len(b['items']) >= b['n'], abs((day(b['d']) - day(x['d'])).days), b['d']))
+        if c:
+            c[0]['items'].append(dict(name=x['name'], link=x.get('link', ''), k=x.get('k', '')))
+            c[0]['by_uc'] = True
+            continue
+        key = f"{x['g']}|{x['tab']}|{x['row']}"
+        if key not in out:
+            out[key] = dict(g=x['g'], tab=x['tab'], row=x['row'], d=x['d'], uc=x.get('uc', ''), sc=x.get('sc', ''), k='', t='AI' if x['t'] == 'A' else '二创', n=None,
+                            how='', tpl='', src='排期外：' + TABS.get(x['tab'], x['tab']), link=cell_link(x['g'], x['tab'], 'A', x['row']), items=[])
+        out[key]['items'].append(dict(name=x['name'], link=x.get('link', ''), k=x.get('k', '')))
+    for b in out.values():
+        got = len(b['items'])
+        b['got'] = got
+        b['st'] = '排期外' if b['n'] is None else ('交齐' if got >= b['n'] else ('还没到' if b['d'] > T.isoformat() else ('今天交' if b['d'] == T.isoformat() else (f"差 {b['n'] - got}" if got else '没交'))))
+    return sorted(out.values(), key=lambda b: (b['d'], b['g'], b['row']), reverse=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', required=True)
@@ -128,12 +179,14 @@ def main():
     mon = T - dt.timedelta(days=T.weekday())
     weeks = sorted({(dt.date.fromisoformat(x['d']) - dt.timedelta(days=dt.date.fromisoformat(x['d']).weekday())).isoformat() for x in store.values()}, reverse=True)
     tpl = open(os.path.join(ROOT, 'tools/output_template.html'), encoding='utf-8').read()
+    plan = json.load(open(os.path.join(ROOT, 'tools/schedule_plan.json'), encoding='utf-8'))
     for wk in weeks:
         if wk < (mon - dt.timedelta(days=7)).isoformat():
             continue  # 只重算这周和上周
         w0 = dt.date.fromisoformat(wk)
         items = sorted([x for x in store.values() if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g'], x['k'], x['uc']))
-        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, kinds=KIND_NAME, weeks=weeks)
+        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, kinds=KIND_NAME, weeks=weeks,
+                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()})
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
         for path in [os.path.join(ROOT, 'output', wk, 'index.html')] + ([os.path.join(ROOT, 'output', 'index.html')] if w0 == mon else []):
             os.makedirs(os.path.dirname(path), exist_ok=True)
