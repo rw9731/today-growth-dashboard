@@ -182,7 +182,7 @@ document.getElementById('filters').addEventListener('input',ev=>{const e=ev.targ
 renderF();
 const KB={'变式':'V','同脚本换画面':'S','自己发挥':'N','':'N'};
 const bk=b=>b.n==null?'N':KB[b.k]??'N';
-const OPEN=new Set();
+const OPEN=new Set();const KO={V:0,S:1,N:2,X:3};
 function draw(){
   const pass=x=>(!F.g||x.g===F.g)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.t||x.t===F.t)&&(!F.l1||x.l1===F.l1)&&(!F.uc||x.uc===F.uc)&&(!F.sc||SX(x)===F.sc)&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase()));
   const passB=b=>b.n!=null&&(!F.g||b.g===F.g)&&(!F.k||(F.k==='VS'?['V','S'].includes(bk(b)):bk(b)===F.k))&&(!F.uc||b.uc===F.uc)&&(!F.sc||(b.sc||'（没写）')===F.sc)&&(!F.q);
@@ -190,8 +190,8 @@ function draw(){
   document.getElementById('cnt').textContent=`${L.length} 条成片，变式占 ${c?Math.round(v/c*100):0}%`;
   const days=[...D.days].reverse();
   document.getElementById('list').innerHTML=days.map(d=>{
-    const X=L.filter(x=>x.d===d).sort((a,b)=>a.g.localeCompare(b.g)||a.k.localeCompare(b.k)||String(a.uc).localeCompare(b.uc));
-    const P=D.batches.filter(b=>b.d===d&&passB(b)),open=P.filter(b=>b.got<b.n).sort((a,b)=>a.g.localeCompare(b.g)||bk(a).localeCompare(bk(b))||String(a.uc).localeCompare(b.uc));
+    const X=L.filter(x=>x.d===d).sort((a,b)=>KO[a.k]-KO[b.k]||a.g.localeCompare(b.g)||String(a.uc).localeCompare(b.uc));
+    const P=D.batches.filter(b=>b.d===d&&passB(b)),open=P.filter(b=>b.got<b.n).sort((a,b)=>KO[bk(a)]-KO[bk(b)]||a.g.localeCompare(b.g)||String(a.uc).localeCompare(b.uc));
     if(!X.length&&!P.length)return '';
     const sm=g=>{const n=X.filter(x=>x.g===g&&CNT(x)).length,pl=P.filter(b=>b.g===g).reduce((a,b)=>a+b.n,0);return (n||pl)?`<span>${g} 组 交 <b>${n}</b>${pl?` / 排 ${pl}`:''}</span>`:''};
     const head=`<div class="dayh"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'<span class="st-mu">今天</span>':d>D.T?'<span class="st-mu">还没到</span>':''}${sm('A')}${sm('B')}</div>`;
