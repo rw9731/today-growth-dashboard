@@ -81,7 +81,8 @@ tr.we td{color:var(--sub)}
 .plan{margin-top:6px}.plan .ph{cursor:pointer;font-size:12px;color:var(--sub);padding:6px 8px;background:var(--panel);border:1px dashed var(--line)}.plan .ph:hover{color:var(--fg)}.plan.open .ph{border-bottom:0}
 .lk{font-size:11px;color:var(--sub);border:1px solid var(--line);padding:0 4px;white-space:nowrap}
 .dim .row.uc .tg{cursor:pointer;color:var(--sub);font-weight:400;padding:0 2px}.dim .scs{margin:0 0 6px 16px;border-left:2px solid var(--line);padding-left:8px}.dim .row.sc{grid-template-columns:1fr auto 0;font-size:12px}.dim .row.uc{grid-template-columns:minmax(120px,190px) 1fr 58px}
-.dim{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.dim{grid-template-columns:repeat(auto-fit,minmax(380px,1fr));align-items:start}
+.dim .more{margin-top:6px;font:inherit;font-size:12px;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer}
 </style>
 </head>
 <body>
@@ -150,17 +151,19 @@ function dimBlock(title,key,lab){const m={};IT.filter(CNT).forEach(x=>{const k=x
   return `<div class="card"><h3>${title}</h3>${rows.map(([k,c])=>`<div class="row" data-f="${key}" data-v="${esc(k==='（没标）'?'':k)}" title="变式 ${c.V+c.S}，新测试 ${c.N}"><span class="t">${esc(lab?lab(k):k)}</span><span class="b" style="width:${c.n/mx*100}%"><i style="width:${c.V/c.n*100}%;background:var(--v)"></i><i style="width:${c.S/c.n*100}%;background:var(--s)"></i><i style="width:${c.N/c.n*100}%;background:var(--n)"></i></span><span class="n">${c.n}</span></div>`).join('')}</div>`}
 const UCN={...(D.ucn||{})};IT.forEach(x=>{if(x.uc&&x.ucn)UCN[x.uc]=x.ucn});
 const SX=x=>x.var||x.sc||'（没写）';
-const UOPEN=new Set();
+const UOPEN=new Set();let UMORE=false;const UTOP=8;
 function ucBlock(){
   const m={};IT.filter(CNT).forEach(x=>{const u=x.uc||'（没标）';const c=(m[u]??={V:0,S:0,N:0,n:0,sc:{}});c[x.k]++;c.n++;const s=SX(x);(c.sc[s]??={got:0,plan:0}).got++});
   D.batches.filter(b=>b.n!=null&&b.uc&&b.uc!=='自选').forEach(b=>{const c=(m[b.uc]??={V:0,S:0,N:0,n:0,sc:{}});c.plan=(c.plan||0)+b.n;(c.sc[b.sc||'（没写）']??={got:0,plan:0}).plan+=b.n});
-  const rows=Object.entries(m).sort((a,b)=>b[1].n-a[1].n);const mx=Math.max(1,...rows.map(r=>r[1].n));
-  return `<div class="card"><h3>Use case <small class="st-mu" style="font-weight:400">交了 / 这周排了；点 ▸ 看这里面排了哪些细分场景</small></h3>${rows.map(([u,c])=>{const op=UOPEN.has(u);const scs=Object.entries(c.sc).sort((a,b)=>(b[1].got+b[1].plan)-(a[1].got+a[1].plan));
+  const all=Object.entries(m).sort((a,b)=>b[1].n-a[1].n||(b[1].plan||0)-(a[1].plan||0));const mx=Math.max(1,...all.map(r=>r[1].n));
+  const rows=UMORE?all:all.slice(0,UTOP),more=all.length>UTOP?`<button class="more" id="umore">${UMORE?'收起':`显示全部 ${all.length} 个 use case`}</button>`:'';
+  return `<div class="card"><h3>Use case <small class="st-mu" style="font-weight:400">通过 / 排</small></h3>${rows.map(([u,c])=>{const op=UOPEN.has(u);const scs=Object.entries(c.sc).sort((a,b)=>(b[1].got+b[1].plan)-(a[1].got+a[1].plan));
     return `<div class="row uc" data-f="uc" data-v="${esc(u==='（没标）'?'':u)}" title="变式 ${c.V+c.S}，新测试 ${c.N}"><span class="t"><b class="tg" data-u="${esc(u)}">${op?'▾':'▸'}</b> ${esc(u+(UCN[u]?' '+UCN[u]:''))}</span><span class="b" style="width:${c.n/mx*100}%">${c.n?`<i style="width:${c.V/c.n*100}%;background:var(--v)"></i><i style="width:${c.S/c.n*100}%;background:var(--s)"></i><i style="width:${c.N/c.n*100}%;background:var(--n)"></i>`:''}</span><span class="n" title="交了 / 这周排了">${c.n}${c.plan?`<small class="st-mu">/${c.plan}</small>`:''}</span></div>`+
-    (op?`<div class="scs">${scs.map(([s,v])=>`<div class="row sc" data-u="${esc(u)}" data-s="${esc(s)}"><span class="t">${esc(s)}</span><span class="st-mu">交 ${v.got}${v.plan?` · 排 ${v.plan}`:''}</span><span></span></div>`).join('')}</div>`:'')}).join('')}</div>`}
+    (op?`<div class="scs">${scs.map(([s,v])=>`<div class="row sc" data-u="${esc(u)}" data-s="${esc(s)}"><span class="t">${esc(s)}</span><span class="st-mu">交 ${v.got}${v.plan?` · 排 ${v.plan}`:''}</span><span></span></div>`).join('')}</div>`:'')}).join('')}${more}</div>`}
 function dims(){document.getElementById('dims').innerHTML=dimBlock('一级分类','l1')+ucBlock()}
 dims();
 document.getElementById('dims').addEventListener('click',ev=>{
+  if(ev.target.closest('#umore')){UMORE=!UMORE;dims();return}
   const tg=ev.target.closest('.tg');if(tg){const u=tg.dataset.u;UOPEN.has(u)?UOPEN.delete(u):UOPEN.add(u);dims();return}
   const sc=ev.target.closest('.row.sc');if(sc){F.uc=sc.dataset.u;F.sc=sc.dataset.s;renderF();draw();document.getElementById('list').scrollIntoView({behavior:'smooth'});return}
   const r=ev.target.closest('.row');if(!r)return;F[r.dataset.f]=r.dataset.v;if(r.dataset.f==='uc')F.sc='';renderF();draw();document.getElementById('list').scrollIntoView({behavior:'smooth'})});
