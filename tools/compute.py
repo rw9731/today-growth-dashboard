@@ -727,11 +727,32 @@ def main():
         ar = sum(act_by[i].get(k, 0) for k in ks if k <= D1)
         rr = sum(ret_by[i].get(nx(k), 0) for k in ks if k <= D1)  # 分日表里 X 激活的次留记在 X+1 那行
         return a3, c3, (rr / ar if ar else None), ar, ks[-1] <= D[3]
-    b0, b1 = (Dd - dt.timedelta(days=37)).isoformat(), (Dd - dt.timedelta(days=11)).isoformat()
-    bw = [win3(i, up_day(i))[:2] for i in first_sp if b0 <= up_day(i) <= b1]
-    base, basec = sorted(x[0] for x in bw), sorted(x[1] for x in bw)
-    q = lambda L, p_: L[int(len(L) * p_)] if L else None
-    cs_th = max(1, round(q(base, 0.8))) if base else None
+    # 门槛按每个上传日自己的 cohort 定（Reina 11/11）：用上传日前 30 天到前 4 天上传、花过钱的素材（窗口都已走完），
+    # B = 它们窗口激活的 80 分位（主口径）；C = 它们窗口激活占当时全盘激活比例的 80 分位 × 这批窗口里全盘激活（去掉预算影响）。
+    q = lambda L, p_: sorted(L)[int(len(L) * p_)] if L else None
+    day_act = defaultdict(float)
+    for r in allrows:
+        if r['date'] <= D[3]:
+            day_act[r['date']] += r['act']
+    mkt_act = lambda u: sum(day_act.get((dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat(), 0) for k in range(CSW))
+    spent_w = {i: win3(i, up_day(i))[:2] for i in first_sp if up_day(i)}
+    _thc = {}
+
+    def cs_thr(u):
+        if u in _thc:
+            return _thc[u]
+        u0 = dt.date.fromisoformat(u)
+        f0, f1 = (u0 - dt.timedelta(days=30)).isoformat(), (u0 - dt.timedelta(days=4)).isoformat()
+        bw = [(a_, c_, up_day(i)) for i, (a_, c_) in spent_w.items() if f0 <= up_day(i) <= f1]
+        if not bw:
+            _thc[u] = None
+            return None
+        th_b = max(1, round(q([x[0] for x in bw], 0.8)))
+        sh = q([x[0] / mkt_act(x[2]) for x in bw if mkt_act(x[2])], 0.8)
+        mk = mkt_act(u)
+        _thc[u] = {'b': th_b, 'c': max(1, round(sh * mk)) if sh and mk else None, 'share': sh, 'mkt': round(mk),
+                   'from': f0, 'to': f1, 'n': len(bw), 'med': q([x[0] for x in bw], 0.5), 'c80': round(q([x[1] for x in bw], 0.8))}
+        return _thc[u]
     upl_names, upl_days = {}, set()
     for k in range(60):
         dd_ = (Dd - dt.timedelta(days=k)).isoformat()
@@ -759,6 +780,7 @@ def main():
     rec_by = {m['id']: m for m in recent}
     cs_mats = []
     for u in rdays:
+        THU = cs_thr(u)
         ids = {i for i in every if up_day(i) == u}
         for i in ids:
             n = nm_of(i)
@@ -779,7 +801,8 @@ def main():
                  'acc_show': x[1] if x else None, 'acc_100': x[3] if x else None}
             a3, c3, r3, ar, done = win3(i, u)
             e.update({'first': first_sp.get(i, ''), 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
-                      'st': 'pass' if cs_th and a3 >= cs_th else ('fail' if done else 'wait')})
+                      'st': 'pass' if THU and a3 >= THU['b'] else ('fail' if done else 'wait'),
+                      'st_c': 'pass' if THU and THU['c'] and a3 >= THU['c'] else ('fail' if done else 'wait')})
             if i not in first_sp or first_sp[i] > (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat():
                 e['nospend'] = True  # 窗口里一分钱没花
             m = rec_by.get(i)
@@ -797,6 +820,8 @@ def main():
         full = (Dd - dt.date.fromisoformat(u)).days >= 2
         c3s = [m['c3'] for m in g if m['c3'] is not None]
         npass, nfail, nwait = (sum(1 for m in cg if m['st'] == k) for k in ('pass', 'fail', 'wait'))
+        cpass, cwait = (sum(1 for m in cg if m.get('st_c') == k) for k in ('pass', 'wait'))
+        THU = cs_thr(u) or {}
         batches.append({'up': u, 'n': len(g), 'full': full, 'acc_mean': round(s_show / len(sh), 1) if sh else None,
                         'pass': (sum(m['acc_100'] for m in sh) / s_show) if s_show and full else None,
                         'any': (sum(1 for m in g if (m['acc_100'] or 0) > 0) / len(g)) if full and acct and g else None,
@@ -806,9 +831,11 @@ def main():
                         'cs': npass / len(cg) if cg and not nwait else None, 'cs_sofar': npass / len(cg) if cg else None,
                         'win_end': (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat(),
                         'mkt': round(sum(day_tot.get((dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat(), 0) for k in range(CSW) if (dt.date.fromisoformat(u) + dt.timedelta(days=k)) <= Dd) / max(1, min(CSW, (Dd - dt.date.fromisoformat(u)).days + 1))),
-                        'mkt_prev': round(sum(day_tot.get((dt.date.fromisoformat(u) - dt.timedelta(days=k)).isoformat(), 0) for k in range(1, 8)) / 7)})
-    newd_meta['cs_th'] = cs_th
-    newd_meta['cs_base'] = [b0, b1, len(base), q(base, 0.5), round(q(basec, 0.8)) if basec else None]
+                        'mkt_prev': round(sum(day_tot.get((dt.date.fromisoformat(u) - dt.timedelta(days=k)).isoformat(), 0) for k in range(1, 8)) / 7),
+                        'th': THU.get('b'), 'th_c': THU.get('c'), 'th_share': THU.get('share'), 'th_mkt': THU.get('mkt'), 'th_from': THU.get('from'), 'th_to': THU.get('to'),
+                        'th_n': THU.get('n'), 'th_med': THU.get('med'), 'th_c80': THU.get('c80'),
+                        'cs_pass_c': cpass, 'cs_c': cpass / len(cg) if cg and not cwait else None, 'cs_c_sofar': cpass / len(cg) if cg else None})
+    newd_meta['cs_th'] = (cs_thr(D[3]) or {}).get('b')
     newd_meta['cs_win'] = CSW
     pj_path = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{D[3]}.json')  # proj_save.py：新素材建进几个项目、项目里怎么分钱
     newd_meta['proj'] = json.load(open(pj_path)) if os.path.exists(pj_path) else None
