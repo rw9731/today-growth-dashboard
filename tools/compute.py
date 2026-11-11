@@ -662,7 +662,7 @@ def main():
         x = AI.get(m['id'])
         m['acc_show'] = x[1] if x else (0 if acct else None)
         m['acc_d'] = x[6] if x else (0 if acct else None)
-    # 集中度（Reina 11/11）：D 当天单账户最高消耗、占这条素材 D 总消耗多少、在几个账户里花了钱。接口只能按账户拆，不是项目。
+    # 集中度（Reina 11/11）：D 当天单项目最高消耗、占这条素材 D 总消耗多少、在几个项目里花了钱（conc_js.py 按项目拆）。
     conc_path = os.path.join(os.path.dirname(HERE), 'notes', f'conc-{D[3]}.json')
     conc = json.load(open(conc_path)).get('items', {}) if os.path.exists(conc_path) else None
     if conc is not None:
@@ -670,6 +670,9 @@ def main():
             x = conc.get(m['id'])
             if x and x[0] > 0:
                 m['conc_top'], m['conc_share'], m['conc_n'] = x[1], round(x[1] / x[0], 3), x[2]
+    # 当天次留（Reina 11/11）：D 当天激活的人的次留要 T+2 才看得到，由下一天出日报时 rt_backfill.py 回补成 notes/rtday-D.json；重跑 D 时带上
+    rtd_path = os.path.join(os.path.dirname(HERE), 'notes', f'rtday-{D[3]}.json')
+    rtd_note = json.load(open(rtd_path)) if os.path.exists(rtd_path) else None
     cost_by = defaultdict(lambda: defaultdict(float))
     for r in allrows:
         if r['date'] <= D[3]:
@@ -806,6 +809,9 @@ def main():
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= th['top']], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
+    if rtd_note:
+        import rt_backfill
+        rt_backfill.apply(out, rtd_note, th['act'])
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),

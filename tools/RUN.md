@@ -21,6 +21,7 @@ D = 新加坡时间昨天（报告日）。数据：Google 表「国区投放素
    - 改法写进 tools/gaifa.json：`{素材ID: {"gaifa": "原片/只剪辑/换开头/全片重配/AI 重拍", "checked": "对的日期", "note": "一句依据"}}`。要对的清单：`python3 tools/gaifa_list.py /tmp/results.json --sheet <分日文件>`（D 消耗 ≥ ¥500、gaifa.json 里还没有的二剪，带它和父素材或原片的视频；第 3 步跑 jl_js.py 时加 `--sheet <分日文件>`，缺的视频会一起从巨量拿）。parent_id 为空 = 原片没在巨量投过，对不了，跳过，看板上显示「二剪（未核对）」。写完再跑一次第 2 步。
    - 写进 notes/D.json：`{原素材名: {"title": "UC 简称 + 类型（UC 编号）", "changed": "改了什么", "why": "为什么跑上来"}}`。一句话一件事，要具体（时长、开头那句、Today 出现时间），不写套话；样本小就直说。
 5. `python3 tools/build.py /tmp/results.json`：写 D/index.html，更新 reports.json；D 是最新一天时同时改 index.html。
+   - 回补当天次留（Reina 11/11）：build 完再跑 `python3 tools/rt_backfill.py --sheet <分日文件> --date <D-1>` 和 `--date <D-2>`，把前两天日报「四、昨天消耗排行」的当天次留率、当天次留成本补上（X 天激活的人的次留 X+1 才回传完，T = X+2 才看得到；D-2 再补一次是因为次留第二天还会小涨一点，比如 11/8 的全盘从 29.3% 涨到 31.0%）。写 notes/rtday-X.json 并重画 X/index.html，和页面一起提交。D 当天的这两列先显示「待回补」。11/4 到 11/9 已回补。
 6. 提交 D/、index.html、reports.json、tools/links.json、tools/gaifa.json、notes/（和改过的 tools/ucs.json），push 到 main。
 
 已经发布的日子只补链接、不重算：`python3 tools/relink.py YYYY-MM-DD [--sheet <分日文件>]`（带 --sheet 会补素材类型）。
