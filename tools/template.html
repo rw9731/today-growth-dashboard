@@ -949,6 +949,7 @@
       if (squeezed(m)) t.push([(isEr(m) ? '二剪，' : isKl(m) ? '扩量，' : '') + '被同原片挤掉：同几个项目里「' + shortNm(m.sib[2]) + '」花了 ' + fmtY(m.sib[3]) + '，它自己 ' + fmtY(m.sib[1]), 'bad']);
       else if (isEr(m)) t.push(['二剪或没核对的改法', '']);
       else if (isKl(m)) t.push(['扩量', '']);
+      if (m.vsim) t.push(['和「' + shortNm(m.vsim[0]) + '」画面重合 ' + fmtP0(m.vsim[1]) + '、台词相似 ' + fmtP0(m.vsim[2]), m.vsim[1] >= 0.5 ? 'bad' : '']);
       if (m.same >= 2) t.push(['同批同场景 ' + m.same + ' 条', '']);
       if (m.prev14 >= 5) t.push(['前 14 天同场景已上 ' + m.prev14 + ' 条', '']);
       return t;

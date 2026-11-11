@@ -883,6 +883,13 @@ def main():
                             'n_proj': len(ks), 'mats_med': med([PJ[k][1] for k in ks]), 'old_share': round(old_ / tot_, 3) if tot_ else None, 'self_share': round(self_ / tot_, 3) if tot_ else None, 'win_tot': round(tot_),
                             'top_old': [[nm_of(i_), round(c), up_day(i_)] for c, i_ in top_old], 'days': [wd[0], wd[-1]]}
     newd_meta['proj'] = pjd
+    # 二剪和对比版本像到什么程度（Reina 11/11）：画面重合比例、台词相似度，notes/vsim-D.json
+    vs_path = os.path.join(os.path.dirname(HERE), 'notes', f'vsim-{D[3]}.json')
+    if os.path.exists(vs_path):
+        VS = json.load(open(vs_path)).get('items', {})
+        for m in cs_mats:
+            if m['id'] in VS:
+                m['vsim'] = VS[m['id']]
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
