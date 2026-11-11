@@ -131,12 +131,19 @@
   .lx-cstable tbody tr.lx-csday:hover td { background: var(--color-bg-subtle, rgba(127,127,127,.08)); }
   .lx-cstable tbody tr.lx-csday td:first-child::before { content: '▸ '; color: var(--color-fg-muted); }
   .lx-cstable tbody tr.lx-csday.open td:first-child::before { content: '▾ '; }
-  .lx-cspanel { padding: 10px 4px 14px; white-space: normal; }
+  .lx-cspanel { margin-top: 10px; padding: 12px 14px 14px; white-space: normal; }
+  .lx-cspanel[hidden] { display: none; }
+  .lx-tip { border-bottom: 1px dotted currentColor; cursor: help; }
+  .lx-tipbox { position: fixed; z-index: 60; max-width: 360px; padding: 8px 10px; border-radius: 6px; background: #22211f; color: #f4f3ef; font-size: 12px; line-height: 1.6; font-weight: 400; white-space: normal; box-shadow: 0 4px 12px rgba(0,0,0,.2); pointer-events: none; }
+  .lx-cspanel .lx-table th { position: static; }
+  .lx-csscroll { overflow: auto; max-height: 60vh; }
+  .lx-csconc { margin: 6px 0 10px; padding: 10px 14px; border-left: 3px solid var(--bar); background: var(--color-panel); font-size: 13px; line-height: 1.7; }
+  .lx-csconc ol { margin: 4px 0 0 1.2em; padding: 0; }
+  .lx-cstable tbody tr.lx-csday.open td { background: var(--color-bg-subtle, rgba(127,127,127,.10)); }
   .lx-cspanel h4 { margin: 12px 0 6px; font-size: 13px; }
   .lx-cscmp { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 6px 0 4px; font-size: 12px; }
   .lx-cscmp div { min-width: 13rem; }
   .lx-cscmp b { font-weight: 600; }
-  .lx-cspanel .lx-scroll { max-height: 55vh; }
   .lx-cspanel table td.name { white-space: normal; min-width: 16rem; }
   .lx-rtdhint { margin-top: 3px; font-size: 11px; font-weight: 600; color: var(--color-ok); white-space: nowrap; }
   .lx-namelink { color: inherit; text-decoration: underline; text-decoration-color: var(--color-fg-muted); text-underline-offset: 3px; }
@@ -437,21 +444,22 @@
     </div>
     <div data-draw="rampwrap">
       <h3 class="lx-h3">最近 10 个上传日：冷启率，投进几个账户、跑起来没有</h3>
+      <p class="lx-note" data-draw="cs-short" style="margin-top:-4px"></p>
+      <div class="lx-csconc" data-draw="cs-conc"></div>
       <p class="lx-note" data-draw="ramp-sum"></p>
-      <p class="lx-note"><b>过冷启</b> = 首次消耗当天起 3 天的激活 ≥ <b data-draw="cs-th"></b> 个，这是<span data-draw="cs-base"></span>首花素材头 3 天激活的 80 分位（每天按最近 4 周重算，过冷启的多了门槛跟着涨）。<b>冷启率</b> = 过冷启的条数 ÷ 这天上传的条数；上传条数来自巨量素材库，加上投放表里花过钱、工作台里有展示的。上传满 3 天还没花钱的算没过；首次消耗不满 3 天、激活还没到门槛的算「还在看」，有还在看的批次先显示到目前为止的比例。<b>点上传日那一行</b>，展开看那天哪些素材过了、哪些没过。<br><b>投放账户数</b> = 素材在多少个巨量账户里有过展示，同一账户建几个单元只算一次，是被建次数的下限。<b>账户跑起来率</b> = 在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。</p>
       <div class="lx-card lx-scroll">
         <table class="lx-table lx-cstable">
           <thead>
             <tr>
               <th>上传日</th>
-              <th class="num">上传条数</th>
-              <th class="num">过冷启</th>
+              <th class="num"><span class="lx-tip" data-tipk="up">上传条数</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span></th>
               <th class="num">没过</th>
-              <th class="num">还在看</th>
-              <th class="num">冷启率<span class="th-sub">过冷启 ÷ 上传</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="cs">冷启率</span><span class="th-sub">过冷启 ÷ 上传</span></th>
               <th class="num">花过钱的条数</th>
-              <th class="num">平均投放账户数</th>
-              <th class="num">账户跑起来率<span class="th-sub">3 天花到 ¥100</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="acc">平均投放账户数</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="run">账户跑起来率</span><span class="th-sub">3 天花到 ¥100</span></th>
               <th class="num">头 3 天消耗<span class="th-sub">中位</span></th>
               <th class="num">累计消耗<span class="th-sub">截至 {{D}}</span></th>
             </tr>
@@ -459,6 +467,7 @@
           <tbody data-draw="rampbatch"></tbody>
         </table>
       </div>
+      <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
     </div>
   </section>
 
@@ -873,6 +882,26 @@
     const avgCs = d3.sum(done, (b) => b.n_up) ? d3.sum(done, (b) => b.cs_pass) / d3.sum(done, (b) => b.n_up) : null;
     fill('cs-th', (el) => { el.textContent = nm.cs_th == null ? '—' : nm.cs_th; });
     fill('cs-base', (el) => { const b = nm.cs_base || []; el.textContent = b.length ? fmtD(b[0]) + '–' + fmtD(b[1]) + ' 的 ' + b[2] + ' 条' : ''; });
+    const TH0 = nm.cs_th, BS = nm.cs_base || [];
+    const TIPS = {
+      pass: '过冷启：素材第一次花钱那天起算 3 天（含当天），激活加起来 ≥ ' + TH0 + ' 个。',
+      wait: '还在看：第一次花钱还不满 3 天、激活还没到 ' + TH0 + ' 个，暂时判不了。所以最近几天的冷启率先显示「目前 x%」，等满 3 天再定。',
+      cs: '冷启率 = 过冷启的条数 ÷ 这天上传的条数。\n门槛 ' + TH0 + ' 个激活 = ' + (BS.length ? fmtD(BS[0]) + '–' + fmtD(BS[1]) + ' 首次花钱的 ' + BS[2] + ' 条素材' : '近 4 周首花素材') + '头 3 天激活的 80 分位，也就是那段时间大约前 20% 的素材能过；每天按最近 4 周重算。\n上传满 3 天一分钱没花的算没过。',
+      up: '上传条数：这天上传到巨量的全部素材（巨量素材库清单），加上投放表里花过钱、工作台里有展示的。没读到素材库的日子只有后两种，会偏少。',
+      acc: '平均投放账户数：每条素材在多少个巨量账户里有过展示，再取平均。同一账户建几个单元只算一次，是被建次数的下限。',
+      run: '账户跑起来率：在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。',
+      same: '同批同场景：同一天上传的素材里，和它同一原片或同一细分场景的条数（含它自己）。AI 素材按细分场景和 use case 编号归，KOC、KOL 按原片归，扩量算进原片。',
+      prev: '前 14 天同场景：上传日前 14 天里，同一原片或同一细分场景已经上过几条。'
+    };
+    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = 第一次花钱后 3 天内激活 ≥ ' + TH0 + ' 个的条数 ÷ 当天上传条数；' + TH0 + ' 是近 4 周素材头 3 天激活的 80 分位，大约前 20% 能过。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
+    {
+      let tip = null;
+      const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(360, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };
+      const hide = (e) => { if (tip && e.target.closest('.lx-tip')) tip.hidden = true; };
+      document.addEventListener('mouseover', show); document.addEventListener('mouseout', hide);
+      document.addEventListener('click', (e) => { if (e.target.closest('.lx-tip')) { e.stopPropagation(); show(e); } else if (tip) tip.hidden = true; }, true);
+      addEventListener('scroll', () => { if (tip) tip.hidden = true; }, { passive: true });
+    }
     fill('ramp-sum', (el) => {
       const parts = [];
       if (done.length) parts.push('冷启率：' + done.map((b) => fmtD(b.up) + ' <b>' + fmtP0(b.cs) + '</b>（' + b.cs_pass + '/' + b.n_up + '）').join('、') + '；这几批合起来 <b>' + P1(avgCs) + '</b>。');
@@ -883,12 +912,42 @@
     const ST = {pass: '过了', fail: '没过', wait: '还在看'};
     const rateTxt = (L) => { const n = L.length, p = L.filter((m) => m.st === 'pass').length; return n ? p + '/' + n + '（' + fmtP0(p / n) + '）' : '—'; };
     const cmp = (L, label, groups) => '<div><b>' + label + '</b><br>' + groups.map(([g, f]) => { const x = L.filter(f); return x.length ? esc(g) + ' ' + rateTxt(x) : ''; }).filter(Boolean).join('<br>') + '</div>';
+    // 结论：冷启率低的原因，按数据自动写（只写差得开的，差不到 5 个点不写）
+    const bucket = (m) => /全片重配/.test(m.kind) ? '全片重配' : /二剪|改法未核对/.test(m.kind) ? '二剪和没核对的改法' : /原片/.test(m.kind) ? '原片' : '其他';
+    const pr = (L) => L.length ? L.filter((m) => m.st === 'pass').length / L.length : null;
+    const pc = (L) => fmtP0(pr(L)) + '（' + L.filter((m) => m.st === 'pass').length + '/' + L.length + '）';
+    const concl = (dec, all) => {
+      const out = [];
+      if (!dec.length) return out;
+      const low = dec.filter((m) => m.a3 < 10), ns = dec.filter((m) => m.nospend);
+      if (low.length / dec.length >= 0.4) out.push('<b>大部分素材根本没拿到量</b>：能判的 ' + dec.length + ' 条里 ' + low.length + ' 条（' + fmtP0(low.length / dec.length) + '）头 3 天激活不到 10 个' + (ns.length ? '，其中 ' + ns.length + ' 条一分钱没花' : '') + '。这些不是跑了以后被证明不行，是系统没给机会，先看投放有没有建、出价和预算够不够。');
+      const one = dec.filter((m) => m.same <= 1), many = dec.filter((m) => m.same >= 2);
+      if (one.length >= 5 && many.length >= 5 && pr(one) - pr(many) >= 0.05) out.push('<b>同一个场景一天上太多条</b>：当天同场景只上 1 条的过了 ' + pc(one) + '，同场景上 2 条以上的只过了 ' + pc(many) + '。同一场景的几条在抢同一批人，系统通常只挑一条给量。');
+      const fresh = dec.filter((m) => !m.prev14), worn = dec.filter((m) => m.prev14 >= 5);
+      if (fresh.length >= 5 && worn.length >= 5 && pr(fresh) - pr(worn) >= 0.05) out.push('<b>老场景做得太密</b>：前 14 天没上过的场景过了 ' + pc(fresh) + '，前 14 天已经上过 5 条以上的只过了 ' + pc(worn) + '。');
+      const kl = dec.filter((m) => /扩量/.test(m.name)), nk = dec.filter((m) => !/扩量/.test(m.name));
+      if (kl.length >= 5 && nk.length >= 5 && pr(nk) - pr(kl) >= 0.05) out.push('<b>扩量版本基本过不了</b>：扩量过了 ' + pc(kl) + '，不是扩量的过了 ' + pc(nk) + '。扩量和原片太像，等于同一条素材重复上。');
+      const bk = d3.groups(dec, bucket).filter(([, v]) => v.length >= 5).sort((x, y) => pr(y[1]) - pr(x[1]));
+      if (bk.length >= 2 && pr(bk[0][1]) - pr(bk[bk.length - 1][1]) >= 0.05) out.push('<b>按改法看</b>：' + bk.map(([k, v]) => k + ' ' + pc(v)).join('，') + '。' + (bk.find(([k]) => k === '二剪和没核对的改法') && pr(bk.find(([k]) => k === '二剪和没核对的改法')[1]) < 0.05 ? '二剪几乎都过不了。' : ''));
+      const passL = dec.filter((m) => m.st === 'pass');
+      if (passL.length) { const pu = d3.rollups(passL, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 4); out.push('<b>过了的集中在</b>：' + pu.map(([u, n]) => esc(u) + ' ' + n + ' 条').join('、') + '。'); }
+      const wait = all.filter((m) => m.st === 'wait').length;
+      if (wait) out.push('还有 ' + wait + ' 条首次消耗不满 3 天，没算进上面。');
+      return out;
+    };
+    fill('cs-conc', (el) => {
+      const dec = CS.filter((m) => m.st !== 'wait');
+      const items = concl(dec, CS);
+      if (!items.length) { el.hidden = true; return; }
+      el.innerHTML = '<b>结论：这几批冷启率低的原因</b>（' + B.filter((b) => b.n_up).map((b) => fmtD(b.up)).join('、') + ' 上传，合起来能判的 ' + dec.length + ' 条，过了 ' + pc(dec) + '；按门槛定义，基准期大约 20% 能过）<ol>' + items.map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+    });
     const panel = (b) => {
       const L = CS.filter((m) => m.up.slice(0, 10) === b.up);
       const dec = L.filter((m) => m.st !== 'wait');
       const kinds = [...new Set(dec.map((m) => m.kind))].sort((x, y) => dec.filter((m) => m.kind === y).length - dec.filter((m) => m.kind === x).length);
       const ucs = d3.rollups(dec, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 6).map((x) => x[0]);
-      let h = '<div class="lx-cspanel"><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传满 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：头 3 天激活 ≥ ' + nm.cs_th + ' 个。</div>';
+      const its = concl(dec, L);
+      let h = '<div><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传满 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：头 3 天激活 ≥ ' + nm.cs_th + ' 个。</div>' + (its.length ? '<div class="lx-csconc"><b>这天冷启率低的原因</b><ol>' + its.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>' : '');
       if (dec.length) {
         h += '<div class="lx-cscmp">'
           + cmp(dec, '同批同场景（同一原片或同一细分场景）条数', [['只有 1 条', (m) => m.same <= 1], ['2–3 条', (m) => m.same >= 2 && m.same <= 3], ['4 条以上', (m) => m.same >= 4]])
@@ -902,7 +961,7 @@
       for (const st of ['pass', 'fail', 'wait']) {
         const rows = L.filter((m) => m.st === st).sort((x, y) => y.a3 - x.a3 || (x.root > y.root ? 1 : -1));
         if (!rows.length) continue;
-        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-scroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num">同批同场景</th><th class="num">前 14 天同场景</th><th>首次消耗</th><th class="num">头 3 天激活</th><th class="num">头 3 天消耗</th><th class="num">头 3 天次留</th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
+        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num">头 3 天激活</th><th class="num">头 3 天消耗</th><th class="num">头 3 天次留</th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
           + rows.map((m) => '<tr><td class="name">' + (m.video ? '<a class="lx-namelink" href="' + esc(m.video) + '" target="_blank" rel="noopener">' + esc(m.name) + '</a>' : esc(m.name)) + '</td><td style="white-space:nowrap">' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td style="min-width:10rem">' + esc(m.root) + '</td>'
             + '<td class="num' + (m.same >= 4 ? ' lx-badv' : '') + '">' + m.same + '</td><td class="num' + (m.prev14 >= 5 ? ' lx-badv' : '') + '">' + m.prev14 + '</td><td class="date">' + (m.first ? fmtD(m.first) : '<span class="muted">没花钱</span>') + '</td>'
             + '<td class="num">' + fmtN(m.a3) + '</td><td class="num">' + fmtY(m.c3) + '</td><td class="num">' + (m.r3 == null || m.ar3 < 20 ? (m.r3 == null ? '—' : '<span class="muted">' + fmtP0(m.r3) + '（' + m.ar3 + '）</span>') : fmtP0(m.r3)) + '</td>'
@@ -927,11 +986,12 @@
         td('num muted').textContent = fmtY(b.tot);
         tb.appendChild(tr);
         tr.addEventListener('click', () => {
-          const nx = tr.nextElementSibling;
-          if (nx && nx.classList.contains('lx-csrow')) { nx.remove(); tr.classList.remove('open'); return; }
-          const pr = document.createElement('tr'); pr.className = 'lx-csrow';
-          const c = document.createElement('td'); c.colSpan = tr.children.length; c.innerHTML = panel(b); pr.appendChild(c);
-          tr.after(pr); tr.classList.add('open');
+          const box = document.querySelector('[data-draw="cspanel"]'); if (!box) return;
+          const was = tr.classList.contains('open');
+          tb.querySelectorAll('tr.lx-csday.open').forEach((x) => x.classList.remove('open'));
+          if (was) { box.hidden = true; box.innerHTML = ''; return; }
+          tr.classList.add('open'); box.innerHTML = panel(b); box.hidden = false;
+          box.scrollIntoView({behavior: 'smooth', block: 'start'});
         });
       }
     });
