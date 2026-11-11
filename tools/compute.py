@@ -662,6 +662,14 @@ def main():
         x = AI.get(m['id'])
         m['acc_show'] = x[1] if x else (0 if acct else None)
         m['acc_d'] = x[6] if x else (0 if acct else None)
+    # 集中度（Reina 11/11）：D 当天单账户最高消耗、占这条素材 D 总消耗多少、在几个账户里花了钱。接口只能按账户拆，不是项目。
+    conc_path = os.path.join(os.path.dirname(HERE), 'notes', f'conc-{D[3]}.json')
+    conc = json.load(open(conc_path)).get('items', {}) if os.path.exists(conc_path) else None
+    if conc is not None:
+        for m in mat:
+            x = conc.get(m['id'])
+            if x and x[0] > 0:
+                m['conc_top'], m['conc_share'], m['conc_n'] = x[1], round(x[1] / x[0], 3), x[2]
     cost_by = defaultdict(lambda: defaultdict(float))
     for r in allrows:
         if r['date'] <= D[3]:
