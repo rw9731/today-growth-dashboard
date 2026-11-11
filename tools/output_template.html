@@ -145,10 +145,11 @@ if(D.stage&&(D.stage.A||D.stage.B)){
   const byUC=L=>{const m={};L.forEach(x=>{(m[x.uc||'（没标）']??=[]).push(x)});return Object.entries(m).sort((a,b)=>b[1].length-a[1].length).map(([u,a])=>`${esc(u)}${D.ucn[u]?' '+esc(D.ucn[u]):''} ${a.length}`).join(' · ')};
   const asof=['A','B'].map(g=>D.stage[g]&&D.stage[g].asof).filter(Boolean).sort().pop();
   document.getElementById('stagebox').innerHTML=`<h2>还没成片的脚本 <span class="pn">截至 ${md(asof)}</span></h2><div class="stg">`+['A','B'].map(g=>{const S=D.stage[g];if(!S)return `<div class="card"><div class="hd"><h3>${g} 组</h3></div><p class="note">今天没读到脚本表。</p></div>`;
-   return `<div class="card"><div class="hd"><h3>${g} 组</h3></div><div class="two"><div><b>${S.in_script.length}</b><span>还在脚本中</span></div><div><b>${S.ready.length}</b><span>脚本已完成、还没开始做</span></div></div>
+   return `<div class="card"><div class="hd"><h3>${g} 组</h3></div><div class="two"><div><b>${S.in_script.length}</b><span>还在脚本中</span></div><div><b>${S.ready.length}</b><span>脚本已完成、还没开始做（本周要交的）</span></div></div>
    ${S.in_script.length?`<details><summary>还在脚本中：${byUC(S.in_script)}</summary><ul>${S.in_script.map(li).join('')}</ul></details>`:''}
    ${S.ready.length?`<details><summary>脚本已完成、还没开始做：${byUC(S.ready)}</summary><ul>${S.ready.map(li).join('')}</ul></details>`:''}
-   ${S.done&&S.done.length?`<details><summary>另有 ${S.done.length} 条脚本表里写着可制作、成片没回填，但同名素材已经交了，没算</summary><ul>${S.done.map(x=>`<li><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a> → ${esc(x.by)}</li>`).join('')}</ul></details>`:''}</div>`}).join('')+`</div><p class="note">读脚本表的「脚本状态」：需修改、修改后待审核、未审核算还在脚本中；可制作、成片那一格还空着算脚本已完成没开始做。未通过、写了先不拍或顺延的不算。A 组从脚本及成片第 ${D.stage.A?D.stage.A.start:485} 行（11 月起）算，B 组看脚本&amp;成片全表。只看最新时间点，往期周不显示。</p>`;
+   ${S.old||S.killed?`<p class="note">没算：${S.old?`交付日在本周以前、一直没做的 ${S.old} 条`:''}${S.old&&S.killed?'；':''}${S.killed?`说了不要做或弃用的 ${S.killed} 条`:''}。</p>`:''}
+   ${S.done&&S.done.length?`<details><summary>另有 ${S.done.length} 条脚本表里写着可制作、成片没回填，但同名素材已经交了，没算</summary><ul>${S.done.map(x=>`<li><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a> → ${esc(x.by)}</li>`).join('')}</ul></details>`:''}</div>`}).join('')+`</div><p class="note">读脚本表的「脚本状态」：需修改、修改后待审核、未审核算还在脚本中；可制作、成片那一格还空着算脚本已完成没开始做，只算交付日在本周的（A 组按脚本名里写的扩量排期行号取那一行的日期，热点按名字里的日期；B 组按产出日期或扩量排期里写到它的那一行）。未通过的、脚本备注或扩量排期里写了先不拍、弃用、顺延的都不算。A 组从脚本及成片第 ${D.stage.A?D.stage.A.start:485} 行（11 月起）读，B 组看脚本&amp;成片全表。只看最新时间点，往期周不显示</p>`;
 }
 // 每天
 const DESC=[...D.days].filter(d=>d<=D.T).reverse();

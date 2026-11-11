@@ -131,15 +131,21 @@ def classify(x):
 
 KX = {'A': 'kMJdAv', 'B': '3KtioB'}
 STAGE_TABS = {'A': 'f18d7b', 'B': 'c665d9'}
+STAGE_KX = {'A': 'kMJdAv', 'B': '3KtioB'}
 
 
 def stage(folder, names, T):
-    """还没成片的脚本（Reina 11/11）：tools/script_stage.js 在两组脚本表跑出来的 stage_<tab>.json，只看最新时间点，不追溯过去。
-    还在脚本中 = 脚本状态是需修改 / 修改后待审核 / 未审核；脚本已完成、还没开始做 = 可制作、成片空着。
-    脚本表里成片没回填、但同 use case 同标题的素材已经交了（扩量表、另一组、分日表里有）的不算，单列 done。没读到就沿用 notes/output-stage.json 里上次的。"""
+    """还没成片的脚本（Reina 11/11）：tools/script_stage.js 在两组脚本表和扩量排期跑出来的 stage_<tab>.json，只看最新时间点，不追溯过去。
+    还在脚本中 = 脚本状态是需修改 / 修改后待审核 / 未审核；脚本已完成、还没开始做 = 可制作、成片空着，而且交付日在本周（以前的不算）。
+    说了不要做的、弃用的都不算：脚本备注里写了（script_stage.js 已去掉），或对应的扩量排期行写了先不拍 / 弃用 / 顺延（x）。
+    交付日：A 组按脚本名里写的扩量排期行号（「-75-」「76行」「【60】」「_158_」）取那一行的日期，热点按名字里的 MMDD，都没有就沿用表里上一条的；
+    B 组按脚本表的产出日期，没有就按扩量排期「45，46脚本已贴表」写到的那一行的日期。
+    脚本表里成片没回填、但同 use case 同标题的素材已经交了（扩量表、另一组、分日表里有）的也不算，单列 done。没读到就沿用 notes/output-stage.json 里上次的。"""
     p = os.path.join(ROOT, 'notes/output-stage.json')
     old = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
     out = dict(old)
+    mon = T - dt.timedelta(days=T.weekday())
+    week = {(mon + dt.timedelta(days=i)).strftime('%m%d') for i in range(7)}
     for g, tab in STAGE_TABS.items():
         f = os.path.join(folder, f'stage_{tab}.json')
         if not os.path.exists(f):
@@ -147,9 +153,45 @@ def stage(folder, names, T):
         d = json.load(open(f, encoding='utf-8'))
         if isinstance(d, str):
             d = json.loads(d)
-        ready, done = [], []
-        for x in d.get('ready', []):
+        fk = os.path.join(folder, f'stage_{STAGE_KX[g]}.json')
+        kx = json.load(open(fk, encoding='utf-8')).get('rows', {}) if os.path.exists(fk) else {}
+        sc2kx = {}
+        for r, y in kx.items():
+            for n in y.get('sc', []):
+                sc2kx.setdefault(n, y)
+
+        def plan_of(x):
+            if g == 'B':
+                return sc2kx.get(x['r'])
+            m = re.findall(r'(?:[-_【]|^)(\d{2,3})(?=[-_】]|行)', x['name'])
+            m = [n for n in m if 20 <= int(n) <= 999]
+            return kx.get(m[-1]) if m else None
+
+        allx = sorted([dict(x, ready=False) for x in d.get('in_script', [])] + [dict(x, ready=True) for x in d.get('ready', [])], key=lambda x: x['r'])
+        last = ''
+        ins, ready, done, killed, old_n = [], [], [], d.get('killed', 0), 0
+        for x in allx:
+            y = plan_of(x)
+            day = x.get('d') or (y or {}).get('d') or ''
+            if not day:
+                m = re.search(r'(?<!\d)(1[012][0-3]\d)(?!\d)', x['name'])
+                day = m.group(1) if m and g == 'A' else ''
+            if day:
+                last = day
+            else:
+                day = last
             x['link'] = cell_link(g, tab, 'A', x['r'])
+            if day and day != 'next':
+                x['d'] = day
+            if y and y.get('x'):
+                killed += 1
+                continue
+            if not x.pop('ready'):
+                ins.append(x)
+                continue
+            if day not in week:
+                old_n += 1
+                continue
             m = re.search(r'[A-Z]{2}\d{2}[-_](?:\d{2}[-_])?([一-龥A-Za-z0-9]{4,14})', x['name'])
             tok = m.group(1) if m else ''
             hit = next((n for n in names if tok and x.get('uc') and tok in n and x['uc'] in n and not any(tok in k for k in TEMPLATE_KEYS)), '') if not re.fullmatch(r'AI素材.*|新角度.*|\d+', tok or '0') else ''
@@ -157,8 +199,7 @@ def stage(folder, names, T):
                 done.append(dict(x, by=hit))
             else:
                 ready.append(x)
-        ins = [dict(x, link=cell_link(g, tab, 'A', x['r'])) for x in d.get('in_script', [])]
-        out[g] = dict(asof=T.isoformat(), start=d.get('start'), tab=tab, in_script=ins, ready=ready, done=done)
+        out[g] = dict(asof=T.isoformat(), week=mon.isoformat(), start=d.get('start'), tab=tab, in_script=ins, ready=ready, done=done, killed=killed, old=old_n)
     json.dump(out, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return out
 
@@ -315,7 +356,7 @@ def main():
             open(path, 'w', encoding='utf-8').write(html.replace('{{REL}}', rel))
     json.dump([dict(week=w) for w in weeks], open(os.path.join(ROOT, 'outputs.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     cnt = {g: {k: sum(1 for x in store.values() if x['g'] == g and x['k'] == k and x.get('ok') and x['d'] >= mon.isoformat()) for k in 'VSNX'} for g in 'AB'}
-    sg = {g: dict(in_script=len(stg[g]['in_script']), ready=len(stg[g]['ready']), done=len(stg[g]['done']), asof=stg[g]['asof']) for g in 'AB' if g in stg}
+    sg = {g: dict(in_script=len(stg[g]['in_script']), ready=len(stg[g]['ready']), done=len(stg[g]['done']), killed=stg[g].get('killed'), old=stg[g].get('old'), asof=stg[g]['asof']) for g in 'AB' if g in stg}
     print(json.dumps(dict(items=len(new), kept=len(seen), store=len(store), week=mon.isoformat(), count=cnt, stage=sg), ensure_ascii=False))
 
 
