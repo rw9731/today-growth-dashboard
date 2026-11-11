@@ -459,7 +459,7 @@
             <tr>
               <th>上传日</th>
               <th class="num"><span class="lx-tip" data-tipk="up">上传条数</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">激活 ≥ 这个数算过：前 4 周上传的素材，上传当天 + 第二天激活的 80 分位</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">激活 ≥ 这个数算过：前 7 天上传的素材，上传当天 + 第二天激活的 80 分位</span></th>
               <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span></th>
               <th class="num">没过</th>
               <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span></th>
@@ -894,7 +894,7 @@
     const wan = (v) => v == null ? '—' : '¥' + d3.format('.1f')(v / 10000) + ' 万';
     const ex = B.filter((b) => b.cs != null && b.th).slice(-1)[0] || B.filter((b) => b.th)[0] || {};
     const TH0 = ex.th;
-    const how = '门槛按每个上传日自己的 cohort 定：用这天之前 30 天到前 ' + WN + ' 天上传、花过钱的素材（它们的窗口都已走完），各自「' + WT + '」的激活从少到多排队，取排在 80% 位置的那个数。每批门槛写在「冷启门槛」列，定了以后不随今天重算而变。\n以 ' + fmtD(ex.up) + ' 这批为例：' + fmtD(ex.th_from) + '–' + fmtD(ex.th_to) + ' 上传、花过钱的 ' + ex.th_n + ' 条，排在 80% 位置的是 ' + ex.th + ' 个激活（排在中间的只有 ' + ex.th_med + ' 个），约等于这 ' + WN + ' 天花到 ' + fmtY(ex.th_c80) + '。也就是那段时间大约前 20% 的素材能过。\n为什么用 80 分位：按朱艺涛的建议，先拿「头部 20%」当过冷启的标准，以后过的太多就提高、太少就降低。';
+    const how = '门槛按每个上传日自己的 cohort 定：用这天之前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天（共 7 个上传日）上传、花过钱的素材（它们的窗口都已走完），各自「' + WT + '」的激活从少到多排队，取排在 80% 位置的那个数。每批门槛写在「冷启门槛」列，定了以后不随今天重算而变。\n以 ' + fmtD(ex.up) + ' 这批为例：' + fmtD(ex.th_from) + '–' + fmtD(ex.th_to) + ' 上传、花过钱的 ' + ex.th_n + ' 条，排在 80% 位置的是 ' + ex.th + ' 个激活（排在中间的只有 ' + ex.th_med + ' 个），约等于这 ' + WN + ' 天花到 ' + fmtY(ex.th_c80) + '。也就是那段时间大约前 20% 的素材能过。\n为什么参照前 7 天：样本每批 250–350 条，够稳，也跟得上最近的投放情况；只取前两天样本太少，门槛跳得厉害。\n为什么用 80 分位：按朱艺涛的建议，先拿「头部 20%」当过冷启的标准，以后过的太多就提高、太少就降低。';
     const TIPS = {
       pass: '过冷启：从上传当天起 ' + WN + ' 天（' + WT + '，按日历天算，不是到今天为止的最近几天），这条素材激活加起来 ≥ 这批的门槛。\n' + how,
       wait: '还在看：' + WT + '还没过完（最近 ' + (WN - 1) + ' 个上传日），激活还没到门槛的先不判。所以这几天的冷启率显示「目前 x%」，窗口过完就定下来。',
@@ -905,10 +905,10 @@
       same: '同批同场景：同一天上传的素材里，和它同一原片或同一细分场景的条数（含它自己）。AI 素材按细分场景和 use case 编号归，KOC、KOL 按原片归，扩量算进原片。',
       prev: '前 14 天同场景：上传日前 14 天里，同一原片或同一细分场景已经上过几条。',
       th: '冷启门槛：这批素材要在「' + WT + '」拿到多少激活才算过冷启。\n' + how,
-      csc: '去掉预算影响的冷启率：门槛跟着那几天全盘的量走。先算之前 30 天到前 ' + WN + ' 天上传的素材，各自窗口激活占同期全盘激活的比例，取 80 分位；再乘以这批窗口里全盘的总激活，得到这批的门槛（括号里）。全盘量大门槛就高，预算掉了门槛跟着降。\n和左边冷启率对着看：两个都低，是素材本身的问题；这个明显高于左边，说明低主要是预算没给。颜色规则同冷启率。',
+      csc: '去掉预算影响的冷启率：门槛跟着那几天全盘的量走。先算之前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天上传的素材，各自窗口激活占同期全盘激活的比例，取 80 分位；再乘以这批窗口里全盘的总激活，得到这批的门槛（括号里）。全盘量大门槛就高，预算掉了门槛跟着降。\n和左边冷启率对着看：两个都低，是素材本身的问题；这个明显高于左边，说明低主要是预算没给。颜色规则同冷启率。',
       win: '冷启窗口：' + WT + '。激活、消耗、次留都只算这 ' + WN + ' 天。'
     };
-    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '激活过门槛的条数 ÷ 当天上传条数，第二天就能看。门槛按每批自己算：这天之前 4 周上传的素材在同样 ' + WN + ' 天里激活的 80 分位，相当于头部 20% 的水平，最近几批是 ' + TH0 + ' 个左右。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
+    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '激活过门槛的条数 ÷ 当天上传条数，第二天就能看。门槛按每批自己算：这天之前 7 个上传日（前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天）上传的素材，同样看' + WT + '的激活，取 80 分位，相当于头部 20% 的水平，每批的数在「冷启门槛」列。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
     {
       let tip = null;
       const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(380, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };

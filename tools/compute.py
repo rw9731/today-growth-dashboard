@@ -727,7 +727,7 @@ def main():
         ar = sum(act_by[i].get(k, 0) for k in ks if k <= D1)
         rr = sum(ret_by[i].get(nx(k), 0) for k in ks if k <= D1)  # 分日表里 X 激活的次留记在 X+1 那行
         return a3, c3, (rr / ar if ar else None), ar, ks[-1] <= D[3]
-    # 门槛按每个上传日自己的 cohort 定（Reina 11/11）：用上传日前 30 天到前 CSW 天上传、花过钱的素材（窗口都已走完），
+    # 门槛按每个上传日自己的 cohort 定（Reina 11/11）：用上传日前 CSW+6 天到前 CSW 天（共 7 个上传日，Reina 11/11 从 30 天改成 7 天）上传、花过钱的素材（窗口都已走完），
     # B = 它们窗口激活的 80 分位（主口径）；C = 它们窗口激活占当时全盘激活比例的 80 分位 × 这批窗口里全盘激活（去掉预算影响）。
     q = lambda L, p_: sorted(L)[int(len(L) * p_)] if L else None
     day_act = defaultdict(float)
@@ -742,7 +742,7 @@ def main():
         if u in _thc:
             return _thc[u]
         u0 = dt.date.fromisoformat(u)
-        f0, f1 = (u0 - dt.timedelta(days=30)).isoformat(), (u0 - dt.timedelta(days=CSW)).isoformat()
+        f0, f1 = (u0 - dt.timedelta(days=CSW + 6)).isoformat(), (u0 - dt.timedelta(days=CSW)).isoformat()
         bw = [(a_, c_, up_day(i)) for i, (a_, c_) in spent_w.items() if f0 <= up_day(i) <= f1]
         if not bw:
             _thc[u] = None
