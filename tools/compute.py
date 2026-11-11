@@ -704,28 +704,34 @@ def main():
                        'video': pick_video(lk), 'link': '' if lk.get('type') == '预览' else lk.get('link', ''), 'link_type': lk.get('type', '')})
     recent.sort(key=lambda m: (-(m['c3'] or 0), -m['tot']))
 
-    # 冷启（Reina 11/11，朱艺涛提的牵引指标）：首次消耗起头 3 天的激活，过「近 4 周首花素材头 3 天激活」的 80 分位，算过冷启。
-    # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。上传满 3 天还没花钱的算没过。
+    # 冷启（Reina 11/11，朱艺涛提的牵引指标）：看上传当天起 4 天（上传当天 + 后 3 天）的激活，过「近 4 周上传素材同一窗口激活」的 80 分位，算过冷启。
+    # 窗口按上传日算，不按首次消耗日：上传后 3 天还没花起来本身就是没过冷启。上传日 + 3 天的数出来以后这批就定了。
+    # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。
+    CSW = 4
     act_by, ret_by = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
+    day_tot = defaultdict(float)
     for r in allrows:
         if r['date'] <= D[3]:
             act_by[r['id']][r['date']] += r['act']
             ret_by[r['id']][r['date']] += r['ret']
+            day_tot[r['date']] += r['cost']
     first_sp = {i: min(d for d, c in dd.items() if c > 0) for i, dd in cost_by.items() if any(c > 0 for c in dd.values())}
     D1 = (Dd - dt.timedelta(days=1)).isoformat()
+    nx = lambda k: (dt.date.fromisoformat(k) + dt.timedelta(days=1)).isoformat()
 
-    def win3(i):
-        f = dt.date.fromisoformat(first_sp[i])
-        ks = [(f + dt.timedelta(days=k)).isoformat() for k in range(3)]
+    def win3(i, u):
+        u0 = dt.date.fromisoformat(u)
+        ks = [(u0 + dt.timedelta(days=k)).isoformat() for k in range(CSW)]
         a3 = sum(act_by[i].get(k, 0) for k in ks if k <= D[3])
         c3 = sum(cost_by[i].get(k, 0) for k in ks if k <= D[3])
         ar = sum(act_by[i].get(k, 0) for k in ks if k <= D1)
-        nx = lambda k: (dt.date.fromisoformat(k) + dt.timedelta(days=1)).isoformat()
         rr = sum(ret_by[i].get(nx(k), 0) for k in ks if k <= D1)  # 分日表里 X 激活的次留记在 X+1 那行
         return a3, c3, (rr / ar if ar else None), ar, ks[-1] <= D[3]
     b0, b1 = (Dd - dt.timedelta(days=37)).isoformat(), (Dd - dt.timedelta(days=11)).isoformat()
-    base = sorted(win3(i)[0] for i, f in first_sp.items() if b0 <= f <= b1)
-    cs_th = max(1, round(base[int(len(base) * 0.8)])) if base else None
+    bw = [win3(i, up_day(i))[:2] for i in first_sp if b0 <= up_day(i) <= b1]
+    base, basec = sorted(x[0] for x in bw), sorted(x[1] for x in bw)
+    q = lambda L, p_: L[int(len(L) * p_)] if L else None
+    cs_th = max(1, round(q(base, 0.8))) if base else None
     upl_names, upl_days = {}, set()
     for k in range(60):
         dd_ = (Dd - dt.timedelta(days=k)).isoformat()
@@ -771,13 +777,11 @@ def main():
             e = {'id': i, 'name': n, 'up': up_time(i), 'kind': kind_of(src, track, n, i, kl=False), 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''),
                  'root': rt, 'same': roots_by_day[u][rt], 'prev14': prev,
                  'acc_show': x[1] if x else None, 'acc_100': x[3] if x else None}
-            if i in first_sp:
-                a3, c3, r3, ar, done = win3(i)
-                e.update({'first': first_sp[i], 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
-                          'st': 'pass' if cs_th and a3 >= cs_th else ('fail' if done else 'wait')})
-            else:
-                e.update({'first': '', 'a3': 0, 'c3': 0, 'r3': None, 'ar3': 0, 'nospend': True,
-                          'st': 'fail' if (Dd - dt.date.fromisoformat(u)).days >= 2 else 'wait'})
+            a3, c3, r3, ar, done = win3(i, u)
+            e.update({'first': first_sp.get(i, ''), 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
+                      'st': 'pass' if cs_th and a3 >= cs_th else ('fail' if done else 'wait')})
+            if i not in first_sp or first_sp[i] > (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat():
+                e['nospend'] = True  # 窗口里一分钱没花
             m = rec_by.get(i)
             lk = links.get(i, {})
             e['video'] = (m or {}).get('video') or pick_video(lk)
@@ -799,9 +803,13 @@ def main():
                         'c3_med': sorted(c3s)[len(c3s) // 2] if full and c3s else None,
                         'k1': sum(1 for m in g if m['d1k']) / len(g) if g else 0, 'tot': sum(m['tot'] for m in g),
                         'n_up': len(cg), 'upl': u in upl_days, 'cs_pass': npass, 'cs_fail': nfail, 'cs_wait': nwait,
-                        'cs': npass / len(cg) if cg and not nwait else None, 'cs_sofar': npass / len(cg) if cg else None})
+                        'cs': npass / len(cg) if cg and not nwait else None, 'cs_sofar': npass / len(cg) if cg else None,
+                        'win_end': (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat(),
+                        'mkt': round(sum(day_tot.get((dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat(), 0) for k in range(CSW) if (dt.date.fromisoformat(u) + dt.timedelta(days=k)) <= Dd) / max(1, min(CSW, (Dd - dt.date.fromisoformat(u)).days + 1))),
+                        'mkt_prev': round(sum(day_tot.get((dt.date.fromisoformat(u) - dt.timedelta(days=k)).isoformat(), 0) for k in range(1, 8)) / 7)})
     newd_meta['cs_th'] = cs_th
-    newd_meta['cs_base'] = [b0, b1, len(base)]
+    newd_meta['cs_base'] = [b0, b1, len(base), q(base, 0.5), round(q(basec, 0.8)) if basec else None]
+    newd_meta['cs_win'] = CSW
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 

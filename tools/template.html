@@ -882,21 +882,24 @@
     const avgCs = d3.sum(done, (b) => b.n_up) ? d3.sum(done, (b) => b.cs_pass) / d3.sum(done, (b) => b.n_up) : null;
     fill('cs-th', (el) => { el.textContent = nm.cs_th == null ? '—' : nm.cs_th; });
     fill('cs-base', (el) => { const b = nm.cs_base || []; el.textContent = b.length ? fmtD(b[0]) + '–' + fmtD(b[1]) + ' 的 ' + b[2] + ' 条' : ''; });
-    const TH0 = nm.cs_th, BS = nm.cs_base || [];
+    const TH0 = nm.cs_th, BS = nm.cs_base || [], WN = nm.cs_win || 4;
+    const wan = (v) => v == null ? '—' : '¥' + d3.format('.1f')(v / 10000) + ' 万';
+    const how = '怎么来的：把 ' + (BS.length ? fmtD(BS[0]) + '–' + fmtD(BS[1]) + ' 上传、花过钱的 ' + BS[2] + ' 条素材' : '近 4 周上传、花过钱的素材') + '，各自「上传当天 + 后 3 天」拿到的激活从少到多排队，排在 80% 位置的那条是 ' + TH0 + ' 个' + (BS[3] != null ? '（排在中间的只有 ' + BS[3] + ' 个）' : '') + '。也就是那 4 周里大约前 20% 的素材能在这 4 天拿到 ' + TH0 + ' 个以上激活' + (BS[4] ? '，约等于这 4 天花到 ' + fmtY(BS[4]) : '') + '。\n为什么用 80 分位：按朱艺涛的建议，先拿「头部 20%」当过冷启的标准，以后过的太多就提高、太少就降低。门槛每天按最近 4 周重算，会小幅变动。';
     const TIPS = {
-      pass: '过冷启：素材第一次花钱那天起算 3 天（含当天），激活加起来 ≥ ' + TH0 + ' 个。',
-      wait: '还在看：第一次花钱还不满 3 天、激活还没到 ' + TH0 + ' 个，暂时判不了。所以最近几天的冷启率先显示「目前 x%」，等满 3 天再定。',
-      cs: '冷启率 = 过冷启的条数 ÷ 这天上传的条数。\n门槛 ' + TH0 + ' 个激活 = ' + (BS.length ? fmtD(BS[0]) + '–' + fmtD(BS[1]) + ' 首次花钱的 ' + BS[2] + ' 条素材' : '近 4 周首花素材') + '头 3 天激活的 80 分位，也就是那段时间大约前 20% 的素材能过；每天按最近 4 周重算。\n上传满 3 天一分钱没花的算没过。',
+      pass: '过冷启：从上传当天起 4 天（上传当天 + 后 3 天，按日历天算，不是到今天为止的最近 3 天），这条素材激活加起来 ≥ ' + TH0 + ' 个。\n' + how,
+      wait: '还在看：上传后 3 天还没过完（最近 3 个上传日），激活还没到 ' + TH0 + ' 个的先不判。所以这几天的冷启率显示「目前 x%」，过完 3 天就定下来。',
+      cs: '冷启率 = 过冷启的条数 ÷ 这天上传的条数。\n过冷启 = 上传当天 + 后 3 天激活 ≥ ' + TH0 + ' 个；上传后 3 天一分钱没花的算没过。\n' + how + '\n颜色：比这几批合起来的冷启率高 3 个点以上标绿，低 3 个点以上标红，差不到 3 个点不标。',
       up: '上传条数：这天上传到巨量的全部素材（巨量素材库清单），加上投放表里花过钱、工作台里有展示的。没读到素材库的日子只有后两种，会偏少。',
       acc: '平均投放账户数：每条素材在多少个巨量账户里有过展示，再取平均。同一账户建几个单元只算一次，是被建次数的下限。',
-      run: '账户跑起来率：在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。',
+      run: '账户跑起来率：在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。颜色：不低于这几批平均标绿，低于标红。',
       same: '同批同场景：同一天上传的素材里，和它同一原片或同一细分场景的条数（含它自己）。AI 素材按细分场景和 use case 编号归，KOC、KOL 按原片归，扩量算进原片。',
-      prev: '前 14 天同场景：上传日前 14 天里，同一原片或同一细分场景已经上过几条。'
+      prev: '前 14 天同场景：上传日前 14 天里，同一原片或同一细分场景已经上过几条。',
+      win: '冷启窗口：上传当天 + 后 3 天。激活、消耗、次留都只算这 4 天。'
     };
-    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = 第一次花钱后 3 天内激活 ≥ ' + TH0 + ' 个的条数 ÷ 当天上传条数；' + TH0 + ' 是近 4 周素材头 3 天激活的 80 分位，大约前 20% 能过。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
+    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = 上传当天 + 后 3 天激活 ≥ ' + TH0 + ' 个的条数 ÷ 当天上传条数。' + TH0 + ' 是近 4 周上传素材在同样 4 天里激活的 80 分位，相当于头部 20% 的水平。鼠标放到带虚线的表头上看 ' + TH0 + ' 怎么来的；点上传日那一行，看那天哪些过了、哪些没过。）'; });
     {
       let tip = null;
-      const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(360, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };
+      const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(380, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };
       const hide = (e) => { if (tip && e.target.closest('.lx-tip')) tip.hidden = true; };
       document.addEventListener('mouseover', show); document.addEventListener('mouseout', hide);
       document.addEventListener('click', (e) => { if (e.target.closest('.lx-tip')) { e.stopPropagation(); show(e); } else if (tip) tip.hidden = true; }, true);
@@ -904,7 +907,6 @@
     }
     fill('ramp-sum', (el) => {
       const parts = [];
-      if (done.length) parts.push('冷启率：' + done.map((b) => fmtD(b.up) + ' <b>' + fmtP0(b.cs) + '</b>（' + b.cs_pass + '/' + b.n_up + '）').join('、') + '；这几批合起来 <b>' + P1(avgCs) + '</b>。');
       if (!nm.acct) parts.push('<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>');
       else if (full.length) parts.push('账户跑起来率：' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；合起来 <b>' + P1(avgPass) + '</b>。');
       el.innerHTML = parts.join('<br>');
@@ -912,42 +914,74 @@
     const ST = {pass: '过了', fail: '没过', wait: '还在看'};
     const rateTxt = (L) => { const n = L.length, p = L.filter((m) => m.st === 'pass').length; return n ? p + '/' + n + '（' + fmtP0(p / n) + '）' : '—'; };
     const cmp = (L, label, groups) => '<div><b>' + label + '</b><br>' + groups.map(([g, f]) => { const x = L.filter(f); return x.length ? esc(g) + ' ' + rateTxt(x) : ''; }).filter(Boolean).join('<br>') + '</div>';
-    // 结论：冷启率低的原因，按数据自动写（只写差得开的，差不到 5 个点不写）
-    const bucket = (m) => /全片重配/.test(m.kind) ? '全片重配' : /二剪|改法未核对/.test(m.kind) ? '二剪和没核对的改法' : /原片/.test(m.kind) ? '原片' : '其他';
+    // 冷启率低的原因：按数据自动写（Reina 11/11：按日期列每天的原因，再写所有天的共性问题）
+    const isEr = (m) => /二剪|改法未核对/.test(m.kind);
+    const isKl = (m) => /扩量/.test(m.name);
     const pr = (L) => L.length ? L.filter((m) => m.st === 'pass').length / L.length : null;
     const pc = (L) => fmtP0(pr(L)) + '（' + L.filter((m) => m.st === 'pass').length + '/' + L.length + '）';
-    const concl = (dec, all) => {
-      const out = [];
-      if (!dec.length) return out;
-      const low = dec.filter((m) => m.a3 < 10), ns = dec.filter((m) => m.nospend);
-      if (low.length / dec.length >= 0.4) out.push('<b>大部分素材根本没拿到量</b>：能判的 ' + dec.length + ' 条里 ' + low.length + ' 条（' + fmtP0(low.length / dec.length) + '）头 3 天激活不到 10 个' + (ns.length ? '，其中 ' + ns.length + ' 条一分钱没花' : '') + '。这些不是跑了以后被证明不行，是系统没给机会，先看投放有没有建、出价和预算够不够。');
-      const one = dec.filter((m) => m.same <= 1), many = dec.filter((m) => m.same >= 2);
-      if (one.length >= 5 && many.length >= 5 && pr(one) - pr(many) >= 0.05) out.push('<b>同一个场景一天上太多条</b>：当天同场景只上 1 条的过了 ' + pc(one) + '，同场景上 2 条以上的只过了 ' + pc(many) + '。同一场景的几条在抢同一批人，系统通常只挑一条给量。');
-      const fresh = dec.filter((m) => !m.prev14), worn = dec.filter((m) => m.prev14 >= 5);
-      if (fresh.length >= 5 && worn.length >= 5 && pr(fresh) - pr(worn) >= 0.05) out.push('<b>老场景做得太密</b>：前 14 天没上过的场景过了 ' + pc(fresh) + '，前 14 天已经上过 5 条以上的只过了 ' + pc(worn) + '。');
-      const kl = dec.filter((m) => /扩量/.test(m.name)), nk = dec.filter((m) => !/扩量/.test(m.name));
-      if (kl.length >= 5 && nk.length >= 5 && pr(nk) - pr(kl) >= 0.05) out.push('<b>扩量版本基本过不了</b>：扩量过了 ' + pc(kl) + '，不是扩量的过了 ' + pc(nk) + '。扩量和原片太像，等于同一条素材重复上。');
-      const bk = d3.groups(dec, bucket).filter(([, v]) => v.length >= 5).sort((x, y) => pr(y[1]) - pr(x[1]));
-      if (bk.length >= 2 && pr(bk[0][1]) - pr(bk[bk.length - 1][1]) >= 0.05) out.push('<b>按改法看</b>：' + bk.map(([k, v]) => k + ' ' + pc(v)).join('，') + '。' + (bk.find(([k]) => k === '二剪和没核对的改法') && pr(bk.find(([k]) => k === '二剪和没核对的改法')[1]) < 0.05 ? '二剪几乎都过不了。' : ''));
-      const passL = dec.filter((m) => m.st === 'pass');
-      if (passL.length) { const pu = d3.rollups(passL, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 4); out.push('<b>过了的集中在</b>：' + pu.map(([u, n]) => esc(u) + ' ' + n + ' 条').join('、') + '。'); }
-      const wait = all.filter((m) => m.st === 'wait').length;
-      if (wait) out.push('还有 ' + wait + ' 条首次消耗不满 3 天，没算进上面。');
+    const ofDay = (b) => CS.filter((m) => m.up.slice(0, 10) === b.up);
+    const dayFacts = (b) => {
+      const L = ofDay(b), dec = b.cs == null ? L : L.filter((m) => m.st !== 'wait');
+      const f = {n: dec.length};
+      f.low = dec.filter((m) => m.a3 < 10).length; f.ns = dec.filter((m) => m.nospend).length;
+      f.er = dec.filter(isEr); f.kl = dec.filter(isKl);
+      f.stacks = d3.rollups(dec, (v) => v, (m) => m.root).filter(([, v]) => v.length >= 3).sort((x, y) => y[1].length - x[1].length);
+      f.stackN = d3.sum(f.stacks, ([, v]) => v.length);
+      f.worn = dec.filter((m) => m.prev14 >= 5);
+      f.budget = b.mkt_prev && b.mkt < 0.6 * b.mkt_prev;
+      f.pass = dec.filter((m) => m.st === 'pass');
+      return f;
+    };
+    const dayReasons = (b) => {
+      const f = dayFacts(b), out = [];
+      if (!f.n) return out;
+      if (f.budget) out.push('<b>全盘预算掉了</b>：冷启窗口里全盘平均每天 ' + wan(b.mkt) + '，上传前 7 天平均 ' + wan(b.mkt_prev) + '，新素材分不到钱。');
+      if (f.low / f.n >= 0.4) out.push('<b>没拿到量</b>：' + f.low + '/' + f.n + ' 条（' + fmtP0(f.low / f.n) + '）' + (b.cs == null ? '到 ' + fmtD(META.date) + ' 为止' : '4 天') + '激活不到 10 个' + (f.ns ? '，' + f.ns + ' 条一分钱没花' : '') + '。');
+      if (f.er.length >= 3 && f.er.length / f.n >= 0.25) out.push('<b>二剪多</b>：' + f.er.length + ' 条是二剪或没核对的改法，过了 ' + pc(f.er) + '。');
+      if (f.kl.length >= 3 && f.kl.length / f.n >= 0.25) out.push('<b>扩量多</b>：' + f.kl.length + ' 条扩量，过了 ' + pc(f.kl) + '。');
+      if (f.stacks.length) out.push('<b>同场景堆在同一天</b>：' + f.stacks.slice(0, 3).map(([r, v]) => esc(r) + ' ' + v.length + ' 条（过 ' + v.filter((m) => m.st === 'pass').length + '）').join('；') + '。');
+      if (f.worn.length >= 3 && f.worn.length / f.n >= 0.25) out.push('<b>老场景</b>：' + f.worn.length + ' 条的场景前 14 天已上过 5 条以上，过了 ' + pc(f.worn) + '。');
+      if (f.pass.length) { const g = d3.rollups(f.pass, (v) => [v.length, d3.max(v, (m) => m.a3)], (m) => m.root).sort((x, y) => y[1][1] - x[1][1]); out.push('<b>过了的</b>：' + g.slice(0, 4).map(([r, [n, a]]) => esc(r) + (n > 1 ? ' ' + n + ' 条' : '') + '（最多 ' + a + ' 个激活）').join('、') + (g.length > 4 ? ' 等' : '') + '。'); }
+      return out;
+    };
+    const common = () => {
+      const days = B.filter((b) => b.cs != null && b.n_up >= 5), out = [];
+      if (days.length < 2) return out;
+      const F = days.map((b) => [b, dayFacts(b)]);
+      const all = CS.filter((m) => m.st !== 'wait' && days.some((b) => b.up === m.up.slice(0, 10)));
+      const lowS = F.map(([, f]) => f.low / f.n);
+      if (d3.min(lowS) >= 0.3) out.push('<b>最大的共性问题：每天大部分新素材根本没拿到量</b>（每天 ' + fmtP0(d3.min(lowS)) + '–' + fmtP0(d3.max(lowS)) + ' 的素材在上传后 4 天里激活不到 10 个，合起来 ' + d3.sum(F, ([, f]) => f.low) + '/' + d3.sum(F, ([, f]) => f.n) + ' 条）。冷启率低首先不是素材跑了被证明不行，是大部分素材没被系统拿去测。要先和投放对：每天新素材建了多少计划、给了多少测试预算。');
+      const erD = F.filter(([, f]) => f.er.length >= 3);
+      const er = all.filter(isEr), ner = all.filter((m) => !isEr(m));
+      if (erD.length >= 2 && pr(er) <= 0.05 && pr(ner) - pr(er) >= 0.05) out.push('<b>二剪和没核对的改法几乎每天都过不了</b>：合起来 ' + pc(er) + '，其他素材 ' + pc(ner) + '；每天的二剪占上传 ' + fmtP0(d3.min(F, ([, f]) => f.er.length / f.n)) + '–' + fmtP0(d3.max(F, ([, f]) => f.er.length / f.n)) + '。二剪和原片太像，系统当成同一条，产能花在这上面回报最低。');
+      const kl = all.filter(isKl), nk = all.filter((m) => !isKl(m));
+      if (kl.length >= 10 && pr(nk) - pr(kl) >= 0.05) out.push('<b>扩量版本过得少</b>：扩量 ' + pc(kl) + '，不是扩量的 ' + pc(nk) + '。');
+      const one = all.filter((m) => m.same <= 1), many = all.filter((m) => m.same >= 2);
+      const stD = F.filter(([, f]) => f.stacks.length).length;
+      if (stD >= days.length - 1 && pr(one) - pr(many) >= 0.05) out.push('<b>同一场景一天上很多条</b>：' + stD + '/' + days.length + ' 天都有同场景一天 3 条以上。当天同场景只有 1 条的过了 ' + pc(one) + '，2 条以上的过了 ' + pc(many) + '。同场景几条抢同一批人，系统一般只挑一条给量，其他的白上。');
+      const bd = F.filter(([, f]) => f.budget).map(([b]) => fmtD(b.up));
+      if (bd.length) out.push('<b>' + bd.join('、') + ' 这几批还碰上全盘预算下降</b>：全盘日耗从 11 月初的十几万掉到几万，这几批更难分到钱，比例低有预算的原因。');
       return out;
     };
     fill('cs-conc', (el) => {
-      const dec = CS.filter((m) => m.st !== 'wait');
-      const items = concl(dec, CS);
-      if (!items.length) { el.hidden = true; return; }
-      el.innerHTML = '<b>结论：这几批冷启率低的原因</b>（' + B.filter((b) => b.n_up).map((b) => fmtD(b.up)).join('、') + ' 上传，合起来能判的 ' + dec.length + ' 条，过了 ' + pc(dec) + '；按门槛定义，基准期大约 20% 能过）<ol>' + items.map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+      const days = B.filter((b) => b.n_up);
+      if (!days.length) { el.hidden = true; return; }
+      const dd = days.filter((b) => b.cs != null), pend = days.filter((b) => b.cs == null);
+      const dec = CS.filter((m) => m.st !== 'wait' && dd.some((b) => b.up === m.up.slice(0, 10)));
+      let h = '<b>结论</b>：能定的 ' + dd.length + ' 个上传日（' + dd.map((b) => fmtD(b.up)).join('、') + '）合起来 ' + dec.length + ' 条，过冷启 ' + pc(dec) + '；按门槛定义，基准期大约 20% 能过。';
+      const cm = common();
+      if (cm.length) h += '<div style="margin-top:6px"><b>一直都有的共性问题</b><ol>' + cm.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>';
+      h += '<div style="margin-top:6px"><b>每天的原因</b><ol>' + dd.map((b) => '<li><b>' + fmtD(b.up) + '</b> 冷启率 ' + P1(b.cs) + '（' + b.cs_pass + '/' + b.n_up + '）：' + dayReasons(b).join(' ') + '</li>').join('')
+        + pend.map((b) => '<li><b>' + fmtD(b.up) + '</b> 还没过完 3 天（' + fmtD(b.win_end) + ' 的数出来才定），目前 ' + b.cs_pass + '/' + b.n_up + '。' + (dayReasons(b).filter((x) => /预算|没拿到量/.test(x)).join(' ')) + '</li>').join('') + '</ol></div>';
+      el.innerHTML = h;
     });
     const panel = (b) => {
       const L = CS.filter((m) => m.up.slice(0, 10) === b.up);
       const dec = L.filter((m) => m.st !== 'wait');
       const kinds = [...new Set(dec.map((m) => m.kind))].sort((x, y) => dec.filter((m) => m.kind === y).length - dec.filter((m) => m.kind === x).length);
       const ucs = d3.rollups(dec, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 6).map((x) => x[0]);
-      const its = concl(dec, L);
-      let h = '<div><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传满 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：头 3 天激活 ≥ ' + nm.cs_th + ' 个。</div>' + (its.length ? '<div class="lx-csconc"><b>这天冷启率低的原因</b><ol>' + its.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>' : '');
+      const its = dayReasons(b);
+      let h = '<div><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传后 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：上传当天 + 后 3 天激活 ≥ ' + nm.cs_th + ' 个。</div>' + (its.length ? '<div class="lx-csconc"><b>这天冷启率低的原因</b><ol>' + its.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>' : '');
       if (dec.length) {
         h += '<div class="lx-cscmp">'
           + cmp(dec, '同批同场景（同一原片或同一细分场景）条数', [['只有 1 条', (m) => m.same <= 1], ['2–3 条', (m) => m.same >= 2 && m.same <= 3], ['4 条以上', (m) => m.same >= 4]])
@@ -961,14 +995,14 @@
       for (const st of ['pass', 'fail', 'wait']) {
         const rows = L.filter((m) => m.st === st).sort((x, y) => y.a3 - x.a3 || (x.root > y.root ? 1 : -1));
         if (!rows.length) continue;
-        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num">头 3 天激活</th><th class="num">头 3 天消耗</th><th class="num">头 3 天次留</th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
+        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num"><span class="lx-tip" data-tipk="win">窗口激活</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口消耗</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口次留</span></th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
           + rows.map((m) => '<tr><td class="name">' + (m.video ? '<a class="lx-namelink" href="' + esc(m.video) + '" target="_blank" rel="noopener">' + esc(m.name) + '</a>' : esc(m.name)) + '</td><td style="white-space:nowrap">' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td style="min-width:10rem">' + esc(m.root) + '</td>'
             + '<td class="num' + (m.same >= 4 ? ' lx-badv' : '') + '">' + m.same + '</td><td class="num' + (m.prev14 >= 5 ? ' lx-badv' : '') + '">' + m.prev14 + '</td><td class="date">' + (m.first ? fmtD(m.first) : '<span class="muted">没花钱</span>') + '</td>'
             + '<td class="num">' + fmtN(m.a3) + '</td><td class="num">' + fmtY(m.c3) + '</td><td class="num">' + (m.r3 == null || m.ar3 < 20 ? (m.r3 == null ? '—' : '<span class="muted">' + fmtP0(m.r3) + '（' + m.ar3 + '）</span>') : fmtP0(m.r3)) + '</td>'
             + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td></tr>').join('')
           + '</tbody></table></div>';
       }
-      return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。头 3 天次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
+      return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = 上传当天 + 后 3 天；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
     };
     fill('rampbatch', (tb) => {
       for (const b of B) {
@@ -978,7 +1012,7 @@
         { const c = td('num'); c.textContent = b.cs_pass; if (b.cs_pass) c.className = 'num lx-good'; }
         td('num').textContent = b.cs_fail;
         td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
-        { const c = td('num'); if (b.cs != null) { c.textContent = fmtP0(b.cs); if (avgCs != null) c.className = 'num ' + (b.cs >= avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + fmtP0(b.cs_sofar) + '</span>'; } }
+        { const c = td('num'); if (b.cs != null) { c.textContent = P1(b.cs); if (avgCs != null && Math.abs(b.cs - avgCs) >= 0.03) c.className = 'num ' + (b.cs > avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_sofar) + '</span>'; c.title = fmtD(b.win_end) + ' 的数出来才定'; } }
         td('num').textContent = b.n;
         td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
         { const c = td('num'); c.textContent = P1(b.pass); if (b.pass != null && avgPass != null) c.className = 'num ' + (b.pass >= avgPass ? 'lx-good' : 'lx-badv'); }
