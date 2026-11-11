@@ -1004,7 +1004,7 @@
       return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = 上传当天 + 后 3 天；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
     };
     fill('rampbatch', (tb) => {
-      for (const b of B) {
+      for (const b of B.slice().reverse()) {
         const tr = document.createElement('tr'); tr.className = 'lx-csday'; const td = cellMaker(tr);
         { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.upl ? '' : ' <span class="lx-note">没读到素材库</span>'); c.style.whiteSpace = 'nowrap'; }
         td('num').textContent = b.n_up;
