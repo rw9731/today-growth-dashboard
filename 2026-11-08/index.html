@@ -1119,7 +1119,40 @@
     }
   });
 </script>
-<script>addEventListener('load', () => document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); }));</script>
+<script>
+// 表头吸顶（Reina 11/11）：宽表格横向滚动时，原生 sticky 只能贴住滚动框、贴不住窗口顶。这时在窗口顶上复制一份表头，宽度和横向位置跟着原表走。
+addEventListener('load', () => {
+  document.querySelectorAll('.lx-scroll').forEach((x) => { if (x.scrollWidth > x.clientWidth + 1) x.classList.add('lx-wide'); });
+  const heads = [];
+  document.querySelectorAll('.lx-scroll table').forEach((table) => {
+    const wrap = table.closest('.lx-scroll'), thead = table.tHead; if (!thead) return;
+    const box = document.createElement('div'); box.className = 'lx-fixhead'; box.hidden = true;
+    const t2 = document.createElement('table'); t2.className = table.className; const h2 = thead.cloneNode(true); t2.appendChild(h2); box.appendChild(t2); document.body.appendChild(box);
+    heads.push({ table, wrap, thead, box, t2, h2 });
+  });
+  const sync = () => {
+    for (const h of heads) {
+      const cs = getComputedStyle(h.wrap);
+      const boxed = cs.overflowX !== 'visible' && h.wrap.scrollHeight <= h.wrap.clientHeight + 1; // 横向滚动框但没有竖向滚动：原生 sticky 不起作用
+      const r = h.table.getBoundingClientRect(), hh = h.thead.getBoundingClientRect().height;
+      if (!boxed || h.table.offsetParent === null || r.top >= 0 || r.bottom < hh + 24) { h.box.hidden = true; continue; }
+      const w = h.wrap.getBoundingClientRect(), left = w.left + h.wrap.clientLeft;
+      h.box.hidden = false; h.box.style.left = left + 'px'; h.box.style.width = h.wrap.clientWidth + 'px';
+      h.t2.style.width = h.table.offsetWidth + 'px'; h.t2.style.transform = 'translateX(' + (r.left - left) + 'px)';
+      const src = h.thead.querySelectorAll('th'), dst = h.h2.querySelectorAll('th');
+      src.forEach((th, i) => { if (dst[i]) { const px = th.getBoundingClientRect().width + 'px'; dst[i].style.width = dst[i].style.minWidth = dst[i].style.maxWidth = px; } });
+    }
+  };
+  addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync);
+  document.querySelectorAll('.lx-scroll').forEach((x) => x.addEventListener('scroll', sync, { passive: true }));
+  sync();
+});
+</script>
+<style>
+  .lx-fixhead { position: fixed; top: 0; z-index: 30; overflow: hidden; background: var(--color-panel); box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+  .lx-fixhead .lx-table { table-layout: fixed; }
+  .lx-fixhead th { position: static; box-sizing: border-box; }
+</style>
 <script>
 // 左侧目录：按页面上显示出来的各节标题生成，点了跳过去，滚动时高亮当前一节（Reina 11/9）
 addEventListener('load', () => {
