@@ -360,7 +360,7 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（11/2 起）。点素材名字直接打开巨量里投的那条视频；其他链接：原帖 = 博主原帖，成片 = 唯西表里的成片和脚本。<b>单项目最高消耗</b>、<b>头部占比</b>看素材能不能在单个项目里带量（Reina 11/11）：单项目过 ¥1,000 标绿，优先加产；昨天花了 ¥1,000 以上、但单项目不到 ¥500 的标红，是分散在很多项目里各跑一点。按巨量广告的项目拆（智擎户和普通户都算）。<b>当天次留率</b>、<b>当天次留成本</b>是 11/5 当天激活的人第二天的次留，要再过一天才回传完，所以出日报时先写「待回补」，下一天出日报时补上（Reina 11/11）；和全盘同一天比上色<span data-draw="rtd-all"></span>，当天激活不到 <b data-draw="th-act2">—</b> 个的灰字带激活数、不上色。标签只看前三天激活的人；回补后当天激活够数、当天次留率和次留成本都好于全盘的，标签下面加一行「当天次留好」。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（11/2 起）。点素材名字直接打开巨量里投的那条视频；其他链接：原帖 = 博主原帖，成片 = 唯西表里的成片和脚本。<b>单项目最高消耗</b>、<b>头部占比</b>看素材能不能在单个项目里带量（Reina 11/11）：单项目过 ¥1,000 标绿，优先加产；昨天花了 ¥1,000 以上、但单项目不到 ¥500 的标红，是分散在很多项目里各跑一点。按巨量广告的项目拆（智擎户和普通户都算）。<b>当天次留率</b>、<b>当天次留成本</b>是 11/5 当天激活的人第二天的次留，要再过一天才回传完，所以出日报时先写「待回补」，下一天出日报时补上（Reina 11/11）；和全盘同一天比上色<span data-draw="rtd-all"></span>，当天激活不到 <b data-draw="th-act2">—</b> 个的灰字带激活数、不上色。标签只看前三天激活的人；回补后当天激活够数、当天次留率和次留成本都好于全盘的，标签下面加一行「几号次留好」（比如「9 号次留好」）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -769,7 +769,7 @@
       { const gc = td(); pill(gc, r.group, tagCls(r.group));
         const rm0 = days === true ? one('rtday_meta') : null; // 当天次留好（Reina 11/11）：回补后当天激活够数、次留率和次留成本都好于全盘同一天
         if (rm0 && !r.rtd_small && r.rtd_rate != null && r.rtd_cpr != null && r.rtd_rate >= rm0.rate && r.rtd_cpr <= rm0.cpr) {
-          const h = document.createElement('div'); h.className = 'lx-rtdhint'; h.textContent = '当天次留好'; h.title = '11/5 当天激活 ' + r.rtd_act + ' 个，次留 ' + fmtP0(r.rtd_rate) + '、¥' + d3.format(',.0f')(r.rtd_cpr) + '（全盘 ' + fmtP0(rm0.rate) + '、¥' + d3.format(',.0f')(rm0.cpr) + '）'; gc.appendChild(h); } }
+          const h = document.createElement('div'); h.className = 'lx-rtdhint'; h.textContent = (+rm0.date.slice(8, 10)) + ' 号次留好'; h.title = '11/5 当天激活 ' + r.rtd_act + ' 个，次留 ' + fmtP0(r.rtd_rate) + '、¥' + d3.format(',.0f')(r.rtd_cpr) + '（全盘 ' + fmtP0(rm0.rate) + '、¥' + d3.format(',.0f')(rm0.cpr) + '）'; gc.appendChild(h); } }
       if (days === true) judgeCell(td(), r);
       const vid = r.video || (r.link_type === '预览' ? r.link : '');
       { const nc = td('name'); if (days) nc.style.minWidth = '8.5rem';
