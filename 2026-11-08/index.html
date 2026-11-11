@@ -970,9 +970,8 @@
       const dec = CS.filter((m) => m.st !== 'wait' && dd.some((b) => b.up === m.up.slice(0, 10)));
       let h = '<b>结论</b>：能定的 ' + dd.length + ' 个上传日（' + dd.map((b) => fmtD(b.up)).join('、') + '）合起来 ' + dec.length + ' 条，过冷启 ' + pc(dec) + '；按门槛定义，基准期大约 20% 能过。';
       const cm = common();
-      if (cm.length) h += '<div style="margin-top:6px"><b>一直都有的共性问题</b><ol>' + cm.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>';
-      h += '<div style="margin-top:6px"><b>每天的原因</b><ol>' + dd.map((b) => '<li><b>' + fmtD(b.up) + '</b> 冷启率 ' + P1(b.cs) + '（' + b.cs_pass + '/' + b.n_up + '）：' + dayReasons(b).join(' ') + '</li>').join('')
-        + pend.map((b) => '<li><b>' + fmtD(b.up) + '</b> 还没过完 3 天（' + fmtD(b.win_end) + ' 的数出来才定），目前 ' + b.cs_pass + '/' + b.n_up + '。' + (dayReasons(b).filter((x) => /预算|没拿到量/.test(x)).join(' ')) + '</li>').join('') + '</ol></div>';
+      if (cm.length) h += '<div style="margin-top:6px"><b>每天都有的共性问题</b><ol>' + cm.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>';
+      h += '<div class="lx-note" style="margin-top:4px">每天的具体原因：点下面表格里的上传日展开看。' + (pend.length ? pend.map((b) => fmtD(b.up)).join('、') + ' 还没过完 3 天，' + fmtD(pend[pend.length - 1].win_end) + ' 的数出来才全部定。' : '') + '</div>';
       el.innerHTML = h;
     });
     const panel = (b) => {
