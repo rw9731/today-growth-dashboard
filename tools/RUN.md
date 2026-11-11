@@ -193,8 +193,9 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
    - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：3KtioB 扩量素材迭代排期、c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪
    同一个域名下可以把脚本存进 localStorage（键名 __claude_ 开头，用 AsyncFunction 跑，结束时删掉），不用每个 tab 都贴一遍。
+1之二. 还没成片的脚本（Reina 11/11，只看最新时间点，不追溯过去，只放进当周页面）：同样在 A 组 f18d7b、B 组 c665d9 两个 tab 用 javascript_tool 跑 tools/script_stage.js 全文，返回的 JSON 原样存成 /tmp/out/stage_<tab id>.json（不要手抄，从会话记录里解析工具结果写文件）。口径：「脚本状态」需修改、修改后待审核、未审核 = 还在脚本中；可制作、「成片」空着 = 脚本已完成、还没开始做；未通过、脚本备注写了先不拍、先不做、顺延的不算。A 组从第 485 行（11 月起）算，10 月的旧行不算；B 组全表。output_build.py 会把成片没回填、但同 use case 同标题素材已经交了（扩量表、另一组、分日表里有）的挪到 done，不计数。没读到就沿用 notes/output-stage.json 上次的结果，页面写着截至哪天。
 2. `python3 tools/output_build.py --dir /tmp/out --date T --sheet <投放数据_分日文件>`：合进 notes/output-items.json（按组 + 素材名去重，同一条在扩量表和脚本表都登记的留扩量表那条），重写这周和上周的页面。
-3. 提交 output/、outputs.json、notes/output-items.json。
+3. 提交 output/、outputs.json、notes/output-items.json、notes/output-stage.json。
 - 分类规则：扩量表那一行「怎么改」或「依据」写了「头部模板」的算变式；名字带「同脚本换画面」的算同脚本换画面；名字带 22 个模板原片标识（output_build.py 的 TEMPLATE_KEYS）的也算变式；其余算新测试。新加头部模板时把它的原片标识加进 TEMPLATE_KEYS。
 - 细分场景：扩量表取那一行的细分场景；脚本表没有这一列，投出去以后从 notes/scene-map.json 补。
 - 头部模板变式的「细分场景」写换了什么（Reina 11/10）：先取素材名里模板标识后面的变量（如「LOL比赛」），再按「换角度+NN」对上 tools/templates.json 里这个模板的第几个角度，再取排期行「怎么改」里写的「这次换（…）」，都没有就写「没写变量，原片场景：…」。换了 use case 的写「换 use case：…」。

@@ -130,6 +130,37 @@ def classify(x):
 
 
 KX = {'A': 'kMJdAv', 'B': '3KtioB'}
+STAGE_TABS = {'A': 'f18d7b', 'B': 'c665d9'}
+
+
+def stage(folder, names, T):
+    """还没成片的脚本（Reina 11/11）：tools/script_stage.js 在两组脚本表跑出来的 stage_<tab>.json，只看最新时间点，不追溯过去。
+    还在脚本中 = 脚本状态是需修改 / 修改后待审核 / 未审核；脚本已完成、还没开始做 = 可制作、成片空着。
+    脚本表里成片没回填、但同 use case 同标题的素材已经交了（扩量表、另一组、分日表里有）的不算，单列 done。没读到就沿用 notes/output-stage.json 里上次的。"""
+    p = os.path.join(ROOT, 'notes/output-stage.json')
+    old = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+    out = dict(old)
+    for g, tab in STAGE_TABS.items():
+        f = os.path.join(folder, f'stage_{tab}.json')
+        if not os.path.exists(f):
+            continue
+        d = json.load(open(f, encoding='utf-8'))
+        if isinstance(d, str):
+            d = json.loads(d)
+        ready, done = [], []
+        for x in d.get('ready', []):
+            x['link'] = cell_link(g, tab, 'A', x['r'])
+            m = re.search(r'[A-Z]{2}\d{2}[-_](?:\d{2}[-_])?([一-龥A-Za-z0-9]{4,14})', x['name'])
+            tok = m.group(1) if m else ''
+            hit = next((n for n in names if tok and x.get('uc') and tok in n and x['uc'] in n and not any(tok in k for k in TEMPLATE_KEYS)), '') if not re.fullmatch(r'AI素材.*|新角度.*|\d+', tok or '0') else ''
+            if hit:
+                done.append(dict(x, by=hit))
+            else:
+                ready.append(x)
+        ins = [dict(x, link=cell_link(g, tab, 'A', x['r'])) for x in d.get('in_script', [])]
+        out[g] = dict(asof=T.isoformat(), start=d.get('start'), tab=tab, in_script=ins, ready=ready, done=done)
+    json.dump(out, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    return out
 
 
 def batches(plan, items, w0, T):
@@ -197,11 +228,12 @@ def main():
     store = json.load(open(store_p, encoding='utf-8')) if os.path.exists(store_p) else {}
 
     # 分日表：素材名 -> 素材 ID、累计消耗、首花
-    by_name = {}
+    by_name, sheet_names = {}, set()
     if a.sheet:
         v = json.load(open(a.sheet, encoding='utf-8'))['values']
         H = v[0]
         iD, iI, iN, iC = H.index('日期'), H.index('素材ID'), H.index('素材名'), H.index('消耗')
+        sheet_names = set(r[iN] for r in v[1:] if len(r) > iN)
         for r in v[1:]:
             if len(r) <= iC:
                 continue
@@ -260,6 +292,8 @@ def main():
         x['lk'] = 'v' if x.get('video') else 'f'
     json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
+    names = set(x['name'] for x in store.values()) | sheet_names
+    stg = stage(a.dir, names, T)
     mon = T - dt.timedelta(days=T.weekday())
     weeks = sorted({(dt.date.fromisoformat(x['d']) - dt.timedelta(days=dt.date.fromisoformat(x['d']).weekday())).isoformat() for x in store.values()}, reverse=True)
     tpl = open(os.path.join(ROOT, 'tools/output_template.html'), encoding='utf-8').read()
@@ -272,7 +306,8 @@ def main():
         items = [x for x in wk_all if x.get('ok')]
         pend = [dict(g=x['g'], d=x['d'], k=x['k'], t=x['t'], uc=x.get('uc', ''), ucn=x.get('ucn', ''), name=x['name'], st=x.get('st') or '还没审') for x in wk_all if not x.get('ok')]
         data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks,
-                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}))
+                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}),
+                    stage=stg if w0 == mon else None)
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
         for path in [os.path.join(ROOT, 'output', wk, 'index.html')] + ([os.path.join(ROOT, 'output', 'index.html')] if w0 == mon else []):
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -280,7 +315,8 @@ def main():
             open(path, 'w', encoding='utf-8').write(html.replace('{{REL}}', rel))
     json.dump([dict(week=w) for w in weeks], open(os.path.join(ROOT, 'outputs.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     cnt = {g: {k: sum(1 for x in store.values() if x['g'] == g and x['k'] == k and x.get('ok') and x['d'] >= mon.isoformat()) for k in 'VSNX'} for g in 'AB'}
-    print(json.dumps(dict(items=len(new), kept=len(seen), store=len(store), week=mon.isoformat(), count=cnt), ensure_ascii=False))
+    sg = {g: dict(in_script=len(stg[g]['in_script']), ready=len(stg[g]['ready']), done=len(stg[g]['done']), asof=stg[g]['asof']) for g in 'AB' if g in stg}
+    print(json.dumps(dict(items=len(new), kept=len(seen), store=len(store), week=mon.isoformat(), count=cnt, stage=sg), ensure_ascii=False))
 
 
 if __name__ == '__main__':

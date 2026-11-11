@@ -83,6 +83,9 @@ tr.we td{color:var(--sub)}
 .dim .row.uc .tg{cursor:pointer;color:var(--sub);font-weight:400;padding:0 2px}.dim .scs{margin:0 0 6px 16px;border-left:2px solid var(--line);padding-left:8px}.dim .row.sc{grid-template-columns:1fr auto 0;font-size:12px}.dim .row.uc{grid-template-columns:minmax(120px,190px) 1fr 58px}
 .dim{grid-template-columns:repeat(auto-fit,minmax(380px,1fr));align-items:start}
 .dim .more{margin-top:6px;font:inherit;font-size:12px;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer}
+.stg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.stg .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stg .two div{display:grid}.stg .two b{font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}.stg .two span{font-size:12px;color:var(--sub)}
+.stg details{margin-top:8px;font-size:12px}.stg summary{cursor:pointer;color:var(--sub)}.stg ul{margin:4px 0 0;padding-left:18px}.stg li{margin:2px 0;overflow-wrap:anywhere}.stg .uc{color:var(--sub);margin-right:4px}
 </style>
 </head>
 <body>
@@ -94,6 +97,7 @@ tr.we td{color:var(--sub)}
 
 <h2>本周交了多少</h2>
 <div class="kpis" id="kpis"></div>
+<div id="stagebox"></div>
 
 <h2>每天交了多少</h2>
 <div class="dg" id="days"></div>
@@ -135,6 +139,17 @@ document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
   <div class="pn">到昨天应交约 ${pace} 条（${wdays} 个工作日）</div>
   <div class="l2"><div><b>${Y.length}${yp?`<small> / 排 ${yp}</small>`:''}</b><span>昨天 ${md(YD)} 交了</span></div><div><b>${vs} <small>${pc(vs)}%</small></b><span>头部模板变式</span></div><div><b>${n} <small>${pc(n)}%</small></b><span>新测试</span></div><div><b>${ai} / ${C.length-ai}</b><span>AI / 二创</span></div></div>
   ${L.length-C.length?`<p class="note">另有 ${L.length-C.length} 条只换前贴，不计数。</p>`:''}</div>`}).join('');
+// 还没成片的脚本（Reina 11/11）：只看最新时间点
+if(D.stage&&(D.stage.A||D.stage.B)){
+  const li=x=>`<li><span class="uc">${esc(x.uc||'')}${D.ucn[x.uc]?' '+esc(D.ucn[x.uc]):''}</span><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a>${x.st&&x.st!=='可制作'?` <span class="st-mu">${esc(x.st)}</span>`:''}</li>`;
+  const byUC=L=>{const m={};L.forEach(x=>{(m[x.uc||'（没标）']??=[]).push(x)});return Object.entries(m).sort((a,b)=>b[1].length-a[1].length).map(([u,a])=>`${esc(u)}${D.ucn[u]?' '+esc(D.ucn[u]):''} ${a.length}`).join(' · ')};
+  const asof=['A','B'].map(g=>D.stage[g]&&D.stage[g].asof).filter(Boolean).sort().pop();
+  document.getElementById('stagebox').innerHTML=`<h2>还没成片的脚本 <span class="pn">截至 ${md(asof)}</span></h2><div class="stg">`+['A','B'].map(g=>{const S=D.stage[g];if(!S)return `<div class="card"><div class="hd"><h3>${g} 组</h3></div><p class="note">今天没读到脚本表。</p></div>`;
+   return `<div class="card"><div class="hd"><h3>${g} 组</h3></div><div class="two"><div><b>${S.in_script.length}</b><span>还在脚本中</span></div><div><b>${S.ready.length}</b><span>脚本已完成、还没开始做</span></div></div>
+   ${S.in_script.length?`<details><summary>还在脚本中：${byUC(S.in_script)}</summary><ul>${S.in_script.map(li).join('')}</ul></details>`:''}
+   ${S.ready.length?`<details><summary>脚本已完成、还没开始做：${byUC(S.ready)}</summary><ul>${S.ready.map(li).join('')}</ul></details>`:''}
+   ${S.done&&S.done.length?`<details><summary>另有 ${S.done.length} 条脚本表里写着可制作、成片没回填，但同名素材已经交了，没算</summary><ul>${S.done.map(x=>`<li><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a> → ${esc(x.by)}</li>`).join('')}</ul></details>`:''}</div>`}).join('')+`</div><p class="note">读脚本表的「脚本状态」：需修改、修改后待审核、未审核算还在脚本中；可制作、成片那一格还空着算脚本已完成没开始做。未通过、写了先不拍或顺延的不算。A 组从脚本及成片第 ${D.stage.A?D.stage.A.start:485} 行（11 月起）算，B 组看脚本&amp;成片全表。只看最新时间点，往期周不显示。</p>`;
+}
 // 每天
 const DESC=[...D.days].filter(d=>d<=D.T).reverse();
 const PLAN=(g,d)=>D.batches.filter(b=>b.g===g&&b.d===d&&b.n!=null).reduce((a,b)=>a+b.n,0);
