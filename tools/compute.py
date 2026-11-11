@@ -810,6 +810,8 @@ def main():
     newd_meta['cs_th'] = cs_th
     newd_meta['cs_base'] = [b0, b1, len(base), q(base, 0.5), round(q(basec, 0.8)) if basec else None]
     newd_meta['cs_win'] = CSW
+    pj_path = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{D[3]}.json')  # proj_save.py：新素材建进几个项目、项目里怎么分钱
+    newd_meta['proj'] = json.load(open(pj_path)) if os.path.exists(pj_path) else None
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 

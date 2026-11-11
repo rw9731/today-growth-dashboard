@@ -944,13 +944,19 @@
       if (f.pass.length) { const g = d3.rollups(f.pass, (v) => [v.length, d3.max(v, (m) => m.a3)], (m) => m.root).sort((x, y) => y[1][1] - x[1][1]); out.push('<b>过了的</b>：' + g.slice(0, 4).map(([r, [n, a]]) => esc(r) + (n > 1 ? ' ' + n + ' 条' : '') + '（最多 ' + a + ' 个激活）').join('、') + (g.length > 4 ? ' 等' : '') + '。'); }
       return out;
     };
+    const projTxt = () => {
+      const pj = nm.proj; if (!pj) return '';
+      const days = B.filter((b) => b.cs != null).map((b) => b.up), v = days.map((u) => (pj.proj_per_mat || {})[u]).filter(Boolean).map((x) => x[0]);
+      const bb = (pj.budget_bid || [])[0];
+      return '<br>巨量后台看（智擎户，' + pj.n_proj + ' 个项目）：素材不是没建进计划，' + (v.length ? '这几天上传的每条素材中位进了 ' + d3.min(v) + '–' + d3.max(v) + ' 个项目' : '') + '；但每个项目里中位塞了 ' + pj.mats_per_proj_med + ' 条素材，消耗最多的 1 条拿走项目消耗的 ' + fmtP0(pj.top1_share_med) + '（中位），素材 × 项目的组合里 ' + fmtP0(pj.zero_pair_share) + ' 一分钱没花。' + (bb ? '项目最常见的设置是日预算 ¥' + d3.format(',')(+bb[0]) + '、激活出价 ¥' + (+bb[1]) + '。' : '') + '也就是新素材是在同一个项目里被少数素材挤掉的：一个项目素材太多，系统只挑一两条花钱。';
+    };
     const common = () => {
       const days = B.filter((b) => b.cs != null && b.n_up >= 5), out = [];
       if (days.length < 2) return out;
       const F = days.map((b) => [b, dayFacts(b)]);
       const all = CS.filter((m) => m.st !== 'wait' && days.some((b) => b.up === m.up.slice(0, 10)));
       const lowS = F.map(([, f]) => f.low / f.n);
-      if (d3.min(lowS) >= 0.3) out.push('<b>最大的共性问题：每天大部分新素材根本没拿到量</b>（每天 ' + fmtP0(d3.min(lowS)) + '–' + fmtP0(d3.max(lowS)) + ' 的素材在上传后 4 天里激活不到 10 个，合起来 ' + d3.sum(F, ([, f]) => f.low) + '/' + d3.sum(F, ([, f]) => f.n) + ' 条）。冷启率低首先不是素材跑了被证明不行，是大部分素材没被系统拿去测。要先和投放对：每天新素材建了多少计划、给了多少测试预算。');
+      if (d3.min(lowS) >= 0.3) out.push('<b>最大的共性问题：每天大部分新素材根本没拿到量</b>（每天 ' + fmtP0(d3.min(lowS)) + '–' + fmtP0(d3.max(lowS)) + ' 的素材在上传后 4 天里激活不到 10 个，合起来 ' + d3.sum(F, ([, f]) => f.low) + '/' + d3.sum(F, ([, f]) => f.n) + ' 条）。冷启率低首先不是素材跑了被证明不行，是大部分素材没被系统分到钱。' + projTxt());
       const erD = F.filter(([, f]) => f.er.length >= 3);
       const er = all.filter(isEr), ner = all.filter((m) => !isEr(m));
       if (erD.length >= 2 && pr(er) <= 0.05 && pr(ner) - pr(er) >= 0.05) out.push('<b>二剪和没核对的改法几乎每天都过不了</b>：合起来 ' + pc(er) + '，其他素材 ' + pc(ner) + '；每天的二剪占上传 ' + fmtP0(d3.min(F, ([, f]) => f.er.length / f.n)) + '–' + fmtP0(d3.max(F, ([, f]) => f.er.length / f.n)) + '。二剪和原片太像，系统当成同一条，产能花在这上面回报最低。');
