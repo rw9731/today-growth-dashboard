@@ -488,12 +488,13 @@ def main():
         c, a_, rt = win(rs)
         c27 = S(rs, D[3], 'cost')
         f = first.get(i, '')
-        # 三天花够、激活够的打标签；昨天花了 ¥500 以上但还没次留的也放进来（新上线 / 激活太少）
-        if a_ >= th['act'] and (c >= th['min'] or c27 >= th['top']):
+        # 三天花够、激活够的打标签；昨天花到消耗排行门槛但还没次留的也放进来（新上线 / 样本不够）
+        top_in = min(th['top'], th['rank'])  # 消耗排行要列的都放进来（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的被漏掉了）
+        if a_ >= th['act'] and (c >= th['min'] or c27 >= top_in):
             rate = rt / a_
             cpr = c / rt if rt else None
             g = label(rate, cpr, c)
-        elif c27 >= th['top']:
+        elif c27 >= top_in:
             rate = cpr = None
             g = '新上线' if f >= D[2] else '样本不够'
         else:
@@ -806,7 +807,8 @@ def main():
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])]  # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）, 'goodstats': [gs], 'kl': kl,
+    # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
+    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     if rtd_note:
