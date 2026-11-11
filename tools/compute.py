@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import scripts_lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'rank': 1000, 'low': 0.8, 'high': 1.25,
+TH = {'scale': 1000, 'min': 500, 'act': 30, 'drop': 200, 'top': 500, 'rank': 500, 'low': 0.8, 'high': 1.25,
       'judge_act': 50, 'stuck_n': 3, 'stuck_cost': 200}  # 判差和「判差还在花」的门槛（Reina 11/4 定）
 L1_SHORT = {'AI 个人助理综述': 'AI 综述', '工作沟通与协作': '工作', '个人日程与事务助理': '日程', '学习与成长': '学习',
             '购物与生活服务': '购物', '健康与运动': '健康', '信息检索与追踪': '信息追踪', '出行与旅行': '出行',
