@@ -958,13 +958,13 @@
       if (m.prev14 >= 5) t.push(['前 14 天同场景已上 ' + m.prev14 + ' 条', '']);
       return t;
     };
-    // 没拿到量是结果，这里写原因：钱被谁拿走、建了几个项目、项目里塞了多少素材（Reina 11/11）
+    // 没拿到量是结果，这里写原因：装它们的项目有没有起量、建了几个项目、项目里塞了多少素材（Reina 11/11）
     const lowWhy = (b, f) => {
       const w = b.why_low, pend = b.cs == null;
       let h = '<b>没拿到量的原因</b>（' + f.low + '/' + f.n + ' 条' + (pend ? '到 ' + fmtD(META.date) + ' 为止' : '在' + WT) + '激活不到 10 个' + (f.ns ? '，' + f.ns + ' 条一分钱没花' : '') + '）：';
       if (!w) return h + '没有巨量项目数据，查不到原因。';
       const ps = [];
-      ps.push('钱被之前的素材拿走了：' + fmtD(w.days[0]) + (w.days[1] !== w.days[0] ? '–' + fmtD(w.days[1]) : '') + ' 全盘花了 ' + fmtY(w.win_tot) + '，这批 ' + b.n_up + ' 条合起来只拿到 ' + fmtP0(w.self_share) + '，' + fmtP0(w.old_share) + ' 给了之前上传的素材（最多的：' + w.top_old.map((x) => esc(shortNm(x[0])) + ' ' + fmtY(x[1])).join('、') + '）');
+      if (w.n_proj) ps.push('装它们的项目大多没起量：这些素材进的 ' + w.n_proj + ' 个项目里，' + fmtP0(w.pj_lt100) + ' 到 ' + fmtD(META.date) + ' 一共花不到 ¥100（中位 ' + fmtY(w.pj_med) + '）；' + fmtP0(w.pj_clean) + ' 的项目里没有高热老素材，不是被老素材抢的')
       const few = w.npj_hi && w.npj_lo <= 0.7 * w.npj_hi;
       if (few) ps.push('建得少：没拿到量的素材中位只进了 ' + w.npj_lo + ' 个项目，拿到量的进了 ' + w.npj_hi + ' 个' + (w.zero ? '，' + w.zero + ' 条一个项目都没进' : ''));
       else ps.push('不是没建：没拿到量的素材中位也进了 ' + w.npj_lo + ' 个项目' + (w.npj_hi ? '（拿到量的 ' + w.npj_hi + ' 个）' : '') + (w.zero ? '，只有 ' + w.zero + ' 条一个项目都没进' : ''));
@@ -991,7 +991,11 @@
       const pj = nm.proj; if (!pj) return '';
       const days = B.filter((b) => b.cs != null).map((b) => b.up), v = days.map((u) => (pj.proj_per_mat || {})[u]).filter(Boolean).map((x) => x[0]);
       const bb = (pj.budget_bid || [])[0];
-      return '<br>② <b>一个项目塞太多素材</b>（巨量后台，智擎户 ' + pj.n_proj + ' 个项目）：素材不是没建进计划，' + (v.length ? '这几天上传的每条素材中位进了 ' + d3.min(v) + '–' + d3.max(v) + ' 个项目' : '') + '；但每个项目里中位塞了 ' + pj.mats_per_proj_med + ' 条素材，消耗最多的 1 条拿走项目消耗的 ' + fmtP0(pj.top1_share_med) + '（中位），素材 × 项目的组合里 ' + fmtP0(pj.zero_pair_share) + ' 一分钱没花。' + (bb ? '项目最常见的设置是日预算 ¥' + d3.format(',')(+bb[0]) + '、激活出价 ¥' + (+bb[1]) + '。' : '') + '也就是新素材是在同一个项目里被少数素材挤掉的：一个项目素材太多，系统只挑一两条花钱。';
+      const np = pj.new_proj || {};
+      let t = '';
+      if (np.clean_n) t += '<br>① <b>新建项目大多没起量</b>（巨量后台，智擎户）：新素材主要推在新建、没有高热老素材的项目里' + (v.length ? '，每条中位进了 ' + d3.min(v) + '–' + d3.max(v) + ' 个' : '') + '，所以不是被高热素材抢的（' + fmtD(np.from) + '–' + fmtD(np.to) + ' 新建的项目里，有高热老素材的只有 ' + np.hot_n + ' 个）。但这类项目 ' + np.clean_n + ' 个里，' + np.clean_lt100 + ' 个（' + fmtP0(np.clean_lt100 / np.clean_n) + '）到 ' + fmtD(pj.date) + ' 一共花不到 ¥100，中位只花了 ' + fmtY(np.clean_med) + '。新项目自己没跑起来，里面的新素材就没机会。';
+      t += '<br>② <b>项目里素材太多，钱只给一两条</b>：' + (np.clean_mats_med ? '新建项目中位塞了 ' + np.clean_mats_med + ' 条素材（其中新素材 ' + np.clean_new_med + ' 条）；' : '') + (np.k80_n ? '花了 ¥500 以上的 ' + np.k80_n + ' 个项目里，中位 ' + np.k80_med + ' 条素材就占了项目 80% 的花费；' : '') + '素材 × 项目的组合里 ' + fmtP0(pj.zero_pair_share) + ' 一分钱没花。' + (bb ? '项目最常见的设置是日预算 ¥' + d3.format(',')(+bb[0]) + '、激活出价 ¥' + (+bb[1]) + '。' : '');
+      return t;
     };
     const common = () => {
       const days = B.filter((b) => b.cs != null && b.n_up >= 5), out = [];
@@ -1002,7 +1006,6 @@
       if (d3.min(lowS) >= 0.3) {
         const W = F.map(([b]) => b.why_low).filter(Boolean);
         let t = '<b>最大的共性问题：每天大部分新素材没拿到量</b>（每天 ' + fmtP0(d3.min(lowS)) + '–' + fmtP0(d3.max(lowS)) + ' 的素材在' + WT + '激活不到 10 个，合起来 ' + d3.sum(F, ([, f]) => f.low) + '/' + d3.sum(F, ([, f]) => f.n) + ' 条）。这是结果，原因是：';
-        if (W.length) t += '<br>① <b>钱被之前上传的素材拿走</b>：每批冷启那 ' + WN + ' 天，全盘的钱 ' + fmtP0(d3.min(W, (w) => w.old_share)) + '–' + fmtP0(d3.max(W, (w) => w.old_share)) + ' 给了之前上传的素材，新上的这批合起来只拿到 ' + fmtP0(d3.min(W, (w) => w.self_share)) + '–' + fmtP0(d3.max(W, (w) => w.self_share)) + '。';
         t += projTxt();
         if (W.length) { const few = F.filter(([b]) => b.why_low && b.why_low.npj_hi && b.why_low.npj_lo <= 0.7 * b.why_low.npj_hi).map(([b]) => fmtD(b.up)); t += '<br>③ <b>建计划多少不是主要原因</b>：大多数天没拿到量的素材和拿到量的进的项目数差不多' + (few.length ? '；只有 ' + few.join('、') + ' 没拿到量的明显建得少' : '') + '。'; }
         out.push(t);

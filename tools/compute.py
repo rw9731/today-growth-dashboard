@@ -879,7 +879,13 @@ def main():
             old_ = sum(c for i_, c in sp.items() if up_day(i_) < b['up'])
             self_ = sum(c for i_, c in sp.items() if up_day(i_) == b['up'])
             top_old = sorted(((c, i_) for i_, c in sp.items() if up_day(i_) < b['up']), reverse=True)[:3]
-            b['why_low'] = {'n': len(lo), 'npj_lo': med([m['npj'] for m in lo]), 'npj_hi': med([m['npj'] for m in hi]), 'zero': sum(1 for m in lo if not m['npj']),
+            # 装这批没拿到量素材的项目自己有没有起量（Reina 11/11）：项目总花费、有没有高热老素材（更早上传、在项目里花到 ¥1,000）
+            ptot = {k: sum(c for _, c in PJ[k][2]) for k in ks}
+            phot = {k: any(c >= 1000 and up_day(mid) < b['up'] for mid, c in PJ[k][2]) for k in ks}
+            pj_stat = {'pj_lt100': round(sum(1 for k in ks if ptot[k] < 100) / len(ks), 3) if ks else None,
+                       'pj_med': round(sorted(ptot.values())[len(ptot) // 2]) if ks else None,
+                       'pj_clean': round(sum(1 for k in ks if not phot[k]) / len(ks), 3) if ks else None}
+            b['why_low'] = {**pj_stat, 'n': len(lo), 'npj_lo': med([m['npj'] for m in lo]), 'npj_hi': med([m['npj'] for m in hi]), 'zero': sum(1 for m in lo if not m['npj']),
                             'n_proj': len(ks), 'mats_med': med([PJ[k][1] for k in ks]), 'old_share': round(old_ / tot_, 3) if tot_ else None, 'self_share': round(self_ / tot_, 3) if tot_ else None, 'win_tot': round(tot_),
                             'top_old': [[nm_of(i_), round(c), up_day(i_)] for c, i_ in top_old], 'days': [wd[0], wd[-1]]}
     newd_meta['proj'] = pjd

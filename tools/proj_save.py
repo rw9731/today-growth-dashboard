@@ -34,6 +34,32 @@ out = {'date': a.date, 'source': '巨量广告智擎版 std/projects/list + std/
        'zero_pair_share': round(zero / pairs, 3) if pairs else None,
        'proj_per_mat': {u: [st.median(v), len(v)] for u, v in sorted(per_day.items())},
        'budget_bid': [[b, bid, n] for (b, bid), n in bud]}
+# 新建项目有没有起量（Reina 11/11，回应 Xuhan：新素材一般推到没有高热素材的项目里）。
+# 干净项目 = 建的时候，项目里没有一条更早上传的素材在这段时间花到 ¥1,000；只看 D-8 到 D-1 建的项目。
+c0, c1 = (compute.dt.date.fromisoformat(a.date) - compute.dt.timedelta(days=8)).isoformat(), (compute.dt.date.fromisoformat(a.date) - compute.dt.timedelta(days=1)).isoformat()
+cl, ht = [], []
+for p in P:
+    ct = (p.get('ct') or '')[:10]
+    if not (c0 <= ct <= c1):
+        continue
+    tot = sum(c for _, c in p['mats'])
+    hot = any(c >= 1000 and compute.up_day(m) < ct for m, c in p['mats'])
+    (ht if hot else cl).append((tot, len(p['mats']), sum(1 for m, _ in p['mats'] if compute.up_day(m) >= ct)))
+k80 = []
+for p in P:
+    cs = sorted((c for _, c in p['mats']), reverse=True)
+    t = sum(cs)
+    if t >= 500:
+        acc = 0
+        for j, c in enumerate(cs):
+            acc += c
+            if acc >= 0.8 * t:
+                k80.append(j + 1)
+                break
+out['new_proj'] = {'from': c0, 'to': c1, 'clean_n': len(cl), 'clean_lt100': sum(1 for x in cl if x[0] < 100),
+                   'clean_med': round(st.median([x[0] for x in cl])) if cl else None, 'clean_tot': round(sum(x[0] for x in cl)),
+                   'clean_mats_med': st.median([x[1] for x in cl]) if cl else None, 'clean_new_med': st.median([x[2] for x in cl]) if cl else None,
+                   'hot_n': len(ht), 'hot_tot': round(sum(x[0] for x in ht)), 'k80_n': len(k80), 'k80_med': st.median(k80) if k80 else None}
 # 明细：给 compute.py 按上传日拆「没拿到量的素材为什么没拿到」用。projects = [项目ID, 素材数, [[有消耗的素材ID, 消耗], ...]]；
 # mat_proj = 最近 14 天上传的素材 → 它在哪些项目里（projects 的下标）
 d0 = (compute.dt.date.fromisoformat(a.date) - compute.dt.timedelta(days=14)).isoformat()
