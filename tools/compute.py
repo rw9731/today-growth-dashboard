@@ -704,10 +704,10 @@ def main():
                        'video': pick_video(lk), 'link': '' if lk.get('type') == '预览' else lk.get('link', ''), 'link_type': lk.get('type', '')})
     recent.sort(key=lambda m: (-(m['c3'] or 0), -m['tot']))
 
-    # 冷启（Reina 11/11，朱艺涛提的牵引指标）：看上传当天起 4 天（上传当天 + 后 3 天）的激活，过「近 4 周上传素材同一窗口激活」的 80 分位，算过冷启。
-    # 窗口按上传日算，不按首次消耗日：上传后 3 天还没花起来本身就是没过冷启。上传日 + 3 天的数出来以后这批就定了。
+    # 冷启（Reina 11/11，朱艺涛提的牵引指标）：看上传当天 + 第二天（CSW = 2 天，Reina 11/11 从 4 天改成 2 天，第二天就能看）的激活，过「近 4 周上传素材同一窗口激活」的 80 分位，算过冷启。
+    # 窗口按上传日算，不按首次消耗日：窗口里还没花起来本身就是没过冷启。窗口最后一天的数出来以后这批就定了。
     # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。
-    CSW = 4
+    CSW = 2
     act_by, ret_by = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
     day_tot = defaultdict(float)
     for r in allrows:
@@ -727,7 +727,7 @@ def main():
         ar = sum(act_by[i].get(k, 0) for k in ks if k <= D1)
         rr = sum(ret_by[i].get(nx(k), 0) for k in ks if k <= D1)  # 分日表里 X 激活的次留记在 X+1 那行
         return a3, c3, (rr / ar if ar else None), ar, ks[-1] <= D[3]
-    # 门槛按每个上传日自己的 cohort 定（Reina 11/11）：用上传日前 30 天到前 4 天上传、花过钱的素材（窗口都已走完），
+    # 门槛按每个上传日自己的 cohort 定（Reina 11/11）：用上传日前 30 天到前 CSW 天上传、花过钱的素材（窗口都已走完），
     # B = 它们窗口激活的 80 分位（主口径）；C = 它们窗口激活占当时全盘激活比例的 80 分位 × 这批窗口里全盘激活（去掉预算影响）。
     q = lambda L, p_: sorted(L)[int(len(L) * p_)] if L else None
     day_act = defaultdict(float)
@@ -742,7 +742,7 @@ def main():
         if u in _thc:
             return _thc[u]
         u0 = dt.date.fromisoformat(u)
-        f0, f1 = (u0 - dt.timedelta(days=30)).isoformat(), (u0 - dt.timedelta(days=4)).isoformat()
+        f0, f1 = (u0 - dt.timedelta(days=30)).isoformat(), (u0 - dt.timedelta(days=CSW)).isoformat()
         bw = [(a_, c_, up_day(i)) for i, (a_, c_) in spent_w.items() if f0 <= up_day(i) <= f1]
         if not bw:
             _thc[u] = None
@@ -867,7 +867,7 @@ def main():
                 continue
             med = lambda L: sorted(L)[len(L) // 2] if L else None
             ks = {k for m in lo for k in MP.get(m['id'], [])}
-            # 钱去了哪：冷启窗口那几天（上传当天 + 后 3 天，到 D 为止）全盘的钱，按素材上传日分新老（用投放分日表，按天准）
+            # 钱去了哪：冷启窗口那几天（上传当天起 CSW 天，到 D 为止）全盘的钱，按素材上传日分新老（用投放分日表，按天准）
             wd = [(dt.date.fromisoformat(b['up']) + dt.timedelta(days=k)).isoformat() for k in range(CSW)]
             wd = [d_ for d_ in wd if d_ <= D[3]]
             sp = defaultdict(float)
