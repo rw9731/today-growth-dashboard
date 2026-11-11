@@ -133,6 +133,8 @@
   .lx-cstable tbody tr.lx-csday.open td:first-child::before { content: '▾ '; }
   .lx-cspanel { margin-top: 10px; padding: 12px 14px 14px; white-space: normal; }
   .lx-cspanel[hidden] { display: none; }
+  .lx-cstag { display: inline-block; margin: 1px 4px 2px 0; padding: 1px 6px; border-radius: 4px; font-size: 11px; line-height: 1.5; background: rgba(127,127,127,.12); color: var(--color-fg-muted); white-space: normal; }
+  .lx-cstag.bad { background: rgba(239,107,95,.14); color: var(--color-bad); }
   .lx-tip { border-bottom: 1px dotted currentColor; cursor: help; }
   .lx-tipbox { position: fixed; z-index: 60; max-width: 360px; padding: 8px 10px; border-radius: 6px; background: #22211f; color: #f4f3ef; font-size: 12px; line-height: 1.6; font-weight: 400; white-space: normal; box-shadow: 0 4px 12px rgba(0,0,0,.2); pointer-events: none; }
   .lx-cspanel .lx-table th { position: static; }
@@ -939,6 +941,18 @@
       return f;
     };
     const shortNm = (n) => { n = String(n || '').replace(/^推送视频_/, ''); return n.length > 26 ? n.slice(0, 26) + '…' : n; };
+    const squeezed = (m) => m.sib && m.sib[0] >= 200 && m.sib[1] < m.sib[0] / 5;
+    const tagsOf = (m, medPj) => {
+      const t = [];
+      if (m.npj === 0) t.push(['没进任何项目', 'bad']);
+      else if (m.npj != null && medPj && m.npj < 0.5 * medPj) t.push(['只进了 ' + m.npj + ' 个项目（这批中位 ' + medPj + '）', 'bad']);
+      if (squeezed(m)) t.push([(isEr(m) ? '二剪，' : isKl(m) ? '扩量，' : '') + '被同原片挤掉：同几个项目里「' + shortNm(m.sib[2]) + '」花了 ' + fmtY(m.sib[3]) + '，它自己 ' + fmtY(m.sib[1]), 'bad']);
+      else if (isEr(m)) t.push(['二剪或没核对的改法', '']);
+      else if (isKl(m)) t.push(['扩量', '']);
+      if (m.same >= 2) t.push(['同批同场景 ' + m.same + ' 条', '']);
+      if (m.prev14 >= 5) t.push(['前 14 天同场景已上 ' + m.prev14 + ' 条', '']);
+      return t;
+    };
     // 没拿到量是结果，这里写原因：钱被谁拿走、建了几个项目、项目里塞了多少素材（Reina 11/11）
     const lowWhy = (b, f) => {
       const w = b.why_low, pend = b.cs == null;
@@ -951,6 +965,8 @@
       else ps.push('不是没建：没拿到量的素材中位也进了 ' + w.npj_lo + ' 个项目' + (w.npj_hi ? '（拿到量的 ' + w.npj_hi + ' 个）' : '') + (w.zero ? '，只有 ' + w.zero + ' 条一个项目都没进' : ''));
       ps.push('项目里素材太多：这些项目中位塞了 ' + w.mats_med + ' 条素材，系统只挑少数几条花钱');
       const lo = ofDay(b).filter((m) => m.a3 < 10), er = lo.filter(isEr).length, st = lo.filter((m) => m.same >= 2).length;
+      const sq = lo.filter(squeezed);
+      if (sq.length) ps.push('被同原片的其他版本挤掉：' + sq.length + ' 条和自己的原片或别的版本在同一批项目里，钱都给了那个版本（' + sq.filter(isEr).length + ' 条是二剪），明细表「可能原因」列标了');
       if (er || st) ps.push('没拿到量的这些里' + (er ? ' ' + er + ' 条是二剪或没核对的改法' : '') + (er && st ? '、' : '') + (st ? ' ' + st + ' 条和同批素材是同一场景' : '') + '，系统更不会给');
       return h + ps.map((x, i) => '①②③④⑤'[i] + x).join('；') + '。';
     };
@@ -988,7 +1004,7 @@
       }
       const erD = F.filter(([, f]) => f.er.length >= 3);
       const er = all.filter(isEr), ner = all.filter((m) => !isEr(m));
-      if (erD.length >= 2 && pr(er) <= 0.05 && pr(ner) - pr(er) >= 0.05) out.push('<b>二剪和没核对的改法几乎每天都过不了</b>：合起来 ' + pc(er) + '，其他素材 ' + pc(ner) + '；每天的二剪占上传 ' + fmtP0(d3.min(F, ([, f]) => f.er.length / f.n)) + '–' + fmtP0(d3.max(F, ([, f]) => f.er.length / f.n)) + '。二剪和原片太像，系统当成同一条，产能花在这上面回报最低。');
+      if (erD.length >= 2 && pr(er) <= 0.05 && pr(ner) - pr(er) >= 0.05) out.push('<b>二剪和没核对的改法几乎每天都过不了</b>：合起来 ' + pc(er) + '，其他素材 ' + pc(ner) + '；每天的二剪占上传 ' + fmtP0(d3.min(F, ([, f]) => f.er.length / f.n)) + '–' + fmtP0(d3.max(F, ([, f]) => f.er.length / f.n)) + '。二剪和原片太像，系统当成同一条，产能花在这上面回报最低。' + (() => { const f = er.filter((m) => m.st === 'fail'), q = f.filter(squeezed); return q.length ? '后台能看到：没过的 ' + f.length + ' 条二剪里，' + q.length + ' 条和自己的原片或别的版本建在同一批项目里，钱都给了那个版本，它自己几乎没花（明细表「可能原因」列标了「被同原片挤掉」）。' : ''; })());
       const kl = all.filter(isKl), nk = all.filter((m) => !isKl(m));
       if (kl.length >= 10 && pr(nk) - pr(kl) >= 0.05) out.push('<b>扩量版本过得少</b>：扩量 ' + pc(kl) + '，不是扩量的 ' + pc(nk) + '。');
       const one = all.filter((m) => m.same <= 1), many = all.filter((m) => m.same >= 2);
@@ -1015,6 +1031,7 @@
       const kinds = [...new Set(dec.map((m) => m.kind))].sort((x, y) => dec.filter((m) => m.kind === y).length - dec.filter((m) => m.kind === x).length);
       const ucs = d3.rollups(dec, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 6).map((x) => x[0]);
       const its = dayReasons(b);
+      const pjs = L.filter((m) => m.npj != null).map((m) => m.npj).sort((x, y) => x - y), medPj = pjs.length ? pjs[pjs.length >> 1] : null;
       let h = '<div><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传后 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：上传当天 + 后 3 天激活 ≥ ' + b.th + ' 个' + (b.th_c ? '；去掉预算影响的门槛 ' + b.th_c + ' 个，过 ' + b.cs_pass_c + ' 条' : '') + '。</div>' + (its.length ? '<div class="lx-csconc"><b>这天冷启率低的原因</b><ol>' + its.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>' : '');
       if (dec.length) {
         h += '<div class="lx-cscmp">'
@@ -1029,11 +1046,12 @@
       for (const st of ['pass', 'fail', 'wait']) {
         const rows = L.filter((m) => m.st === st).sort((x, y) => y.a3 - x.a3 || (x.root > y.root ? 1 : -1));
         if (!rows.length) continue;
-        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num"><span class="lx-tip" data-tipk="win">窗口激活</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口消耗</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口次留</span></th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
+        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num"><span class="lx-tip" data-tipk="win">窗口激活</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口消耗</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口次留</span></th><th class="num">投放账户数</th><th class="num">跑起来账户</th><th>可能原因</th></tr></thead><tbody>'
           + rows.map((m) => '<tr><td class="name">' + (m.video ? '<a class="lx-namelink" href="' + esc(m.video) + '" target="_blank" rel="noopener">' + esc(m.name) + '</a>' : esc(m.name)) + '</td><td style="white-space:nowrap">' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td style="min-width:10rem">' + esc(m.root) + '</td>'
             + '<td class="num' + (m.same >= 4 ? ' lx-badv' : '') + '">' + m.same + '</td><td class="num' + (m.prev14 >= 5 ? ' lx-badv' : '') + '">' + m.prev14 + '</td><td class="date">' + (m.first ? fmtD(m.first) : '<span class="muted">没花钱</span>') + '</td>'
             + '<td class="num">' + fmtN(m.a3) + '</td><td class="num">' + fmtY(m.c3) + '</td><td class="num">' + (m.r3 == null || m.ar3 < 20 ? (m.r3 == null ? '—' : '<span class="muted">' + fmtP0(m.r3) + '（' + m.ar3 + '）</span>') : fmtP0(m.r3)) + '</td>'
-            + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td></tr>').join('')
+            + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td>'
+            + '<td style="min-width:14rem">' + (st === 'pass' ? '' : tagsOf(m, medPj).map(([x, c]) => '<span class="lx-cstag' + (c ? ' ' + c : '') + '">' + esc(x) + '</span>').join('')) + '</td></tr>').join('')
           + '</tbody></table></div>';
       }
       return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = 上传当天 + 后 3 天；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';

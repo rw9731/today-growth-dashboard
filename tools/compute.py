@@ -841,8 +841,25 @@ def main():
     pjd = json.load(open(pj_path)) if os.path.exists(pj_path) else None
     if pjd:
         PJ, MP = pjd.pop('projects', []), pjd.pop('mat_proj', {})
+        # 同原片或同场景的其他版本在同一批项目里花了多少（看二剪、扩量是不是被自己的原片或别的版本挤掉）
+        root_c = {}
         for m in cs_mats:  # 冷启素材都在最近 10 天，mat_proj 存了最近 14 天上传的
-            m['npj'] = len(MP.get(m['id'], []))
+            ks_ = MP.get(m['id'], [])
+            m['npj'] = len(ks_)
+            sib, own, top = 0.0, 0.0, defaultdict(float)
+            for k in ks_:
+                for mid, c in PJ[k][2]:
+                    if mid == m['id']:
+                        own += c
+                        continue
+                    if mid not in root_c:
+                        root_c[mid] = root_of(nm_of(mid))
+                    if root_c[mid] == m['root']:
+                        sib += c
+                        top[mid] += c
+            if sib > 0:
+                t_ = max(top, key=top.get)
+                m['sib'] = [round(sib), round(own), nm_of(t_), round(top[t_]), up_day(t_)]
         for b in batches:
             cg = [m for m in cs_mats if m['up'][:10] == b['up'] and 'npj' in m]
             lo, hi = [m for m in cg if m['a3'] < 10], [m for m in cg if m['a3'] >= 10]
