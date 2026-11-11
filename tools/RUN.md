@@ -266,4 +266,4 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - 数据：python3 tools/align_check.py --sheet <投放数据_分日> --date D --page D/index.html --out /tmp/align/data.json（口径写在脚本开头）。
 - 排期：A 组 kMJdAv、B 组 3KtioB 里日期 T+1 到 T+3 的行（当天不动），按 UC_ID 和「怎么改」里照的原片/模板合计条数；头部模板表 my.feishu.cn/sheets/VEBUs3HTjh3dHqtojlsckJzmnqS 看新赢家进没进表。
 - 接不上的判断：起量 + 表现好的 use case，后三天 A+B 合计排产占比明显低于它近 3 天消耗占比（低一半以上），或后三天里有一天是 0；新跑出来的模板素材后两天没有变式。
-- 只有需要调整时才发飞书「Today UG 内部」，没有就不发（Reina 11/11）。只建议，不改排期表。
+- 只有需要调整时才发飞书「投放同步群 A+B」（群里有唯西两组投放和 Xuhan，Reina 11/11 改），没有就不发。只建议，不改排期表；群里有代理，不放看板链接。
