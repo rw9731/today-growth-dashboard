@@ -444,8 +444,12 @@
         <tbody data-draw="newdrows"></tbody>
       </table>
     </div>
+  </section>
+
+  <section class="lx-sec" id="coldstart">
+    <h2 class="lx-h2">六、冷启动率</h2>
     <div data-draw="rampwrap">
-      <h3 class="lx-h3">最近 10 个上传日：冷启率，投进几个账户、跑起来没有</h3>
+      <h3 class="lx-h3">最近 10 个上传日：过冷启的比例，投进几个账户、跑起来没有</h3>
       <p class="lx-note" data-draw="cs-short" style="margin-top:-4px"></p>
       <div class="lx-csconc" data-draw="cs-conc"></div>
       <p class="lx-note" data-draw="ramp-sum"></p>
@@ -476,7 +480,7 @@
   </section>
 
   <section class="lx-sec" id="bad">
-    <h2 class="lx-h2">六、拖后腿的素材</h2>
+    <h2 class="lx-h2">七、拖后腿的素材</h2>
     <h3 class="lx-h3">判差 3 天以上还在花<span class="lx-note" style="margin-left:8px;font-weight:400" data-draw="stuck-sum"></span></h3>
     <p class="lx-note">判差 = 最近 3 个激活日合计至少 50 人，且次留率低于同期全盘的 80%，或次留成本高于同期全盘的 1.25 倍。周一激活的人周三上午才看得到次留，所以第 1 天从看得到那天上午算；第 1、2 天常有翻回来的，不算拖，第 3 天起还花 ¥200 以上列在这里。判差后多花 = 第一次判差那天到昨天的消耗。这里只看消耗，看不到开关状态：掉量可能是关了，也可能是系统不跑了。</p>
     <div class="lx-card lx-scroll">
@@ -516,7 +520,7 @@
   </section>
 
   <section class="lx-sec" id="cohort">
-    <h2 class="lx-h2">七、昨天的钱花在哪批素材上（按首次消耗分批）</h2>
+    <h2 class="lx-h2">八、昨天的钱花在哪批素材上（按首次消耗分批）</h2>
     <p class="lx-note">按首次消耗日期分批（不是上传日期），一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没开始花。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -540,7 +544,7 @@
   </section>
 
   <section class="lx-sec" id="plan" hidden>
-    <h2 class="lx-h2">八、核心 insight 和下一步</h2>
+    <h2 class="lx-h2">九、核心 insight 和下一步</h2>
     <p class="pl-headline" data-draw="pl-headline" hidden></p>
     <div class="pl-quad4">
       <div class="pl-blk" style="--bc:var(--color-fg)"><h3>全局 insight<span>整盘看，钱和次留在往哪走</span></h3><ol data-draw="pl-global"></ol></div>
@@ -876,7 +880,7 @@
   {
     const B = data('ramp_batches'), R = data('ramp_mats'), CS = data('cs_mats'), nm = one('newd_meta') || {};
     const wrap = document.querySelector('[data-draw="rampwrap"]');
-    if (!B.length && wrap) wrap.hidden = true;
+    if (!B.length && wrap) { wrap.hidden = true; const sec = wrap.closest('section'); if (sec) sec.hidden = true; }
     const P1 = (v) => v == null ? '—' : d3.format('.1~%')(v);
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
     const full = B.filter((b) => b.full && b.pass != null);
