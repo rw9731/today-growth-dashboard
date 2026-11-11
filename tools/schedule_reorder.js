@@ -27,7 +27,9 @@ const lab={};for(const o of items){const L=(lab[o.d]??={ai:0,ec:0,v:0});const n=
 const head=d=>{const L=lab[d];if(d==='9999')return `下周（11/10 晚顺延，这周先不做，共 ${L.ai+L.ec} 条）`;const dt=new Date(2026,+d.slice(0,2)-1,+d.slice(2));const s=`${+d.slice(0,2)}/${+d.slice(2)} 周${WD[dt.getDay()]}`;
  if(KEEP[d])return `${s}（续：这天上面第 ${KEEP[d]} 行起还有；这里 AI ${L.ai} 条、二创 ${L.ec} 条）`;
  return `${s}（AI ${L.ai} 条、二创 ${L.ec} 条，共 ${L.ai+L.ec} 条；其中头部模板变式 ${L.v} 条）`};
-const NEW=out.map((o,k)=>{if(!o.x){const v=o.v.slice();v[10]=fix(v[10]);return v}const v=o.x.v.slice();v[0]=(k===0||out[k-1].d!==o.d)?head(o.d):'';for(const c of [8,10,11])v[c]=fix(v[c]);return v});
+// 每一行都写日期，不留空（Reina 11/11）：一天的第一行写完整标题，后面的行写「M/D 周X」
+const dayLab=d=>{if(d==='9999')return '下周';const dt=new Date(2026,+d.slice(0,2)-1,+d.slice(2));return `${+d.slice(0,2)}/${+d.slice(2)} 周${WD[dt.getDay()]}`};
+const NEW=out.map((o,k)=>{if(!o.x){const v=o.v.slice();v[10]=fix(v[10]);return v}const v=o.x.v.slice();v[0]=(k===0||out[k-1].d!==o.d)?head(o.d):dayLab(o.d);for(const c of [8,10,11])v[c]=fix(v[c]);return v});
 const total=last-S+1;let w=0;
 if(WRITE){for(let k=0;k<total;k++){const r=S-1+k,v=NEW[k]||Array(C).fill('');for(let c=0;c<C;c++){if(c===12)continue;const cur=sh.getText(r,c)||'';const nv=v[c]||'';if(cur!==nv){sh.setCellValue(r,c,nv);w++}}}}
 [last,out.length,w,Object.entries(map).map(([a,b])=>a+'>'+b).join(','),NEW.map((v,k)=>v[0]?(S+k)+':'+v[0]:'').filter(Boolean).join(' | ')]
