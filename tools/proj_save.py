@@ -34,6 +34,16 @@ out = {'date': a.date, 'source': '巨量广告智擎版 std/projects/list + std/
        'zero_pair_share': round(zero / pairs, 3) if pairs else None,
        'proj_per_mat': {u: [st.median(v), len(v)] for u, v in sorted(per_day.items())},
        'budget_bid': [[b, bid, n] for (b, bid), n in bud]}
+# 明细：给 compute.py 按上传日拆「没拿到量的素材为什么没拿到」用。projects = [项目ID, 素材数, [[有消耗的素材ID, 消耗], ...]]；
+# mat_proj = 最近 14 天上传的素材 → 它在哪些项目里（projects 的下标）
+d0 = (compute.dt.date.fromisoformat(a.date) - compute.dt.timedelta(days=14)).isoformat()
+out['projects'] = [[p['pid'], len(p['mats']), [[m, round(c, 2)] for m, c in p['mats'] if c > 0]] for p in P]
+mp = collections.defaultdict(list)
+for k, p in enumerate(P):
+    for m, _ in p['mats']:
+        if compute.up_day(m) >= d0:
+            mp[m].append(k)
+out['mat_proj'] = mp
 p_ = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{a.date}.json')
 json.dump(out, open(p_, 'w'), ensure_ascii=False, separators=(',', ':'))
-print(json.dumps({k: v for k, v in out.items() if k != 'proj_per_mat'}, ensure_ascii=False))
+print(json.dumps({k: v for k, v in out.items() if k not in ('proj_per_mat', 'projects', 'mat_proj')}, ensure_ascii=False))

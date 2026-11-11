@@ -838,7 +838,34 @@ def main():
     newd_meta['cs_th'] = (cs_thr(D[3]) or {}).get('b')
     newd_meta['cs_win'] = CSW
     pj_path = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{D[3]}.json')  # proj_save.py：新素材建进几个项目、项目里怎么分钱
-    newd_meta['proj'] = json.load(open(pj_path)) if os.path.exists(pj_path) else None
+    pjd = json.load(open(pj_path)) if os.path.exists(pj_path) else None
+    if pjd:
+        PJ, MP = pjd.pop('projects', []), pjd.pop('mat_proj', {})
+        for m in cs_mats:  # 冷启素材都在最近 10 天，mat_proj 存了最近 14 天上传的
+            m['npj'] = len(MP.get(m['id'], []))
+        for b in batches:
+            cg = [m for m in cs_mats if m['up'][:10] == b['up'] and 'npj' in m]
+            lo, hi = [m for m in cg if m['a3'] < 10], [m for m in cg if m['a3'] >= 10]
+            if not lo:
+                continue
+            med = lambda L: sorted(L)[len(L) // 2] if L else None
+            ks = {k for m in lo for k in MP.get(m['id'], [])}
+            # 钱去了哪：冷启窗口那几天（上传当天 + 后 3 天，到 D 为止）全盘的钱，按素材上传日分新老（用投放分日表，按天准）
+            wd = [(dt.date.fromisoformat(b['up']) + dt.timedelta(days=k)).isoformat() for k in range(CSW)]
+            wd = [d_ for d_ in wd if d_ <= D[3]]
+            sp = defaultdict(float)
+            for i_, dd_ in cost_by.items():
+                c_ = sum(dd_.get(d_, 0) for d_ in wd)
+                if c_ > 0:
+                    sp[i_] = c_
+            tot_ = sum(sp.values())
+            old_ = sum(c for i_, c in sp.items() if up_day(i_) < b['up'])
+            self_ = sum(c for i_, c in sp.items() if up_day(i_) == b['up'])
+            top_old = sorted(((c, i_) for i_, c in sp.items() if up_day(i_) < b['up']), reverse=True)[:3]
+            b['why_low'] = {'n': len(lo), 'npj_lo': med([m['npj'] for m in lo]), 'npj_hi': med([m['npj'] for m in hi]), 'zero': sum(1 for m in lo if not m['npj']),
+                            'n_proj': len(ks), 'mats_med': med([PJ[k][1] for k in ks]), 'old_share': round(old_ / tot_, 3) if tot_ else None, 'self_share': round(self_ / tot_, 3) if tot_ else None, 'win_tot': round(tot_),
+                            'top_old': [[nm_of(i_), round(c), up_day(i_)] for c, i_ in top_old], 'days': [wd[0], wd[-1]]}
+    newd_meta['proj'] = pjd
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
