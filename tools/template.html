@@ -127,6 +127,17 @@
   .lx-ang-tag { display: inline-block; font-size: 11px; line-height: 1.5; padding: 0 6px; border-radius: 999px; border: 1px solid var(--color-ok); color: var(--color-ok); white-space: nowrap; }
   .lx-ang-tag.new { border-color: var(--bar); color: var(--bar); }
   .lx-links a + a { margin-left: 6px; }
+  .lx-cstable tbody tr.lx-csday { cursor: pointer; }
+  .lx-cstable tbody tr.lx-csday:hover td { background: var(--color-bg-subtle, rgba(127,127,127,.08)); }
+  .lx-cstable tbody tr.lx-csday td:first-child::before { content: '▸ '; color: var(--color-fg-muted); }
+  .lx-cstable tbody tr.lx-csday.open td:first-child::before { content: '▾ '; }
+  .lx-cspanel { padding: 10px 4px 14px; white-space: normal; }
+  .lx-cspanel h4 { margin: 12px 0 6px; font-size: 13px; }
+  .lx-cscmp { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 6px 0 4px; font-size: 12px; }
+  .lx-cscmp div { min-width: 13rem; }
+  .lx-cscmp b { font-weight: 600; }
+  .lx-cspanel .lx-scroll { max-height: 55vh; }
+  .lx-cspanel table td.name { white-space: normal; min-width: 16rem; }
   .lx-rtdhint { margin-top: 3px; font-size: 11px; font-weight: 600; color: var(--color-ok); white-space: nowrap; }
   .lx-namelink { color: inherit; text-decoration: underline; text-decoration-color: var(--color-fg-muted); text-underline-offset: 3px; }
   .lx-namelink:hover { color: var(--color-link, #2563eb); text-decoration-color: currentColor; }
@@ -425,33 +436,29 @@
       </table>
     </div>
     <div data-draw="rampwrap">
-      <h3 class="lx-h3">最近 10 个上传日：投进几个账户、跑起来没有</h3>
+      <h3 class="lx-h3">最近 10 个上传日：冷启率，投进几个账户、跑起来没有</h3>
       <p class="lx-note" data-draw="ramp-sum"></p>
-      <p class="lx-note"><b>投放账户数</b> = 素材在多少个巨量账户里有过展示（巨量升级版工作台视频分析，按 天 × 素材 × 账户）。巨量单元层的数据看不到，先用它近似「被建次数」，同一账户建几个单元只算一次，是下限。<b>账户跑起来率</b> = 在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。<b>头 3 天消耗</b> = 投放表里首次消耗当天起 3 天。只算花过钱的素材；上传不满 3 天的批次跑起来率和头 3 天先空着。试算口径，门槛可以改。</p>
+      <p class="lx-note"><b>过冷启</b> = 首次消耗当天起 3 天的激活 ≥ <b data-draw="cs-th"></b> 个，这是<span data-draw="cs-base"></span>首花素材头 3 天激活的 80 分位（每天按最近 4 周重算，过冷启的多了门槛跟着涨）。<b>冷启率</b> = 过冷启的条数 ÷ 这天上传的条数；上传条数来自巨量素材库，加上投放表里花过钱、工作台里有展示的。上传满 3 天还没花钱的算没过；首次消耗不满 3 天、激活还没到门槛的算「还在看」，有还在看的批次先显示到目前为止的比例。<b>点上传日那一行</b>，展开看那天哪些素材过了、哪些没过。<br><b>投放账户数</b> = 素材在多少个巨量账户里有过展示，同一账户建几个单元只算一次，是被建次数的下限。<b>账户跑起来率</b> = 在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。</p>
       <div class="lx-card lx-scroll">
-        <table class="lx-table">
+        <table class="lx-table lx-cstable">
           <thead>
             <tr>
               <th>上传日</th>
+              <th class="num">上传条数</th>
+              <th class="num">过冷启</th>
+              <th class="num">没过</th>
+              <th class="num">还在看</th>
+              <th class="num">冷启率<span class="th-sub">过冷启 ÷ 上传</span></th>
               <th class="num">花过钱的条数</th>
               <th class="num">平均投放账户数</th>
               <th class="num">账户跑起来率<span class="th-sub">3 天花到 ¥100</span></th>
-              <th class="num">至少一个账户跑起来<span class="th-sub">素材占比</span></th>
               <th class="num">头 3 天消耗<span class="th-sub">中位</span></th>
-              <th class="num">单日过 ¥1,000<span class="th-sub">素材占比</span></th>
               <th class="num">累计消耗<span class="th-sub">截至 {{D}}</span></th>
             </tr>
           </thead>
           <tbody data-draw="rampbatch"></tbody>
         </table>
       </div>
-      <details class="lx-card" style="margin-top:10px">
-        <summary style="cursor:pointer;font-weight:600">每条素材（<span data-draw="ramp-n"></span> 条，点表头排序）</summary>
-        <p class="lx-note" style="margin:8px 0">绿色 = 账户跑起来率不低于这几批的平均；红色 = 投了 10 个以上账户、一个都没跑起来。上传不满 3 天的显示「—」。</p>
-        <div class="lx-scroll" style="max-height:70vh">
-          <table class="lx-table" data-draw="rampmats"></table>
-        </div>
-      </details>
     </div>
   </section>
 
@@ -852,53 +859,82 @@
     }
   });
 
-  // 最近 10 个上传日：投进几个账户、跑起来没有（Reina 11/9）
+  // 最近 10 个上传日：冷启率（Reina 11/11），投进几个账户、跑起来没有（Reina 11/9）。点一行展开那天过了、没过的素材
   {
-    const B = data('ramp_batches'), R = data('ramp_mats'), nm = one('newd_meta') || {};
+    const B = data('ramp_batches'), R = data('ramp_mats'), CS = data('cs_mats'), nm = one('newd_meta') || {};
     const wrap = document.querySelector('[data-draw="rampwrap"]');
-    if (!B.length || !nm.acct) { if (wrap) wrap.hidden = !B.length; }
+    if (!B.length && wrap) wrap.hidden = true;
     const P1 = (v) => v == null ? '—' : d3.format('.1~%')(v);
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
     const full = B.filter((b) => b.full && b.pass != null);
     const sumShow = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_show), sum100 = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_100 || 0);
     const avgPass = sumShow ? sum100 / sumShow : null;
+    const done = B.filter((b) => b.cs != null);
+    const avgCs = d3.sum(done, (b) => b.n_up) ? d3.sum(done, (b) => b.cs_pass) / d3.sum(done, (b) => b.n_up) : null;
+    fill('cs-th', (el) => { el.textContent = nm.cs_th == null ? '—' : nm.cs_th; });
+    fill('cs-base', (el) => { const b = nm.cs_base || []; el.textContent = b.length ? fmtD(b[0]) + '–' + fmtD(b[1]) + ' 的 ' + b[2] + ' 条' : ''; });
     fill('ramp-sum', (el) => {
-      if (!nm.acct) { el.innerHTML = '<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>'; return; }
-      if (!full.length) return;
-      el.innerHTML = '满 3 天的 ' + full.length + ' 批里，账户跑起来率 ' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；这几批合起来 <b>' + P1(avgPass) + '</b>。';
+      const parts = [];
+      if (done.length) parts.push('冷启率：' + done.map((b) => fmtD(b.up) + ' <b>' + fmtP0(b.cs) + '</b>（' + b.cs_pass + '/' + b.n_up + '）').join('、') + '；这几批合起来 <b>' + P1(avgCs) + '</b>。');
+      if (!nm.acct) parts.push('<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>');
+      else if (full.length) parts.push('账户跑起来率：' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；合起来 <b>' + P1(avgPass) + '</b>。');
+      el.innerHTML = parts.join('<br>');
     });
+    const ST = {pass: '过了', fail: '没过', wait: '还在看'};
+    const rateTxt = (L) => { const n = L.length, p = L.filter((m) => m.st === 'pass').length; return n ? p + '/' + n + '（' + fmtP0(p / n) + '）' : '—'; };
+    const cmp = (L, label, groups) => '<div><b>' + label + '</b><br>' + groups.map(([g, f]) => { const x = L.filter(f); return x.length ? esc(g) + ' ' + rateTxt(x) : ''; }).filter(Boolean).join('<br>') + '</div>';
+    const panel = (b) => {
+      const L = CS.filter((m) => m.up.slice(0, 10) === b.up);
+      const dec = L.filter((m) => m.st !== 'wait');
+      const kinds = [...new Set(dec.map((m) => m.kind))].sort((x, y) => dec.filter((m) => m.kind === y).length - dec.filter((m) => m.kind === x).length);
+      const ucs = d3.rollups(dec, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 6).map((x) => x[0]);
+      let h = '<div class="lx-cspanel"><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条上传满 3 天一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：头 3 天激活 ≥ ' + nm.cs_th + ' 个。</div>';
+      if (dec.length) {
+        h += '<div class="lx-cscmp">'
+          + cmp(dec, '同批同场景（同一原片或同一细分场景）条数', [['只有 1 条', (m) => m.same <= 1], ['2–3 条', (m) => m.same >= 2 && m.same <= 3], ['4 条以上', (m) => m.same >= 4]])
+          + cmp(dec, '前 14 天同场景已经上过', [['没上过', (m) => !m.prev14], ['1–4 条', (m) => m.prev14 >= 1 && m.prev14 <= 4], ['5 条以上', (m) => m.prev14 >= 5]])
+          + cmp(dec, '扩量还是新片', [['扩量', (m) => /扩量/.test(m.name)], ['不是扩量', (m) => !/扩量/.test(m.name)]])
+          + cmp(dec, '类型', kinds.map((k) => [k, (m) => m.kind === k]))
+          + cmp(dec, 'Use case（条数最多的 6 个）', ucs.map((u) => [u, (m) => (m.short || m.uc) === u]))
+          + '</div><p class="lx-note" style="margin:2px 0 0">括号里是过冷启的比例，只算已经能判的（不含还在看）。</p>';
+      }
+      const order = {pass: 0, wait: 1, fail: 2};
+      for (const st of ['pass', 'fail', 'wait']) {
+        const rows = L.filter((m) => m.st === st).sort((x, y) => y.a3 - x.a3 || (x.root > y.root ? 1 : -1));
+        if (!rows.length) continue;
+        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-scroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num">同批同场景</th><th class="num">前 14 天同场景</th><th>首次消耗</th><th class="num">头 3 天激活</th><th class="num">头 3 天消耗</th><th class="num">头 3 天次留</th><th class="num">投放账户数</th><th class="num">跑起来账户</th></tr></thead><tbody>'
+          + rows.map((m) => '<tr><td class="name">' + (m.video ? '<a class="lx-namelink" href="' + esc(m.video) + '" target="_blank" rel="noopener">' + esc(m.name) + '</a>' : esc(m.name)) + '</td><td style="white-space:nowrap">' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td style="min-width:10rem">' + esc(m.root) + '</td>'
+            + '<td class="num' + (m.same >= 4 ? ' lx-badv' : '') + '">' + m.same + '</td><td class="num' + (m.prev14 >= 5 ? ' lx-badv' : '') + '">' + m.prev14 + '</td><td class="date">' + (m.first ? fmtD(m.first) : '<span class="muted">没花钱</span>') + '</td>'
+            + '<td class="num">' + fmtN(m.a3) + '</td><td class="num">' + fmtY(m.c3) + '</td><td class="num">' + (m.r3 == null || m.ar3 < 20 ? (m.r3 == null ? '—' : '<span class="muted">' + fmtP0(m.r3) + '（' + m.ar3 + '）</span>') : fmtP0(m.r3)) + '</td>'
+            + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td></tr>').join('')
+          + '</tbody></table></div>';
+      }
+      return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。头 3 天次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
+    };
     fill('rampbatch', (tb) => {
       for (const b of B) {
-        const tr = document.createElement('tr'); const td = cellMaker(tr);
-        { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.full ? '' : ' <span class="lx-note">不满 3 天</span>'); }
+        const tr = document.createElement('tr'); tr.className = 'lx-csday'; const td = cellMaker(tr);
+        { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.upl ? '' : ' <span class="lx-note">没读到素材库</span>'); c.style.whiteSpace = 'nowrap'; }
+        td('num').textContent = b.n_up;
+        { const c = td('num'); c.textContent = b.cs_pass; if (b.cs_pass) c.className = 'num lx-good'; }
+        td('num').textContent = b.cs_fail;
+        td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
+        { const c = td('num'); if (b.cs != null) { c.textContent = fmtP0(b.cs); if (avgCs != null) c.className = 'num ' + (b.cs >= avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + fmtP0(b.cs_sofar) + '</span>'; } }
         td('num').textContent = b.n;
         td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
         { const c = td('num'); c.textContent = P1(b.pass); if (b.pass != null && avgPass != null) c.className = 'num ' + (b.pass >= avgPass ? 'lx-good' : 'lx-badv'); }
-        td('num').textContent = b.any == null ? '—' : fmtP0(b.any);
         td('num').textContent = b.c3_med == null ? '—' : fmtY(b.c3_med);
-        td('num').textContent = fmtP0(b.k1);
         td('num muted').textContent = fmtY(b.tot);
         tb.appendChild(tr);
+        tr.addEventListener('click', () => {
+          const nx = tr.nextElementSibling;
+          if (nx && nx.classList.contains('lx-csrow')) { nx.remove(); tr.classList.remove('open'); return; }
+          const pr = document.createElement('tr'); pr.className = 'lx-csrow';
+          const c = document.createElement('td'); c.colSpan = tr.children.length; c.innerHTML = panel(b); pr.appendChild(c);
+          tr.after(pr); tr.classList.add('open');
+        });
       }
     });
-    fill('ramp-n', (el) => { el.textContent = R.length; });
-    const cols = [['name', '素材'], ['kind', '类型'], ['short', 'Use case'], ['made', '制作'], ['up', '上传'], ['first', '首次消耗'], ['acc_show', '投放账户数', 1], ['acc_100', '跑起来账户', 1, '3 天 ≥ ¥100'], ['rate', '跑起来率', 1], ['c3', '头 3 天消耗', 1], ['c7', '头 7 天消耗', 1], ['peak', '单日最高', 1], ['d1k', '第几天过 ¥1,000', 1], ['tot', '累计消耗', 1], ['link', '链接']];
-    R.forEach((m) => { m.rate = m.acc_ok && m.acc_show ? (m.acc_100 || 0) / m.acc_show : null; });
-    let key = 'c3', dir = -1;
-    const draw = () => {
-      const tb = document.querySelector('[data-draw="rampmats"]'); if (!tb) return;
-      const rows = R.slice().sort((a, b) => { const x = a[key], y = b[key]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * dir; });
-      const max = d3.max(rows, (m) => m.c3 || 0) || 1;
-      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
-      tb.innerHTML = '<thead><tr>' + cols.map((c) => '<th class="' + (c[2] ? 'num' : '') + '" data-k="' + c[0] + '" style="cursor:' + (c[0] === 'link' ? 'default' : 'pointer') + '">' + c[1] + (c[3] ? '<span class="th-sub">' + c[3] + '</span>' : '') + (key === c[0] ? (dir < 0 ? ' ↓' : ' ↑') : '') + '</th>').join('') + '</tr></thead><tbody>' + rows.map((m) => {
-        const cls = m.rate != null && avgPass != null && m.rate >= avgPass ? 'lx-good' : (m.acc_ok && m.acc_show >= 10 && !m.acc_100 ? 'lx-badv' : '');
-        const lk = [m.video ? '<a href="' + esc(m.video) + '" target="_blank" rel="noopener">视频</a>' : '', m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + (m.link_type === '原片' ? '原帖' : esc(m.link_type || '链接')) + '</a>' : ''].filter(Boolean).join(' ');
-        return '<tr><td class="name" style="white-space:normal;min-width:14rem">' + esc(m.name) + '</td><td>' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td class="date">' + fmtD(m.made) + '</td><td class="date" style="white-space:nowrap">' + fmtD(m.up.slice(0, 10)) + ' ' + m.up.slice(11) + '</td><td class="date">' + fmtD(m.first) + '</td>'
-          + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_ok ? (m.acc_100 || 0) : '—') + '</td><td class="num ' + cls + '">' + (m.rate == null ? '—' : fmtP0(m.rate)) + '</td>'
-          + '<td class="num" style="white-space:nowrap">' + (m.c3 == null ? '—' : '<span style="display:inline-block;height:8px;border-radius:2px;background:var(--bar);vertical-align:middle;margin-right:6px;width:' + Math.round(m.c3 / max * 60) + 'px"></span>' + fmtY(m.c3)) + '</td><td class="num">' + (m.c7 == null ? '—' : fmtY(m.c7)) + '</td><td class="num">' + fmtY(m.peak) + '</td><td class="num">' + (m.d1k ? '第 ' + m.d1k + ' 天' : '—') + '</td><td class="num">' + fmtY(m.tot) + '</td><td class="short lx-links">' + (lk || '—') + '</td></tr>';
-      }).join('') + '</tbody>';
-      tb.querySelectorAll('th[data-k]').forEach((th) => th.addEventListener('click', () => { const k = th.dataset.k; if (k === 'link') return; if (key === k) dir = -dir; else { key = k; dir = ['name', 'kind', 'short', 'made', 'up', 'first'].includes(k) ? 1 : -1; } draw(); }));
-    };
-    draw();
   }
 
   // 判差 3 天还在花（Reina 11/4 定）

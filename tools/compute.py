@@ -703,20 +703,105 @@ def main():
                        'acc_ok': bool(x) and (Dd - dt.date.fromisoformat(x[0])).days >= 2,
                        'video': pick_video(lk), 'link': '' if lk.get('type') == '预览' else lk.get('link', ''), 'link_type': lk.get('type', '')})
     recent.sort(key=lambda m: (-(m['c3'] or 0), -m['tot']))
+
+    # 冷启（Reina 11/11，朱艺涛提的牵引指标）：首次消耗起头 3 天的激活，过「近 4 周首花素材头 3 天激活」的 80 分位，算过冷启。
+    # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。上传满 3 天还没花钱的算没过。
+    act_by, ret_by = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
+    for r in allrows:
+        if r['date'] <= D[3]:
+            act_by[r['id']][r['date']] += r['act']
+            ret_by[r['id']][r['date']] += r['ret']
+    first_sp = {i: min(d for d, c in dd.items() if c > 0) for i, dd in cost_by.items() if any(c > 0 for c in dd.values())}
+    D1 = (Dd - dt.timedelta(days=1)).isoformat()
+
+    def win3(i):
+        f = dt.date.fromisoformat(first_sp[i])
+        ks = [(f + dt.timedelta(days=k)).isoformat() for k in range(3)]
+        a3 = sum(act_by[i].get(k, 0) for k in ks if k <= D[3])
+        c3 = sum(cost_by[i].get(k, 0) for k in ks if k <= D[3])
+        ar = sum(act_by[i].get(k, 0) for k in ks if k <= D1)
+        nx = lambda k: (dt.date.fromisoformat(k) + dt.timedelta(days=1)).isoformat()
+        rr = sum(ret_by[i].get(nx(k), 0) for k in ks if k <= D1)  # 分日表里 X 激活的次留记在 X+1 那行
+        return a3, c3, (rr / ar if ar else None), ar, ks[-1] <= D[3]
+    b0, b1 = (Dd - dt.timedelta(days=37)).isoformat(), (Dd - dt.timedelta(days=11)).isoformat()
+    base = sorted(win3(i)[0] for i, f in first_sp.items() if b0 <= f <= b1)
+    cs_th = max(1, round(base[int(len(base) * 0.8)])) if base else None
+    upl_names, upl_days = {}, set()
+    for k in range(60):
+        dd_ = (Dd - dt.timedelta(days=k)).isoformat()
+        up_ = os.path.join(os.path.dirname(HERE), 'notes', f'uploads-{dd_}.json')
+        if os.path.exists(up_):
+            upl_days.add(dd_)
+            for i, v in json.load(open(up_)).get('items', {}).items():
+                upl_names[i] = v[0] if isinstance(v, list) else v
+
+    def root_of(n):
+        n = re.sub(r'^推送视频_', '', n or '').strip()
+        m = re.match(r'(.+?)-\s*([A-Z]{1,3}\d{2})-\s*(?:[A-Za-z]+-)?\d{1,2}(?!\d)', n)
+        if m:
+            return re.sub(r'^.*?[-_]', '', m.group(1)).strip(' -_') + '（' + m.group(2) + '）' if '-' in m.group(1) else m.group(1) + '（' + m.group(2) + '）'
+        m = re.search(r'_(?:today ?)?(?:koc|kol)_(.+?)_(?:二创|精剪|精简|扩量)', n, re.I)
+        if m:
+            return m.group(1).replace('_', ' ').strip()
+        n = n.split('_扩量')[0]
+        return re.sub(r'[_-]\s*(20)?\d{6}.*$', '', n).strip(' -_')
+    every = set(cost_by) | set(upl_names) | set(AI)
+    nm_of = lambda i: names.get(i) or upl_names.get(i) or i
+    roots_by_day = defaultdict(lambda: defaultdict(int))
+    for i in every:
+        roots_by_day[up_day(i)][root_of(nm_of(i))] += 1
+    rec_by = {m['id']: m for m in recent}
+    cs_mats = []
+    for u in rdays:
+        ids = {i for i in every if up_day(i) == u}
+        for i in ids:
+            n = nm_of(i)
+            r0 = rows_by_id[i][0] if rows_by_id.get(i) else None
+            if r0:
+                uc, src, track = r0['uc'], r0['src'], r0['track']
+            else:
+                mu = [c for c in re.findall(r'(?<![A-Z])([A-Z]{2}\d{2})(?!\d)', n) if c in ucs]
+                uc = mu[0] if mu else '库外'
+                low = n.lower().replace('_', ' ')
+                src = 'KOC' if 'today koc' in low or 'todaykoc' in low else 'KOL' if 'today kol' in low or 'todaykol' in low else 'AIGC'
+                track = ''
+            rt = root_of(n)
+            prev = sum(roots_by_day[(dt.date.fromisoformat(u) - dt.timedelta(days=k)).isoformat()].get(rt, 0) for k in range(1, 15))
+            x = AI.get(i)
+            e = {'id': i, 'name': n, 'up': up_time(i), 'kind': kind_of(src, track, n, i, kl=False), 'uc': uc, 'short': ucs.get(uc, {}).get('short', ''),
+                 'root': rt, 'same': roots_by_day[u][rt], 'prev14': prev,
+                 'acc_show': x[1] if x else None, 'acc_100': x[3] if x else None}
+            if i in first_sp:
+                a3, c3, r3, ar, done = win3(i)
+                e.update({'first': first_sp[i], 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
+                          'st': 'pass' if cs_th and a3 >= cs_th else ('fail' if done else 'wait')})
+            else:
+                e.update({'first': '', 'a3': 0, 'c3': 0, 'r3': None, 'ar3': 0, 'nospend': True,
+                          'st': 'fail' if (Dd - dt.date.fromisoformat(u)).days >= 2 else 'wait'})
+            m = rec_by.get(i)
+            lk = links.get(i, {})
+            e['video'] = (m or {}).get('video') or pick_video(lk)
+            cs_mats.append(e)
     batches = []
     for u in rdays:
         g = [m for m in recent if m['up'][:10] == u]
-        if not g:
+        cg = [m for m in cs_mats if m['up'][:10] == u]
+        if not g and not cg:
             continue
         sh = [m for m in g if m['acc_show']]
         s_show = sum(m['acc_show'] for m in sh)
         full = (Dd - dt.date.fromisoformat(u)).days >= 2
         c3s = [m['c3'] for m in g if m['c3'] is not None]
+        npass, nfail, nwait = (sum(1 for m in cg if m['st'] == k) for k in ('pass', 'fail', 'wait'))
         batches.append({'up': u, 'n': len(g), 'full': full, 'acc_mean': round(s_show / len(sh), 1) if sh else None,
                         'pass': (sum(m['acc_100'] for m in sh) / s_show) if s_show and full else None,
-                        'any': (sum(1 for m in g if (m['acc_100'] or 0) > 0) / len(g)) if full and acct else None,
+                        'any': (sum(1 for m in g if (m['acc_100'] or 0) > 0) / len(g)) if full and acct and g else None,
                         'c3_med': sorted(c3s)[len(c3s) // 2] if full and c3s else None,
-                        'k1': sum(1 for m in g if m['d1k']) / len(g), 'tot': sum(m['tot'] for m in g)})
+                        'k1': sum(1 for m in g if m['d1k']) / len(g) if g else 0, 'tot': sum(m['tot'] for m in g),
+                        'n_up': len(cg), 'upl': u in upl_days, 'cs_pass': npass, 'cs_fail': nfail, 'cs_wait': nwait,
+                        'cs': npass / len(cg) if cg and not nwait else None, 'cs_sofar': npass / len(cg) if cg else None})
+    newd_meta['cs_th'] = cs_th
+    newd_meta['cs_base'] = [b0, b1, len(base)]
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
@@ -809,7 +894,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent,
+           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     if rtd_note:
         import rt_backfill
