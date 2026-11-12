@@ -127,6 +127,29 @@
   .lx-ang-tag { display: inline-block; font-size: 11px; line-height: 1.5; padding: 0 6px; border-radius: 999px; border: 1px solid var(--color-ok); color: var(--color-ok); white-space: nowrap; }
   .lx-ang-tag.new { border-color: var(--bar); color: var(--bar); }
   .lx-links a + a { margin-left: 6px; }
+  .lx-cstable tbody tr.lx-csday { cursor: pointer; }
+  .lx-cstable tbody tr.lx-csday:hover td { background: var(--color-bg-subtle, rgba(127,127,127,.08)); }
+  .lx-cstable tbody tr.lx-csday td:first-child::before { content: '▸ '; color: var(--color-fg-muted); }
+  .lx-cstable tbody tr.lx-csday.open td:first-child::before { content: '▾ '; }
+  .lx-cspanel { margin-top: 10px; padding: 12px 14px 14px; white-space: normal; }
+  .lx-cspanel[hidden] { display: none; }
+  .lx-cstag { display: inline-block; margin: 1px 4px 2px 0; padding: 1px 6px; border-radius: 4px; font-size: 11px; line-height: 1.5; background: rgba(127,127,127,.12); color: var(--color-fg-muted); white-space: normal; }
+  .lx-cstag.bad { background: rgba(239,107,95,.14); color: var(--color-bad); }
+  .lx-tip { border-bottom: 1px dotted currentColor; cursor: help; }
+  .lx-tipbox { position: fixed; z-index: 60; max-width: 360px; padding: 8px 10px; border-radius: 6px; background: #22211f; color: #f4f3ef; font-size: 12px; line-height: 1.6; font-weight: 400; white-space: normal; box-shadow: 0 4px 12px rgba(0,0,0,.2); pointer-events: none; }
+  .lx-cspanel .lx-table th { position: static; }
+  .lx-csscroll { overflow: auto; max-height: 60vh; }
+  .lx-csconc { margin: 6px 0 10px; padding: 10px 14px; border-left: 3px solid var(--bar); background: var(--color-panel); font-size: 13px; line-height: 1.7; }
+  .lx-csconc ol { margin: 4px 0 0 1.2em; padding: 0; }
+  .lx-cstable tbody tr.lx-csday.open td { background: var(--color-bg-subtle, rgba(127,127,127,.10)); }
+  .lx-cspanel h4 { margin: 12px 0 6px; font-size: 13px; }
+  .lx-cscmp { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 6px 0 4px; font-size: 12px; }
+  .lx-cscmp div { min-width: 13rem; }
+  .lx-cscmp b { font-weight: 600; }
+  .lx-cspanel table td.name { white-space: normal; min-width: 16rem; }
+  .lx-rtdhint { margin-top: 3px; font-size: 11px; font-weight: 600; color: var(--color-ok); white-space: nowrap; }
+  .lx-namelink { color: inherit; text-decoration: underline; text-decoration-color: var(--color-fg-muted); text-underline-offset: 3px; }
+  .lx-namelink:hover { color: var(--color-link, #2563eb); text-decoration-color: currentColor; }
   .lx-foot { color: var(--color-fg-muted); font-size: 12px; margin-top: 8px; }
   /* 八、核心 insight 和下一步 */
   :root { --t1: var(--color-ok); --t2: var(--bar); --t3: var(--color-warn); --t0: var(--cds-chart-reference); }
@@ -357,21 +380,25 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（10/26 起）。链接：视频 = 巨量里投的那条；原帖 = 博主原帖；成片 = 唯西表里的成片和脚本。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。标签和二一样，只是素材的<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（10/26 起）。点素材名字直接打开巨量里投的那条视频；其他链接：原帖 = 博主原帖，成片 = 唯西表里的成片和脚本。<b>单项目最高消耗</b>、<b>头部占比</b>看素材能不能在单个项目里带量（Reina 11/11）：单项目过 ¥1,000 标绿，优先加产；昨天花了 ¥1,000 以上、但单项目不到 ¥500 的标红，是分散在很多项目里各跑一点。按巨量广告的项目拆（智擎户和普通户都算）。<b>当天次留率</b>、<b>当天次留成本</b>是 10/27 当天激活的人第二天的次留，要再过一天才回传完，所以出日报时先写「待回补」，下一天出日报时补上（Reina 11/11）；和全盘同一天比上色<span data-draw="rtd-all"></span>，当天激活不到 <b data-draw="th-act2">—</b> 个的灰字带激活数、不上色。标签只看前三天激活的人；回补后当天激活够数、当天次留率和次留成本都好于全盘的，标签本来不是次留好的，标签下面加一行「几号次留变好」（比如「9 号次留变好」）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
           <tr>
             <th>标签</th>
             <th>判差<span class="th-sub">连续第几天</span></th>
-            <th>素材</th>
+            <th>素材<span class="th-sub">点名字看视频</span></th>
             <th>素材类型</th>
             <th>首次消耗<span class="th-sub">按首次消耗日期</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">10/27（按这列排）</span></th>
             <th>最近 7 天消耗<span class="th-sub">深色是 10/27，每行按自己最高那天</span></th>
+            <th class="num">单项目最高消耗<span class="th-sub">10/27，花得最多的那个项目</span></th>
+            <th class="num">头部占比<span class="th-sub">10/27，最高项目占总消耗（几个项目在花）</span></th>
             <th class="num">激活<span class="th-sub">10/27</span></th>
             <th class="num">激活成本<span class="th-sub">10/27</span></th>
+            <th class="num">当天次留率<span class="th-sub">10/27 激活，后天回补</span></th>
+            <th class="num">当天次留成本<span class="th-sub">10/27</span></th>
             <th class="num">消耗<span class="th-sub">10/24–26</span></th>
             <th class="num">激活<span class="th-sub">10/24–26</span></th>
             <th class="num">激活成本<span class="th-sub">10/24–26</span></th>
@@ -379,7 +406,7 @@
             <th class="num">次留成本<span class="th-sub">10/24–26</span></th>
             <th class="num">连续 3 留率<span class="th-sub">10/22–24 激活</span></th>
             <th class="num">连续 3 留成本<span class="th-sub">10/22–24</span></th>
-            <th>链接</th>
+            <th>其他链接</th>
           </tr>
         </thead>
         <tbody data-draw="goodrows"></tbody>
@@ -417,39 +444,43 @@
         <tbody data-draw="newdrows"></tbody>
       </table>
     </div>
+  </section>
+
+  <section class="lx-sec" id="coldstart">
+    <h2 class="lx-h2">六、冷启动率</h2>
     <div data-draw="rampwrap">
-      <h3 class="lx-h3">最近 10 个上传日：投进几个账户、跑起来没有</h3>
+      <h3 class="lx-h3">最近 10 个上传日：过冷启的比例，投进几个账户、跑起来没有</h3>
+      <p class="lx-note" data-draw="cs-short" style="margin-top:-4px"></p>
+      <div class="lx-csconc" data-draw="cs-conc"></div>
       <p class="lx-note" data-draw="ramp-sum"></p>
-      <p class="lx-note"><b>投放账户数</b> = 素材在多少个巨量账户里有过展示（巨量升级版工作台视频分析，按 天 × 素材 × 账户）。巨量单元层的数据看不到，先用它近似「被建次数」，同一账户建几个单元只算一次，是下限。<b>账户跑起来率</b> = 在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。<b>头 3 天消耗</b> = 投放表里首次消耗当天起 3 天。只算花过钱的素材；上传不满 3 天的批次跑起来率和头 3 天先空着。试算口径，门槛可以改。</p>
       <div class="lx-card lx-scroll">
-        <table class="lx-table">
+        <table class="lx-table lx-cstable">
           <thead>
             <tr>
               <th>上传日</th>
+              <th class="num"><span class="lx-tip" data-tipk="up">上传条数</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">激活 ≥ 这个数算过：前 7 天上传的素材，上传当天 + 第二天激活的 80 分位</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span><span class="th-sub">上传当天 + 第二天激活 ≥ 冷启门槛</span></th>
+              <th class="num">没过</th>
+              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">第二天的数还没出</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="cs">冷启率</span><span class="th-sub">过冷启 ÷ 上传</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="csc">去掉预算影响</span><span class="th-sub">冷启率（门槛）</span></th>
               <th class="num">花过钱的条数</th>
-              <th class="num">平均投放账户数</th>
-              <th class="num">账户跑起来率<span class="th-sub">3 天花到 ¥100</span></th>
-              <th class="num">至少一个账户跑起来<span class="th-sub">素材占比</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="acc">平均投放账户数</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="run">账户跑起来率</span><span class="th-sub">3 天花到 ¥100</span></th>
               <th class="num">头 3 天消耗<span class="th-sub">中位</span></th>
-              <th class="num">单日过 ¥1,000<span class="th-sub">素材占比</span></th>
               <th class="num">累计消耗<span class="th-sub">截至 10/27</span></th>
             </tr>
           </thead>
           <tbody data-draw="rampbatch"></tbody>
         </table>
       </div>
-      <details class="lx-card" style="margin-top:10px">
-        <summary style="cursor:pointer;font-weight:600">每条素材（<span data-draw="ramp-n"></span> 条，点表头排序）</summary>
-        <p class="lx-note" style="margin:8px 0">绿色 = 账户跑起来率不低于这几批的平均；红色 = 投了 10 个以上账户、一个都没跑起来。上传不满 3 天的显示「—」。</p>
-        <div class="lx-scroll" style="max-height:70vh">
-          <table class="lx-table" data-draw="rampmats"></table>
-        </div>
-      </details>
+      <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
     </div>
   </section>
 
   <section class="lx-sec" id="bad">
-    <h2 class="lx-h2">六、拖后腿的素材</h2>
+    <h2 class="lx-h2">七、拖后腿的素材</h2>
     <h3 class="lx-h3">判差 3 天以上还在花<span class="lx-note" style="margin-left:8px;font-weight:400" data-draw="stuck-sum"></span></h3>
     <p class="lx-note">判差 = 最近 3 个激活日合计至少 50 人，且次留率低于同期全盘的 80%，或次留成本高于同期全盘的 1.25 倍。周一激活的人周三上午才看得到次留，所以第 1 天从看得到那天上午算；第 1、2 天常有翻回来的，不算拖，第 3 天起还花 ¥200 以上列在这里。判差后多花 = 第一次判差那天到昨天的消耗。这里只看消耗，看不到开关状态：掉量可能是关了，也可能是系统不跑了。</p>
     <div class="lx-card lx-scroll">
@@ -489,7 +520,7 @@
   </section>
 
   <section class="lx-sec" id="cohort">
-    <h2 class="lx-h2">七、昨天的钱花在哪批素材上（按首次消耗分批）</h2>
+    <h2 class="lx-h2">八、昨天的钱花在哪批素材上（按首次消耗分批）</h2>
     <p class="lx-note">按首次消耗日期分批（不是上传日期），一天一批。横着看每批在各天的消耗占比，看钱有没有往新素材走；“—”= 那天这批还没开始花。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -513,7 +544,7 @@
   </section>
 
   <section class="lx-sec" id="plan" hidden>
-    <h2 class="lx-h2">八、核心 insight 和下一步</h2>
+    <h2 class="lx-h2">九、核心 insight 和下一步</h2>
     <p class="pl-headline" data-draw="pl-headline" hidden></p>
     <div class="pl-quad4">
       <div class="pl-blk" style="--bc:var(--color-fg)"><h3>全局 insight<span>整盘看，钱和次留在往哪走</span></h3><ol data-draw="pl-global"></ol></div>
@@ -635,6 +666,8 @@
   fill('k-rate3d', (el) => { const v = data('overview')[0].rate3_days; el.textContent = v ? v.map(fmtP).join('、') : '—'; });
   tile('k-ratew', 'overview', 'rate_w', fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
   tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-rank', 'th', 'rank', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
+  tile('th-act2', 'th', 'act', fmtN);
+  fill('rtd-all', (el) => { const rm = one('rtday_meta'); if (rm && rm.rate != null) el.textContent = '（全盘 ' + fmtP(rm.rate) + '、¥' + d3.format(',.0f')(rm.cpr) + '）'; });
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
 
   fill('l1rows', (tb) => {
@@ -757,17 +790,34 @@
     for (const r of rows) {
       const tr = document.createElement('tr'); if (r.is_new) tr.className = 'is-new';
       const td = cellMaker(tr);
-      pill(td(), r.group, tagCls(r.group));
+      { const gc = td(); pill(gc, r.group, tagCls(r.group));
+        const rm0 = days === true ? one('rtday_meta') : null; // 当天次留好（Reina 11/11）：回补后当天激活够数、次留率和次留成本都好于全盘同一天
+        if (rm0 && !/次留好/.test(r.group || '') && !r.rtd_small && r.rtd_rate != null && r.rtd_cpr != null && r.rtd_rate >= rm0.rate && r.rtd_cpr <= rm0.cpr) {
+          const h = document.createElement('div'); h.className = 'lx-rtdhint'; h.textContent = (+rm0.date.slice(8, 10)) + ' 号次留变好'; h.title = '10/27 当天激活 ' + r.rtd_act + ' 个，次留 ' + fmtP0(r.rtd_rate) + '、¥' + d3.format(',.0f')(r.rtd_cpr) + '（全盘 ' + fmtP0(rm0.rate) + '、¥' + d3.format(',.0f')(rm0.cpr) + '）'; gc.appendChild(h); } }
       if (days === true) judgeCell(td(), r);
-      { const nc = td('name'); nc.textContent = r.name; if (days) nc.style.minWidth = '8.5rem'; }
+      const vid = r.video || (r.link_type === '预览' ? r.link : '');
+      { const nc = td('name'); if (days) nc.style.minWidth = '8.5rem';
+        if (days === true && vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.name; a.className = 'lx-namelink'; nc.appendChild(a); } else nc.textContent = r.name; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.short || r.uc, r.l1);
       const lab = barCell(td(), r.cost27, max, days ? 24 : 50);
       const f = flag(r); if (f) lab.className = f;
       if (days) spark7(td(), r.days7);
+      if (days === true) {
+        const ct = td(r.conc_top >= 1000 ? 'num lx-good' : 'num'); ct.textContent = r.conc_top == null ? '—' : fmtY(r.conc_top);
+        const cs = td('num'); cs.textContent = r.conc_share == null ? '—' : fmtP0(r.conc_share) + '（' + r.conc_n + ' 个）';
+        if (r.conc_top != null && r.conc_top < 500 && r.cost27 >= 1000) cs.className = 'num lx-badv';
+      }
       td('num').textContent = r.act27 == null ? '—' : fmtN(r.act27);
       td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+      if (days === true) {
+        const rm = one('rtday_meta');
+        if (!rm) { td('num muted').textContent = '待回补'; td('num muted').textContent = ''; }
+        else if (r.rtd_rate == null) { td('num muted').textContent = r.rtd_act ? '—' : '没激活'; td('num muted').textContent = '—'; }
+        else if (r.rtd_small) { td('num muted').textContent = fmtP0(r.rtd_rate) + '（' + fmtN(r.rtd_act) + ' 激活）'; td('num muted').textContent = r.rtd_cpr == null ? '—' : fmtY(r.rtd_cpr); }
+        else { const od = {rate_w: rm.rate, cpr_w: rm.cpr}; td(rateCls(r.rtd_rate, od, t)).textContent = fmtP0(r.rtd_rate); td(r.rtd_cpr == null ? 'num lx-badv' : cprCls(r.rtd_cpr, od, t)).textContent = r.rtd_cpr == null ? '没次留' : fmtY(r.rtd_cpr); }
+      }
       td('num muted').textContent = fmtY(r.cost_w);
       td('num muted').textContent = fmtN(r.act_w);
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
@@ -776,9 +826,9 @@
       ret3(td, r, o);
       const lc = td('short lx-links');
       const addLink = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; lc.appendChild(a); };
-      const vid = r.video || (r.link_type === '预览' ? r.link : '');
-      if (vid) addLink(vid, '视频');
+      if (vid && days !== true) addLink(vid, '视频');
       if (r.link && r.link_type !== '预览') addLink(r.link, r.link_type === '原片' ? '原帖' : r.link_type);
+      if (days === true && !vid) { const sp = document.createElement('span'); sp.className = 'muted'; sp.textContent = '没找到视频'; lc.appendChild(sp); }
       tb.appendChild(tr);
     }
   });
@@ -826,53 +876,221 @@
     }
   });
 
-  // 最近 10 个上传日：投进几个账户、跑起来没有（Reina 11/9）
+  // 最近 10 个上传日：冷启率（Reina 11/11），投进几个账户、跑起来没有（Reina 11/9）。点一行展开那天过了、没过的素材
   {
-    const B = data('ramp_batches'), R = data('ramp_mats'), nm = one('newd_meta') || {};
+    const B = data('ramp_batches'), R = data('ramp_mats'), CS = data('cs_mats'), nm = one('newd_meta') || {};
     const wrap = document.querySelector('[data-draw="rampwrap"]');
-    if (!B.length || !nm.acct) { if (wrap) wrap.hidden = !B.length; }
+    if (!B.length && wrap) { wrap.hidden = true; const sec = wrap.closest('section'); if (sec) sec.hidden = true; }
     const P1 = (v) => v == null ? '—' : d3.format('.1~%')(v);
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
     const full = B.filter((b) => b.full && b.pass != null);
     const sumShow = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_show), sum100 = d3.sum(R.filter((m) => m.acc_ok && m.acc_show), (m) => m.acc_100 || 0);
     const avgPass = sumShow ? sum100 / sumShow : null;
+    const done = B.filter((b) => b.cs != null);
+    const avgCs = d3.sum(done, (b) => b.n_up) ? d3.sum(done, (b) => b.cs_pass) / d3.sum(done, (b) => b.n_up) : null;
+    const doneC = B.filter((b) => b.cs_c != null);
+    const avgCsC = d3.sum(doneC, (b) => b.n_up) ? d3.sum(doneC, (b) => b.cs_pass_c) / d3.sum(doneC, (b) => b.n_up) : null;
+    const WN = nm.cs_win || 2, WT = WN === 2 ? '上传当天 + 第二天' : '上传当天 + 后 ' + (WN - 1) + ' 天';
+    const wan = (v) => v == null ? '—' : '¥' + d3.format('.1f')(v / 10000) + ' 万';
+    const ex = B.filter((b) => b.cs != null && b.th).slice(-1)[0] || B.filter((b) => b.th)[0] || {};
+    const TH0 = ex.th;
+    const how = '门槛按每个上传日自己的 cohort 定：用这天之前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天（共 7 个上传日）上传、花过钱的素材（它们的窗口都已走完），各自「' + WT + '」的激活从少到多排队，取排在 80% 位置的那个数。每批门槛写在「冷启门槛」列，定了以后不随今天重算而变。\n以 ' + fmtD(ex.up) + ' 这批为例：' + fmtD(ex.th_from) + '–' + fmtD(ex.th_to) + ' 上传、花过钱的 ' + ex.th_n + ' 条，排在 80% 位置的是 ' + ex.th + ' 个激活（排在中间的只有 ' + ex.th_med + ' 个），约等于这 ' + WN + ' 天花到 ' + fmtY(ex.th_c80) + '。也就是那段时间大约前 20% 的素材能过。\n为什么参照前 7 天：样本每批 250–350 条，够稳，也跟得上最近的投放情况；只取前两天样本太少，门槛跳得厉害。\n为什么用 80 分位：按朱艺涛的建议，先拿「头部 20%」当过冷启的标准，以后过的太多就提高、太少就降低。';
+    const TIPS = {
+      pass: '过冷启：从上传当天起 ' + WN + ' 天（' + WT + '，按日历天算，不是到今天为止的最近几天），这条素材激活加起来 ≥ 这批的门槛。\n' + how,
+      wait: '还在看：' + WT + '还没过完（最近 ' + (WN - 1) + ' 个上传日），激活还没到门槛的先不判。所以这几天的冷启率显示「目前 x%」，窗口过完就定下来。',
+      cs: '冷启率 = 过冷启的条数 ÷ 这天上传的条数。\n过冷启 = ' + WT + '激活 ≥ 这批的门槛；窗口里一分钱没花的算没过。\n' + how + '\n颜色：比这几批合起来的冷启率高 3 个点以上标绿，低 3 个点以上标红，差不到 3 个点不标。',
+      up: '上传条数：这天上传到巨量的全部素材（巨量素材库清单），加上投放表里花过钱、工作台里有展示的。没读到素材库的日子只有后两种，会偏少。',
+      acc: '平均投放账户数：每条素材在多少个巨量账户里有过展示，再取平均。同一账户建几个单元只算一次，是被建次数的下限。',
+      run: '账户跑起来率：在该账户第一次有展示后 3 天内花到 ¥100 的账户数 ÷ 投放账户数。颜色：不低于这几批平均标绿，低于标红。',
+      same: '同批同场景：同一天上传的素材里，和它同一原片或同一细分场景的条数（含它自己）。AI 素材按细分场景和 use case 编号归，KOC、KOL 按原片归，扩量算进原片。',
+      prev: '前 14 天同场景：上传日前 14 天里，同一原片或同一细分场景已经上过几条。',
+      th: '冷启门槛：这批素材要在「' + WT + '」拿到多少激活才算过冷启。\n' + how,
+      csc: '去掉预算影响的冷启率：门槛跟着那几天全盘的量走。先算之前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天上传的素材，各自窗口激活占同期全盘激活的比例，取 80 分位；再乘以这批窗口里全盘的总激活，得到这批的门槛（括号里）。全盘量大门槛就高，预算掉了门槛跟着降。\n和左边冷启率对着看：两个都低，是素材本身的问题；这个明显高于左边，说明低主要是预算没给。颜色规则同冷启率。',
+      win: '冷启窗口：' + WT + '。激活、消耗、次留都只算这 ' + WN + ' 天。'
+    };
+    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '激活过门槛的条数 ÷ 当天上传条数，第二天就能看。门槛按每批自己算：这天之前 7 个上传日（前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天）上传的素材，同样看' + WT + '的激活，取 80 分位，相当于头部 20% 的水平，每批的数在「冷启门槛」列。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
+    {
+      let tip = null;
+      const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(380, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };
+      const hide = (e) => { if (tip && e.target.closest('.lx-tip')) tip.hidden = true; };
+      document.addEventListener('mouseover', show); document.addEventListener('mouseout', hide);
+      document.addEventListener('click', (e) => { if (e.target.closest('.lx-tip')) { e.stopPropagation(); show(e); } else if (tip) tip.hidden = true; }, true);
+      addEventListener('scroll', () => { if (tip) tip.hidden = true; }, { passive: true });
+    }
     fill('ramp-sum', (el) => {
-      if (!nm.acct) { el.innerHTML = '<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>'; return; }
-      if (!full.length) return;
-      el.innerHTML = '满 3 天的 ' + full.length + ' 批里，账户跑起来率 ' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；这几批合起来 <b>' + P1(avgPass) + '</b>。';
+      const parts = [];
+      if (!nm.acct) parts.push('<b>今天没读到巨量的账户数据，投放账户数和跑起来率先空着。</b>');
+      else if (full.length) parts.push('账户跑起来率：' + full.map((b) => fmtD(b.up) + ' <b>' + P1(b.pass) + '</b>').join('、') + '；合起来 <b>' + P1(avgPass) + '</b>。');
+      el.innerHTML = parts.join('<br>');
     });
+    const ST = {pass: '过了', fail: '没过', wait: '还在看'};
+    const rateTxt = (L) => { const n = L.length, p = L.filter((m) => m.st === 'pass').length; return n ? p + '/' + n + '（' + fmtP0(p / n) + '）' : '—'; };
+    const cmp = (L, label, groups) => '<div><b>' + label + '</b><br>' + groups.map(([g, f]) => { const x = L.filter(f); return x.length ? esc(g) + ' ' + rateTxt(x) : ''; }).filter(Boolean).join('<br>') + '</div>';
+    // 冷启率低的原因：按数据自动写（Reina 11/11：按日期列每天的原因，再写所有天的共性问题）
+    const isEr = (m) => /二剪|改法未核对/.test(m.kind);
+    const isKl = (m) => /扩量/.test(m.name);
+    const pr = (L) => L.length ? L.filter((m) => m.st === 'pass').length / L.length : null;
+    const pc = (L) => fmtP0(pr(L)) + '（' + L.filter((m) => m.st === 'pass').length + '/' + L.length + '）';
+    const ofDay = (b) => CS.filter((m) => m.up.slice(0, 10) === b.up);
+    const dayFacts = (b) => {
+      const L = ofDay(b), dec = b.cs == null ? L : L.filter((m) => m.st !== 'wait');
+      const f = {n: dec.length};
+      f.low = dec.filter((m) => m.a3 < 10).length; f.ns = dec.filter((m) => m.nospend).length;
+      f.er = dec.filter(isEr); f.kl = dec.filter(isKl);
+      f.stacks = d3.rollups(dec, (v) => v, (m) => m.root).filter(([, v]) => v.length >= 3).sort((x, y) => y[1].length - x[1].length);
+      f.stackN = d3.sum(f.stacks, ([, v]) => v.length);
+      f.worn = dec.filter((m) => m.prev14 >= 5);
+      f.budget = b.mkt_prev && b.mkt < 0.6 * b.mkt_prev;
+      f.pass = dec.filter((m) => m.st === 'pass');
+      return f;
+    };
+    const shortNm = (n) => { n = String(n || '').replace(/^推送视频_/, ''); return n.length > 26 ? n.slice(0, 26) + '…' : n; };
+    const squeezed = (m) => m.sib && m.sib[0] >= 200 && m.sib[1] < m.sib[0] / 5;
+    const tagsOf = (m, medPj) => {
+      const t = [];
+      if (m.npj === 0) t.push(['没进任何项目', 'bad']);
+      else if (m.npj != null && medPj && m.npj < 0.5 * medPj) t.push(['只进了 ' + m.npj + ' 个项目（这批中位 ' + medPj + '）', 'bad']);
+      if (squeezed(m)) t.push([(isEr(m) ? '二剪，' : isKl(m) ? '扩量，' : '') + '被同原片挤掉：同几个项目里「' + shortNm(m.sib[2]) + '」花了 ' + fmtY(m.sib[3]) + '，它自己 ' + fmtY(m.sib[1]), 'bad']);
+      else if (isEr(m)) t.push(['二剪或没核对的改法', '']);
+      else if (isKl(m)) t.push(['扩量', '']);
+      if (m.vsim) t.push(['和「' + shortNm(m.vsim[0]) + '」画面重合 ' + fmtP0(m.vsim[1]) + '、台词相似 ' + fmtP0(m.vsim[2]), m.vsim[1] >= 0.5 ? 'bad' : '']);
+      if (m.same >= 2) t.push(['同批同场景 ' + m.same + ' 条', '']);
+      if (m.prev14 >= 5) t.push(['前 14 天同场景已上 ' + m.prev14 + ' 条', '']);
+      return t;
+    };
+    // 没拿到量是结果，这里写原因：装它们的项目有没有起量、建了几个项目、项目里塞了多少素材（Reina 11/11）
+    const lowWhy = (b, f) => {
+      const w = b.why_low, pend = b.cs == null;
+      let h = '<b>没拿到量的原因</b>（' + f.low + '/' + f.n + ' 条' + (pend ? '到 ' + fmtD(META.date) + ' 为止' : '在' + WT) + '激活不到 10 个' + (f.ns ? '，' + f.ns + ' 条一分钱没花' : '') + '）：';
+      if (!w) return h + '没有巨量项目数据，查不到原因。';
+      const ps = [];
+      if (w.n_proj) ps.push('装它们的项目基本没花出去钱：这些素材进的 ' + w.n_proj + ' 个项目里，' + fmtP0(w.pj_lt100) + ' 到 ' + fmtD(META.date) + ' 一共花不到 ¥100（中位 ' + fmtY(w.pj_med) + '）。项目花不出钱，里面的新素材就拿不到量')
+      const few = w.npj_hi && w.npj_lo <= 0.7 * w.npj_hi;
+      if (few) ps.push('建得少：没拿到量的素材中位只进了 ' + w.npj_lo + ' 个项目，拿到量的进了 ' + w.npj_hi + ' 个' + (w.zero ? '，' + w.zero + ' 条一个项目都没进' : ''));
+      else ps.push('建了不少计划，计划数不是卡点：没拿到量的素材中位进了 ' + w.npj_lo + ' 个项目' + (w.npj_hi ? '，拿到量的是 ' + w.npj_hi + ' 个' : '') + (w.zero ? '；只有 ' + w.zero + ' 条一个项目都没进' : ''));
+      ps.push('项目里素材太多：这些项目中位塞了 ' + w.mats_med + ' 条素材，系统只挑少数几条花钱');
+      const lo = ofDay(b).filter((m) => m.a3 < 10), er = lo.filter(isEr).length, st = lo.filter((m) => m.same >= 2).length;
+      const sq = lo.filter(squeezed);
+      if (sq.length) ps.push('被同原片的其他版本挤掉：' + sq.length + ' 条和自己的原片或别的版本在同一批项目里，钱都给了那个版本（' + sq.filter(isEr).length + ' 条是二剪），明细表「可能原因」列标了');
+      if (er || st) ps.push('没拿到量的这些里' + (er ? ' ' + er + ' 条是二剪或没核对的改法' : '') + (er && st ? '、' : '') + (st ? ' ' + st + ' 条和同批素材是同一场景' : '') + '，系统更不会给');
+      return h + ps.map((x, i) => '①②③④⑤'[i] + x).join('；') + '。';
+    };
+    const dayReasons = (b) => {
+      const f = dayFacts(b), out = [];
+      if (!f.n) return out;
+      if (f.budget) out.push('<b>全盘预算掉了</b>：冷启窗口里全盘平均每天 ' + wan(b.mkt) + '，上传前 7 天平均 ' + wan(b.mkt_prev) + '，新素材分不到钱' + (b.cs_c != null ? '；去掉预算影响的冷启率是 ' + P1(b.cs_c) + '（门槛 ' + b.th_c + '）' : '') + '。');
+      if (f.low / f.n >= 0.4) out.push(lowWhy(b, f));
+      if (f.er.length >= 3 && f.er.length / f.n >= 0.25) out.push('<b>二剪多</b>：' + f.er.length + ' 条是二剪或没核对的改法，过了 ' + pc(f.er) + '。');
+      if (f.kl.length >= 3 && f.kl.length / f.n >= 0.25) out.push('<b>扩量多</b>：' + f.kl.length + ' 条扩量，过了 ' + pc(f.kl) + '。');
+      if (f.stacks.length) out.push('<b>同场景堆在同一天</b>：' + f.stacks.slice(0, 3).map(([r, v]) => esc(r) + ' ' + v.length + ' 条（过 ' + v.filter((m) => m.st === 'pass').length + '）').join('；') + '。');
+      if (f.worn.length >= 3 && f.worn.length / f.n >= 0.25) out.push('<b>老场景</b>：' + f.worn.length + ' 条的场景前 14 天已上过 5 条以上，过了 ' + pc(f.worn) + '。');
+      if (f.pass.length) { const g = d3.rollups(f.pass, (v) => [v.length, d3.max(v, (m) => m.a3)], (m) => m.root).sort((x, y) => y[1][1] - x[1][1]); out.push('<b>过了的</b>：' + g.slice(0, 4).map(([r, [n, a]]) => esc(r) + (n > 1 ? ' ' + n + ' 条' : '') + '（最多 ' + a + ' 个激活）').join('、') + (g.length > 4 ? ' 等' : '') + '。'); }
+      return out;
+    };
+    const projTxt = () => {
+      const pj = nm.proj; if (!pj) return '';
+      const days = B.filter((b) => b.cs != null).map((b) => b.up), v = days.map((u) => (pj.proj_per_mat || {})[u]).filter(Boolean).map((x) => x[0]);
+      const bb = (pj.budget_bid || [])[0];
+      const np = pj.new_proj || {};
+      let t = '';
+      if (np.clean_n) t += '<br>① <b>新素材主要放在新建项目里，这些项目大多没花出去钱</b>（巨量后台，智擎户）：' + fmtD(np.from) + '–' + fmtD(np.to) + ' 新建、装新素材的项目 ' + np.clean_n + ' 个里，' + np.clean_lt100 + ' 个（' + fmtP0(np.clean_lt100 / np.clean_n) + '）到 ' + fmtD(pj.date) + ' 一共花不到 ¥100，中位只花了 ' + fmtY(np.clean_med) + (v.length ? '；每条新素材中位进了 ' + d3.min(v) + '–' + d3.max(v) + ' 个项目' : '') + '。这类项目里基本都是新素材，项目花不出钱就等于新素材没拿到量。可能的原因：' + (bb ? '出价偏低（最常见是激活出价 ¥' + (+bb[1]) + '、日预算 ¥' + d3.format(',')(+bb[0]) + '），' : '') + '以及项目里素材太多、系统试探不过来（见②）。';
+      t += '<br>② <b>项目里素材太多，钱只给一两条</b>：' + (np.clean_mats_med ? '新建项目中位塞了 ' + np.clean_mats_med + ' 条素材（其中新素材 ' + np.clean_new_med + ' 条）；' : '') + (np.k80_n ? '花了 ¥500 以上的 ' + np.k80_n + ' 个项目里，中位 ' + np.k80_med + ' 条素材就占了项目 80% 的花费；' : '') + '素材 × 项目的组合里 ' + fmtP0(pj.zero_pair_share) + ' 一分钱没花。';
+      return t;
+    };
+    const common = () => {
+      const days = B.filter((b) => b.cs != null && b.n_up >= 5), out = [];
+      if (days.length < 2) return out;
+      const F = days.map((b) => [b, dayFacts(b)]);
+      const all = CS.filter((m) => m.st !== 'wait' && days.some((b) => b.up === m.up.slice(0, 10)));
+      const lowS = F.map(([, f]) => f.low / f.n);
+      if (d3.min(lowS) >= 0.3) {
+        const W = F.map(([b]) => b.why_low).filter(Boolean);
+        let t = '<b>最大的共性问题：每天大部分新素材没拿到量</b>（每天 ' + fmtP0(d3.min(lowS)) + '–' + fmtP0(d3.max(lowS)) + ' 的素材在' + WT + '激活不到 10 个，合起来 ' + d3.sum(F, ([, f]) => f.low) + '/' + d3.sum(F, ([, f]) => f.n) + ' 条）。这是结果，原因是：';
+        t += projTxt();
+        if (W.length) { const few = F.filter(([b]) => b.why_low && b.why_low.npj_hi && b.why_low.npj_lo <= 0.7 * b.why_low.npj_hi).map(([b]) => fmtD(b.up)); t += '<br>③ <b>计划建得够多，计划数影响不大</b>：大多数天没拿到量的素材和拿到量的进的项目数差不多' + (few.length ? '；' + few.join('、') + ' 例外，没拿到量的明显建得少' : '') + '。'; }
+        out.push(t);
+      }
+      const erD = F.filter(([, f]) => f.er.length >= 3);
+      const er = all.filter(isEr), ner = all.filter((m) => !isEr(m));
+      if (erD.length >= 2 && pr(ner) - pr(er) >= 0.08) out.push('<b>二剪和没核对的改法过得少</b>：合起来 ' + pc(er) + '，其他素材 ' + pc(ner) + '；每天的二剪占上传 ' + fmtP0(d3.min(F, ([, f]) => f.er.length / f.n)) + '–' + fmtP0(d3.max(F, ([, f]) => f.er.length / f.n)) + '。二剪和原片太像，系统当成同一条，产能花在这上面回报最低。' + (() => { const f = er.filter((m) => m.st === 'fail'), q = f.filter(squeezed); return q.length ? '后台能看到：没过的 ' + f.length + ' 条二剪里，' + q.length + ' 条和自己的原片或别的版本建在同一批项目里，钱都给了那个版本，它自己几乎没花（明细表「可能原因」列标了「被同原片挤掉」）。' : ''; })());
+      const kl = all.filter(isKl), nk = all.filter((m) => !isKl(m));
+      if (kl.length >= 10 && pr(nk) - pr(kl) >= 0.05) out.push('<b>扩量版本过得少</b>：扩量 ' + pc(kl) + '，不是扩量的 ' + pc(nk) + '。');
+      const one = all.filter((m) => m.same <= 1), many = all.filter((m) => m.same >= 2);
+      const stD = F.filter(([, f]) => f.stacks.length).length;
+      if (stD >= days.length - 1 && pr(one) - pr(many) >= 0.05) out.push('<b>同一场景一天上很多条</b>：' + stD + '/' + days.length + ' 天都有同场景一天 3 条以上。当天同场景只有 1 条的过了 ' + pc(one) + '，2 条以上的过了 ' + pc(many) + '。同场景几条抢同一批人，系统一般只挑一条给量，其他的白上。');
+      const bud = days.filter((b) => b.cs_c != null && b.cs_c - b.cs >= 0.05), own = days.filter((b) => b.cs_c != null && b.cs_c - b.cs < 0.05);
+      if (bud.length) out.push('<b>预算影响</b>：' + bud.map((b) => fmtD(b.up) + ' ' + P1(b.cs) + ' → ' + P1(b.cs_c)).join('、') + '（冷启率 → 去掉预算影响），去掉预算影响以后明显更高，说明这几批有一部分被全盘预算压住了。' + (own.length ? own.map((b) => fmtD(b.up)).join('、') + ' 去掉预算影响以后差不多或更低，低主要是素材本身的问题。' : ''));
+      return out;
+    };
+    fill('cs-conc', (el) => {
+      const days = B.filter((b) => b.n_up);
+      if (!days.length) { el.hidden = true; return; }
+      const dd = days.filter((b) => b.cs != null), pend = days.filter((b) => b.cs == null);
+      const dec = CS.filter((m) => m.st !== 'wait' && dd.some((b) => b.up === m.up.slice(0, 10)));
+      let h = '<b>结论</b>：能定的 ' + dd.length + ' 个上传日（' + dd.map((b) => fmtD(b.up)).join('、') + '）合起来 ' + dec.length + ' 条，过冷启 ' + pc(dec) + '；按门槛定义，基准期大约 20% 能过。';
+      const cm = common();
+      if (cm.length) h += '<div style="margin-top:6px"><b>每天都有的共性问题</b><ol>' + cm.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>';
+      h += '<div class="lx-note" style="margin-top:4px">每天的具体原因：点下面表格里的上传日展开看。' + (pend.length ? pend.map((b) => fmtD(b.up)).join('、') + ' 窗口还没过完，' + fmtD(pend[pend.length - 1].win_end) + ' 的数出来才定。' : '') + '</div>';
+      el.innerHTML = h;
+    });
+    const panel = (b) => {
+      const L = CS.filter((m) => m.up.slice(0, 10) === b.up);
+      const dec = L.filter((m) => m.st !== 'wait');
+      const kinds = [...new Set(dec.map((m) => m.kind))].sort((x, y) => dec.filter((m) => m.kind === y).length - dec.filter((m) => m.kind === x).length);
+      const ucs = d3.rollups(dec, (v) => v.length, (m) => m.short || m.uc).sort((x, y) => y[1] - x[1]).slice(0, 6).map((x) => x[0]);
+      const its = dayReasons(b);
+      const pjs = L.filter((m) => m.npj != null).map((m) => m.npj).sort((x, y) => x - y), medPj = pjs.length ? pjs[pjs.length >> 1] : null;
+      let h = '<div><div><b>' + fmtD(b.up) + ' 上传 ' + L.length + ' 条</b>：过冷启 ' + b.cs_pass + ' 条，没过 ' + b.cs_fail + ' 条' + (L.filter((m) => m.nospend && m.st === 'fail').length ? '（其中 ' + L.filter((m) => m.nospend && m.st === 'fail').length + ' 条窗口里一分钱没花）' : '') + (b.cs_wait ? '，还在看 ' + b.cs_wait + ' 条' : '') + '。门槛：' + WT + '激活 ≥ ' + b.th + ' 个' + (b.th_c ? '；去掉预算影响的门槛 ' + b.th_c + ' 个，过 ' + b.cs_pass_c + ' 条' : '') + '。</div>' + (its.length ? '<div class="lx-csconc"><b>这天冷启率低的原因</b><ol>' + its.map((x) => '<li>' + x + '</li>').join('') + '</ol></div>' : '');
+      if (dec.length) {
+        h += '<div class="lx-cscmp">'
+          + cmp(dec, '同批同场景（同一原片或同一细分场景）条数', [['只有 1 条', (m) => m.same <= 1], ['2–3 条', (m) => m.same >= 2 && m.same <= 3], ['4 条以上', (m) => m.same >= 4]])
+          + cmp(dec, '前 14 天同场景已经上过', [['没上过', (m) => !m.prev14], ['1–4 条', (m) => m.prev14 >= 1 && m.prev14 <= 4], ['5 条以上', (m) => m.prev14 >= 5]])
+          + cmp(dec, '扩量还是新片', [['扩量', (m) => /扩量/.test(m.name)], ['不是扩量', (m) => !/扩量/.test(m.name)]])
+          + cmp(dec, '类型', kinds.map((k) => [k, (m) => m.kind === k]))
+          + cmp(dec, 'Use case（条数最多的 6 个）', ucs.map((u) => [u, (m) => (m.short || m.uc) === u]))
+          + '</div><p class="lx-note" style="margin:2px 0 0">括号里是过冷启的比例，只算已经能判的（不含还在看）。</p>';
+      }
+      const order = {pass: 0, wait: 1, fail: 2};
+      for (const st of ['pass', 'fail', 'wait']) {
+        const rows = L.filter((m) => m.st === st).sort((x, y) => y.a3 - x.a3 || (x.root > y.root ? 1 : -1));
+        if (!rows.length) continue;
+        h += '<h4 class="' + (st === 'pass' ? 'lx-good' : st === 'fail' ? 'lx-badv' : '') + '">' + ST[st] + ' ' + rows.length + ' 条</h4><div class="lx-csscroll"><table class="lx-table"><thead><tr><th>素材</th><th>类型</th><th>Use case</th><th>同场景（原片或细分场景）</th><th class="num"><span class="lx-tip" data-tipk="same">同批同场景</span></th><th class="num"><span class="lx-tip" data-tipk="prev">前 14 天同场景</span></th><th>首次消耗</th><th class="num"><span class="lx-tip" data-tipk="win">窗口激活</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口消耗</span></th><th class="num"><span class="lx-tip" data-tipk="win">窗口次留</span></th><th class="num">投放账户数</th><th class="num">跑起来账户</th><th>可能原因</th></tr></thead><tbody>'
+          + rows.map((m) => '<tr><td class="name">' + (m.video ? '<a class="lx-namelink" href="' + esc(m.video) + '" target="_blank" rel="noopener">' + esc(m.name) + '</a>' : esc(m.name)) + '</td><td style="white-space:nowrap">' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td style="min-width:10rem">' + esc(m.root) + '</td>'
+            + '<td class="num' + (m.same >= 4 ? ' lx-badv' : '') + '">' + m.same + '</td><td class="num' + (m.prev14 >= 5 ? ' lx-badv' : '') + '">' + m.prev14 + '</td><td class="date">' + (m.first ? fmtD(m.first) : '<span class="muted">没花钱</span>') + '</td>'
+            + '<td class="num">' + fmtN(m.a3) + '</td><td class="num">' + fmtY(m.c3) + '</td><td class="num">' + (m.r3 == null || m.ar3 < 20 ? (m.r3 == null ? '—' : '<span class="muted">' + fmtP0(m.r3) + '（' + m.ar3 + '）</span>') : fmtP0(m.r3)) + '</td>'
+            + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td>'
+            + '<td style="min-width:14rem">' + (st === 'pass' ? '' : tagsOf(m, medPj).map(([x, c]) => '<span class="lx-cstag' + (c ? ' ' + c : '') + '">' + esc(x) + '</span>').join('')) + '</td></tr>').join('')
+          + '</tbody></table></div>';
+      }
+      return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = ' + WT + '；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
+    };
     fill('rampbatch', (tb) => {
-      for (const b of B) {
-        const tr = document.createElement('tr'); const td = cellMaker(tr);
-        { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.full ? '' : ' <span class="lx-note">不满 3 天</span>'); }
+      for (const b of B.slice().reverse()) {
+        const tr = document.createElement('tr'); tr.className = 'lx-csday'; const td = cellMaker(tr);
+        { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>' + (b.upl ? '' : ' <span class="lx-note">没读到素材库</span>'); c.style.whiteSpace = 'nowrap'; }
+        td('num').textContent = b.n_up;
+        td('num').textContent = b.th == null ? '—' : b.th;
+        { const c = td('num'); c.textContent = b.cs_pass; if (b.cs_pass) c.className = 'num lx-good'; }
+        td('num').textContent = b.cs_fail;
+        td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
+        { const c = td('num'); if (b.cs != null) { c.textContent = P1(b.cs); if (avgCs != null && Math.abs(b.cs - avgCs) >= 0.03) c.className = 'num ' + (b.cs > avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_sofar) + '</span>'; c.title = fmtD(b.win_end) + ' 的数出来才定'; } }
+        { const c = td('num'); const tx = b.th_c ? '（' + b.th_c + '）' : ''; if (b.cs_c != null) { c.innerHTML = P1(b.cs_c) + ' <span class="muted">' + tx + '</span>'; if (avgCsC != null && Math.abs(b.cs_c - avgCsC) >= 0.03) c.className = 'num ' + (b.cs_c > avgCsC ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_c_sofar) + ' ' + tx + '</span>'; } c.style.whiteSpace = 'nowrap'; }
         td('num').textContent = b.n;
         td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
         { const c = td('num'); c.textContent = P1(b.pass); if (b.pass != null && avgPass != null) c.className = 'num ' + (b.pass >= avgPass ? 'lx-good' : 'lx-badv'); }
-        td('num').textContent = b.any == null ? '—' : fmtP0(b.any);
         td('num').textContent = b.c3_med == null ? '—' : fmtY(b.c3_med);
-        td('num').textContent = fmtP0(b.k1);
         td('num muted').textContent = fmtY(b.tot);
         tb.appendChild(tr);
+        tr.addEventListener('click', () => {
+          const box = document.querySelector('[data-draw="cspanel"]'); if (!box) return;
+          const was = tr.classList.contains('open');
+          tb.querySelectorAll('tr.lx-csday.open').forEach((x) => x.classList.remove('open'));
+          if (was) { box.hidden = true; box.innerHTML = ''; return; }
+          tr.classList.add('open'); box.innerHTML = panel(b); box.hidden = false;
+          box.scrollIntoView({behavior: 'smooth', block: 'start'});
+        });
       }
     });
-    fill('ramp-n', (el) => { el.textContent = R.length; });
-    const cols = [['name', '素材'], ['kind', '类型'], ['short', 'Use case'], ['made', '制作'], ['up', '上传'], ['first', '首次消耗'], ['acc_show', '投放账户数', 1], ['acc_100', '跑起来账户', 1, '3 天 ≥ ¥100'], ['rate', '跑起来率', 1], ['c3', '头 3 天消耗', 1], ['c7', '头 7 天消耗', 1], ['peak', '单日最高', 1], ['d1k', '第几天过 ¥1,000', 1], ['tot', '累计消耗', 1], ['link', '链接']];
-    R.forEach((m) => { m.rate = m.acc_ok && m.acc_show ? (m.acc_100 || 0) / m.acc_show : null; });
-    let key = 'c3', dir = -1;
-    const draw = () => {
-      const tb = document.querySelector('[data-draw="rampmats"]'); if (!tb) return;
-      const rows = R.slice().sort((a, b) => { const x = a[key], y = b[key]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * dir; });
-      const max = d3.max(rows, (m) => m.c3 || 0) || 1;
-      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (ch) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
-      tb.innerHTML = '<thead><tr>' + cols.map((c) => '<th class="' + (c[2] ? 'num' : '') + '" data-k="' + c[0] + '" style="cursor:' + (c[0] === 'link' ? 'default' : 'pointer') + '">' + c[1] + (c[3] ? '<span class="th-sub">' + c[3] + '</span>' : '') + (key === c[0] ? (dir < 0 ? ' ↓' : ' ↑') : '') + '</th>').join('') + '</tr></thead><tbody>' + rows.map((m) => {
-        const cls = m.rate != null && avgPass != null && m.rate >= avgPass ? 'lx-good' : (m.acc_ok && m.acc_show >= 10 && !m.acc_100 ? 'lx-badv' : '');
-        const lk = [m.video ? '<a href="' + esc(m.video) + '" target="_blank" rel="noopener">视频</a>' : '', m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + (m.link_type === '原片' ? '原帖' : esc(m.link_type || '链接')) + '</a>' : ''].filter(Boolean).join(' ');
-        return '<tr><td class="name" style="white-space:normal;min-width:14rem">' + esc(m.name) + '</td><td>' + esc(m.kind) + '</td><td>' + esc(m.short || m.uc) + '</td><td class="date">' + fmtD(m.made) + '</td><td class="date" style="white-space:nowrap">' + fmtD(m.up.slice(0, 10)) + ' ' + m.up.slice(11) + '</td><td class="date">' + fmtD(m.first) + '</td>'
-          + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_ok ? (m.acc_100 || 0) : '—') + '</td><td class="num ' + cls + '">' + (m.rate == null ? '—' : fmtP0(m.rate)) + '</td>'
-          + '<td class="num" style="white-space:nowrap">' + (m.c3 == null ? '—' : '<span style="display:inline-block;height:8px;border-radius:2px;background:var(--bar);vertical-align:middle;margin-right:6px;width:' + Math.round(m.c3 / max * 60) + 'px"></span>' + fmtY(m.c3)) + '</td><td class="num">' + (m.c7 == null ? '—' : fmtY(m.c7)) + '</td><td class="num">' + fmtY(m.peak) + '</td><td class="num">' + (m.d1k ? '第 ' + m.d1k + ' 天' : '—') + '</td><td class="num">' + fmtY(m.tot) + '</td><td class="short lx-links">' + (lk || '—') + '</td></tr>';
-      }).join('') + '</tbody>';
-      tb.querySelectorAll('th[data-k]').forEach((th) => th.addEventListener('click', () => { const k = th.dataset.k; if (k === 'link') return; if (key === k) dir = -dir; else { key = k; dir = ['name', 'kind', 'short', 'made', 'up', 'first'].includes(k) ? 1 : -1; } draw(); }));
-    };
-    draw();
   }
 
   // 判差 3 天还在花（Reina 11/4 定）
