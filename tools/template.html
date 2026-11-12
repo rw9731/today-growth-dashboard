@@ -92,6 +92,16 @@
   .uc-spark { display: inline-flex; align-items: flex-end; gap: 1px; height: 26px; vertical-align: middle; }
   .uc-spark i { display: block; width: 6px; min-height: 1px; background: var(--bar); opacity: .45; border-radius: 1px 1px 0 0; }
   .uc-spark i:last-child { opacity: 1; }
+  .lx-table tr.uc-row { cursor: pointer; }
+  .lx-table tr.uc-row:hover td { background: color-mix(in srgb, var(--color-fg-muted) 8%, transparent); }
+  .lx-table tr.uc-row td.uc::before { content: '▸'; display: inline-block; width: 1em; color: var(--color-fg-muted); transition: transform .15s; }
+  .lx-table tr.uc-row.open td.uc::before { transform: rotate(90deg); }
+  .lx-table tr.uc-detail > td { padding: 6px 10px 12px 28px; background: color-mix(in srgb, var(--color-fg-muted) 5%, transparent); }
+  .uc-sub { width: auto; border-collapse: collapse; font-size: 12.5px; }
+  .uc-sub th, .uc-sub td { padding: 4px 8px; text-align: left; white-space: nowrap; border-bottom: 1px solid color-mix(in srgb, var(--color-fg-muted) 18%, transparent); }
+  .uc-sub th { font-weight: 500; color: var(--color-fg-muted); }
+  .uc-sub td.name { white-space: normal; min-width: 16rem; max-width: 30rem; }
+  .uc-sub .num { text-align: right; font-variant-numeric: tabular-nums; }
   .lx-good { color: var(--color-ok); font-weight: 600; }
   .lx-badv { color: var(--color-bad); font-weight: 600; }
   .lx-warnv { color: var(--color-warn); font-weight: 600; }
@@ -318,7 +328,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
+    <p class="lx-note">按昨天消耗排。<b>点一行能展开这个 use case 昨天按消耗排的素材</b>，看是哪几条把它带起来的。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
     <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留贵,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留贵,量小 + 次留差,样本不够,新上线"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -704,6 +714,7 @@
   const tagCls = (t) => { const s = t || ''; const r = /次留差|次留贵|拖后腿/.test(s) ? 'r-bad' : /次留一般/.test(s) ? 'r-mid' : /新上线/.test(s) ? 'r-new' : /次留好/.test(s) ? 'r-good' : 'r-na'; return 'tg ' + (s.startsWith('能放量') ? 's-big' : 's-small') + ' ' + r; };
   document.querySelectorAll('[data-draw="tag-legend"]').forEach((box) => { box.className = 'tg-legend'; for (const t of box.dataset.tags.split(',')) { const p = document.createElement('span'); p.className = tagCls(t); p.textContent = t; box.appendChild(p); } });
   const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '能放量 + 次留好但贵': 'g-pricey', '次留好但贵、量还小': 'g-pricey', '次留好但贵': 'g-pricey', '能放量 + 次留差': 'g-bad', '次留差、量还小': 'g-bad', '拖后腿': 'g-bad', '能放量 + 成本略高': 'g-mid', '成本略高、量还小': 'g-mid', '能放量 + 次留略低': 'g-mid', '次留略低、量还小': 'g-mid', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
+  const UCM = d3.group(data('uc_mats') || [], (m) => m.uc);
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -725,8 +736,53 @@
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
       pill(td(), r.status, tagCls(r.status));
       tb.appendChild(tr);
+      // 点开：这个 use case 昨天按消耗排的素材（Reina 11/12）
+      const ms = UCM.get(r.uc) || [];
+      if (!ms.length) continue;
+      tr.classList.add('uc-row'); tr.title = '点开看这个 use case 昨天按消耗排的素材';
+      const dr = document.createElement('tr'); dr.className = 'uc-detail'; dr.hidden = true;
+      const dc = document.createElement('td'); dc.colSpan = tr.children.length; dr.appendChild(dc); tb.appendChild(dr);
+      let built = false;
+      tr.addEventListener('click', (ev) => {
+        if (ev.target.closest('a')) return;
+        if (!built) { buildUcSub(dc, ms); built = true; }
+        dr.hidden = !dr.hidden; tr.classList.toggle('open', !dr.hidden);
+      });
     }
   });
+  function buildUcSub(box, ms) {
+    const tbl = document.createElement('table'); tbl.className = 'uc-sub';
+    tbl.innerHTML = '<thead><tr><th>#</th><th>素材</th><th>类型</th><th>上线</th><th>消耗<span class="th-sub">{{D}}</span></th><th class="num">占这个 UC</th><th class="num">激活<span class="th-sub">{{D}}</span></th><th class="num">激活成本<span class="th-sub">{{D}}</span></th><th class="num">次留率<span class="th-sub">{{W}}</span></th><th class="num">次留成本<span class="th-sub">{{W}}</span></th><th>标签</th></tr></thead>';
+    const tb = document.createElement('tbody'); tbl.appendChild(tb);
+    const max = d3.max(ms, (m) => m.cost27 || m.rest_cost) || 1;
+    for (const m of ms) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      if (m.rest_n) {
+        td('muted');
+        const c = td('muted'); c.textContent = '其余 ' + m.rest_n + ' 条'; c.colSpan = 3;
+        td('num muted').textContent = fmtY(m.rest_cost);
+        td('num muted').textContent = fmtP0(m.share);
+        for (let k = 0; k < 5; k++) td();
+        tb.appendChild(tr); continue;
+      }
+      if (m.first && m.first >= (t.week || '9999')) tr.className = 'is-new';
+      td('num muted').textContent = m.rank;
+      const nc = td('name');
+      const vid = m.video || (m.link_type === '预览' ? m.link : '');
+      if (vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.className = 'lx-namelink'; a.textContent = m.name; nc.appendChild(a); } else nc.textContent = m.name;
+      td('short').textContent = (m.kind || '').split(' · ')[0];
+      td(m.first && m.first >= (t.week || '9999') ? 'date new' : 'date').textContent = m.first ? fmtD(m.first) : '—';
+      barCell(td(), m.cost27, max, 40);
+      td('num').textContent = fmtP0(m.share);
+      td('num').textContent = m.act27 ? fmtN(m.act27) : '—';
+      td('num').textContent = m.act27 ? fmtY(m.cost27 / m.act27) : '—';
+      const cr = td(m.rate == null ? 'num muted' : rateCls(m.rate, o, t)); cr.textContent = m.rate == null ? '激活太少' : fmtP0(m.rate);
+      const cc = td(m.rate == null ? 'num muted' : cprCls(m.cpr, o, t)); cc.textContent = m.rate == null ? '' : fmtY(m.cpr);
+      const gc = td(); if (m.group) pill(gc, m.group, tagCls(m.group));
+      tb.appendChild(tr);
+    }
+    box.appendChild(tbl);
+  }
 
   fill('kindrows', (tb) => {
     const rows = data('kind_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;

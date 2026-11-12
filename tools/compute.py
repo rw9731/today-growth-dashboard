@@ -516,6 +516,36 @@ def main():
     mat.sort(key=lambda x: -x['cost27'])  # 严格按昨天消耗排，分组看标签
     good = [m for m in mat if m['group'] in ('能放量 + 次留好', '量小 + 次留好')]
 
+    # 二、按 use case 点开的素材明细（Reina 11/12）：每个 use case 当天有消耗的素材按消耗排，前 UCM_N 条，其余合成一行
+    UCM_N = 15
+    mat_by = {m['id']: m for m in mat}
+    ucm = defaultdict(list)
+    for i, rs in by_id.items():
+        r27 = [r for r in rs if r['date'] == D[3]]
+        c27 = sum(r['cost'] for r in r27)
+        if c27 <= 0:
+            continue
+        m = mat_by.get(i)
+        c, a_, rt = win(rs)
+        ok = a_ >= th['act']
+        lk = links.get(i, {})
+        ltype = lk.get('type', '')
+        link = '' if ltype == '预览' else lk.get('link', '')
+        ucm[r27[0]['uc']].append({
+            'id': i, 'name': names.get(i, i), 'first': first.get(i, ''), 'kind': kind_of(r27[0]['src'], r27[0]['track'], names.get(i, i), i),
+            'group': m['group'] if m else '', 'cost27': c27, 'act27': sum(r['act'] for r in r27),
+            'cost_w': c, 'act_w': a_, 'rate': rt / a_ if ok else None, 'cpr': (c / rt) if ok and rt else None,
+            'video': (m or {}).get('video') or pick_video(lk), 'link': link, 'link_type': ltype if link else ''})
+    uc_mats = []
+    for uc, ms in ucm.items():
+        ms.sort(key=lambda x: -x['cost27'])
+        tot = sum(x['cost27'] for x in ms) or 1
+        for k, x in enumerate(ms[:UCM_N]):
+            uc_mats.append({'uc': uc, 'rank': k + 1, 'share': x['cost27'] / tot, **x})
+        if len(ms) > UCM_N:
+            rest = ms[UCM_N:]
+            uc_mats.append({'uc': uc, 'rest_n': len(rest), 'rest_cost': sum(x['cost27'] for x in rest), 'share': sum(x['cost27'] for x in rest) / tot})
+
     # 扩量素材和它的原素材比：原素材按截至 D-1 激活的全部 cohort 算
     by_base = defaultdict(set)
     for i, n in names.items():
@@ -996,7 +1026,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats,
+           'uc_tbl': uct, 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     if rtd_note:
         import rt_backfill
