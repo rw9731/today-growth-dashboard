@@ -57,6 +57,8 @@ def main():
     hubs = json.load(open(os.path.join(HERE, 'jl_hubs.json')))
     now = time.time()
     ids = {m['id'] for m in res['mat'] + res.get('newd', [])} | {i for k in res.get('kl', []) for i in k.get('src_ids', [])}
+    # 冷启明细里「被同原片挤掉」「画面重合」对比的那条也要有视频（Reina 11/12）
+    ids |= {m['sib'][5] for m in res.get('cs_mats', []) if len(m.get('sib') or []) > 5} | {m['vsim'][3] for m in res.get('cs_mats', []) if len(m.get('vsim') or []) > 3}
     # 往期页面上还在用巨量链接的也一起刷新（巨量链接 2 天过期）
     ids |= {i for i, lk in links.items() if lk.get('jl') and not lk.get('video')}
     if a.sheet:

@@ -69,6 +69,9 @@ def main():
     nolink = [m['id'] for m in mats.values() if not m.get('video')]
     # 扩量分析要对照原素材，原素材不一定在看板里，也一起找视频
     nolink += sorted({i for k in res.get('kl', []) for i in k.get('src_ids', []) if i not in mats and not links.get(i, {}).get('video')})
+    # 冷启明细里对比的同原片版本也一起找视频（Reina 11/12）
+    ref = {m['sib'][5] for m in res.get('cs_mats', []) if len(m.get('sib') or []) > 5} | {m['vsim'][3] for m in res.get('cs_mats', []) if len(m.get('vsim') or []) > 3}
+    nolink += sorted(i for i in ref if i not in mats and i not in nolink and not links.get(i, {}).get('video'))
     if a.roi:
         batch = json.load(open(a.roi)).get('batch_items', {})
         nolink += sorted({it[0] for v in batch.values() for x in v.values() for it in x['items'] if it[0] not in mats and not links.get(it[0], {}).get('video')})

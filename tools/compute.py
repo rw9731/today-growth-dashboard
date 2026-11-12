@@ -859,7 +859,7 @@ def main():
                         top[mid] += c
             if sib > 0:
                 t_ = max(top, key=top.get)
-                m['sib'] = [round(sib), round(own), nm_of(t_), round(top[t_]), up_day(t_)]
+                m['sib'] = [round(sib), round(own), nm_of(t_), round(top[t_]), up_day(t_), t_, pick_video(links.get(t_, {}))]  # 第 6、7 项：同原片那条的 ID 和视频（Reina 11/12：要点进去看有多像）
         for b in batches:
             cg = [m for m in cs_mats if m['up'][:10] == b['up'] and 'npj' in m]
             lo, hi = [m for m in cg if m['a3'] < 10], [m for m in cg if m['a3'] >= 10]
@@ -893,9 +893,15 @@ def main():
     vs_path = os.path.join(os.path.dirname(HERE), 'notes', f'vsim-{D[3]}.json')
     if os.path.exists(vs_path):
         VS = json.load(open(vs_path)).get('items', {})
+        rev_ = {}  # 名字 → 素材ID，给对比的那条找视频（Reina 11/12）
+        for i_, n_ in list(names.items()) + list(upl_names.items()):
+            rev_.setdefault(n_, i_)
         for m in cs_mats:
             if m['id'] in VS:
-                m['vsim'] = VS[m['id']]
+                m['vsim'] = list(VS[m['id']])
+                ri = rev_.get(m['vsim'][0])  # 对比的那条的 ID 和视频附在第 4、5 项
+                if ri:
+                    m['vsim'] = m['vsim'][:3] + [ri, pick_video(links.get(ri, {}))]
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
