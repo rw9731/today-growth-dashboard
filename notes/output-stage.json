@@ -1,6 +1,6 @@
 {
  "A": {
-  "asof": "2026-11-11",
+  "asof": "2026-11-12",
   "week": "2026-11-09",
   "start": 485,
   "tab": "f18d7b",
@@ -8,14 +8,14 @@
    {
     "r": 485,
     "uc": "TR01",
-    "st": "需修改",
+    "st": "废除",
     "name": "出行与旅行-TR01-变了就重排-热点.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTQ4NQ"
    },
    {
     "r": 550,
     "uc": "WK06",
-    "st": "需修改",
+    "st": "废除",
     "name": "工作沟通与协作-WK06-别再慢半拍-92-新角度扩量(1).docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTU1MA",
     "d": "1107"
@@ -23,165 +23,157 @@
    {
     "r": 551,
     "uc": "WK06",
-    "st": "需修改",
+    "st": "废除",
     "name": "工作沟通与协作-WK06-消息挺灵啊-92-新角度扩量(1).docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTU1MQ",
     "d": "1107"
    },
    {
-    "r": 623,
-    "uc": "SH04",
-    "st": "修改后待审核",
-    "name": "购物生活与服务-SH04-1108入冬火锅-热点.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyMw",
-    "d": "1108"
+    "r": 659,
+    "uc": "IN01",
+    "st": "需修改",
+    "name": "信息检索与追踪-IN01-扩量169-2-换对象+人设_三人追番-a组-客户659-修订版.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1OQ",
+    "d": "1110"
    },
    {
-    "r": 624,
+    "r": 668,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "牙科复诊.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2OA",
+    "d": "1110"
+   },
+   {
+    "r": 669,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "组会刚记下来，又有通知 - 副本.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2OQ",
+    "d": "1110"
+   },
+   {
+    "r": 670,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "作业截止时间.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3MA",
+    "d": "1110"
+   },
+   {
+    "r": 671,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "家里猫的疫苗.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3MQ",
+    "d": "1110"
+   },
+   {
+    "r": 676,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS03_扩量175_1_KOC非原生_全文重配_视频没剪完  资料也还没准备_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3Ng",
+    "d": "1110"
+   },
+   {
+    "r": 677,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS03_扩量175_2_KOC非原生_全文重配_睡前一张晚报_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3Nw",
+    "d": "1110"
+   },
+   {
+    "r": 678,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS03_扩量175_3_KOC非原生_全文重配_报名最怕最后一步_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3OA",
+    "d": "1110"
+   },
+   {
+    "r": 679,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS03_扩量175_4_KOC非原生_全文重配_两个孩子的事情别全挤在早上_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3OQ",
+    "d": "1110"
+   },
+   {
+    "r": 680,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS01_扩量94-1_KOC非原生_全文重配_爸妈复查z_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4MA",
+    "d": "1110"
+   },
+   {
+    "r": 682,
+    "uc": "PS01",
+    "st": "需修改",
+    "name": "个人日程与事务助理_PS01_扩量94-3_KOC非原生_全文重配_爸妈生日_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4Mg",
+    "d": "1110"
+   },
+   {
+    "r": 683,
+    "uc": "WK01",
+    "st": "需修改",
+    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07-188-扩量-AI素材-AI重拍-A组-客户又来.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4Mw",
+    "d": "1112"
+   },
+   {
+    "r": 684,
+    "uc": "WK01",
+    "st": "需修改",
+    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07-188-扩量-AI素材-AI重拍-A组-谁在等谁.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4NA",
+    "d": "1112"
+   },
+   {
+    "r": 687,
+    "uc": "WK01",
+    "st": "需修改",
+    "name": "工作场景-约多人会议：查空档、发邀请，有冲突再协调-W11-ljq-01-186-扩量-AI素材-AI重拍-A组-客户没见上.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4Nw",
+    "d": "1112"
+   },
+   {
+    "r": 688,
+    "uc": "WK01",
+    "st": "需修改",
+    "name": "工作场景-约多人会议：查空档、发邀请，有冲突再协调-W11-ljq-01-186-扩量-AI素材-AI重拍-A组-演示没开始.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4OA",
+    "d": "1112"
+   },
+   {
+    "r": 689,
     "uc": "NT01",
-    "st": "修改后待审核",
-    "name": "随身记事与个人资料管理-NT01-1107纪念日-热点.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyNA",
-    "d": "1107"
-   },
-   {
-    "r": 626,
-    "uc": "LG03",
-    "st": "修改后待审核",
-    "name": "学习与成长-LG03-1107剪视频-热点 (2).docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyNg",
-    "d": "1107"
-   },
-   {
-    "r": 627,
-    "uc": "WK01",
-    "st": "修改后待审核",
-    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_159_扩量01_AI素材_AI重拍_A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyNw",
-    "d": "1110"
-   },
-   {
-    "r": 628,
-    "uc": "WK01",
-    "st": "修改后待审核",
-    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_159_扩量02_AI素材_AI重拍_A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyOA",
-    "d": "1110"
-   },
-   {
-    "r": 629,
-    "uc": "WK01",
     "st": "需修改",
-    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_160-扩量03_AI素材_AI重拍_A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyOQ",
-    "d": "1110"
+    "name": "随身记事与个人资料管理-NT01-说来惭愧-187-扩量-AI素材-AI重拍-A组-别再送错了.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4OQ",
+    "d": "1112"
    },
    {
-    "r": 630,
-    "uc": "WK01",
+    "r": 690,
+    "uc": "NT01",
     "st": "需修改",
-    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_161-扩量04_AI素材_AI重拍_A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzMA",
-    "d": "1110"
+    "name": "随身记事与个人资料管理-NT01-说来惭愧-187-扩量-AI素材-AI重拍-A组-她说过的话.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5MA",
+    "d": "1112"
    },
    {
-    "r": 635,
+    "r": 692,
     "uc": "PS02",
-    "st": "未审核",
-    "name": "个人日程与事务助理-PS02-AI素材-换人设-要不要续费_照真人-156行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNQ",
-    "d": "1110"
-   },
-   {
-    "r": 636,
-    "uc": "PS02",
-    "st": "未审核",
-    "name": "个人日程与事务助理-PS02-AI素材-换人设-这事归我了_照真人-156行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNg",
-    "d": "1110"
-   },
-   {
-    "r": 637,
-    "uc": "IN01",
-    "st": "未审核",
-    "name": "信息检索与追踪-IN01-AI素材-新角度扩量-标讯有人盯-102行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNw",
-    "d": "1109"
-   },
-   {
-    "r": 638,
-    "uc": "IN01",
-    "st": "未审核",
-    "name": "信息检索与追踪-IN01-AI素材-新角度扩量-对手有人盯-101行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzOA",
-    "d": "1109"
-   },
-   {
-    "r": 639,
-    "uc": "LG03",
-    "st": "未审核",
-    "name": "学习与成长-LG03-AI素材-换对象-回复小作文-154行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzOQ",
-    "d": "1110"
-   },
-   {
-    "r": 640,
-    "uc": "LG03",
-    "st": "未审核",
-    "name": "学习与成长-LG03-AI素材-换对象-生日歌翻车-155行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0MA",
-    "d": "1110"
-   },
-   {
-    "r": 641,
-    "uc": "LG03",
-    "st": "未审核",
-    "name": "学习与成长-LG03-AI素材-换对象-小星星跑调-155行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0MQ",
-    "d": "1110"
-   },
-   {
-    "r": 642,
-    "uc": "LG03",
-    "st": "未审核",
-    "name": "学习与成长-LG03-AI素材-换对象-周报翻车-154行.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0Mg",
-    "d": "1110"
+    "st": "需修改",
+    "name": "学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027-184-扩量01-KOC非原生-AI重拍-A组-两个孩子",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5Mg",
+    "d": "1112"
    }
   ],
   "ready": [
-   {
-    "r": 589,
-    "uc": "FN01",
-    "st": "可制作",
-    "name": "财务与投资-FN01-公告别堆了-151-新角度扩量-修改更正.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTU4OQ",
-    "d": "1110"
-   },
-   {
-    "r": 590,
-    "uc": "FN01",
-    "st": "可制作",
-    "name": "财务与投资-FN01-开会没漏掉-154-新角度扩量-更正.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTU5MA",
-    "d": "1110"
-   },
-   {
-    "r": 608,
-    "uc": "HL04",
-    "st": "可制作",
-    "name": "健康与运动-HL04-狗子的日历-153-新角度扩量-更正.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYwOA",
-    "d": "1110"
-   },
-   {
-    "r": 613,
-    "uc": "NT02",
-    "st": "可制作",
-    "name": "随身记事与个人资料管理-NT02-这碗面记着-150-新角度扩量.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYxMw",
-    "d": "1110"
-   },
    {
     "r": 615,
     "uc": "PS01",
@@ -223,6 +215,30 @@
     "d": "1109"
    },
    {
+    "r": 627,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_159_扩量01_AI素材_AI重拍_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyNw",
+    "d": "1110"
+   },
+   {
+    "r": 628,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_159_扩量02_AI素材_AI重拍_A组 (2).docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyOA",
+    "d": "1110"
+   },
+   {
+    "r": 629,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07_160-扩量03_AI素材_AI重拍_A组 (1) (2).docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYyOQ",
+    "d": "1110"
+   },
+   {
     "r": 633,
     "uc": "NT01",
     "st": "可制作",
@@ -237,34 +253,438 @@
     "name": "随身记事与个人资料管理-NT01-说来惭愧_158_扩量02_AI素材_AI重拍_A组.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNA",
     "d": "1110"
+   },
+   {
+    "r": 635,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-要不要续费-156-转真人扩量_照真人-a组-客户635.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNQ",
+    "d": "1110"
+   },
+   {
+    "r": 636,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-这事归我了-156-转真人扩量_照真人-a组-客户636.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzNg",
+    "d": "1110"
+   },
+   {
+    "r": 638,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-对手有人盯-101-新角度扩量-a组-客户638.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzOA",
+    "d": "1109"
+   },
+   {
+    "r": 639,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-AI素材-换对象-回复小作文-154行.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYzOQ",
+    "d": "1110"
+   },
+   {
+    "r": 640,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-AI素材-换对象-生日歌翻车-155行.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0MA",
+    "d": "1110"
+   },
+   {
+    "r": 641,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-AI素材-换对象-小星星跑调-155行.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0MQ",
+    "d": "1110"
+   },
+   {
+    "r": 642,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-AI素材-换对象-周报翻车-154行.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0Mg",
+    "d": "1110"
+   },
+   {
+    "r": 643,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-扩量163-1-换对象+换人设_异地女儿安排爸妈看海-a组-客户643_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0Mw",
+    "d": "1110"
+   },
+   {
+    "r": 644,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-扩量163-2-换对象+换人设_异地女儿安排爸妈看海-a组-客户644_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0NA",
+    "d": "1110"
+   },
+   {
+    "r": 645,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-扩量166-1-换人设_爸爸选兴趣班-a组-客户645_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0NQ",
+    "d": "1110"
+   },
+   {
+    "r": 646,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-扩量166-2-换人设_爸爸选兴趣班-a组-客户646_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0Ng",
+    "d": "1110"
+   },
+   {
+    "r": 647,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-扩量172-2-换对象_兄妹陪老人复查送药-a组-客户647_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0Nw",
+    "d": "1110"
+   },
+   {
+    "r": 648,
+    "uc": "PS03",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS03-扩量172-1-同脚本换画面-a组-客户648_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0OA",
+    "d": "1110"
+   },
+   {
+    "r": 649,
+    "uc": "PS03",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS03-扩量172-3-换身份+场景_倒班妈妈安排接娃-a组-客户649_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY0OQ",
+    "d": "1110"
+   },
+   {
+    "r": 650,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK01-扩量165-1-换身份+场景_研究生约组会-a组-客户650.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1MA",
+    "d": "1110"
+   },
+   {
+    "r": 651,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK01-扩量165-2-换身份+场景_研究生约组会-a组-客户651.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1MQ",
+    "d": "1110"
+   },
+   {
+    "r": 652,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK01-扩量168-1-换细分场景_会多组长录音纪要待办-a组-客户652.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1Mg",
+    "d": "1110"
+   },
+   {
+    "r": 653,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK01-扩量168-2-换细分场景_会多组长录音纪要待办-a组-客户653.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1Mw",
+    "d": "1110"
+   },
+   {
+    "r": 654,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-扩量164-1-换细分场景_新婚媳妇给公婆送年礼-a组-客户654.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1NA",
+    "d": "1110"
+   },
+   {
+    "r": 655,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-扩量164-2-换细分场景_新婚媳妇给公婆送年礼-a组-客户655.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1NQ",
+    "d": "1110"
+   },
+   {
+    "r": 656,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-扩量167-1-换人设_异地儿子送妈妈生日礼物-a组-客户656.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1Ng",
+    "d": "1110"
+   },
+   {
+    "r": 657,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-扩量167-2-换人设_异地儿子送妈妈生日礼物-a组-客户657.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1Nw",
+    "d": "1110"
+   },
+   {
+    "r": 658,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-扩量169-1-换对象+人设_三人追剧-a组-客户658.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY1OA",
+    "d": "1110"
+   },
+   {
+    "r": 660,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-扩量170-1-换对象_三人国乒追赛-a组-客户660.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2MA",
+    "d": "1110"
+   },
+   {
+    "r": 661,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-扩量170-2-换对象_三人国羽追赛-a组-客户661.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2MQ",
+    "d": "1110"
+   },
+   {
+    "r": 662,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-扩量171-1-换对象+人设_演唱会现场三人欢呼-a组-客户662.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2Mg",
+    "d": "1110"
+   },
+   {
+    "r": 663,
+    "uc": "IN01",
+    "st": "可制作",
+    "name": "信息检索与追踪-IN01-扩量171-2-换对象+人设_演唱会现场三人欢呼-a组-客户663-修订版.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2Mw",
+    "d": "1110"
+   },
+   {
+    "r": 664,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理_PS02_扩量176-2_KOC非原生_全文重配_暑假安排_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2NA",
+    "d": "1110"
+   },
+   {
+    "r": 665,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理_PS02_扩量176-1_KOC非原生_全文重配_新手爸妈疫苗接种_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2NQ",
+    "d": "1110"
+   },
+   {
+    "r": 666,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理_PS02_扩量176-2_KOC非原生_全文重配_兴趣班日程管理_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2Ng",
+    "d": "1110"
+   },
+   {
+    "r": 667,
+    "uc": "LG00",
+    "st": "可制作",
+    "name": "个人日程与事务助理_PS02_扩量176-2_KOC非原生_全文重配_成人兴趣班_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY2Nw",
+    "d": "1110"
+   },
+   {
+    "r": 672,
+    "uc": "HL00",
+    "st": "可制作",
+    "name": "健康与运动_HL00_扩量208-1_KOC非原生_全文重配_周末徒步_A组.doc",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3Mg",
+    "d": "1110"
+   },
+   {
+    "r": 673,
+    "uc": "HL00",
+    "st": "可制作",
+    "name": "健康与运动_HL00_扩量208-2_KOC非原生_全文重配_临时加班_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3Mw",
+    "d": "1110"
+   },
+   {
+    "r": 674,
+    "uc": "HL00",
+    "st": "可制作",
+    "name": "健康与运动_HL00_扩量208-3_KOC非原生_全文重配_训练漏了一次_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3NA",
+    "d": "1110"
+   },
+   {
+    "r": 675,
+    "uc": "HL00",
+    "st": "可制作",
+    "name": "健康与运动_HL00_扩量208-4_KOC非原生_全文重配_运动总拖到深夜_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY3NQ",
+    "d": "1110"
+   },
+   {
+    "r": 681,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理_PS01_扩量94-2_KOC非原生_全文重配_爸妈来住_A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4MQ",
+    "d": "1110"
+   },
+   {
+    "r": 685,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作场景-约多人会议：查空档、发邀请，有冲突再协调-W11-ljq-01-185-扩量-AI素材-AI重拍-A组-客户半小时.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4NQ",
+    "d": "1112"
+   },
+   {
+    "r": 686,
+    "uc": "WK01",
+    "st": "可制作",
+    "name": "工作场景-约多人会议：查空档、发邀请，有冲突再协调-W11-ljq-01-185-扩量-AI素材-AI重拍-A组-老板的会.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY4Ng",
+    "d": "1112"
+   },
+   {
+    "r": 691,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027-184-扩量01-KOC非原生-AI重拍-A组-搭机器人",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5MQ",
+    "d": "1112"
+   },
+   {
+    "r": 693,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02--穿旧衣服-183-转真人扩量_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5Mw",
+    "d": "1112"
+   },
+   {
+    "r": 694,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02--记得剪指甲-183-转真人扩量_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5NA",
+    "d": "1112"
+   },
+   {
+    "r": 695,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-疫苗不撞会-182-转真人扩量_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5NQ",
+    "d": "1112"
+   },
+   {
+    "r": 696,
+    "uc": "PS02",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS02-这回提前了-182-转真人扩量_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5Ng",
+    "d": "1112"
+   },
+   {
+    "r": 697,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-会前速记-180-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5Nw",
+    "d": "1112"
+   },
+   {
+    "r": 698,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-就说这个-180-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5OA",
+    "d": "1112"
+   },
+   {
+    "r": 699,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-剪得怎么样-181-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTY5OQ",
+    "d": "1112"
+   },
+   {
+    "r": 700,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-作品最少-181-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTcwMA",
+    "d": "1112"
+   },
+   {
+    "r": 701,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-日语速记-179-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTcwMQ",
+    "d": "1112"
+   },
+   {
+    "r": 702,
+    "uc": "LG03",
+    "st": "可制作",
+    "name": "学习与成长-LG03-下月泰国-179-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTcwMg",
+    "d": "1112"
    }
   ],
-  "done": [],
-  "killed": 26,
-  "old": 43
+  "done": [
+   {
+    "r": 590,
+    "uc": "FN01",
+    "st": "可制作",
+    "name": "财务与投资-FN01-开会没漏掉-154-新角度扩量-更正.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTU5MA",
+    "d": "1110",
+    "by": "财务与投资-FN01-开会没漏掉-154-新角度扩量-更正_扩量01_AI素材_AI重拍_wq_A组_20261111"
+   },
+   {
+    "r": 608,
+    "uc": "HL04",
+    "st": "可制作",
+    "name": "健康与运动-HL04-狗子的日历-153-新角度扩量-更正.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYwOA",
+    "d": "1110",
+    "by": "健康与运动-HL04-狗子的日历-153-新角度扩量-更正_扩量01_AI素材_AI重拍_yyz_A组_20261111"
+   },
+   {
+    "r": 613,
+    "uc": "NT02",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT02-这碗面记着-150-新角度扩量.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTYxMw",
+    "d": "1110",
+    "by": "随身记事与个人资料管理-NT02-这碗面记着-150-新角度扩量_扩量01_AI素材_AI重拍_lst_A组_20261111"
+   }
+  ],
+  "killed": 25,
+  "old": 46
  },
  "B": {
-  "asof": "2026-11-11",
+  "asof": "2026-11-12",
   "week": "2026-11-09",
   "start": 2,
   "tab": "c665d9",
   "in_script": [
-   {
-    "r": 47,
-    "uc": "IN01",
-    "st": "修改后待审核",
-    "name": "信息检索与追踪-IN01-01-老球迷追比赛（3）.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTQ3",
-    "d": "1109"
-   },
-   {
-    "r": 48,
-    "uc": "IN01",
-    "st": "需修改",
-    "name": "信息检索与追踪-IN01-02-产品经理盯反馈.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTQ4",
-    "d": "1109"
-   },
    {
     "r": 51,
     "uc": "HL00",
@@ -279,30 +699,6 @@
     "st": "需修改",
     "name": "出行与旅行-TR00-01-出差前一晚.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTUy",
-    "d": "1110"
-   },
-   {
-    "r": 54,
-    "uc": "PS01",
-    "st": "需修改",
-    "name": "个人日程与事务助理-PS01-01-躺下才想起群没回.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTU0",
-    "d": "1110"
-   },
-   {
-    "r": 56,
-    "uc": "PS07",
-    "st": "需修改",
-    "name": "个人日程与事务助理-PS07-01-打疫苗跟出差撞.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTU2",
-    "d": "1110"
-   },
-   {
-    "r": 57,
-    "uc": "PS07",
-    "st": "需修改",
-    "name": "个人日程与事务助理-PS07-02-避开出差和会议.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTU3",
     "d": "1110"
    },
    {
@@ -368,40 +764,176 @@
     "name": "健康与运动-HL00-02-夜班护士坚持运动.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTY1",
     "d": "1110"
+   },
+   {
+    "r": 66,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-01-装修晨间清单.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTY2",
+    "d": "1111"
+   },
+   {
+    "r": 67,
+    "uc": "PS03",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-02-装修复尺、周会和接娃撞了.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTY3",
+    "d": "1111"
+   },
+   {
+    "r": 68,
+    "uc": "PS04",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-01-群消息乱炖、家长会撞车.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTY4",
+    "d": "1111"
+   },
+   {
+    "r": 69,
+    "uc": "PS05",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-02-双职工家庭晨间清单.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTY5",
+    "d": "1111"
+   },
+   {
+    "r": 70,
+    "uc": "PS06",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-01-带团导游群消息轰炸.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTcw",
+    "d": "1111"
+   },
+   {
+    "r": 71,
+    "uc": "PS07",
+    "st": "需修改",
+    "name": "个人日程与事务助理-PS03-02-家长会与带团撞车.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTcx",
+    "d": "1111"
+   },
+   {
+    "r": 73,
+    "uc": "HL00",
+    "st": "需修改",
+    "name": "健康与运动-HL00-01-爸妈复查撞出差.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTcz",
+    "d": "1111"
+   },
+   {
+    "r": 74,
+    "uc": "HL00",
+    "st": "需修改",
+    "name": "健康与运动-HL00-02-爸妈复查排进日历.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc0",
+    "d": "1111"
+   },
+   {
+    "r": 75,
+    "uc": "SH03",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-01-耳机退货扣一半，凭据帮我追到底.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc1",
+    "d": "1111"
+   },
+   {
+    "r": 76,
+    "uc": "SH03",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-02-退租房东扣一半押金.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc2",
+    "d": "1111"
+   },
+   {
+    "r": 77,
+    "uc": "SH04",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-03-外卖显示送达却没收.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc3",
+    "d": "1111"
+   },
+   {
+    "r": 78,
+    "uc": "SH05",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-04-报课退费拖俩月，凭据帮我追到底.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc4",
+    "d": "1111"
+   },
+   {
+    "r": 79,
+    "uc": "SH06",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-05-海外酒店多扣房费.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTc5",
+    "d": "1111"
+   },
+   {
+    "r": 80,
+    "uc": "SH07",
+    "st": "需修改",
+    "name": "购物与生活服务-SH03-06-邮件比对帮我追回退款.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTgw",
+    "d": "1111"
+   },
+   {
+    "r": 81,
+    "uc": "IN01",
+    "st": "需修改",
+    "name": "信息检索与追踪-IN01-01-KPL年度总决赛开打.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTgx",
+    "d": "1111"
+   },
+   {
+    "r": 82,
+    "uc": "WK05",
+    "st": "未审核",
+    "name": "工作沟通与协作-WK05-01-月底被财务退单.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTgy",
+    "d": "1111"
+   },
+   {
+    "r": 83,
+    "uc": "WK05",
+    "st": "未审核",
+    "name": "工作沟通与协作-WK05-02-替团队垫钱报销难.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTgz",
+    "d": "1111"
+   },
+   {
+    "r": 84,
+    "uc": "WK05",
+    "st": "未审核",
+    "name": "工作沟通与协作-WK05-01-公司号封账，提前整理.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTg0",
+    "d": "1111"
+   },
+   {
+    "r": 85,
+    "uc": "WK05",
+    "st": "未审核",
+    "name": "工作沟通与协作-WK05-02-提前整理报销.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTg1",
+    "d": "1111"
    }
   ],
   "ready": [
    {
-    "r": 39,
+    "r": 48,
     "uc": "IN01",
     "st": "可制作",
-    "name": "信息检索与追踪-IN01-05-三金等个价.docx",
-    "d": "1110",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTM5"
-   },
-   {
-    "r": 45,
-    "uc": "SH03",
-    "st": "可制作",
-    "name": "购物与生活服务-SH03-01-酒店退款售后（2）.docx",
-    "d": "1110",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTQ1"
-   },
-   {
-    "r": 49,
-    "uc": "HL00",
-    "st": "可制作",
-    "name": "健康与运动-HL00-01-工作调作息.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTQ5",
-    "d": "1110"
+    "name": "信息检索与追踪-产品经理盯反馈-IN01-02-小月-20261111-b组",
+    "d": "1111",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTQ4"
    },
    {
     "r": 53,
     "uc": "TR00",
     "st": "可制作",
     "name": "出行与旅行-TR00-02-出差买票.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTUz",
-    "d": "1110"
+    "d": "1111",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTUz"
    }
   ],
   "done": [],
