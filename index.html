@@ -471,15 +471,15 @@
               <th class="num"><span class="lx-tip" data-tipk="up">上传条数</span></th>
               <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">激活 ≥ 这个数算过：前 7 天上传的素材，上传当天 + 第二天激活的 80 分位</span></th>
               <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span><span class="th-sub">上传当天 + 第二天激活 ≥ 冷启门槛</span></th>
-              <th class="num">没过</th>
-              <th class="num">内容硬伤</th>
-              <th class="num"><span class="lx-tip" data-tipk="pjsp">测试不充分</span></th>
-              <th class="num">方向偏弱</th>
-              <th class="num">单条没跑出来<span class="th-sub">测够了、方向正常</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">第二天的数还没出</span></th>
               <th class="num"><span class="lx-tip" data-tipk="cs">冷启率</span><span class="th-sub">过冷启 ÷ 上传</span></th>
               <th class="num"><span class="lx-tip" data-tipk="csc">去掉预算影响</span><span class="th-sub">冷启率（门槛）</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="pjsp">测够了</span><span class="th-sub">实测项目 ≥ 3 个的条数</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">第二天的数还没出</span></th>
+              <th class="num">没过<span class="th-sub">条数（占上传）</span></th>
+              <th class="num">内容硬伤<span class="th-sub">条数（占上传）</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pjsp">测试不充分</span><span class="th-sub">实测项目不到 3 个（占上传）</span></th>
+              <th class="num">方向偏弱<span class="th-sub">条数（占上传）</span></th>
+              <th class="num">单条没跑出来<span class="th-sub">测够了、方向正常（占上传）</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pjsp">测够了</span><span class="th-sub">实测项目 ≥ 3 个（占上传）</span></th>
               <th class="num">花过钱的条数</th>
               <th class="num"><span class="lx-tip" data-tipk="acc">平均投放账户数</span></th>
               <th class="num"><span class="lx-tip" data-tipk="run">账户跑起来率</span><span class="th-sub">3 天花到 ¥100</span></th>
@@ -955,6 +955,7 @@
     const wan = (v) => v == null ? '—' : '¥' + d3.format('.1f')(v / 10000) + ' 万';
     const ex = B.filter((b) => b.cs != null && b.th).slice(-1)[0] || B.filter((b) => b.th)[0] || {};
     const TH0 = ex.th;
+    // 表格列顺序（Reina 11/12）：上传 → 门槛 → 过冷启 → 冷启率 → 去掉预算影响 → 还在看 → 没过 → 四类原因 → 测够了 → 投放
     const how = '门槛按每个上传日自己的 cohort 定：用这天之前 ' + (WN + 6) + ' 天到前 ' + WN + ' 天（共 7 个上传日）上传、花过钱的素材（它们的窗口都已走完），各自「' + WT + '」的激活从少到多排队，取排在 80% 位置的那个数。每批门槛写在「冷启门槛」列，定了以后不随今天重算而变。\n以 ' + fmtD(ex.up) + ' 这批为例：' + fmtD(ex.th_from) + '–' + fmtD(ex.th_to) + ' 上传、花过钱的 ' + ex.th_n + ' 条，排在 80% 位置的是 ' + ex.th + ' 个激活（排在中间的只有 ' + ex.th_med + ' 个），约等于这 ' + WN + ' 天花到 ' + fmtY(ex.th_c80) + '。也就是那段时间大约前 20% 的素材能过。\n为什么参照前 7 天：样本每批 250–350 条，够稳，也跟得上最近的投放情况；只取前两天样本太少，门槛跳得厉害。\n为什么用 80 分位：按朱艺涛的建议，先拿「头部 20%」当过冷启的标准，以后过的太多就提高、太少就降低。';
     const TIPS = {
       pass: '过冷启：从上传当天起 ' + WN + ' 天（' + WT + '，按日历天算，不是到今天为止的最近几天），这条素材激活加起来 ≥ 这批的门槛。\n' + how,
@@ -1238,6 +1239,7 @@
       }
       return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = ' + WT + '；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
     };
+    const CAUSE_AVG = (() => { const dd = B.filter((b) => b.cs != null && b.n_up), n = d3.sum(dd, (b) => b.n_up); return ['硬伤', '测试', '方向', '其他'].map((k) => n ? CS.filter((m) => m.cause === k && dd.some((b) => b.up === m.up.slice(0, 10))).length / n : null); })();
     fill('rampbatch', (tb) => {
       for (const b of B.slice().reverse()) {
         const tr = document.createElement('tr'); tr.className = 'lx-csday'; const td = cellMaker(tr);
@@ -1245,12 +1247,14 @@
         td('num').textContent = b.n_up;
         td('num').textContent = b.th == null ? '—' : b.th;
         { const c = td('num'); c.textContent = b.cs_pass; if (b.cs_pass) c.className = 'num lx-good'; }
-        td('num').textContent = b.cs_fail;
-        { const F = ofDay(b).filter((m) => m.st === 'fail'), has = F.some((m) => m.cause); for (const k of ['硬伤', '测试', '方向', '其他']) { const n = F.filter((m) => m.cause === k).length, c = td('num' + (n ? '' : ' muted')); c.textContent = has ? n : '—'; } }
-        td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
         { const c = td('num'); if (b.cs != null) { c.textContent = P1(b.cs); if (avgCs != null && Math.abs(b.cs - avgCs) >= 0.03) c.className = 'num ' + (b.cs > avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_sofar) + '</span>'; c.title = fmtD(b.win_end) + ' 的数出来才定'; } }
         { const c = td('num'); const tx = b.th_c ? '（' + b.th_c + '）' : ''; if (b.cs_c != null) { c.innerHTML = P1(b.cs_c) + ' <span class="muted">' + tx + '</span>'; if (avgCsC != null && Math.abs(b.cs_c - avgCsC) >= 0.03) c.className = 'num ' + (b.cs_c > avgCsC ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_c_sofar) + ' ' + tx + '</span>'; } c.style.whiteSpace = 'nowrap'; }
-        { const L = ofDay(b).filter((m) => m.pj_sp != null), k = L.filter((m) => m.pj_sp >= (nm.cs_pj || 3)).length, c = td('num'); c.textContent = L.length ? k + '（' + fmtP0(k / L.length) + '）' : '—'; c.style.whiteSpace = 'nowrap'; }
+        td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
+        // 没过和四类原因：条数（占上传条数），比这几批合起来的占比高 10 个点以上标红（Reina 11/12）
+        const np = (c, n, base) => { c.innerHTML = n + ' <span class="muted">（' + fmtP0(b.n_up ? n / b.n_up : 0) + '）</span>'; c.style.whiteSpace = 'nowrap'; if (base != null && b.n_up && n / b.n_up >= base + 0.1) c.classList.add('lx-badv'); };
+        np(td('num'), b.cs_fail, null);
+        { const F = ofDay(b).filter((m) => m.st === 'fail'), has = F.some((m) => m.cause); ['硬伤', '测试', '方向', '其他'].forEach((k, j) => { const c = td('num'); if (!has) { c.textContent = '—'; c.className = 'num muted'; return; } np(c, F.filter((m) => m.cause === k).length, CAUSE_AVG[j]); }); }
+        { const L = ofDay(b).filter((m) => m.pj_sp != null), k = L.filter((m) => m.pj_sp >= (nm.cs_pj || 3)).length, c = td('num'); if (L.length) np(c, k, null); else c.textContent = '—'; }
         td('num').textContent = b.n;
         td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
         { const c = td('num'); c.textContent = P1(b.pass); if (b.pass != null && avgPass != null) c.className = 'num ' + (b.pass >= avgPass ? 'lx-good' : 'lx-badv'); }
