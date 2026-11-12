@@ -117,8 +117,13 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
    然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
    分日表审核核对（Reina 11/5）：`python3 tools/review_cover.py --sheet <分日文件> --date D --dir /tmp/sched/feishu --out /tmp/sched/review_cover.json`。用 schedule_read.js 返回的 cov，查 11/5 起首花的扩量、二剪有没有都审过：no_table 没传表就投了，not_reviewed 传了没审就投了（含他们自己标通过、没有审核备注的），need_fix 要改还在投。第一行 line 进推送，名单写进 claude/schedule-progress-MMDD.md。只告诉 Reina，不发群，不改飞书。11/5 用 11/3、11/4 的数据试跑过：扩量都对得上，没传表的 27 条全是 A 组新原片首剪（today koc_UC_博主_二创_精剪_剪辑），11/5 23:39 已在 Today素材群告诉单志远、赵勇洲，以后这类也传到扩量排期，对应行或最下面加一行。
+3之二. 外部 agency 进度（Reina 11/12：悦普放抖音星图达人，知定堂都是星广，每周目标看他们群里的日报）。内置浏览器打开下面两个 tab（my.feishu.cn，带 ?sheet=），用 javascript_tool 跑 tools/agency_read.js 全文，返回的 JSON 原样存成 /tmp/sched/agency/<tab id>.json：
+   - 悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（11月执行表，换月换 sheet id，文件名还用 5cypAT.json）：只取抖音、合作形式是星图的行，按「发布档期」归周，稿件进度写已发布或发布链接有值算发了。
+   - 知定堂 https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP（排期和审核）：按「交付日期」归周，成片审核情况写「通过」算完成，条数按视频链接那格的视频数（真人版、AI 版各算一条）。
+   目标在 tools/agency_targets.json（键是周一）：读「Today AI X 悦普 项目执行群」「Today AI X 知定堂」当天的日报（悦普「本周发布进度」里抖音视频的本周预期；知定堂「本周目标进度」星广已成片 x/目标），和文件里不一样就改，note 写来源和日期。这周没写的沿用上一周，页面标「目标沿用上周」。11/16 那周悦普按 Reina 11/12 说的 30 个（25–30）。
+   然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「今天要看」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
-5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
 改排期（Reina 11/5 定）：今天之后的排期，确定要改就直接在原来的行上改，把这一行的 UC、原素材、条数、怎么改都换成新的，不加「调整」标记、不写改了什么、不留旧内容，也不用通知唯西。改之前先看「扩量素材名」有没有已交，已交的不动。今天的行不改。
 
@@ -130,6 +135,13 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
 头部模板变式（Reina 11/10 定）：「头部素材结构提取和变式（11/9）」表（https://my.feishu.cn/sheets/VEBUs3HTjh3dHqtojlsckJzmnqS）22 个模板的变式角度 A、B 两组都排，同一个角度两组各做一版；每个模板最多 3 条「同脚本换画面」（台词照原片逐句用，只换人设、场景、画面），素材名必须带「同脚本换画面」；每天 AI 素材至少 2/3 是变式（每天 30 条里至少 20 条），全周至少 70%，剩下的留给唯西自己发挥（表里 UC_ID 写「自选」的行，进度不算）。11/10 排了 11/11–11/15：A 组第 194–246 行、B 组第 83–124 行；这周没排完的（另一组那一版、其余同脚本换画面、PS01 角度 6）下周接着排，清单在项目文档 claude/variant-schedule-1110.md。
 
 排期规则（Reina 11/5 定）：同一条原片不限条数，也不限只换开头。全片重配主要看台词怎么写，切片可以随便取用。台词要具体，底稿的数字、金额、省的时间尽量留着。新原片从「Today AI KOC KOL 真人原素材」表找没剪过的，按原则文档附录 B 可以重写台词、全片重配、精简，最长 65 秒左右。换人设、换场景时要写明录屏跟着换。
+
+排期写细分场景和怎么改时看新能力和热点（Reina 11/12 定，以后给唯西排期都这样）：写每一行的细分场景、「怎么改」之前，先看两张飞书表：
+- 重点（Reina 11/12）：产品会陆续上和助理自己执行有关的能力，比如第三方 App 的 MCP 和连接器、浏览器操作、AI 帮用户打电话。这类能力让 Today 能替用户多做事，省心、省力、省时间，是我们要讲的方向。看能力表时优先找这类新功能，场景对得上就让 Today 在片里真的把那一步做掉（查到、填好、打完、订到付款前），不停在「提醒、整理」；按原则，发出、付款、提交这类动作还是先给用户确认。
+- 占多少（Reina 11/12）：拿新执行能力当主打的素材（整条围绕这个新功能讲），算进每周 20% 的探索名额里，不占 80% 的验证方向；只挑比较重要的新功能测，不是每个新上的都排。在已验证方向的行里顺带加一步新功能（主线还是原来的场景）不占名额，照上面写「先实测」。
+- 产品能力表「Today 国区产品能力进度」https://my.feishu.cn/wiki/R6pFwq1k8iNtoTkMirtcANO0nqb （A 状态、B 类别 / 平台、C 相关功能、D 更新时间、E 来源 / 说明）：最近新出的功能，状态是「支持」（已上线），或者「待实测」「灰度」也可以，和这一行的场景对得上的，写进「怎么改」，一句话写清是哪个功能、在场景里用在哪一步，并写明「先实测，ok 再加进内容；实测不行就按原来的拍」。「不支持」「不稳定」的不写。
+- 热点表「Today AI 热点追踪」https://my.feishu.cn/wiki/KHb6wjynMiUUH1k9nkQc9DzXnwb ：「🔥 热点追踪」sheet=1dd64c 近 7 天的行、「长线追踪话题」sheet=2d5sjd 状态「在追」的对象、「📅 季节日历」sheet=UAPMOp 当季的节点。和这一行的 use case、人设对得上的，可以把热点或节点放进场景（照热点表「切入点不能硬凑」的两关判断，过不了就不放），时效短的写清最晚哪天交。
+- 两张表只读。没有对得上的就不加，不为了用新功能或热点硬改场景。
 
 所有分析早上 10 点前做完（Reina 11/5 定）。建议只动 T+1 起的排期，当天的排期不改，除非 Reina 明确说要改。
 
@@ -158,6 +170,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 排期内容只在 tools/schedule_plan.json，页面不手改：
 - E 是排期条目：d 交付日、g 组、t 类型、n 条数、s 状态（done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加）、src 和 link 是飞书位置、to 是拿掉后怎么办。另有四个字段给「点未来排期的数字」弹窗用（Reina 11/10）：sc 细分场景、k 类型（变式 / 同脚本换画面 / 自己发挥 / 空）、tpl 照哪个头部模板、how 一句话做什么（变式写「这次换（换人设）：…」）。往飞书排期加行、改行时同一次把这四个字段写进 E，src 的行号要和飞书表对上（11/9 晚 A 表第 132 行插过一行，之前 E 里 A 组第 142–164 行的行号整体差 1，11/10 已改）。已上线的条数从数据算，不写在这里。
 - Reina 确认调整、写进飞书之后，把对应条目改掉（add 改 todo，cut 删掉或换 uc），MOVES 也跟着改，asof 改成当天。
+- 飞书排期和 E 对表（Reina 11/12：飞书排期改了，关联的数据要一起改）：在 A 组 kMJdAv、B 组 3KtioB 跑 tools/plan_rows_read.js 全文，结果存成 /tmp/sync/<tab id>.json，再跑 `python3 tools/plan_sync.py --dir /tmp/sync --date T`（只打印差异），没问题加 `--apply` 写回。它按行号对：UC、条数、AI/二创对不上的按表重写，表里新加的这周、下周的行补上，表里删掉的行从 E 删掉；不碰别的周和不是扩量排期行的条目。每次改飞书排期（不管是我们改的还是唯西改的）都要跑；每天出排期页面之前也跑一次。11/12 第一次跑改了 18 处（11/11 调产能时飞书改了，E 没跟着改）。
 - 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
 - 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。换之前先把上一周的产出目标（ai、ec 取上一周 meters 的合计，xg、kol 取 output_targets）写进 targets_by_week[上周一]，周一页面看上周产出时用它，不然会拿新一周的目标去比。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
 - schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
@@ -192,6 +205,8 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 预计：AI、真人二创用这周产能（plan 的 meters 第三列，Reina 11/10 定：11/9 这周起 A 组 AI 150、真人二创 100，B 组 AI 100、真人二创 100，合计 AI 250、二创 200）；星广 95（唯西 15 + 知定堂 80，11/9 起）、达人 65（外部 50 + 唯西 15）在 plan 的 output_targets，取自素材产出日报。meters 的 week 对不上时 AI、二创退回 150、50。
 - 水上：合作形式以「星图」开头的抖音合作，只算唯西和悦普；AnyMedia 的表没读，不知道水上水下。
 - 和素材产出日报的数会不一样：日报的 AI 只算 A 组脚本及成片，不算扩量表和 B 组，不算二创，外部 agency 没有悦普，发出后补填的日期也不回改。
+
+进度条分母（Reina 11/12）：A、B 组进度条按这周产能算（plan 的 week_total，A 175、B 120），右边写「本周已交 / 产能」，条长和数字一致；竖线是按飞书排期到昨天该交的位置；下面一行写到昨天该交多少、交了多少，飞书这周排的总数和产能不一样时写出来（比产能多就是排超了），再写按产能算剩下每个工作日要交多少。plan 的 week 对不上时退回用飞书排期总数。
 
 页面排版（Reina 11/5 要小字少、看图清楚）：顶上左边本周实际产出，右边「今天要看」只放要动手的：A、B 组对照排期的进度条（Reina 11/6 要，取代 B 组速度那一行）、落下几行、预计会跌、可能见顶、要看片，每项一行（Reina 11/5：不需要这么多东西，两块高度对齐，不占位置）。定义和口径都放进折叠的「规则和口径」，页面上不再常驻解释性小字，新加内容也照这样放。
 
