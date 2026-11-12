@@ -16,6 +16,11 @@ def load(p):
     return json.loads(x) if isinstance(x, str) else x
 
 
+def os_of(name):
+    # 项目名开头写端（IOS-…、ios-…），其余算安卓（Reina 11/12：iOS 新项目大多没起量，冷启测试充分度里单看）
+    return 'iOS' if (name or '').strip().lower().startswith('ios') else '安卓'
+
+
 def read(paths, date):
     """统一成 [{pid, ct, budget, bid, n, spent: [[m, c]], recent: [m]}]。"""
     P = []
@@ -24,7 +29,7 @@ def read(paths, date):
         x = load(p)
         if isinstance(x, list):  # 旧格式
             for q in x:
-                P.append({'pid': q['pid'], 'ct': q['ct'], 'budget': q['budget'], 'bid': q['bid'], 'n': len(q['mats']),
+                P.append({'pid': q['pid'], 'ct': q['ct'], 'budget': q['budget'], 'bid': q['bid'], 'n': len(q['mats']), 'os': os_of(q.get('name', '')),
                           'spent': [[m, c] for m, c in q['mats'] if c > 0], 'recent': [m for m, _ in q['mats'] if compute.up_day(m) >= d14]})
             continue
         if x.get('date') != date:
@@ -34,7 +39,7 @@ def read(paths, date):
             if len(f) < 12:
                 continue
             sp = [[m, float(c)] for m, c in (s.rsplit(':', 1) for s in f[10].split('|') if s)]
-            P.append({'pid': f[1], 'ct': f[2], 'budget': f[4], 'bid': f[5], 'n': int(f[9] or 0), 'spent': sp, 'recent': [m for m in f[11].split('|') if m]})
+            P.append({'pid': f[1], 'ct': f[2], 'budget': f[4], 'bid': f[5], 'n': int(f[9] or 0), 'os': os_of(f[3]), 'spent': sp, 'recent': [m for m in f[11].split('|') if m]})
     seen, out = set(), []
     for q in P:  # 同一项目分段时可能重复
         if q['pid'] not in seen:
@@ -95,9 +100,9 @@ def main():
                        'clean_med': round(st.median([x[0] for x in cl])) if cl else None, 'clean_tot': round(sum(x[0] for x in cl)),
                        'clean_mats_med': st.median([x[1] for x in cl]) if cl else None, 'clean_new_med': st.median([x[2] for x in cl]) if cl else None,
                        'hot_n': len(ht), 'hot_tot': round(sum(x[0] for x in ht)), 'k80_n': len(k80), 'k80_med': st.median(k80) if k80 else None}
-    # 明细：给 compute.py 按上传日拆「没拿到量的素材为什么没拿到」用。projects = [项目ID, 素材数, [[有消耗的素材ID, 消耗], ...]]；
+    # 明细：给 compute.py 按上传日拆「没拿到量的素材为什么没拿到」用。projects = [项目ID, 素材数, [[有消耗的素材ID, 消耗], ...], 端]；
     # mat_proj = 最近 14 天上传的素材 → 它在哪些项目里（projects 的下标）
-    out['projects'] = [[p['pid'], p['n'], [[m, round(c, 2)] for m, c in p['spent']]] for p in P]
+    out['projects'] = [[p['pid'], p['n'], [[m, round(c, 2)] for m, c in p['spent']], p['os']] for p in P]
     mp = collections.defaultdict(list)
     for k, p in enumerate(P):
         for m in p['recent']:

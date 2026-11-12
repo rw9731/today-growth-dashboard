@@ -16,7 +16,7 @@ Windows (D = the report day, usually yesterday):
   retention_3d, which we report only when D1, D2 and D3 are all opened. It is not the exact-day
   D3 in the Daily Insight report.
 """
-import argparse, datetime as dt, json, os, re, sys
+import argparse, glob, datetime as dt, json, os, re, sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -144,7 +144,7 @@ def load_rows(path):
         out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name'),
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
                     'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
-                    'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != ''})
+                    'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != '', 'show': num(opt('展示'))})
     return shift_ret(out)
 
 
@@ -161,7 +161,7 @@ def shift_ret(rows):
         v, r['ret'] = r['ret'], 0
         nd = (dt.date.fromisoformat(r['date']) + dt.timedelta(days=1)).isoformat()
         if v and nd <= last:
-            extra.append({**r, 'date': nd, 'cost': 0, 'act': 0, 'ret': v, 'r3': 0, 'has3': False})
+            extra.append({**r, 'date': nd, 'cost': 0, 'act': 0, 'ret': v, 'r3': 0, 'has3': False, 'show': 0})
     return sorted(rows + extra, key=lambda r: r['date'])
 
 
@@ -741,9 +741,11 @@ def main():
     # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。
     CSW = 2
     act_by, ret_by = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
+    show_by = defaultdict(lambda: defaultdict(float))
     day_tot = defaultdict(float)
     for r in allrows:
         if r['date'] <= D[3]:
+            show_by[r['id']][r['date']] += r.get('show', 0)
             act_by[r['id']][r['date']] += r['act']
             ret_by[r['id']][r['date']] += r['ret']
             day_tot[r['date']] += r['cost']
@@ -922,9 +924,12 @@ def main():
                             'top_old': [[nm_of(i_), round(c), up_day(i_)] for c, i_ in top_old], 'days': [wd[0], wd[-1]]}
     newd_meta['proj'] = pjd
     # 二剪和对比版本像到什么程度（Reina 11/11）：画面重合比例、台词相似度，notes/vsim-D.json
-    vs_path = os.path.join(os.path.dirname(HERE), 'notes', f'vsim-{D[3]}.json')
-    if os.path.exists(vs_path):
-        VS = json.load(open(vs_path)).get('items', {})
+    # 合并 D 及以前的 vsim 文件（Reina 11/12：冷启硬伤要用，比过一次就一直算），同一条以最近一次为准
+    VS = {}
+    for fn in sorted(glob.glob(os.path.join(os.path.dirname(HERE), 'notes', 'vsim-*.json'))):
+        if os.path.basename(fn)[6:16] <= D[3]:
+            VS.update(json.load(open(fn)).get('items', {}))
+    if VS:
         rev_ = {}  # 名字 → 素材ID，给对比的那条找视频（Reina 11/12）
         for i_, n_ in list(names.items()) + list(upl_names.items()):
             rev_.setdefault(n_, i_)
@@ -934,6 +939,112 @@ def main():
                 ri = rev_.get(m['vsim'][0])  # 对比的那条的 ID 和视频附在第 4、5 项
                 if ri:
                     m['vsim'] = m['vsim'][:3] + [ri, pick_video(links.get(ri, {}))]
+    # 冷启没过按三类排查（Reina 11/12）：内容硬伤 → 测试充分度 → 方向。先看有没有硬伤，再看有没有拿到测试量，拿到量还没过再看方向。
+    # 硬伤：notes/content-flags.json（人工看片）+ 和对比版本画面重合 ≥ 60%（vsim）+ 审核要求修改还在投（notes/review-D.json）。
+    # 测试量：上传当天 + 第二天展示 ≥ CS_SHOW 算拿到了；没拿到的按项目数据找原因（没进智擎项目、只进 iOS、项目都没起量、项目的钱给了别的素材）。
+    # 方向：最近 10 个上传日里「没硬伤、拿到测试量」的素材，按 use case 和素材类型算过冷启比例，比整体低一半算方向弱。
+    CS_SHOW = 5000
+    fl_path = os.path.join(os.path.dirname(HERE), 'notes', 'content-flags.json')
+    FLAGS = json.load(open(fl_path)).get('items', {}) if os.path.exists(fl_path) else {}
+    REV = {}
+    for k in range(4):
+        rp = os.path.join(os.path.dirname(HERE), 'notes', f'review-{(Dd - dt.timedelta(days=k)).isoformat()}.json')
+        if os.path.exists(rp):
+            rv = json.load(open(rp))
+            for x in rv.get('need_fix', []):
+                REV.setdefault(x['id'], 'fix')
+            for x in rv.get('no_table', []) + rv.get('not_reviewed', []):
+                REV.setdefault(x['id'], 'unrev')
+            break
+
+    def kgrp(kind):
+        k = kind or ''
+        if k.startswith('AI'):
+            return 'AI 原片' if '原片' in k else 'AI 二剪和改法'
+        src_ = k.split(' · ')[0]
+        if '全片重配' in k:
+            return src_ + ' 全片重配'
+        if '二剪' in k:
+            return src_ + ' 二剪'
+        return k
+    PJx = PJ if pjd else []
+    MPx = MP if pjd else {}
+    is_ios = lambda pj: len(pj) > 3 and pj[3] == 'iOS'
+    for m in cs_mats:
+        u = m['up'][:10]
+        ks_ = [(dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat() for k in range(CSW)]
+        m['w_show'] = round(sum(show_by[m['id']].get(k, 0) for k in ks_ if k <= D[3]))
+        m['kg'] = kgrp(m['kind'])
+        hard = []
+        if m['id'] in FLAGS:
+            hard.append(FLAGS[m['id']][0])
+        vs_ = m.get('vsim')
+        if vs_ and vs_[1] is not None and vs_[1] >= 0.6:
+            hard.append(f'和对比版本画面重合 {round(vs_[1] * 100)}%')
+        if REV.get(m['id']) == 'fix':
+            hard.append('审核要求修改还在投')
+        m['hard'] = hard
+        if REV.get(m['id']) == 'unrev':
+            m['unrev'] = True
+        m['got'] = m['w_show'] >= CS_SHOW
+        tst = ''
+        if not m['got']:
+            if not pjd:
+                tst = '窗口里一分钱没花' if m.get('nospend') else '没拿到测试量'
+            else:
+                ps = [PJx[k] for k in MPx.get(m['id'], [])]
+                live = [pj for pj in ps if sum(c for _, c in pj[2]) >= 100]
+                if not ps:
+                    tst = '没进智擎项目'
+                elif all(is_ios(pj) for pj in ps):
+                    tst = '只进了 iOS 项目'
+                elif not live:
+                    tst = '所在项目都没起量'
+                else:
+                    old_, new_ = 0.0, 0.0
+                    for pj in live:
+                        for mid, c in pj[2]:
+                            if mid == m['id']:
+                                continue
+                            if up_day(mid) < u:
+                                old_ += c
+                            else:
+                                new_ += c
+                    tst = '项目的钱给了更早的素材' if old_ >= new_ else '项目的钱给了同批或更新的素材'
+                    m['live_pj'] = len(live)
+        m['tst'] = tst
+    dec_ = [m for m in cs_mats if m['st'] != 'wait']
+    fair = [m for m in dec_ if not m['hard'] and m['got']]
+    fr = sum(m['st'] == 'pass' for m in fair) / len(fair) if fair else None
+    cs_dir = []
+    for dim, key in (('uc', lambda m: m['uc']), ('kind', lambda m: m['kg'])):
+        g_ = defaultdict(list)
+        for m in dec_:
+            g_[key(m)].append(m)
+        for k, ms in g_.items():
+            fm = [m for m in ms if not m['hard'] and m['got']]
+            pf = sum(m['st'] == 'pass' for m in fm)
+            rate = pf / len(fm) if fm else None
+            verdict = ''
+            if fr and len(fm) >= 5:
+                verdict = '弱' if rate <= 0.5 * fr else '强' if rate >= 1.5 * fr else ''
+            cs_dir.append({'dim': dim, 'key': k, 'short': ucs.get(k, {}).get('short', '') if dim == 'uc' else '', 'n': len(ms),
+                           'pass': sum(m['st'] == 'pass' for m in ms), 'n_fair': len(fm), 'pass_fair': pf, 'rate_fair': rate, 'verdict': verdict})
+    weak = {(d['dim'], d['key']) for d in cs_dir if d['verdict'] == '弱'}
+    for m in cs_mats:
+        if m['st'] != 'fail':
+            m['cause'] = ''
+        elif m['hard']:
+            m['cause'] = '硬伤'
+        elif not m['got']:
+            m['cause'] = '测试'
+        elif ('uc', m['uc']) in weak or ('kind', m['kg']) in weak:
+            m['cause'] = '方向'
+        else:
+            m['cause'] = '其他'
+    newd_meta['cs_fair_rate'] = fr
+    newd_meta['cs_fair_n'] = len(fair)
+    newd_meta['cs_show'] = CS_SHOW
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
@@ -1026,7 +1137,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats,
+           'uc_tbl': uct, 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     if rtd_note:
         import rt_backfill
