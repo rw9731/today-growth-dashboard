@@ -2,7 +2,7 @@
 
 用法（在仓库根目录）：
   python3 tools/schedule_data.py --sheet <分日文件> --date D --out-dir /tmp/sched
-  python3 tools/schedule_build.py --data-dir /tmp/sched --date T [--progress /tmp/sched/progress.json]
+  python3 tools/schedule_build.py --data-dir /tmp/sched --date T [--progress /tmp/sched/progress.json] [--agency /tmp/sched/agency.json]
 
 写 schedule/T/index.html、schedules.json；T 是最新一天时同时写 schedule/index.html。
 排期内容只从 tools/schedule_plan.json 读，use case 名字从 tools/ucs.json 读，页面骨架是 tools/schedule_template.html。
@@ -440,6 +440,39 @@ def progress_html(prog, T):
     return rows + f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b></summary><ul>{items}</ul></details>'
 
 
+def agency_html(ag, T):
+    """「今天要看」里 A、B 组下面：外部 agency（悦普抖音星图达人、知定堂星广）对照每周目标的进度（Reina 11/12）。"""
+    if not ag or not ag.get('list'):
+        return ''
+    e = html.escape
+    out = ''
+    for g in ag['list']:
+        t = g['t'] or 0
+        if not t:
+            continue
+        got, due = g['got'], g['due']
+        late = g['late']
+        state = f'<em class="o-late">晚了 {len(late)}</em>' if late else ('<em class="o-over">交齐</em>' if got >= t else '')
+        today = [x for x in g['todo'] if x['d'] == T.isoformat()]
+        bits = [f'排了 {g["sched"]} {g["unit"]}' if g['sched'] != t else '']
+        if today:
+            bits.append(f'今天档期 {len(today)} {g["unit"]}')
+        if g.get('vid') is not None:
+            bits.append(f'已交成片 {g["vid"]}')
+        if g['t_stale']:
+            bits.append('目标沿用上周')
+        bits = [b for b in bits if b]
+        pend = late + g['todo']
+        items = ''.join('<li>' + e(f"{int(x['d'][5:7])}/{int(x['d'][8:])} {x['name'] or '没写账号'}（{x['uc']}）{x['st'] or '没写进度'}" + ('，晚了' if x in late else '')) + '</li>' for x in pend)
+        more = f'<details class="lag"><summary>还没{e(g["verb"][-2:])}的 {len(pend)} 行</summary><ul>{items}</ul></details>' if pend else ''
+        tip = e(f"本周目标 {t} {g['unit']}（{g['t_note']}），已{g['verb']} {got}；竖线是到昨天该{g['verb'][-2:]}的位置")
+        out += (f'<span class="k">{e(g["name"])}</span><div class="pg"><div class="o-cell">'
+                f'<span class="o-track" title="{tip}"><span class="o-fill" style="width:{min(100, got / t * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, due / t * 100):.1f}%"></i></span>'
+                f'<span class="o-pct"><b>{got}</b>/{t}{state}</span></div>'
+                f'<small>{e(g["what"])}{" · " + e(" · ".join(bits)) if bits else ""}</small>{more}</div>')
+    return out
+
+
 def output_html(o):
     """本周实际产出：昨天、累计、预计、完成度。进度条上的竖线是按一周 7 天平摊到昨天该到的位置。"""
     if not o or not o.get('rows'):
@@ -491,6 +524,7 @@ def main():
     ap.add_argument('--data-dir', required=True)
     ap.add_argument('--date', required=True, help='看板当天 T')
     ap.add_argument('--progress')
+    ap.add_argument('--agency', help='agency_progress.py 的结果：悦普、知定堂的进度条')
     ap.add_argument('--output', help='schedule_output.py 的结果，页面上的「本周实际产出」')
     ap.add_argument('--root', default=ROOT, help='输出目录，测试时用')
     ap.add_argument('--force', action='store_true')
@@ -544,7 +578,7 @@ def main():
         print('WARNING 没给 --output：页面没有「本周实际产出」')
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
-        PROG=progress_html(prog, T),
+        PROG=progress_html(prog, T) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),

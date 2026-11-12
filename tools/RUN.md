@@ -116,8 +116,13 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
    然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
    分日表审核核对（Reina 11/5）：`python3 tools/review_cover.py --sheet <分日文件> --date D --dir /tmp/sched/feishu --out /tmp/sched/review_cover.json`。用 schedule_read.js 返回的 cov，查 11/5 起首花的扩量、二剪有没有都审过：no_table 没传表就投了，not_reviewed 传了没审就投了（含他们自己标通过、没有审核备注的），need_fix 要改还在投。第一行 line 进推送，名单写进 claude/schedule-progress-MMDD.md。只告诉 Reina，不发群，不改飞书。11/5 用 11/3、11/4 的数据试跑过：扩量都对得上，没传表的 27 条全是 A 组新原片首剪（today koc_UC_博主_二创_精剪_剪辑），11/5 23:39 已在 Today素材群告诉单志远、赵勇洲，以后这类也传到扩量排期，对应行或最下面加一行。
+3之二. 外部 agency 进度（Reina 11/12：悦普放抖音星图达人，知定堂都是星广，每周目标看他们群里的日报）。内置浏览器打开下面两个 tab（my.feishu.cn，带 ?sheet=），用 javascript_tool 跑 tools/agency_read.js 全文，返回的 JSON 原样存成 /tmp/sched/agency/<tab id>.json：
+   - 悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（11月执行表，换月换 sheet id，文件名还用 5cypAT.json）：只取抖音、合作形式是星图的行，按「发布档期」归周，稿件进度写已发布或发布链接有值算发了。
+   - 知定堂 https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP（排期和审核）：按「交付日期」归周，成片审核情况写「通过」算完成，条数按视频链接那格的视频数（真人版、AI 版各算一条）。
+   目标在 tools/agency_targets.json（键是周一）：读「Today AI X 悦普 项目执行群」「Today AI X 知定堂」当天的日报（悦普「本周发布进度」里抖音视频的本周预期；知定堂「本周目标进度」星广已成片 x/目标），和文件里不一样就改，note 写来源和日期。这周没写的沿用上一周，页面标「目标沿用上周」。11/16 那周悦普按 Reina 11/12 说的 30 个（25–30）。
+   然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「今天要看」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
-5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
 改排期（Reina 11/5 定）：今天之后的排期，确定要改就直接在原来的行上改，把这一行的 UC、原素材、条数、怎么改都换成新的，不加「调整」标记、不写改了什么、不留旧内容，也不用通知唯西。改之前先看「扩量素材名」有没有已交，已交的不动。今天的行不改。
 
