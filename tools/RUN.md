@@ -162,6 +162,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 排期内容只在 tools/schedule_plan.json，页面不手改：
 - E 是排期条目：d 交付日、g 组、t 类型、n 条数、s 状态（done 已交没花钱、todo 待交、cut 建议拿掉、add 建议加）、src 和 link 是飞书位置、to 是拿掉后怎么办。另有四个字段给「点未来排期的数字」弹窗用（Reina 11/10）：sc 细分场景、k 类型（变式 / 同脚本换画面 / 自己发挥 / 空）、tpl 照哪个头部模板、how 一句话做什么（变式写「这次换（换人设）：…」）。往飞书排期加行、改行时同一次把这四个字段写进 E，src 的行号要和飞书表对上（11/9 晚 A 表第 132 行插过一行，之前 E 里 A 组第 142–164 行的行号整体差 1，11/10 已改）。已上线的条数从数据算，不写在这里。
 - Reina 确认调整、写进飞书之后，把对应条目改掉（add 改 todo，cut 删掉或换 uc），MOVES 也跟着改，asof 改成当天。
+- 飞书排期和 E 对表（Reina 11/12：飞书排期改了，关联的数据要一起改）：在 A 组 kMJdAv、B 组 3KtioB 跑 tools/plan_rows_read.js 全文，结果存成 /tmp/sync/<tab id>.json，再跑 `python3 tools/plan_sync.py --dir /tmp/sync --date T`（只打印差异），没问题加 `--apply` 写回。它按行号对：UC、条数、AI/二创对不上的按表重写，表里新加的这周、下周的行补上，表里删掉的行从 E 删掉；不碰别的周和不是扩量排期行的条目。每次改飞书排期（不管是我们改的还是唯西改的）都要跑；每天出排期页面之前也跑一次。11/12 第一次跑改了 18 处（11/11 调产能时飞书改了，E 没跟着改）。
 - 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
 - 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT、GROUPS 都要更新。换之前先把上一周的产出目标（ai、ec 取上一周 meters 的合计，xg、kol 取 output_targets）写进 targets_by_week[上周一]，周一页面看上周产出时用它，不然会拿新一周的目标去比。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
 - schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
