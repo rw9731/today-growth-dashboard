@@ -438,8 +438,10 @@ def main():
         bar = max(o['rate_w'], GOOD_RATE)
         if rate >= bar and cpr is not None and cpr <= o['cpr_w']:
             return '次留好'
-        if rate < th['low'] * o['rate_w'] or cpr is None or cpr > th['high'] * o['cpr_w']:
+        if rate < th['low'] * o['rate_w'] or cpr is None:
             return '次留差'
+        if cpr > th['high'] * o['cpr_w']:
+            return '次留贵'  # 次留率没问题，只是次留成本超线（Reina 11/12 从次留差里拆出来）
         return '次留一般'
 
     def label(rate, cpr, cost):

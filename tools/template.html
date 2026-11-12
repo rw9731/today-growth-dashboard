@@ -318,8 +318,8 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
-    <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留差,样本不够,新上线"></div>
+    <p class="lx-note">按昨天消耗排。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
+    <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留贵,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留贵,量小 + 次留差,样本不够,新上线"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -490,7 +490,7 @@
       </table>
     </div>
     <h3 class="lx-h3">拖后腿的素材</h3>
-    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>，或次留成本超过全盘 <b data-draw="th-high">—</b>。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 首次消耗在本周。</p>
+    <p class="lx-note">三天消耗不低于 <b data-draw="th-min">—</b> 的素材里，<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>。两种都列在这里。按昨天消耗排，昨天消耗红色 = 昨天还花了 <b data-draw="th-drop">—</b> 以上，该降。绿底 = 首次消耗在本周。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -701,7 +701,7 @@
     sp.title = (days || []).map((x) => x[0] + ' ' + fmtY(x[1])).join('\n');
     for (const x of days || []) { const b = document.createElement('i'); b.style.height = Math.max(1, x[1] / dmax * 26) + 'px'; b.title = x[0] + ' ' + fmtY(x[1]); sp.appendChild(b); }
     cell.appendChild(sp); };
-  const tagCls = (t) => { const s = t || ''; const r = /次留差|拖后腿/.test(s) ? 'r-bad' : /次留一般/.test(s) ? 'r-mid' : /新上线/.test(s) ? 'r-new' : /次留好/.test(s) ? 'r-good' : 'r-na'; return 'tg ' + (s.startsWith('能放量') ? 's-big' : 's-small') + ' ' + r; };
+  const tagCls = (t) => { const s = t || ''; const r = /次留差|次留贵|拖后腿/.test(s) ? 'r-bad' : /次留一般/.test(s) ? 'r-mid' : /新上线/.test(s) ? 'r-new' : /次留好/.test(s) ? 'r-good' : 'r-na'; return 'tg ' + (s.startsWith('能放量') ? 's-big' : 's-small') + ' ' + r; };
   document.querySelectorAll('[data-draw="tag-legend"]').forEach((box) => { box.className = 'tg-legend'; for (const t of box.dataset.tags.split(',')) { const p = document.createElement('span'); p.className = tagCls(t); p.textContent = t; box.appendChild(p); } });
   const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '能放量 + 次留好但贵': 'g-pricey', '次留好但贵、量还小': 'g-pricey', '次留好但贵': 'g-pricey', '能放量 + 次留差': 'g-bad', '次留差、量还小': 'g-bad', '拖后腿': 'g-bad', '能放量 + 成本略高': 'g-mid', '成本略高、量还小': 'g-mid', '能放量 + 次留略低': 'g-mid', '次留略低、量还小': 'g-mid', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
   fill('ucrows', (tb) => {
@@ -834,7 +834,7 @@
   });
   const GOOD = ['能放量 + 次留好', '量小 + 次留好'];
   matTable('goodrows', (v) => v.cost27 >= (t.rank || 1000), () => '', true);
-  matTable('badrows', (v) => /次留差/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''), 'spark');
+  matTable('badrows', (v) => /次留差|次留贵/.test(v.group), (r) => (r.cost27 >= t.drop ? 'lx-badv' : ''), 'spark');
 
   // 昨天上新的素材（Reina 11/9）
   fill('newd-sum', (el) => {

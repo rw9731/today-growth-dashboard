@@ -45,7 +45,7 @@ def main():
         for m in r['mat']:
             if m['cost27'] >= rank:
                 add(m['id'], m['name'], m['cost27'], '昨天消耗排行')
-            if ('次留差' in m['group'] or m['group'] in ('拖后腿', '次留好但贵')) and m['cost27'] >= 500:
+            if ('次留差' in m['group'] or '次留贵' in m['group'] or m['group'] in ('拖后腿', '次留好但贵')) and m['cost27'] >= 500:
                 add(m['id'], m['name'], m['cost27'], m['group'])
         for k in r.get('kl', []):
             add(k['id'], k['name'], k['cost27'], '扩量')

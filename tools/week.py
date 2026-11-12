@@ -159,7 +159,8 @@ def main():
         if s['rate'] is None or s['act_r'] < WTH['tag_act']:
             tag = '样本不够'
         else:
-            ret = '次留好' if good else '次留差' if s['rate'] < WTH['bad_rate'] * rw or s['cpr'] is None or s['cpr'] > WTH['bad_cpr'] * cw else '次留一般'
+            ret = ('次留好' if good else '次留差' if s['rate'] < WTH['bad_rate'] * rw or s['cpr'] is None
+                   else '次留贵' if s['cpr'] > WTH['bad_cpr'] * cw else '次留一般')  # 次留贵：次留率没问题、成本超线（Reina 11/12）
             tag = ('能放量' if big else '量小') + ' + ' + ret
         flag = ''
         if tier == 'T3' and s['rate'] is not None:
@@ -251,8 +252,10 @@ def main():
         bar = max(rw, C.GOOD_RATE)
         if r >= bar and c <= cw:
             return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '样本不够'
-        if r < WTH['bad_rate'] * rw or c > WTH['bad_cpr'] * cw:
+        if r < WTH['bad_rate'] * rw:
             return '能放量 + 次留差'
+        if c > WTH['bad_cpr'] * cw:
+            return '能放量 + 次留贵'  # 次留率没问题、成本超线（Reina 11/12）
         return '能放量 + 次留一般'
     for m in mats:
         m['tag'] = tag_of(m)
