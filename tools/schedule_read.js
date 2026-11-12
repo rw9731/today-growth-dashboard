@@ -38,7 +38,7 @@ let __sh = null;
 for (let i = 0; i < 60; i++) {
   try {
     __sh = window.spread && window.spread.getActiveSheet();
-    if (__sh && (!__sh.id || !__tab || __sh.id() === __tab) && __WANT[__key(__sh.name())] && __sh.getText(0, 0)) break;
+    if (__sh && (!__sh.id || !__tab || __sh.id() === __tab) && __WANT[__key(__sh.name())] && (__sh.getText(0, 0) || __sh.getText(0, 1))) break; // 11/12 A 组脚本及成片 A1 表头被清空了
     __sh = null;
   } catch (e) { __sh = null; }
   await new Promise((r) => setTimeout(r, 500));
@@ -51,6 +51,7 @@ const __cols = {};
 for (const w of __WANT[__name]) {
   let c = __hdr.indexOf(w);
   if (c < 0) c = __hdr.findIndex((h) => h.startsWith(w));
+  if (c < 0 && w === '素材命名' && __name === '脚本及成片' && !__hdr[0]) c = 0; // 11/12 起 A1「素材命名」表头空着，A 列内容还是素材命名
   if (c < 0 && w === '日期' && __name === '扩量素材迭代排期') c = 0; // A 组这张表 A1 在 11/5 被改成了「照真人」，A 列内容还是日期
   if (c < 0 && w.endsWith('?')) continue; // 可选列，这张表没有就跳过
   if (c < 0) throw new Error(__name + ' 找不到表头：' + w + '，现在的表头：' + __hdr.join('|'));
@@ -130,7 +131,8 @@ let __cov;
 if (__COV[__name]) {
   const __col = (w) => { let c = __hdr.indexOf(w); if (c < 0) c = __hdr.findIndex((h) => h.startsWith(w)); return c; };
   const __both = (r, c) => { if (c < 0) return ''; let a = (__sh.getText(r, c) || '').trim(); try { const f = (__sh.getSegmentArray(r, c) || []).filter((s) => s.type === 'attachment').map((s) => s.text).join('\n').trim(); if (f) a = (a ? a + '\n' : '') + f; } catch (e) { /* 这一格没有附件 */ } return a; };
-  const [cn, cf, cs, cm] = [__COV[__name][0], __COV[__name][1], '成片状态', '成片备注'].map(__col);
+  let [cn, cf, cs, cm] = [__COV[__name][0], __COV[__name][1], '成片状态', '成片备注'].map(__col);
+  if (cn < 0 && !__hdr[0]) cn = 0; // A1 表头空着时 A 列还是素材命名
   const cd = __name === '脚本及成片' ? __col('完成时间') : (__dateCol ? __cols[__dateCol] : -1);
   __cov = [];
   let dd = '';
