@@ -944,6 +944,8 @@ def main():
     # 测试量：上传当天 + 第二天展示 ≥ CS_SHOW 算拿到了；没拿到的按项目数据找原因（没进智擎项目、只进 iOS、项目都没起量、项目的钱给了别的素材）。
     # 方向：最近 10 个上传日里「没硬伤、拿到测试量」的素材，按 use case 和素材类型算过冷启比例，比整体低一半算方向弱。
     CS_SHOW = 5000
+    CS_PJ = 3  # 实测项目数 ≥ 3 算测过；0–2 个不充分，10 个以上充分
+    AUD_SKIP = {'疑似AIGC'}
     fl_path = os.path.join(os.path.dirname(HERE), 'notes', 'content-flags.json')
     FLAGS = json.load(open(fl_path)).get('items', {}) if os.path.exists(fl_path) else {}
     REV = {}
@@ -956,6 +958,20 @@ def main():
             for x in rv.get('no_table', []) + rv.get('not_reviewed', []):
                 REV.setdefault(x['id'], 'unrev')
             break
+
+    # 巨量审核标签（notes/jl-audit-D.json，tools/audit_js.py 拉的素材中心审核结果）：前置拒审-极端相似、禁投、限投、各类违规都算硬伤；疑似AIGC 只是标注，不算
+    AUD = {}
+    for fn in sorted(glob.glob(os.path.join(os.path.dirname(HERE), 'notes', 'jl-audit-*.json'))):
+        if os.path.basename(fn)[9:19] <= D[3]:
+            AUD = {i: [t for t in dict.fromkeys(v.split(';')) if t and t not in AUD_SKIP] for i, v in json.load(open(fn)).get('items', {}).items()}
+    AUD = {i: v for i, v in AUD.items() if v}
+    # 实测项目数（Reina 11/12：测试充分度看素材在几个项目里测过，1–2 个不充分，10 个以上充分）。进了项目不等于测了，这里数它自己真花到钱的项目
+    PJ_SP = defaultdict(int)
+    if pjd:
+        for pj in PJ:
+            for mid, c in pj[2]:
+                if c > 0:
+                    PJ_SP[mid] += 1
 
     def kgrp(kind):
         k = kind or ''
@@ -978,15 +994,19 @@ def main():
         hard = []
         if m['id'] in FLAGS:
             hard.append(FLAGS[m['id']][0])
-        vs_ = m.get('vsim')
-        if vs_ and vs_[1] is not None and vs_[1] >= 0.6:
-            hard.append(f'和对比版本画面重合 {round(vs_[1] * 100)}%')
+        # 画面重合（vsim）不算硬伤（Reina 11/12 问巨量有没有证据：重合 ≥60% 的 26 条巨量一条都没标「极端相似」，19 条照样拿到 5,000 以上展示），只在明细里提示
+        for t_ in AUD.get(m['id'], []):
+            hard.append('巨量审核：' + t_)
         if REV.get(m['id']) == 'fix':
             hard.append('审核要求修改还在投')
         m['hard'] = hard
         if REV.get(m['id']) == 'unrev':
             m['unrev'] = True
-        m['got'] = m['w_show'] >= CS_SHOW
+        if pjd:
+            m['pj_sp'] = PJ_SP.get(m['id'], 0)
+            m['got'] = m['pj_sp'] >= CS_PJ
+        else:
+            m['got'] = m['w_show'] >= CS_SHOW
         tst = ''
         if not m['got']:
             if not pjd:
@@ -1045,6 +1065,8 @@ def main():
     newd_meta['cs_fair_rate'] = fr
     newd_meta['cs_fair_n'] = len(fair)
     newd_meta['cs_show'] = CS_SHOW
+    newd_meta['cs_pj'] = CS_PJ if pjd else None
+    newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
 
