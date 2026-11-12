@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>竞品头部投流素材拆解：灵光 / 千问 / 豆包（2026/11/12）· 专题分析</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  :root {
+    --font-anthropic-sans: var(--font-sans); --font-anthropic-serif: var(--font-serif);
+    --cds-font-size-caption: var(--fs-caption); --cds-font-size-body: var(--fs-body); --cds-font-size-heading: var(--fs-heading); --cds-font-size-title: var(--fs-title);
+    --cds-font-weight-medium: var(--fw-medium);
+    --cds-gap-xs: var(--gap-xs); --cds-gap-sm: var(--gap-sm); --cds-gap-md: var(--gap-md); --cds-gap-lg: var(--gap-lg); --cds-gap-xl: var(--gap-xl);
+    --cds-pad-xs: var(--pad-xs); --cds-pad-sm: var(--pad-sm); --cds-pad-md: var(--pad-md); --cds-pad-lg: var(--pad-lg); --cds-radius: var(--radius);
+    --cds-border: var(--color-border-line); --cds-surface-popover: var(--color-panel); --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .12);
+    --cds-text-secondary: var(--color-fg-muted); --cds-dur-slow: .3s;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 48px; }
+  .topic-top { margin-bottom: 20px; }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
+  .lx-nav-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg-muted); font-weight: 600; margin-right: 4px; }
+  .lx-nav-label svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .lx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg); text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lx-chip:hover { border-color: var(--color-fg-muted); }
+  .lx-chip[aria-current="page"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-chip .new { font-size: 11px; font-weight: 600; color: var(--color-ok); }
+  .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
+  .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
+  .dash-select { font: inherit; color: var(--color-fg); background-color: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 8px; padding: 5px 10px; }
+  .dash-skeleton { background: var(--color-border-line); border-radius: 6px; opacity: .5; }
+
+.wk { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-lg); }
+.wk h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.wk .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; }
+.wk .take { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.6; }
+.wk .take .muted { color: var(--color-fg-muted); }
+.wk .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.wk .card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.wk .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+.wk .sec { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-sm) 0 calc(-1 * var(--cds-gap-sm)); }
+.wk .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 36rem), 1fr)); gap: var(--cds-gap-md); }
+.wk .scroll { overflow: auto; max-height: 36rem; }
+.wk table { border-collapse: separate; border-spacing: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; width: 100%; }
+.wk th, .wk td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.wk th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); vertical-align: bottom; z-index: 1; }
+.wk th:first-child, .wk td:first-child { text-align: left; position: sticky; left: 0; background: var(--color-panel); }
+.wk th:first-child { z-index: 2; }
+.wk .txt { text-align: left; }
+.wk td.muted { color: var(--color-fg-muted); }
+.wk .d { border-right: 2px solid var(--color-border-line); }
+.wk td.wrap { white-space: normal; min-width: 18rem; text-align: left; color: var(--color-fg-muted); }
+.wk td.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.wk .chart { position: relative; min-height: 300px; }
+.wk .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; z-index: 3; }
+.wk .tip .h { color: var(--cds-text-secondary); margin-bottom: 2px; }
+.wk .pick { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wk summary { cursor: pointer; color: var(--color-fg); font-size: var(--cds-font-size-body); }
+.wk dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px var(--cds-gap-md); margin: var(--cds-gap-md) 0 0; }
+.wk dt { color: var(--color-fg); }
+.wk dd { margin: 0; }
+.wk .fail { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wk .fail i { display: inline-block; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wk [data-dash-source-state=empty] { color: transparent; }
+.wk [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.wk .say p { margin: 0 0 var(--cds-gap-sm); line-height: 1.6; font-size: var(--cds-font-size-body); }
+.wk .sub2 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); }
+.wk .dbw { overflow-x: auto; }
+.wk .db-row { display: grid; grid-template-columns: minmax(9rem, 1.2fr) minmax(7rem, 1.2fr) 8rem 4.5rem 7.5rem 10rem 11rem 5.5rem; align-items: center; gap: 0 var(--cds-gap-sm); min-width: 68rem; border-bottom: 1px solid var(--color-border-line); padding: 5px 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wk .db-head { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); align-items: end; }
+.wk .db-row .num { text-align: right; }
+.wk .db-row .muted { color: var(--color-fg-muted); }
+.wk .db-name { font-size: var(--cds-font-size-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk .db-plot svg { display: block; }
+.wk .db-v { text-align: right; }
+.wk .db-v.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .db-body { min-height: 3rem; }
+.wk .dbkey { display: inline-flex; align-items: center; gap: 4px; }
+.wk .dbkey i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.wk .dbkey .o { border: 1.5px solid var(--color-fg-muted); }
+.wk .dbkey .g { background: var(--color-ok); }
+.wk .dbkey .r { background: var(--color-bad); }
+.wk .sum h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+.wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .sum .muted { color: var(--color-fg-muted); }
+.wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .hint { position: relative; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; outline: none; }
+.wk .hint-l { text-align: left; }
+.wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
+.wk .hint-l .hint-tip { left: 0; right: auto; }
+.wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
+.wk .ops td { white-space: normal; text-align: left; vertical-align: top; min-width: 16rem; line-height: 1.55; }
+.wk .ops td:first-child { min-width: 0; white-space: nowrap; }
+.wk .ops th { text-align: left; }
+.wk .ops .r { color: var(--color-fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+
+  .lg { --s1: #2a78d6; --s2: #eb6834; }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .lg { --s1: #3987e5; --s2: #d95926; } }
+  :root[data-theme="dark"] .lg { --s1: #3987e5; --s2: #d95926; }
+  .lg .bc { display: block; max-width: 100%; height: auto; }
+  .lg { --c1: var(--s1); --c2: var(--s2); --c3: #1baf7a; --c4: #eda100; --c5: #e87ba4; --c6: #008300; --cx: #b9b7b0; }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .lg { --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #008300; --cx: #5f5e59; } }
+  :root[data-theme="dark"] .lg { --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #008300; --cx: #5f5e59; }
+  .lg .pies { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 18px 28px; margin-top: 16px; }
+  .lg .pies figure { margin: 0; min-width: 0; }
+  .lg .pies figcaption { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .lg .pies figcaption > span { display: block; font-weight: 400; font-size: 12px; color: var(--color-fg-muted); margin-top: 2px; }
+  .lg .dwrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .lg svg.dn { flex: none; }
+  .lg svg.dn path { stroke: var(--dgap, var(--color-panel)); stroke-width: 2; stroke-linejoin: round; }
+  .lg svg.dn path:hover { opacity: .82; }
+  .lg .blk svg.dn { --dgap: var(--color-bg); }
+  .lg svg.dn .c1 { font-size: 17px; font-weight: 700; fill: var(--color-fg); }
+  .lg svg.dn .c2 { font-size: 11px; fill: var(--color-fg-muted); }
+  .lg ul.dleg { list-style: none; margin: 0; padding: 0; flex: 1 1 160px; min-width: 0; font-size: 13px; }
+  .lg ul.dleg li { display: grid; grid-template-columns: 10px 1fr auto; column-gap: 8px; align-items: baseline; padding: 3px 0; border-bottom: 1px solid var(--color-border-line); }
+  .lg ul.dleg li:last-child { border-bottom: 0; }
+  .lg ul.dleg i { width: 10px; height: 10px; border-radius: 3px; align-self: center; }
+  .lg ul.dleg .nm em { display: block; font-style: normal; font-size: 11.5px; color: var(--color-fg-muted); }
+  .lg ul.dleg .pc { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .lg ul.dleg .v { grid-column: 2 / 4; font-size: 11.5px; color: var(--color-fg-muted); margin-top: -1px; line-height: 1.4; }
+  .lg .seg { margin-top: 4px; }
+  .lg .segr { display: grid; grid-template-columns: 9.5em 1fr; align-items: center; gap: 10px; margin: 7px 0; font-size: 13px; }
+  .lg .segr .sl b { font-weight: 400; color: var(--color-fg-muted); margin-left: 6px; font-size: 12px; }
+  .lg .sb { display: flex; height: 22px; gap: 2px; }
+  .lg .sb span { display: flex; align-items: center; justify-content: center; font-size: 11.5px; color: #fff; font-weight: 600; min-width: 2px; }
+  .lg .sb span:first-child { border-radius: 4px 0 0 4px; }
+  .lg .sb span:last-child { border-radius: 0 4px 4px 0; }
+  .lg .sb span:only-child { border-radius: 4px; }
+  .lg .seg .legend span, .lg .mt-h span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-fg-muted); margin-right: 12px; }
+  .lg .seg .legend i, .lg .mt-h i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .lg .mt { margin-top: 10px; font-size: 13px; }
+  .lg .mt-h, .lg .mt-r { display: grid; grid-template-columns: var(--lw, 5.2em) repeat(var(--n), minmax(0, 1fr)); column-gap: 12px; align-items: center; }
+  .lg .mt-h { padding-bottom: 6px; border-bottom: 1px solid var(--color-border-line); }
+  .lg .mt-r { padding: 4px 0; border-bottom: 1px solid var(--color-border-line); }
+  .lg .mt-r:last-child { border-bottom: 0; }
+  .lg .mc { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .lg .mc b { display: block; height: 12px; border-radius: 0 4px 4px 0; min-width: 0; }
+  .lg .mc em { font-style: normal; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--color-fg); white-space: nowrap; }
+
+  @media (max-width: 520px) { .lg .hb-r { grid-template-columns: 8em 1fr; } .lg .hb-l { flex-wrap: wrap; row-gap: 2px; } }
+  .lg .tag.w { border-color: var(--color-fg); color: var(--color-fg); font-weight: 600; }
+  .lg h4.hbh { margin: 12px 0 4px; font-size: 14px; }
+  .lg .hb { margin: 6px 0 6px; font-size: 13px; }
+  .lg .hb-lg span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-fg-muted); margin-right: 14px; }
+  .lg .hb-lg i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .lg .hb-r { display: grid; grid-template-columns: 11em 1fr; column-gap: 12px; align-items: center; padding: 3px 0; }
+  .lg .hb-l { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .lg .hb-l .tag { font-size: 11px; padding: 0 6px; }
+  .lg .hb-w { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .lg .hb-t { display: flex; gap: 2px; height: 14px; min-width: 3px; }
+  .lg .hb-t span { display: block; height: 100%; min-width: 2px; }
+  .lg .hb-t span:first-child { border-radius: 0; }
+  .lg .hb-t span:last-child { border-radius: 0 4px 4px 0; }
+  .lg .hb-w b { font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+  .lg .hb-cap { font-size: 12.5px; color: var(--color-fg-muted); margin: 2px 0 14px; }
+  .lg table.cmp2 td, .lg table.cmp2 th { text-align: left; }
+
+  .lg .cv { margin: 8px 0 4px; font-size: 13px; --k1: var(--color-fg); --k2: color-mix(in srgb, var(--color-fg) 48%, var(--color-bg)); --k3: color-mix(in srgb, var(--color-fg) 12%, var(--color-bg)); }
+  .lg .cv-r { display: grid; grid-template-columns: 7em 1fr; gap: 10px; align-items: center; margin: 6px 0; }
+  .lg .cv-l b { font-weight: 400; color: var(--color-fg-muted); margin-left: 6px; font-size: 12px; }
+  .lg .cv-b { display: flex; gap: 2px; height: 22px; }
+  .lg .cv-b span { display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; white-space: nowrap; overflow: hidden; min-width: 2px; }
+  .lg .cv-b span:first-child { border-radius: 4px 0 0 4px; }
+  .lg .cv-b span:last-child { border-radius: 0 4px 4px 0; }
+  .lg .cv .k1 { background: var(--k1); color: var(--color-bg); }
+  .lg .cv .k2 { background: var(--k2); color: var(--color-bg); }
+  .lg .cv .k3 { background: var(--k3); color: var(--color-fg); }
+  .lg .cv-lg span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-fg-muted); margin-right: 14px; }
+  .lg .cv-lg i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .lg details.tv { margin-top: 10px; }
+  .lg details.tv summary { cursor: pointer; font-size: 12.5px; color: var(--color-fg-muted); }
+
+  .lg .charts3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 22px; margin-top: 8px; }
+  .lg .charts3 figure { margin: 0; min-width: 0; }
+  .lg .charts3 figcaption { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .lg .charts3 figcaption > span { display: block; font-weight: 400; font-size: 12px; color: var(--color-fg-muted); margin-top: 2px; }
+  .lg .charts3 .legend { margin: 4px 0 0; }
+  .lg .bc .gl { stroke: var(--color-border-line); stroke-width: 1; }
+  .lg .bc .ax { fill: var(--color-fg-muted); font-size: 10px; }
+  .lg .bc .vl { fill: var(--color-fg); font-size: 11px; font-weight: 600; }
+  .lg .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 12px; margin-top: 10px; }
+  .lg .kpi { border: 1px solid var(--color-border-line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+  .lg .kpi b { font-size: 22px; font-variant-numeric: tabular-nums; }
+  .lg .kpi span { color: var(--color-fg-muted); font-size: 13px; line-height: 1.45; }
+  .lg td.wrap, .lg td.w2 { white-space: normal; text-align: left; line-height: 1.5; }
+  .lg td.w2 { min-width: 12rem; }
+  .lg td.wrap { min-width: 22rem; color: var(--color-fg); }
+  .lg td .m { color: var(--color-fg-muted); }
+  .lg td a { color: inherit; }
+  .lg .ids a { display: inline-block; margin: 0 6px 2px 0; color: var(--color-fg-muted); }
+  .lg .tag { display: inline-block; font-size: 12px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--color-border-line); margin: 0 4px 2px 0; white-space: nowrap; color: var(--color-fg-muted); }
+  .lg .tag.ant { border-color: var(--s1); color: var(--color-fg); }
+  .lg .tag.ali { border-color: var(--s2); color: var(--color-fg); }
+  .lg .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+  .lg .chips button { font: inherit; font-size: 13px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+  .lg .chips button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+  .lg .timeline { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14px; line-height: 1.55; }
+  .lg .timeline li { display: grid; grid-template-columns: 7rem 1fr; gap: 10px; }
+  .lg .timeline b { font-variant-numeric: tabular-nums; }
+  .lg .sum ul { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; line-height: 1.6; font-size: 15px; }
+  .lg h3.sub2 { font-size: 15px; margin: 18px 0 4px; }
+  .lg .scroll { max-height: 46rem; }
+  .lg .blk { border: 1px solid var(--color-border-line); border-radius: 10px; padding: 14px 16px 16px; margin-top: 14px; background: var(--color-bg); }
+  .lg .blkh { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--color-border-line); color: var(--color-fg-muted); font-size: 13px; }
+  .lg .pill { font-size: 15px; font-weight: 700; padding: 3px 14px; border-radius: 999px; background: var(--color-fg); color: var(--color-bg); }
+  .lg .blk .kpis { margin-top: 0; }
+  .lg .blk .kpi { background: var(--color-panel); }
+  .lg .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 14px 28px; margin-top: 16px; }
+  .lg .two h4 { margin: 0 0 2px; font-size: 14px; }
+  .lg .two .note { margin: 0 0 6px; }
+  .lg table.cmp { width: auto; min-width: 20rem; background: var(--color-panel); }
+  .lg table.cmp th, .lg table.cmp td { background: transparent; }
+  .lg table.cmp2 { background: var(--color-panel); }
+  .lg table.cmp2 thead th { position: static; }
+  .lg table.cmp2 td { vertical-align: top; }
+  .lg table.cmp2 tr.hl td { background: color-mix(in srgb, var(--s2) 10%, var(--color-panel)); }
+  .lg table.cmp2.fix { table-layout: fixed; width: 100%; }
+  .lg table.cmp2 .sm { font-size: 12.5px; line-height: 1.55; margin-top: 3px; }
+  .lg table.cmp2 .mute { color: var(--color-text-tertiary, #888); }
+  .lg table.cmp2 td.wrap { white-space: normal; min-width: 0; }
+  .lg table.cmp2.fix td, .lg table.cmp2.fix th { overflow-wrap: anywhere; white-space: normal; }
+  .lg table.cmp2.fix .tag { white-space: normal; }
+
+  .lg .scn { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr)); gap: 18px; margin-top: 10px; }
+  .lg .scn .it { border: 1px solid var(--color-border-line); border-radius: 10px; padding: 0 0 14px; background: var(--color-bg); overflow: hidden; }
+  .lg .scn .hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 11px 16px; margin-bottom: 12px; background: var(--color-panel); border-bottom: 1px solid var(--color-border-line); }
+  .lg .scn .hd b { font-size: 17px; }
+  .lg .scn .hd span { color: var(--color-fg-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .lg .scn dl { display: grid; grid-template-columns: 5.2rem 1fr; gap: 9px 12px; margin: 0; padding: 0 16px; font-size: 14px; line-height: 1.6; }
+  .lg .scn dt { color: var(--color-fg-muted); font-weight: 600; font-size: 13px; padding-top: 1px; }
+  .lg .scn dd { margin: 0; }
+  .lg .scn ul.apps { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  .lg .scn ul.apps .tag { margin-right: 6px; }
+  .lg .scn .rp a { color: inherit; }
+  .lg .capd { margin-top: 14px; }
+  .lg .capd summary { font-size: 15px; font-weight: 600; }
+
+  .lg .tl2 li { grid-template-columns: 6.5rem 1fr; }
+  .lg .wave { border-left: 3px solid var(--color-border-line); padding: 2px 0 2px 12px; margin: 10px 0; }
+  .lg .wave b { display: block; font-size: 14px; }
+  .lg .wave span { font-size: 13px; color: var(--color-fg-muted); line-height: 1.55; }
+  .lg .scn dd a { color: inherit; }
+  .lg .hbw .hb-r { grid-template-columns: 13em 1fr; }
+  .lg table th.txt, .lg table th.l { text-align: left; }
+
+  .ct .tw { overflow-x: auto; margin: var(--cds-gap-sm) 0 var(--cds-gap-md); }
+  .ct table { width: 100%; }
+  .ct th, .ct td { white-space: normal; text-align: left; vertical-align: top; line-height: 1.55; font-size: 13px; }
+  .ct th:first-child, .ct td:first-child { position: static; min-width: 7rem; }
+  .ct td { min-width: 9rem; }
+  .ct td:first-child { font-weight: 600; }
+  .ct p { margin: var(--cds-gap-sm) 0; line-height: 1.65; font-size: var(--cds-font-size-body); }
+  .ct ul, .ct ol { margin: var(--cds-gap-xs) 0 var(--cds-gap-sm); padding-left: 1.3em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+  .ct h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); }
+  .ct a { color: var(--bar); }
+  .ct figure { margin: var(--cds-gap-md) 0; }
+  .ct figure svg { display: block; width: 100%; max-width: 860px; height: auto; }
+  .ct figcaption { font-size: 12px; color: var(--color-fg-muted); margin-top: 4px; }
+  .hk .t1 { fill: var(--color-fg); font-size: 16px; font-weight: 600; }
+  .hk .t2, .hk .ax { fill: var(--color-fg-muted); }
+  .hk .lb { fill: var(--color-fg); }
+  .hk .gl { stroke: var(--color-border-line); }
+  .hk .ln { stroke: var(--cx); stroke-width: 2; }
+  .hk .paid { fill: var(--cx); }
+  .hk .today { fill: var(--bar); }
+  .hk .nat { fill: none; stroke: var(--cx); stroke-width: 2; }
+  .hk .band { fill: var(--bar); fill-opacity: .08; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topic-top">
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" href="../">全部专题</a><a class="lx-chip" aria-current="page" href="./">竞品头部投流素材拆解</a></span></div>
+  </nav>
+</div>
+<div class="wk lg">
+  <header>
+    <h1>竞品头部投流素材拆解：灵光 / 千问 / 豆包</h1>
+    <p class="sub">数据：飞书「头部投流素材库」11/12 版（DataEye 预估曝光，加巨量侧给的千问、豆包抖音跑量清单）、「竟对自然流爆款」（声量通，抖音 2026/07–11/11），对照 Today「头部素材结构提取和变式（11/9）」24 条头部模板。竞品没有留存数据，只能说明哪些打法能跑量。11/12 整理。</p>
+  </header>
+<section class="card ct sum" id="sec-1">
+<h2>结论先行</h2>
+<p>竞品头部素材把「这是什么产品、一句话能干嘛、为什么现在下」放在前 8 秒和最后 5 秒；Today 头部把「一个人的一件事」讲得更完整，但产品出场晚、结尾没有下载理由。竞品没有留存数据，下面只能说明哪些打法能跑量。</p>
+<ol>
+<li><strong>产品出场更早。</strong> 产品名第一次出现：灵光 1.0 发布期中位约第 3 秒，灵光 2.0、豆包约第 8–9 秒；Today 24 条头部模板中位约第 10 秒，片长中位约 47 秒，竞品信息流多在 25–40 秒。</li>
+<li><strong>灵光 2.0 是最像 Today 的对手，靠一个骨架量产。</strong> 9 月以来 1,076 条信息流，单条曝光中位 2.9 万；有脚本的 532 条里 52% 说「交给灵光」、50% 出现「帮我管」页面，开头只有 228 种。量靠条数堆，不靠单条爆。</li>
+<li><strong>开头 hook 有三类 Today 一条都没有。</strong> 竞品付费头部 170 条里，产品/品牌先出场 15%、开口就对 AI 下指令 5%、纯画面大字 5%，合计 26%；Today 头部 0 条。Today 靠情景冲突开头的占 25%，竞品付费只有 7%。</li>
+<li><strong>网感在选题和形式，不在热词。</strong> 「谁懂、救命、封神」这类词在竞品脚本里出现率大多不到 10%。真正的网感是：叫得出名字的热点（排球少年圣地、S16、双 11、长白山跨年滑雪）、人设标签（99 年大厂培训师）、关系梗（算账前女友）、「我被灰度到了」「刷到网友分享」的第一手感。</li>
+<li><strong>最值得先测的 4 件事：</strong> 前 3 秒上大字并在第一句说出 Today 和用户原话；出 15 秒、30 秒短版；结尾加下载理由（免费、新人权益）；按「一个骨架 × 多人群 × 多件具体事 × 热点名词」批量出变式。</li>
+</ol>
+</section>
+<section class="card ct" id="sec-2">
+<h2>数据范围和口径</h2>
+<p>用的是飞书「头部投流素材库」11/12 的版本、「竟对自然流爆款」和 Today 的「头部素材结构提取和变式（11/9）」。竞品只有曝光或点赞，没有留存。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>素材组</th>
+<th>来源</th>
+<th>条数</th>
+<th>头部怎么取</th>
+<th>时间</th>
+<th>要注意的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>灵光 1.0 信息流</td>
+<td>DataEye</td>
+<td>1,365</td>
+<td>预估曝光前 100（去重）</td>
+<td>首次出现 2025-11 至 2026-02</td>
+<td>当时卖「闪应用」，是新品发布期</td>
+</tr>
+<tr>
+<td>灵光 2.0 信息流</td>
+<td>DataEye</td>
+<td>1,076</td>
+<td>预估曝光前 100</td>
+<td>2026-09 至 11/11</td>
+<td>个人助理定位，和 Today 最像；脚本多是 DataEye 机器生成，未校对</td>
+</tr>
+<tr>
+<td>千问信息流</td>
+<td>DataEye</td>
+<td>227</td>
+<td>前 60</td>
+<td>2026-09 至 11/11</td>
+<td>曝光 94% 在快手、B 站等，不在抖音</td>
+</tr>
+<tr>
+<td>千问抖音跑量</td>
+<td>巨量侧竞对跑量清单（10/11、10/19 入库）</td>
+<td>530（逐字脚本 268）</td>
+<td>整组都算跑量，没有曝光数</td>
+<td>2026-10</td>
+<td>46 条标了星图，是达人原生拿来投的</td>
+</tr>
+<tr>
+<td>豆包信息流</td>
+<td>DataEye</td>
+<td>146</td>
+<td>前 60</td>
+<td>2026-06 至 10</td>
+<td>素材投放天数中位 79 天</td>
+</tr>
+<tr>
+<td>豆包抖音跑量</td>
+<td>巨量侧清单</td>
+<td>206（逐字脚本 46）</td>
+<td>整组</td>
+<td>2026-10</td>
+<td>大部分只有脚本梳概</td>
+</tr>
+<tr>
+<td>达人 / 星图自然流</td>
+<td>竟对自然流爆款（声量通）</td>
+<td>抖音千问Go 88、灵光 310、千问 131；有脚本 267</td>
+<td>按点赞</td>
+<td>2026-07 至 11/11</td>
+<td>豆包抖音 183 条没脚本，没纳入</td>
+</tr>
+<tr>
+<td>Today</td>
+<td>头部素材结构提取和变式（11/9）</td>
+<td>24 条头部模板</td>
+<td>消耗、次留</td>
+<td>10/11 至 11/10</td>
+<td>另引 11/4 对唯西 501 条脚本的统计</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Hook 分类</strong>：竞品每组取头部前 30–40 条（共 210 条），人工读前一两句归类；Today 按模板表「Hook」列归类。</li>
+<li><strong>其他指标</strong>（产品名第一次出现、结尾下载指引、免费字样）用整组脚本关键词统计；秒数按每条片长和字数折算，竞品口播约每秒 6 字。</li>
+<li><strong>灵光「原生」</strong>的 371 条都是灵光App 官号发布再投，脚本和信息流一样；付费里真正的达人原生只有千问那 46 条星图。</li>
+</ul>
+</section>
+<section class="card ct" id="sec-3">
+<h2>值得学、但 Today 脚本里很缺的</h2>
+<p>下面 7 条按「Today 缺得多不多」排。前 4 条在 Today 头部模板里几乎是 0。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>缺的东西</th>
+<th>竞品怎么做（原句）</th>
+<th>竞品里多常见</th>
+<th>Today 现在</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 第一两句就说出产品名和用户原话</td>
+<td>「交给灵光，一句话搞定」「千问帮我查下大理最近的天气」「豆包豆包，帮我看一下这个 PPT」</td>
+<td>灵光 2.0 脚本 52% 说「交给灵光」，42% 说「语音」；付费头部 5% 开口就对 AI 下指令</td>
+<td>头部模板 Today 中位约第 10 秒出场；11/4 统计唯西 501 条脚本，第一句直接跟 Today 说话的 0 条</td>
+</tr>
+<tr>
+<td>2. 结尾给下载理由</td>
+<td>「相关功能免费使用」「现在下载免费试」「链接就在左下角，你也来试试吧」</td>
+<td>千问抖音跑量 35% 提免费/新人；千问信息流 78%、灵光 2.0 59% 结尾有下载或点击指引</td>
+<td>24 条里 16 条以「懂你所想，为你先行」品牌卡收尾；11/4 统计台词里没搜到免费或新人权益</td>
+</tr>
+<tr>
+<td>3. 前 3 秒大字，和 10–15 秒纯大字短版</td>
+<td>灵光 10 秒版：大字「30秒生成闪应用」+ 指令气泡「不知道吃什么，帮我做一个抽签机」+ 结果页，曝光 64 万</td>
+<td>11/4 看的 45 条前 3 秒，62% 有大字或产品名；灵光 1.0 头部 14% 是无口播大字版</td>
+<td>模板里写到大字的 4 条；没有 15 秒以内的版本，片长中位约 47 秒</td>
+</tr>
+<tr>
+<td>4. 背书和社会证明</td>
+<td>「上线6天，下载量一口气冲破了200万」「20万人实测封神」「刷到网友的分享」开头，再讲帮人追回 52 元差价</td>
+<td>灵光 1.0 头部 42% 提蚂蚁、榜单或人数；千问Go 上线周大量「网友真实案例」转述</td>
+<td>模板里 0 条</td>
+</tr>
+<tr>
+<td>5. 固定的产品界面叫法</td>
+<td>灵光每条都念「打开帮我管页面，任务清清楚楚」；豆包「专家模式」「AI 表格」；千问「作业批改胶囊」</td>
+<td>灵光 2.0 脚本 50% 出现「帮我管」</td>
+<td>界面在口播里叫法不固定：对话界面、任务详情、晨间清单都有</td>
+</tr>
+<tr>
+<td>6. 结果或炫技先行</td>
+<td>「我居然用AI手搓出了一款游戏」（灵光头部第 1，597 万）「这个是我刚用豆包花了2小时做出来的…网站」</td>
+<td>付费头部 6%</td>
+<td>2 条（金价「Today 先提醒过我了」、周五回家「18:20 的，不急」）</td>
+</tr>
+<tr>
+<td>7. 叫得出名字的热点和具体数字</td>
+<td>「寒假想去仙台5天…连体育馆大修到2027年都知道」「3个月学会…每周最多上两次课」「每天下午3:52提醒」</td>
+<td>灵光 2.0 里「排球少年圣地」一个题就有 5 种以上变式</td>
+<td>有一部分：S16、899 元耳机、金价；多数模板是通用场景</td>
+</tr>
+</tbody>
+</table></div>
+<p>Today 已经比竞品做得好的：一个人连着几件事的「它记得」细节、「我确认后才发」的分寸、情景冲突。竞品脚本多是功能说明加一句「一目了然」，这些不要为了洗脑而丢。</p>
+</section>
+<section class="card ct" id="sec-4">
+<h2>开头 hook 长什么样，头部有什么规律</h2>
+<p>竞品付费头部最常见的还是痛点直说（27%）和反问、喊人群（15%），和 Today 差不多；差别在产品先出场、对 AI 开口、纯大字这三类，竞品占 26%，Today 是 0。</p>
+<figure><svg class="hk" viewBox="0 0 760 506" role="img" aria-label="竞品付费头部有三类开头，Today 一条都没有" font-size="12"><text class="t1" x="20" y="28">竞品付费头部有三类开头，Today 一条都没有</text><text class="t2" x="20" y="50">产品、品牌或新闻先出场、开口就对 AI 下指令、纯画面大字：竞品 170 条里占 26%，Today 24 条里 0 条</text><circle class="paid" cx="26" cy="80" r="6"/><text class="t2" x="38" y="84">竞品付费头部（170 条）</text><circle class="today" cx="226" cy="80" r="6"/><text class="t2" x="238" y="84">Today 头部模板（24 条）</text><circle class="nat" cx="426" cy="80" r="6"/><text class="t2" x="438" y="84">达人/星图自然流（40 条）</text><line class="gl" x1="250.0" x2="250.0" y1="114" y2="480"/><text class="ax" x="250.0" y="108" text-anchor="middle">0%</text><line class="gl" x1="384.3" x2="384.3" y1="114" y2="480"/><text class="ax" x="384.3" y="108" text-anchor="middle">10%</text><line class="gl" x1="518.6" x2="518.6" y1="114" y2="480"/><text class="ax" x="518.6" y="108" text-anchor="middle">20%</text><line class="gl" x1="652.9" x2="652.9" y1="114" y2="480"/><text class="ax" x="652.9" y="108" text-anchor="middle">30%</text><text class="ax" x="720" y="500" text-anchor="end">横轴：占该组条数</text><rect class="band" x="14" y="183" width="726" height="34"/><rect class="band" x="14" y="353" width="726" height="34"/><rect class="band" x="14" y="387" width="726" height="34"/><text class="lb" x="20" y="136">痛点直说</text><line class="ln" x1="613.4" x2="697.6" y1="132" y2="132"/><circle class="paid" cx="613.4" cy="132" r="6"><title>痛点直说｜竞品付费头部：46/170 条，27%</title></circle><circle class="today" cx="697.6" cy="132" r="7"><title>痛点直说｜Today 头部模板：8/24 条，33%</title></circle><circle class="nat" cx="317.1" cy="132" r="6"><title>痛点直说｜达人/星图自然流：2/40 条，5%</title></circle><text class="lb" x="20" y="170">反问、喊人群</text><line class="ln" x1="455.4" x2="417.9" y1="166" y2="166"/><circle class="paid" cx="455.4" cy="166" r="6"><title>反问、喊人群｜竞品付费头部：26/170 条，15%</title></circle><circle class="today" cx="417.9" cy="166" r="7"><title>反问、喊人群｜Today 头部模板：3/24 条，12%</title></circle><circle class="nat" cx="317.1" cy="166" r="6"><title>反问、喊人群｜达人/星图自然流：2/40 条，5%</title></circle><text class="lb" x="20" y="204">产品、品牌或新闻先出场</text><line class="ln" x1="455.4" x2="250.0" y1="200" y2="200"/><circle class="paid" cx="455.4" cy="200" r="6"><title>产品、品牌或新闻先出场｜竞品付费头部：26/170 条，15%</title></circle><circle class="today" cx="250.0" cy="200" r="7"><title>产品、品牌或新闻先出场｜Today 头部模板：0/24 条，0%</title></circle><circle class="nat" cx="250.0" cy="200" r="6"><title>产品、品牌或新闻先出场｜达人/星图自然流：0/40 条，0%</title></circle><text class="lb" x="455.4" y="192" font-size="11" text-anchor="middle">15%</text><text class="lb" x="20" y="238">反常识、好奇</text><line class="ln" x1="368.5" x2="306.0" y1="234" y2="234"/><circle class="paid" cx="368.5" cy="234" r="6"><title>反常识、好奇｜竞品付费头部：15/170 条，9%</title></circle><circle class="today" cx="306.0" cy="234" r="7"><title>反常识、好奇｜Today 头部模板：1/24 条，4%</title></circle><circle class="nat" cx="417.9" cy="234" r="6"><title>反常识、好奇｜达人/星图自然流：5/40 条，12%</title></circle><text class="lb" x="20" y="272">情景冲突、对白</text><line class="ln" x1="344.8" x2="585.7" y1="268" y2="268"/><circle class="paid" cx="344.8" cy="268" r="6"><title>情景冲突、对白｜竞品付费头部：12/170 条，7%</title></circle><circle class="today" cx="585.7" cy="268" r="7"><title>情景冲突、对白｜Today 头部模板：6/24 条，25%</title></circle><circle class="nat" cx="652.9" cy="268" r="6"><title>情景冲突、对白｜达人/星图自然流：12/40 条，30%</title></circle><text class="lb" x="20" y="306">内容先行（梗、干货、生活）</text><line class="ln" x1="344.8" x2="306.0" y1="302" y2="302"/><circle class="paid" cx="344.8" cy="302" r="6"><title>内容先行（梗、干货、生活）｜竞品付费头部：12/170 条，7%</title></circle><circle class="today" cx="306.0" cy="302" r="7"><title>内容先行（梗、干货、生活）｜Today 头部模板：1/24 条，4%</title></circle><circle class="nat" cx="619.3" cy="302" r="6"><title>内容先行（梗、干货、生活）｜达人/星图自然流：11/40 条，28%</title></circle><text class="lb" x="20" y="340">结果或炫技先行</text><line class="ln" x1="329.0" x2="361.9" y1="336" y2="336"/><circle class="paid" cx="329.0" cy="336" r="6"><title>结果或炫技先行｜竞品付费头部：10/170 条，6%</title></circle><circle class="today" cx="361.9" cy="336" r="7"><title>结果或炫技先行｜Today 头部模板：2/24 条，8%</title></circle><circle class="nat" cx="317.1" cy="336" r="6"><title>结果或炫技先行｜达人/星图自然流：2/40 条，5%</title></circle><text class="lb" x="20" y="374">开口就对 AI 下指令</text><line class="ln" x1="321.1" x2="250.0" y1="370" y2="370"/><circle class="paid" cx="321.1" cy="370" r="6"><title>开口就对 AI 下指令｜竞品付费头部：9/170 条，5%</title></circle><circle class="today" cx="250.0" cy="370" r="7"><title>开口就对 AI 下指令｜Today 头部模板：0/24 条，0%</title></circle><circle class="nat" cx="350.7" cy="370" r="6"><title>开口就对 AI 下指令｜达人/星图自然流：3/40 条，8%</title></circle><text class="lb" x="321.1" y="362" font-size="11" text-anchor="middle">5%</text><text class="lb" x="20" y="408">纯画面大字</text><line class="ln" x1="321.1" x2="250.0" y1="404" y2="404"/><circle class="paid" cx="321.1" cy="404" r="6"><title>纯画面大字｜竞品付费头部：9/170 条，5%</title></circle><circle class="today" cx="250.0" cy="404" r="7"><title>纯画面大字｜Today 头部模板：0/24 条，0%</title></circle><circle class="nat" cx="250.0" cy="404" r="6"><title>纯画面大字｜达人/星图自然流：0/40 条，0%</title></circle><text class="lb" x="321.1" y="396" font-size="11" text-anchor="middle">5%</text><text class="lb" x="20" y="442">人设、身份自曝</text><line class="ln" x1="289.5" x2="417.9" y1="438" y2="438"/><circle class="paid" cx="289.5" cy="438" r="6"><title>人设、身份自曝｜竞品付费头部：5/170 条，3%</title></circle><circle class="today" cx="417.9" cy="438" r="7"><title>人设、身份自曝｜Today 头部模板：3/24 条，12%</title></circle><circle class="nat" cx="350.7" cy="438" r="6"><title>人设、身份自曝｜达人/星图自然流：3/40 条，8%</title></circle></svg><figcaption>来源：头部投流素材库、竟对自然流爆款、Today 头部素材结构提取和变式（11/9）；竞品每组取头部前 30–40 条，人工读开头归类</figcaption></figure>
+<p>灰点是竞品付费头部，蓝点是 Today，空心圈是达人/星图自然流；浅蓝底的三行就是 Today 没有的开头。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>开头类型</th>
+<th>竞品原句</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>痛点直说</td>
+<td>「孩子的课表、兴趣班、家长会，每天一堆事，光靠脑子记真的容易漏」</td>
+</tr>
+<tr>
+<td>反问、喊人群</td>
+<td>「养宠的小伙伴是不是经常记混补货时间？」「谁懂喝奶茶的纠结啊」</td>
+</tr>
+<tr>
+<td>产品、品牌或新闻先出场</td>
+<td>「我是豆包，工作生活全程伴你左右…你不信？」「蚂蚁集团灵光APP炸场上线」</td>
+</tr>
+<tr>
+<td>反常识、好奇</td>
+<td>「两步教你成为亿万富翁」「你知道吗？咱们的手掌早就把…写得明明白白了」</td>
+</tr>
+<tr>
+<td>情景冲突、对白</td>
+<td>「我这杯 22，你这杯怎么才 9 块 9？」</td>
+</tr>
+<tr>
+<td>内容先行（梗、干货、生活）</td>
+<td>「这是国内的100元人民币，把它换算成韩币…」</td>
+</tr>
+<tr>
+<td>结果或炫技先行</td>
+<td>「我居然用AI手搓出了一款游戏」</td>
+</tr>
+<tr>
+<td>开口就对 AI 下指令</td>
+<td>「千问帮我查下大理最近的天气，千问从武汉到大理最便宜的交通方式有哪些？」</td>
+</tr>
+<tr>
+<td>纯画面大字（无口播）</td>
+<td>「30秒生成闪应用」「一键出行程」</td>
+</tr>
+<tr>
+<td>人设、身份自曝</td>
+<td>「欢迎收看99年大厂车企培训师下班兼职副业的日常」</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>各家的开法各不相同</strong></p>
+<ul>
+<li><strong>灵光 2.0 几乎只用一种开法</strong>：前 35 条里 32 条是「人群或具体事 + 一句抱怨」，紧接「别急/别费劲了，交给灵光」。</li>
+<li><strong>灵光 1.0 发布期靠产品和新闻</strong>：前 35 条里 14 条产品或新闻开头，7 条是 10 秒左右的纯大字版。</li>
+<li><strong>豆包让产品当主角</strong>：「我是豆包，你的生活好帮手」系列跑了 82–115 天；头部 50 条投放天数中位 98.5 天。</li>
+<li><strong>千问抖音靠外卖和优惠的对白剧</strong>：「外卖」「奶茶」「咖啡」分别出现在 14%、10%、4% 的脚本里；信息流（多在快手、B 站）则是梗和干货先行。</li>
+<li><strong>自然流里产品不在开头</strong>：267 条有脚本的自然流里 217 条口播没念出产品名，开头靠剧情和内容。</li>
+</ul>
+<p><strong>头部共同的规律</strong></p>
+<ol>
+<li><strong>第一句点名具体的人或具体的事</strong>：「老婆怀孕，老公记不住产检事项怎么办」「开车的朋友是不是每次加油都在犯愁」，不说「生活太忙」这种空话。</li>
+<li><strong>痛点之后一句内转产品</strong>：「别急」「别费劲了」「这些琐事交给灵光就好」，转折词固定，不先铺一段生活。</li>
+<li><strong>单条爆的是新奇事件，跑得久的是功能演示</strong>：灵光 1.0 前 4 名（597 万、387 万、361 万、229 万）都是「手搓游戏」「AI 圈出大事了」类，片长 65–205 秒、只投了 1–15 天；豆包「我是豆包」系列投了三四个月。</li>
+<li><strong>Today 的情景冲突开头是自己的优势</strong>：竞品付费用得少（7%），达人自然流用得多（30%），说明这类开头偏内容感，可以继续留着，另外补上产品先出场和大字版作对照。</li>
+</ol>
+</section>
+<section class="card ct" id="sec-5">
+<h2>网感具体是什么</h2>
+<p>这里的网感指「让人觉得是刷到的内容、不是广告」的东西。竞品里它主要落在选题和形式上，热词反而少：「谁懂」在灵光 1.0 头部脚本里出现 10%，「头秃」3%，「封神」3%，其他组更低。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>网感落在哪</th>
+<th>竞品例子</th>
+<th>Today 能怎么用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 叫得出名字的热点和 IP</td>
+<td>灵光 2.0：「排球少年」圣地巡礼（5 种以上变式）、长白山跨年滑雪、S16、双 11；千问：黑猴之后的《影之刃0》</td>
+<td>模板里的【具体事】换成这周热榜上的名字；IN01 的 S16 已经是这个路子</td>
+</tr>
+<tr>
+<td>2. 第一手感：我被选中了、网友真的这么用</td>
+<td>千问Go：「救命，我居然被灰度到了！」（3.8 万赞）、「闺蜜用AI整理账单，前男友当场哑火」（2.9 万赞）、「刷到网友的分享」开头再讲追回差价</td>
+<td>拿后台真实用法做「有人让 Today …」的转述开头，事情和数字要是真的</td>
+</tr>
+<tr>
+<td>3. 关系梗和奇葩用法</td>
+<td>千问Go「算账前女友」（2.9 万赞）；灵光商单「突击检查老公手机」（5.0 万赞）</td>
+<td>SH01 的「许美，还会再见吗」已是这类；可扩到同事甩锅、室友、婆媳、父女</td>
+</tr>
+<tr>
+<td>4. 人设标签：年份 + 职业 + 反差</td>
+<td>「欢迎收看99年大厂车企培训师下班兼职副业的日常」（豆包 39 万曝光）、「作为中传大一新生，一个学期接的五条商单」（9.1 万赞）、「ISTJ双班人福音」（2.8 万赞）</td>
+<td>WK02「97年大学老师 摆拍的吧」已是头部；批量做时把「年份 + 职业 + 一个反差」当成变量</td>
+</tr>
+<tr>
+<td>5. 评论区和互动</td>
+<td>千问「评论区摄影作品锐评」（58 万赞）；B 站素材结尾「从我评论区打开千问」</td>
+<td>用真实评论截图做开头，回应质疑或回答提问</td>
+</tr>
+<tr>
+<td>6. 好笑的反差和梗</td>
+<td>灵光「两步教你成为亿万富翁」（69 万曝光）；千问逗 AI「开水是100度，所以开水是钝角」</td>
+<td>LG03「来是 come」和结尾「今晚将是我人生中知识最少的一晚」就是，可以多做</td>
+</tr>
+<tr>
+<td>7. 圈层称呼而不是热词</td>
+<td>灵光 2.0「毛孩子」出现在 14% 的脚本里、「铲屎官」7%；「宝爸宝妈看过来」「打工人」</td>
+<td>开头喊人用圈层自己的叫法，比「上班族」更抓人</td>
+</tr>
+</tbody>
+</table></div>
+<p>不算网感的：堆「yyds、绝绝子」这类词，竞品头部几乎不用。网感也不能压过主线：开头的梗要和后面 Today 办的是同一件事。</p>
+</section>
+<section class="card ct" id="sec-6">
+<h2>三种素材各自怎么打</h2>
+<p>信息流要在 8 秒内让人知道是什么产品、能干嘛；达人原生拿来投时，留下的是带产品演示的那段；自然流靠内容和人设，产品往往只在画面里。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>信息流（非原生）</th>
+<th>达人原生拿来投（星图）</th>
+<th>达人 / 星图自然流</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看的是哪些</td>
+<td>灵光 1.0、2.0，千问、豆包信息流，头部各 60–100 条</td>
+<td>千问抖音跑量清单里标了星图的 46 条</td>
+<td>千问Go、灵光、千问抖音 267 条，62 条标了疑似营销</td>
+</tr>
+<tr>
+<td>片长</td>
+<td>灵光 2.0 里 16–60 秒占 98%；豆包 60 秒以上占 62%</td>
+<td>口播中位 275 字，约 45 秒</td>
+<td>口播中位 626 字，约 1.5–2 分钟</td>
+</tr>
+<tr>
+<td>产品什么时候出现</td>
+<td>中位第 3–13 秒</td>
+<td>千问二字中位在第 73 字，约第 12 秒</td>
+<td>267 条里 217 条口播没念产品名</td>
+</tr>
+<tr>
+<td>开头</td>
+<td>痛点、喊人群、产品先出场</td>
+<td>真人情景 19 条、真人口播 12 条；「今天给你们安利个做饭神器」、「我这杯 22，你这杯怎么才 9 块 9」</td>
+<td>剧情对白、vlog、人设：「如果我回到你的老家，带你的爷爷跨越1500公里…」（27.7 万赞）</td>
+</tr>
+<tr>
+<td>题材</td>
+<td>灵光 2.0 以母婴、宠物、旅行、省钱为主</td>
+<td>外卖出现在 30% 的脚本里，还有做菜、奶茶咖啡、攻略</td>
+<td>家人（妈、爸、孩子）、双十一、老板同事、情侣闺蜜</td>
+</tr>
+<tr>
+<td>结尾</td>
+<td>50–78% 有下载或点击指引</td>
+<td>26% 提免费（「相关功能免费使用」）</td>
+<td>24% 有指引，多是带话题或口令</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>对 Today 的意思</strong></p>
+<ul>
+<li><strong>信息流</strong>：照灵光 2.0 的节奏压到 30–40 秒，产品 8 秒内出场；下一节的模板都是为这类做的。</li>
+<li><strong>达人原生拿来投</strong>：千问星图里真人情景占一半以上，千问 12 秒左右就出现。和 10/20 会上陈朕说的一致：原生账号属性弱，要把植入段做重，切出来或混剪再投。给达人的 brief 要写明一段 10–15 秒、能单独剪出来的 Today 演示。</li>
+<li><strong>自然流</strong>：不要拿信息流的开头去要求达人。千问Go 和灵光的商单都是先把内容做好（带爷爷去北京、韩国留学花钱、公司团建剧情），产品在中段帮一个忙。</li>
+</ul>
+</section>
+<section class="card ct" id="sec-7">
+<h2>信息流模板，和怎么批量做</h2>
+<p>竞品非原生信息流可以归成 7 类模板。Today 要批量做，建议用一个 30–40 秒的固定骨架，分「不动的」和「可换的」两层，每条变式只换 1–2 个变量。Today 已有头部模板表，A、B 组 11/12–13 两天排了 144 条，78% 照模板做；下面是在这套做法上补什么。</p>
+<h3>竞品信息流的 7 类模板</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>模板</th>
+<th>骨架</th>
+<th>代表素材</th>
+<th>片长</th>
+<th>Today 能不能用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 交给它式</td>
+<td>【人群】是不是【具体麻烦】？别急，交给灵光 → 语音说【原话】→ 交出【清单/计划】→「打开帮我管，任务清清楚楚」→ 到点提醒 →「你也来试试」</td>
+<td>灵光 2.0 猫传腹 32 万、学韩舞 21 万</td>
+<td>16–45 秒</td>
+<td>能，和 Today 最接近</td>
+</tr>
+<tr>
+<td>2. 产品自报家门</td>
+<td>「我是豆包，你的【工作/生活】好帮手…你不信？我展示给你看」→ 2–3 个场景 → 下载</td>
+<td>豆包 112 万（投了 115 天）、88 万（109 天）</td>
+<td>45–90 秒</td>
+<td>能，换成 Today 自报家门 + 办成的 2–3 件事</td>
+</tr>
+<tr>
+<td>3. 新闻背书 + 功能清单</td>
+<td>「蚂蚁集团灵光APP炸场上线」→ 三大功能 → 现在下载</td>
+<td>灵光 1.0 83 万、77 万</td>
+<td>20–60 秒</td>
+<td>只在有真实数据或大版本时用</td>
+</tr>
+<tr>
+<td>4. 结果炫技先行</td>
+<td>「我居然用 AI…做出了…」→ 过程 → 成品 → 下载</td>
+<td>灵光 597 万、361 万；豆包「FPS 游戏」39 万</td>
+<td>16 秒短版或 60 秒以上长版</td>
+<td>能，用「办成的结果」代替「做出的东西」</td>
+</tr>
+<tr>
+<td>5. 连问 AI</td>
+<td>「千问帮我查…千问从…到…最便宜…千问帮我制定…」→ 一句总结 → 下载</td>
+<td>千问 263 万（快手）</td>
+<td>30–60 秒</td>
+<td>部分能：用「交代一次」代替「连问」，重点放在它后来主动推来</td>
+</tr>
+<tr>
+<td>6. 两人对白揭秘</td>
+<td>甲：反常现象 → 乙：我用了千问 → 演示 → 甲：学到了</td>
+<td>千问星图里的外卖、咖啡对白</td>
+<td>30–50 秒</td>
+<td>能，Today 已有（接娃、分手梗）</td>
+</tr>
+<tr>
+<td>7. 纯大字短版</td>
+<td>大字标题 + 指令气泡 + 结果页，没有口播</td>
+<td>灵光 10 秒版 64 万、62 万</td>
+<td>10–15 秒</td>
+<td>能，成本最低，把头部模板的结果页单独剪出来</td>
+</tr>
+</tbody>
+</table></div>
+<h3>结构：一个 30–40 秒的骨架</h3>
+<ol>
+<li><strong>0–3 秒 钩子</strong>：一句话，同一句上大字。点名人群或具体的事，带一个名字或数字。</li>
+<li><strong>3–8 秒 把麻烦说具体</strong>：两个细节，用「交给 Today」收住，Today 名字最晚第 8 秒出现。</li>
+<li><strong>8–12 秒 用户原话</strong>：说出或打出一句交代，画面是 Today 对话框。</li>
+<li><strong>12–25 秒 三拍录屏</strong>：它记得或连了什么 → 交出的东西（清单、草稿、计划）→ 到点主动推来的那条推送，带具体时间。</li>
+<li><strong>25–32 秒 结果</strong>：一个数字或一件办成的事；涉及发出、付款的，拍「我确认后才发」。</li>
+<li><strong>32–38 秒 收尾</strong>：一句定位口号 + 下载理由（免费、新人权益，按能力表口径）。</li>
+</ol>
+<p>同一骨架剪三个长度：15 秒（第 1、3、4 的推送、第 6 步）、30 秒、45 秒（加人物情绪或第二件事）。</p>
+<h3>变量怎么设计</h3>
+<p><strong>不动的</strong>：use case 主线、Today 8 秒内出场、真实录屏、结果看得见、确认后再发、收尾口号。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>可换的变量</th>
+<th>取值举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>钩子类型</td>
+<td>痛点直说、喊人群、产品先出场、对 Today 下指令、结果先行、情景冲突、人设自曝、纯大字</td>
+</tr>
+<tr>
+<td>人群</td>
+<td>宝妈、铲屎官、研究生、跑客户的销售、追 S16 的、备考的</td>
+</tr>
+<tr>
+<td>具体的事（可带热点名词）</td>
+<td>驱虫、产检、双 11 盯价、排球少年圣地、长白山滑雪</td>
+</tr>
+<tr>
+<td>用户原话</td>
+<td>「以后每周五…提醒我」「帮我盯着…，降到…就告诉我」</td>
+</tr>
+<tr>
+<td>交出的东西</td>
+<td>清单、回复草稿、计划表、比价表</td>
+</tr>
+<tr>
+<td>推送时间</td>
+<td>具体到分钟，如灵光的「每天下午 3:52」</td>
+</tr>
+<tr>
+<td>演法</td>
+<td>AI 人物口播、两人对白、画外音加录屏、真人 KOC</td>
+</tr>
+<tr>
+<td>长度</td>
+<td>15 / 30 / 45 秒</td>
+</tr>
+<tr>
+<td>结尾利益点</td>
+<td>免费、新人权益、不加</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>怎么复制</strong></p>
+<ol>
+<li><strong>从在跑的母版开始</strong>：头部模板表里 12 条「在跑」的先做，每条只换一层变量出 5–8 条，看哪层起作用。</li>
+<li><strong>钩子层最先测</strong>：同一中段配 4 种开头（痛点、喊人群、对 Today 下指令、纯大字）。11/4 统计里，二创换开头的次留 31.9%，高于全片重配 26.1%、只剪辑 25.6%。</li>
+<li><strong>人群 × 具体的事做矩阵</strong>：灵光 2.0 把一个骨架铺到母婴、宠物、旅行、省钱、学习，532 条有脚本的只有 228 种开头，同一句开头平均用 2.3 次。量级上灵光 11 月前 11 天新出现 963 条，每天约 88 条，和 Today 两组每天约 70 条差不多。</li>
+<li><strong>每条只改 1–2 个变量，并写进素材名</strong>：加「换头 / 换人群 / 换事 / 短版」，回收数据时才知道是哪层起的作用。</li>
+<li><strong>每个母版同时出 15 / 30 / 45 秒三版</strong>。</li>
+</ol>
+<h3>每条都要满足的要素</h3>
+<ul>
+<li>前 3 秒点名人群或具体的事，画面有大字</li>
+<li>Today 名字第 8 秒前出现，口播和画面都有</li>
+<li>一句用户原话（交代或指令）</li>
+<li>真实录屏，Today 界面加结果页累计不少于全片 20%</li>
+<li>一个看得见的结果：清单、推送、数字</li>
+<li>至少一个具体数字或名字：时间、钱、次数、热点名</li>
+<li>结尾一句定位加行动指引</li>
+<li>不碰红线：做不到的事、健康医疗词、点名比较、远程操控、读微信</li>
+</ul>
+</section>
+<section class="card ct" id="sec-8">
+<h2>对 Today 的启示和可以直接测的方向</h2>
+<p>先在已经跑的母版上测 6 件事，每件只动一层变量；竞品没有留存数据，所以都按次留和次留成本判，不只看跑量。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>测什么</th>
+<th>怎么做</th>
+<th>用哪条母版</th>
+<th>开头示例（给编剧参考）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 对 Today 下指令开头</td>
+<td>第一句就是用户对 Today 说的话，画面是对话框</td>
+<td>PS03 学校通知变清单</td>
+<td>「Today，群里老师发的通知我转给你，帮我记着该带什么。」</td>
+</tr>
+<tr>
+<td>2. 产品自报家门</td>
+<td>Today 当叙述者，一条里连着办成 3 件事</td>
+<td>接娃、自动扣费、生日礼物三条头部的录屏</td>
+<td>「我是 Today，你的个人 AI 助理。你交代一次，我替你盯着。不信？看这三件事。」</td>
+</tr>
+<tr>
+<td>3. 结果先行</td>
+<td>把片尾的结果或数字挪到第一句</td>
+<td>SH01 找出自动扣费</td>
+<td>「关掉一个忘了的自动扣费，一年少花 360。」</td>
+</tr>
+<tr>
+<td>4. 15 秒纯大字版</td>
+<td>大字 + 指令气泡 + 结果页 + 尾卡，不配口播</td>
+<td>WK05 发票对行程</td>
+<td>大字「月底报销，发票还在邮箱里？」，气泡「把这个月出差的发票按行程理好」</td>
+</tr>
+<tr>
+<td>5. 结尾加下载理由</td>
+<td>只换最后 5 秒：品牌卡改成定位 + 免费或新人权益</td>
+<td>任选 2 条在跑母版</td>
+<td>权益口径先对能力表（新用户 Pro 是 1 个月还是 3 个月，11/4 就有这个待确认）</td>
+</tr>
+<tr>
+<td>6. 热点名词换【具体事】</td>
+<td>骨架和台词不动，只换成这周热榜上叫得出名字的事</td>
+<td>IN01 追战队、TR00 出差回家</td>
+<td>「【这周热榜上的比赛或节目】几点开始你记得吗？」</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>另外四点</strong></p>
+<ol>
+<li><strong>灵光 2.0 在抢同一批题</strong>：宠物、母婴、旅行、省钱、学习，和 Today 的 PS、SH、LG 大量重叠。Today 的区别要在片子里看得见：记得你说过的细节、工作和家里一起管、发出前先问你。</li>
+<li><strong>选一个界面叫法固定下来</strong>：灵光靠「帮我管」一个词把 1,000 多条素材串起来。Today 可以挑 App 里真实存在的一个页面名，每条在同一位置念出来，要产品确认叫法。</li>
+<li><strong>给达人的 brief 加一句</strong>：要一段 10–15 秒、能单独剪出来的 Today 演示，并写明投放授权。</li>
+<li><strong>不学的</strong>：拍眼睛、手掌看健康（千问头部 1,121 万、702 万，但碰健康红线）、拍题批改（巨量禁投）、点外卖下单（千问有淘宝闪购闭环）、生图生视频模板（Today 没有这个能力）。</li>
+</ol>
+</section>
+<section class="card ct" id="sec-9">
+<h2>附录：文中提到的头部素材</h2>
+<p>DataEye 链接要登录才能看；曝光是 DataEye 预估，点赞来自声量通。「库行号」是头部投流素材库里的行（从 0 数）。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>产品</th>
+<th>素材</th>
+<th>数据</th>
+<th>片长</th>
+<th>文中用来说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>灵光 2.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1435819434">猫传腹打针喂药提醒</a>（库行号 2530）</td>
+<td>31.9 万曝光</td>
+<td>39 秒</td>
+<td>交给它式模板</td>
+</tr>
+<tr>
+<td>灵光 2.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1426287501">学韩舞 3 个月计划</a>（2532）</td>
+<td>21.4 万</td>
+<td>48 秒</td>
+<td>痛点直说</td>
+</tr>
+<tr>
+<td>灵光 2.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1428599474">排球少年圣地 5 天行程</a>（2538）</td>
+<td>5.2 万</td>
+<td>31 秒</td>
+<td>热点名词</td>
+</tr>
+<tr>
+<td>灵光 2.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1436258341">给爸妈挑生日礼物</a>（2559）</td>
+<td>4.3 万</td>
+<td>37 秒</td>
+<td>和 Today NT01 同题</td>
+</tr>
+<tr>
+<td>灵光 1.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/81063585400000">我居然用 AI 手搓出了一款游戏</a>（1082）</td>
+<td>597 万</td>
+<td>83 秒</td>
+<td>结果炫技先行</td>
+</tr>
+<tr>
+<td>灵光 1.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/887566959">上线 6 天下载 200 万</a>（1083）</td>
+<td>387 万</td>
+<td>205 秒</td>
+<td>新闻背书</td>
+</tr>
+<tr>
+<td>灵光 1.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/76633225400000">两步教你成为亿万富翁</a>（1093）</td>
+<td>69 万</td>
+<td>25 秒</td>
+<td>反常识、梗</td>
+</tr>
+<tr>
+<td>灵光 1.0</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/76857545300000">10 秒纯大字版</a>（1097）</td>
+<td>64 万</td>
+<td>10 秒</td>
+<td>纯大字短版</td>
+</tr>
+<tr>
+<td>千问</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1402806626">连问大理天气、交通、攻略</a>（3533）</td>
+<td>263 万（快手）</td>
+<td>63 秒</td>
+<td>连问 AI</td>
+</tr>
+<tr>
+<td>千问</td>
+<td><a href="https://www.douyin.com/video/7688565345870712099">「我这杯 22，你这杯怎么才 9 块 9」</a>（887）</td>
+<td>巨量跑量清单、星图</td>
+<td>—</td>
+<td>两人对白揭秘</td>
+</tr>
+<tr>
+<td>豆包</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1120107305">我是豆包，日常生活有我陪你</a>（3727）</td>
+<td>112 万，投了 115 天</td>
+<td>76 秒</td>
+<td>产品自报家门</td>
+</tr>
+<tr>
+<td>豆包</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1114851967">你别跟我说，现在你的手机里还没有豆包</a>（3728）</td>
+<td>112 万，82 天</td>
+<td>54 秒</td>
+<td>产品先出场</td>
+</tr>
+<tr>
+<td>豆包</td>
+<td><a href="https://adxray-app.dataeye.com/creative/material/1096793547">99 年大厂车企培训师的副业日常</a>（3775）</td>
+<td>39 万，82 天</td>
+<td>53 秒</td>
+<td>人设标签</td>
+</tr>
+<tr>
+<td>千问Go</td>
+<td><a href="https://www.douyin.com/video/7705710359567639695">带爷爷跨越 1500 公里去北京</a></td>
+<td>27.7 万赞，疑似营销</td>
+<td>—</td>
+<td>自然流内容先行</td>
+</tr>
+<tr>
+<td>千问Go</td>
+<td><a href="https://www.douyin.com/video/7696093568498478501">救命，我居然被灰度到了</a></td>
+<td>3.8 万赞</td>
+<td>—</td>
+<td>第一手感</td>
+</tr>
+<tr>
+<td>千问Go</td>
+<td><a href="https://www.douyin.com/video/7696070756614081827">奇葩用法：算账前女友</a></td>
+<td>2.9 万赞</td>
+<td>—</td>
+<td>关系梗</td>
+</tr>
+<tr>
+<td>灵光</td>
+<td><a href="https://www.douyin.com/video/7703848533534821673">在韩国把韩币当欢乐豆花</a></td>
+<td>19.5 万赞，商单</td>
+<td>—</td>
+<td>自然流人设 vlog</td>
+</tr>
+<tr>
+<td>灵光</td>
+<td><a href="https://www.douyin.com/video/7702301175878881721">突击检查老公手机</a></td>
+<td>5.0 万赞，商单</td>
+<td>—</td>
+<td>关系梗</td>
+</tr>
+<tr>
+<td>千问</td>
+<td><a href="https://www.douyin.com/video/7701315980491853071">中传大一新生一学期接 5 条商单</a></td>
+<td>9.1 万赞</td>
+<td>—</td>
+<td>人设标签</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>来源</strong></p>
+<ul>
+<li><a href="https://my.feishu.cn/wiki/Z0R0wvvQ8ic0r4kXeeFc2oKRnYf">头部投流素材库（飞书）</a></li>
+<li><a href="https://docs.google.com/spreadsheets/d/1LHsOHd5U7Ep0SHF-XQecIE-wj9FN2JireiPFhvp3t0Q/edit#gid=1402937333">国区投放素材：竟对自然流爆款</a></li>
+<li><a href="https://my.feishu.cn/sheets/VEBUs3HTjh3dHqtojlsckJzmnqS">Today 头部素材结构提取和变式（11/9）</a></li>
+<li><a href="https://my.feishu.cn/wiki/MTaxwpjpnirajfkGmEecvyj2nQb">竞对投流 hook 和 Today 的 gap（11/4）</a></li>
+</ul>
+</section>
+</div>
+</div>
+<!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
+<style id="gtoc-style">
+  .gtoc-anchor { scroll-margin-top: 12px; }
+  #gtoc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20; box-sizing: border-box;
+    background: var(--color-panel, #fff); color: var(--color-fg, #1f1f1d); border: 1px solid var(--color-border-line, #e4e2dc); border-radius: 12px; padding: 10px 8px; font-size: 13px; }
+  #gtoc[hidden], #gtoc-btn[hidden] { display: none !important; }
+  #gtoc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted, #6b6a66); font-weight: 600; }
+  #gtoc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  #gtoc a { display: block; padding: 5px 8px; border-radius: 8px; color: inherit; text-decoration: none; line-height: 1.35; }
+  #gtoc a.sub { padding-left: 18px; color: var(--color-fg-muted, #6b6a66); }
+  #gtoc a:hover { background: var(--color-bg, #f7f6f2); }
+  #gtoc a[aria-current="true"] { background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); font-weight: 600; }
+  #gtoc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { body.gtoc-on .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { #gtoc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    #gtoc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    #gtoc.open { display: block; }
+    #gtoc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line, #e4e2dc); background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { #gtoc, #gtoc-btn { display: none !important; } body.gtoc-on .wrap { margin-left: auto !important; } }
+</style>
+<nav id="gtoc" aria-label="目录" hidden><h4>目录</h4><ol></ol></nav>
+<button id="gtoc-btn" type="button" aria-controls="gtoc" aria-expanded="false" hidden>目录</button>
+<script id="gtoc-script">
+addEventListener('load', () => {
+  const toc = document.getElementById('gtoc'), ol = toc.querySelector('ol'), btn = document.getElementById('gtoc-btn');
+  const root = document.querySelector('.wrap') || document.body;
+  const visible = (el) => !el.closest('[hidden]') && el.getClientRects().length > 0;
+  const heads = [...root.querySelectorAll('h2')].filter(visible);
+  if (heads.length < 2) return;
+  const items = [];
+  const top = document.querySelector('h1');
+  if (top) { if (!top.id) top.id = 'top'; top.classList.add('gtoc-anchor'); items.push([top, '总览', false]); }
+  let group = '';
+  const seen = {};
+  heads.forEach((h, i) => {
+    const t = h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim();
+    if (h.classList.contains('sec')) group = t;
+    if (!h.id) h.id = 'sec-' + (i + 1);
+    h.classList.add('gtoc-anchor');
+    seen[t] = (seen[t] || 0) + 1;
+    const dup = heads.filter((x) => x.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim() === t).length > 1;
+    items.push([h, dup && group && !h.classList.contains('sec') ? t + '（' + group + '）' : t, !!group && !h.classList.contains('sec')]);
+  });
+  const links = items.map(([el, t, sub]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + el.id; a.textContent = t; if (sub) a.className = 'sub'; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.hidden = false; btn.hidden = false; document.body.classList.add('gtoc-on');
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const mark = () => { let k = 0; items.forEach(([el], i) => { if (el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
+</body>
+</html>
