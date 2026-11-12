@@ -409,30 +409,39 @@ def short_sub(text):
     return f'<span class="k">B 组速度</span><span>{html.escape(m.group(0))}</span>' if m else ''
 
 
-def progress_html(prog, T):
-    """「今天要看」最上面：A、B 组对照排期表的进度条，下面一行落下，点开才是具体哪几行。"""
+def progress_html(prog, T, wt=None):
+    """「今天要看」最上面：A、B 组这周的进度条，下面一行落下，点开才是具体哪几行。
+    Reina 11/12：分母用这周产能（plan 的 week_total，A 175、B 120），右边写「本周已交 / 产能」，和条的长度一致；
+    到昨天该交多少、差多少写在下面那行。竖线是按排期到昨天该交的位置。plan 的 week 对不上（wt 为空）时退回用飞书排期的总条数。"""
     if not prog or not prog.get('line'):
         return ''
     g = prog.get('groups', {})
+    wt = wt or {}
+    fri = T + dt.timedelta(days=max(0, 4 - T.weekday()))
+    left = sum(1 for i in range((fri - T).days + 1) if (T + dt.timedelta(days=i)).weekday() < 5)
     rows = ''
     for k in ('A', 'B'):
         x = g.get(k)
         if not x or not x.get('week') or not x['week']['due']:
             continue
         wd, wg = x['week']['due'], x['week']['got']
+        cap = wt.get(k) or wd
         gap = x['due'] - x['got']
-        state = f'<em class="o-late">差 {gap}</em>' if gap > 0 else '<em class="o-over">交齐</em>'
+        state = f'<em class="o-late">落后 {gap}</em>' if gap > 0 else '<em class="o-over">没落下</em>'
         t = x.get('today') or {}
-        bits = []
+        bits = [f'到昨天该交 {x["due"]}，交了 {x["got"]}']
+        if wt.get(k) and wd != cap:
+            bits.append(f'飞书这周排了 {wd}' + (f'，比产能多 {wd - cap}' if wd > cap else f'，比产能少 {cap - wd}'))
         if t.get('due'):
-            left = t['due'] - t['got']
-            bits.append(f'今天还差 {left}' if left > 0 else '今天的交齐了')
-        if x.get('per_day'):
-            bits.append(f'后面每天约 {x["per_day"]} 条')
+            tl = t['due'] - t['got']
+            bits.append(f'今天还差 {tl}' if tl > 0 else '今天的交齐了')
+        if left and cap > wg:
+            bits.append(f'按 {cap} 算，剩下 {left} 个工作日每天约 {-(-(cap - wg) // left)} 条')
+        tip = f'本周产能 {cap} 条，已交 {wg} 条（含提前交的）；竖线是按飞书排期到昨天该交的 {x["due"]} 条'
         rows += (f'<span class="k">{k} 组</span><div class="pg"><div class="o-cell">'
-                 f'<span class="o-track" title="本周排期 {wd} 条，已交 {wg} 条；竖线是到昨天该交的位置"><span class="o-fill" style="width:{min(100, wg / wd * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, x["due"] / wd * 100):.1f}%"></i></span>'
-                 f'<span class="o-pct"><b>{x["got"]}</b>/{x["due"]}{state}</span></div>'
-                 f'<small>本周 {wg}/{wd}{" · " + " · ".join(bits) if bits else ""}</small></div>')
+                 f'<span class="o-track" title="{html.escape(tip)}"><span class="o-fill" style="width:{min(100, wg / cap * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, x["due"] / cap * 100):.1f}%"></i></span>'
+                 f'<span class="o-pct"><b>{wg}</b>/{cap}{state}</span></div>'
+                 f'<small>{" · ".join(bits)}</small></div>')
     lags = prog.get('lags', [])
     if not lags:
         return rows
@@ -578,7 +587,7 @@ def main():
         print('WARNING 没给 --output：页面没有「本周实际产出」')
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
-        PROG=progress_html(prog, T) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
+        PROG=progress_html(prog, T, plan.get('week_total') if in_week else None) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
