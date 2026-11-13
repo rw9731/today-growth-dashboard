@@ -6,6 +6,7 @@
 - <dir> 里是 tools/output_read.js 在 5 个 tab 上跑出来的 <tab id>.tsv（每行一条：组 表 行号 成片列 日期 UC 细分场景 分类 AI/二创 素材名）。
 - 结果累积在 notes/output-items.json（同一条素材按组+名字去重，重读会覆盖），页面写 output/index.html 和 output/<这周周一>/index.html，目录 outputs.json。
 - 分类：V 头部模板变式、S 同脚本换画面（也算变式）、N 新测试、X 只换前贴（不计数）。表里排期行写了「头部模板」的算 V；名字里带 22 个头部模板原片标识的也算 V。
+- 外部 agency（Reina 11/13）：--agency 目录里的知定堂、悦普，--kv 的 AnyMedia，见 agency()。页面「类型」放最前面（AI、二创、星广、抖音星图、抖音达人、小红书达人），「来源」替代原来的「组」（唯西 A 组、唯西 B 组、知定堂、悦普、AnyMedia）。
 - 链接：飞书成片那一格（?sheet=…&range=列行的 base64），已经投出去的再带巨量视频（tools/links.json，按素材名在分日表找素材 ID）。
 """
 import argparse, base64, datetime as dt, glob, json, os, re
@@ -19,7 +20,10 @@ TEMPLATE_KEYS = ['英语口语陪练与个性化带学', '在微信里直接跟T
                  'W01-zl-07', '开完会整理行动项', '整理电子发票和差旅报销_01', 'H08_neko', 'A18-06', '提前协调工作与接娃安排_01',
                  '每天一张卡看清日程和待办_01', 'L06-05', '找出工作邮箱里遗漏的重要邮件', '个性化读书与自我提升计划_02', 'LG01-03-zl',
                  'A05-03', 'M01-05', '按训练和做饭时间安排一日三餐_02', 'F06_陈忙忙', 'SH03-07', 'F02-02', 'TR00-01']
-KIND_NAME = {'V': '头部模板变式', 'S': '同脚本换画面', 'N': '新测试', 'X': '只换前贴（不计）'}
+KIND_NAME = {'V': '头部模板变式', 'S': '同脚本换画面', 'N': '新测试', 'X': '只换前贴（不计）', 'O': '外部合作'}
+# 来源（Reina 11/13：「组」改成来源，唯西两组和外部 agency 放在一张表里）
+SRC_NAME = {'A': '唯西 A 组', 'B': '唯西 B 组', 'ZDT': '知定堂', 'YP': '悦普', 'AM': 'AnyMedia'}
+AG_DOCS = {'ZDT': ('https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny', 'et1SeP'), 'YP': ('https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd', '5cypAT')}
 
 # 头部模板：表里行号、简称、原片标识（名字里带这些就是照这个模板做的）。链到「头部素材结构提取和变式（11/9）」那一行的代表素材格
 TPL_SHEET = 'https://my.feishu.cn/sheets/VEBUs3HTjh3dHqtojlsckJzmnqS?sheet=24e18e'
@@ -254,11 +258,96 @@ def batches(plan, items, w0, T):
     return sorted(out.values(), key=lambda b: (b['d'], b['g'], b['row']), reverse=True)
 
 
+def ag_day(s, T):
+    """11月9日、11/11/2026、11.13、2026-11-12 都认；年份缺了按 T 补。"""
+    s = (s or '').strip()
+    m = re.match(r'(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})', s)
+    if m:
+        y, mo, d = map(int, m.groups())
+    else:
+        m = re.match(r'(\d{1,2})[/.月](\d{1,2})(?:[/.](\d{4}))?', s)
+        if not m:
+            return None
+        mo, d, y = int(m.group(1)), int(m.group(2)), int(m.group(3) or T.year)
+    try:
+        return dt.date(y, mo, d)
+    except ValueError:
+        return None
+
+
+def ag_uc(s):
+    m = re.search(r'[A-Za-z]{2}\d{2}', s or '')
+    return m.group(0).upper() if m else ''
+
+
+def agency(folder, kv, T):
+    """外部 agency 的成片（Reina 11/13）：知定堂星广（排期和审核 et1SeP，成片审核「通过」，一行按视频链接里的视频数算条数，日期取交付日期，晚于今天的算今天）、
+    悦普抖音星图（执行表 5cypAT，只算抖音、合作形式星图，已发布或有发布链接，日期取发布档期）、AnyMedia（「国区投放素材」Today KOL/KOC 视频 tab，代理商写 AnyMedia、有视频链接的，日期取发布日期）。
+    结果存 notes/output-agency.json；哪家这次没读到就沿用上次的。"""
+    p = os.path.join(ROOT, 'notes/output-agency.json')
+    store = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+    def put(src, items):
+        store[src] = dict(asof=T.isoformat(), items=items)
+    f = os.path.join(folder or '', 'et1SeP.json')
+    if folder and os.path.exists(f):
+        rows = json.load(open(f, encoding='utf-8'))['rows']
+        doc, tab = AG_DOCS['ZDT']
+        out = []
+        for x in rows:
+            if '通过' not in (x.get('vst') or ''):
+                continue
+            d = ag_day(x.get('d'), T)
+            if not d:
+                continue
+            d = min(d, T)
+            n = max(1, int(x.get('vid') or 0))
+            for i in range(n):
+                out.append(dict(g='ZDT', typ='星广', d=d.isoformat(), uc=ag_uc(x.get('uc')), name=f"知定堂_星广_{x.get('acct') or '账号未填'}_{x.get('uc') or ''}_第{x['r']}行" + (f'_{i + 1}' if n > 1 else ''),
+                                link=f"{doc}?sheet={tab}&range=" + base64.b64encode(f"I{x['r']}".encode()).decode().rstrip('=')))
+        put('ZDT', out)
+    f = os.path.join(folder or '', '5cypAT.json')
+    if folder and os.path.exists(f):
+        rows = json.load(open(f, encoding='utf-8'))['rows']
+        doc, tab = AG_DOCS['YP']
+        out = []
+        for x in rows:
+            if not (x.get('pub') or '已发布' in (x.get('st') or '')):
+                continue
+            d = ag_day(x.get('d'), T)
+            if not d:
+                continue
+            out.append(dict(g='YP', typ='抖音星图', d=min(d, T).isoformat(), uc=ag_uc(x.get('uc')), name=f"悦普_抖音星图_{x.get('name')}",
+                            link=f"{doc}?sheet={tab}&range=" + base64.b64encode(f"A{x['r']}".encode()).decode().rstrip('=')))
+        put('YP', out)
+    if kv and os.path.exists(kv):
+        v = json.load(open(kv, encoding='utf-8'))['values']
+        H = v[0]
+        ix = {h: H.index(h) for h in ('平台', '达人类别', '发布日期', '博主名称', '代理商', '视频链接', 'UC_ID') if h in H}
+        g = lambda r, h: (r[ix[h]] if h in ix and ix[h] < len(r) else '').strip()
+        out = []
+        for r in v[1:]:
+            if g(r, '代理商').lower().replace(' ', '') != 'anymedia' or not g(r, '视频链接'):
+                continue
+            d = ag_day(g(r, '发布日期'), T)
+            if not d:
+                continue
+            out.append(dict(g='AM', typ=f"{g(r, '平台')}达人", d=d.isoformat(), uc=ag_uc(g(r, 'UC_ID')), name=f"AnyMedia_{g(r, '平台')}{g(r, '达人类别')}_{g(r, '博主名称')}", link=g(r, '视频链接')))
+        put('AM', out)
+    json.dump(store, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    items = []
+    for src, y in store.items():
+        for x in y['items']:
+            items.append(dict(x, k='O', t='O', ok=True, lk='v' if x['g'] == 'AM' else 'f'))
+    return items, {src: y['asof'] for src, y in store.items()}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', required=True)
     ap.add_argument('--date', required=True)
     ap.add_argument('--sheet')
+    ap.add_argument('--agency', help='tools/agency_read.js 读出来的 5cypAT.json、et1SeP.json 所在目录')
+    ap.add_argument('--kv', help='「国区投放素材」Today KOL/KOC 视频 tab 的 values JSON（AnyMedia）')
     a = ap.parse_args()
     T = dt.date.fromisoformat(a.date)
     ucs = json.load(open(os.path.join(ROOT, 'tools/ucs.json'), encoding='utf-8'))
@@ -333,10 +422,17 @@ def main():
         x['lk'] = 'v' if x.get('video') else 'f'
     json.dump(store, open(store_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
+    for x in store.values():
+        x['typ'] = 'AI' if x.get('t') == 'A' else '二创'
+    ag, ag_asof = agency(a.agency, a.kv, T)
+    for x in ag:
+        u = ucs.get(x.get('uc') or '', {})
+        x['l1'], x['ucn'] = u.get('l1', ''), u.get('short', '')
     names = set(x['name'] for x in store.values()) | sheet_names
     stg = stage(a.dir, names, T)
     mon = T - dt.timedelta(days=T.weekday())
-    weeks = sorted({(dt.date.fromisoformat(x['d']) - dt.timedelta(days=dt.date.fromisoformat(x['d']).weekday())).isoformat() for x in store.values()}, reverse=True)
+    weeks = sorted({(dt.date.fromisoformat(x['d']) - dt.timedelta(days=dt.date.fromisoformat(x['d']).weekday())).isoformat() for x in list(store.values()) + ag}, reverse=True)
+    agt = json.load(open(os.path.join(ROOT, 'tools/agency_targets.json'), encoding='utf-8'))
     tpl = open(os.path.join(ROOT, 'tools/output_template.html'), encoding='utf-8').read()
     plan = json.load(open(os.path.join(ROOT, 'tools/schedule_plan.json'), encoding='utf-8'))
     for wk in weeks:
@@ -344,11 +440,16 @@ def main():
             continue  # 只重算这周和上周
         w0 = dt.date.fromisoformat(wk)
         wk_all = sorted([x for x in store.values() if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g'], x['k'], x['uc']))
-        items = [x for x in wk_all if x.get('ok')]
-        pend = [dict(g=x['g'], d=x['d'], k=x['k'], t=x['t'], uc=x.get('uc', ''), ucn=x.get('ucn', ''), name=x['name'], st=x.get('st') or '还没审') for x in wk_all if not x.get('ok')]
+        items = [x for x in wk_all if x.get('ok')] + sorted([x for x in ag if w0.isoformat() <= x['d'] <= (w0 + dt.timedelta(days=6)).isoformat()], key=lambda x: (x['d'], x['g']))
+        tg = {}
+        for key, src in (('zdt', 'ZDT'), ('yp', 'YP')):
+            past = sorted(k for k in agt if re.match(r'\d{4}-\d{2}-\d{2}$', k) and k <= wk and key in agt[k])
+            if past:
+                tg[src] = dict(t=agt[past[-1]][key]['t'], stale=past[-1] != wk)
+        pend = [dict(g=x['g'], d=x['d'], k=x['k'], t=x['t'], typ=x.get('typ', ''), uc=x.get('uc', ''), ucn=x.get('ucn', ''), name=x['name'], st=x.get('st') or '还没审') for x in wk_all if not x.get('ok')]
         data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks,
-                    batches=batches(plan, items, w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}),
-                    stage=stg if w0 == mon else None)
+                    batches=batches(plan, [x for x in items if x['g'] in ('A', 'B')], w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}),
+                    stage=stg if w0 == mon else None, src=SRC_NAME, agt=tg, ag_asof=ag_asof)
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
         for path in [os.path.join(ROOT, 'output', wk, 'index.html')] + ([os.path.join(ROOT, 'output', 'index.html')] if w0 == mon else []):
             os.makedirs(os.path.dirname(path), exist_ok=True)
