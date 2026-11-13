@@ -175,7 +175,7 @@ function ucBlock(){
     return `<div class="row uc" data-f="uc" data-v="${esc(u==='（没标）'?'':u)}" title="变式 ${c.V+c.S}，新测试 ${c.N}"><span class="t"><b class="tg" data-u="${esc(u)}">${op?'▾':'▸'}</b> ${esc(u+(UCN[u]?' '+UCN[u]:''))}</span><span class="b" style="width:${c.n/mx*100}%">${c.n?`<i style="width:${c.V/c.n*100}%;background:var(--v)"></i><i style="width:${c.S/c.n*100}%;background:var(--s)"></i><i style="width:${c.N/c.n*100}%;background:var(--n)"></i><i style="width:${(c.O||0)/c.n*100}%;background:var(--o)"></i>`:''}</span><span class="n" title="交了 / 这周排了">${c.n}${c.plan?`<small class="st-mu">/${c.plan}</small>`:''}</span></div>`+
     (op?`<div class="scs">${scs.map(([s,v])=>`<div class="row sc" data-u="${esc(u)}" data-s="${esc(s)}"><span class="t">${esc(s)}</span><span class="st-mu">交 ${v.got}${v.plan?` · 排 ${v.plan}`:''}</span><span></span></div>`).join('')}</div>`:'')}).join('')}${more}</div>`}
 IT.forEach(x=>{x.typ=ty(x);x.srcn=sn(x.g)});
-function dims(){document.getElementById('dims').innerHTML=dimBlock('类型','typ')+dimBlock('来源','srcn')+dimBlock('一级分类','l1')+ucBlock()}
+function dims(){document.getElementById('dims').innerHTML=dimBlock('类型','typ')+dimBlock('一级分类','l1')+ucBlock()}
 dims();
 document.getElementById('dims').addEventListener('click',ev=>{
   if(ev.target.closest('#umore')){UMORE=!UMORE;dims();return}
