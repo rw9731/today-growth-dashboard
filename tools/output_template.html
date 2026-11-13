@@ -83,7 +83,7 @@ tr.we td{color:var(--sub)}
 .plan{margin-top:6px}.plan .ph{cursor:pointer;font-size:12px;color:var(--sub);padding:6px 8px;background:var(--panel);border:1px dashed var(--line)}.plan .ph:hover{color:var(--fg)}.plan.open .ph{border-bottom:0}
 .lk{font-size:11px;color:var(--sub);border:1px solid var(--line);padding:0 4px;white-space:nowrap}
 .dim .row.uc .tg{cursor:pointer;color:var(--sub);font-weight:400;padding:0 2px}.dim .scs{margin:0 0 6px 16px;border-left:2px solid var(--line);padding-left:8px}.dim .row.sc{grid-template-columns:1fr auto 0;font-size:12px}.dim .row.uc{grid-template-columns:minmax(120px,190px) 1fr 58px}
-.dim{grid-template-columns:1fr 1fr;align-items:stretch}@media(max-width:820px){.dim{grid-template-columns:1fr}}.dim .dty{grid-column:1/-1}.dim .dty .rs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 28px}
+.dim{grid-template-columns:repeat(3,1fr);align-items:stretch}@media(max-width:980px){.dim{grid-template-columns:1fr}}
 .dim .more{margin-top:6px;font:inherit;font-size:12px;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer}
 .stg{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}.stg summary{cursor:pointer;color:var(--fg);list-style:none;display:grid;grid-template-columns:auto auto 1fr;gap:4px 20px;align-items:end}.stg summary::-webkit-details-marker{display:none}.stg summary .ar{color:var(--sub);font-size:12px;align-self:center}.stg[open] summary .ar{transform:rotate(90deg)}.stg summary .sc{display:flex;flex-direction:column;min-width:0}.stg summary .sc span{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stg summary .sc b{font-size:20px;font-variant-numeric:tabular-nums;line-height:1.2}.stg summary .st-mu{grid-column:2/-1;font-size:12px;color:var(--sub)}
 .stg .sh{margin:8px 0 2px;font-weight:700}.stg ul{margin:0;padding-left:18px}.stg li{margin:2px 0;overflow-wrap:anywhere}.stg .uc{color:var(--sub);margin-right:4px}
@@ -175,7 +175,7 @@ function ucBlock(){
     return `<div class="row uc" data-f="uc" data-v="${esc(u==='（没标）'?'':u)}" title="变式 ${c.V+c.S}，新测试 ${c.N}"><span class="t"><b class="tg" data-u="${esc(u)}">${op?'▾':'▸'}</b> ${esc(u+(UCN[u]?' '+UCN[u]:''))}</span><span class="b" style="width:${c.n/mx*100}%">${c.n?`<i style="width:${c.V/c.n*100}%;background:var(--v)"></i><i style="width:${c.S/c.n*100}%;background:var(--s)"></i><i style="width:${c.N/c.n*100}%;background:var(--n)"></i><i style="width:${(c.O||0)/c.n*100}%;background:var(--o)"></i>`:''}</span><span class="n" title="交了 / 这周排了">${c.n}${c.plan?`<small class="st-mu">/${c.plan}</small>`:''}</span></div>`+
     (op?`<div class="scs">${scs.map(([s,v])=>`<div class="row sc" data-u="${esc(u)}" data-s="${esc(s)}"><span class="t">${esc(s)}</span><span class="st-mu">交 ${v.got}${v.plan?` · 排 ${v.plan}`:''}</span><span></span></div>`).join('')}</div>`:'')}).join('')}${more}</div>`}
 IT.forEach(x=>{x.typ=ty(x);x.srcn=sn(x.g)});
-function dims(){UTOP=Math.max(6,new Set(IT.filter(CNT).map(x=>x.l1||'（没标）')).size-1);document.getElementById('dims').innerHTML=dimBlock('类型','typ',null,'dty')+dimBlock('一级分类','l1')+ucBlock()}
+function dims(){UTOP=Math.max(6,new Set(IT.filter(CNT).map(x=>x.l1||'（没标）')).size-1);document.getElementById('dims').innerHTML=dimBlock('类型','typ')+dimBlock('一级分类','l1')+ucBlock()}
 dims();
 document.getElementById('dims').addEventListener('click',ev=>{
   if(ev.target.closest('#umore')){UMORE=!UMORE;dims();return}
