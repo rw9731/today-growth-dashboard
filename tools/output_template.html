@@ -99,8 +99,6 @@ tr.we td{color:var(--sub)}
 <h2>本周交了多少</h2>
 <div class="kpis" id="kpis"></div>
 
-<h2>每天交了多少</h2>
-<div class="dg" id="days"></div>
 
 <h2>按维度看</h2>
 <div class="dim" id="dims"></div>
@@ -131,7 +129,7 @@ const TG=D.target||{A:150,B:150};
 const wdays=D.days.filter(d=>d<D.T&&![0,6].includes(new Date(d+'T00:00:00').getDay())).length;
 document.getElementById('legend').innerHTML=`<div class="lr"><b>目标</b><span>A 组一周 ${TG.A} 条、B 组一周 ${TG.B} 条（AI 和真人二创都算），按周一到周五排，看总数</span><span>其中头部模板变式约 70%、每天至少 20 条，新测试约 30%</span></div>
 <div class="lr"><b>颜色</b><span><i style="background:var(--v)"></i>头部模板变式：照「头部素材结构提取和变式（11/9）」22 个模板做的</span><span><i style="background:var(--s)"></i>同脚本换画面：台词照原片，只换人设和画面</span><span><i style="background:var(--n)"></i>新测试：其余新脚本、新角度、其他原片二创</span></div>
-<div class="lr"><b>说明</b><span><b>只算审核通过的成片</b>：飞书表「成片状态」写了「通过」才计数、才放链接；需修改、修改后待审核、还没审的折叠在每天下面，不算数</span><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><b>外部 agency</b>：知定堂星广按成片审核「通过」、一行按视频数算；悦普只算抖音星图、已发布；AnyMedia 只算抖音、已发布的视频</span><span><span class="pl"></span>空心框 = 这天排了多少</span><span><span class="m"></span>虚线 = 20 条变式</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
+<div class="lr"><b>说明</b><span><b>只算审核通过的成片</b>：飞书表「成片状态」写了「通过」才计数、才放链接；需修改、修改后待审核、还没审的折叠在每天下面，不算数</span><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><b>外部 agency</b>：知定堂星广按成片审核「通过」、一行按视频数算；悦普只算抖音星图、已发布；AnyMedia 只算抖音、已发布的视频</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
 document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
   const L=IT.filter(x=>x.g===g),C=L.filter(CNT),vs=C.filter(isVar).length,n=C.length-vs,ai=C.filter(x=>x.t==='A').length,tg=TG[g]||150;
   const Y=C.filter(x=>x.d===YD),yv=Y.filter(isVar).length,yp=D.batches.filter(b=>b.g===g&&b.d===YD&&b.n!=null).reduce((a,b)=>a+b.n,0);
@@ -160,15 +158,6 @@ if(D.stage&&(D.stage.A||D.stage.B)){
      ${S.in_script.length?`<p class="sh">还在脚本中</p><ul>${S.in_script.map(li).join('')}</ul>`:''}${S.ready.length?`<p class="sh">脚本已完成、还没开始做</p><ul>${S.ready.map(li).join('')}</ul>`:''}
      <p class="note">按脚本表「脚本状态」：需修改、修改后待审核、未审核算还在脚本中；可制作、成片空着、交付日在本周的算已完成没开始做。${skip?'没算：'+skip+'。':''}</p></details>`)});
 }
-// 每天
-const DESC=[...D.days].filter(d=>d<=D.T).reverse();
-const PLAN=(g,d)=>D.batches.filter(b=>b.g===g&&b.d===d&&b.n!=null).reduce((a,b)=>a+b.n,0);
-const dayMax=Math.max(30,...D.days.flatMap(d=>['A','B'].map(g=>Math.max(PLAN(g,d),IT.filter(x=>x.g===g&&x.d===d&&CNT(x)).length))));
-document.getElementById('days').innerHTML=['A','B'].map(g=>`<div class="card"><div class="hd"><h3>${g} 组</h3></div>
-  <div class="dax"><span></span><span class="ax"><span style="left:0">0</span><span style="left:${20/dayMax*100}%">20</span><span style="left:${30/dayMax*100}%">30</span>${dayMax>=40?`<span style="left:${40/dayMax*100}%">40</span>`:''}</span><span></span></div>
-  ${DESC.map(d=>{const we=[0,6].includes(new Date(d+'T00:00:00').getDay());const C=IT.filter(x=>x.g===g&&x.d===d&&CNT(x)),v=C.filter(x=>x.k==='V').length,s=C.filter(x=>x.k==='S').length,n=C.length-v-s,p=C.length?Math.round((v+s)/C.length*100):0,low=!we&&C.length&&(v+s<20);
-   const w=x=>x/dayMax*100;
-   return `<div class="dr${we?' we':''}"><span class="dd">${md(d)} 周${wd(d)}</span>${C.length?`<span class="track" title="变式 ${v}，同脚本换画面 ${s}，新测试 ${n}"><span class="st"><i style="width:${w(v)}%;background:var(--v)"></i><i style="width:${w(s)}%;background:var(--s)"></i><i style="width:${w(n)}%;background:var(--n)"></i></span><span class="m20" style="left:${w(20)}%"></span>${PLAN(g,d)?`<span class="pl" style="width:${w(PLAN(g,d))}%"></span>`:''}</span><span class="r"><b>${C.length}</b>${PLAN(g,d)?`/${PLAN(g,d)}`:''} 条 · 变式 <b class="${low?'bad':p>=70?'good':''}">${v+s}</b>（${p}%）</span>`:`<span class="none">${d===D.T?'今天还没读到交付':'没有交付'}${PLAN(g,d)?`，排了 ${PLAN(g,d)} 条`:''}</span><span></span>`}</div>`}).join('')}</div>`).join('');
 // 维度
 const F={g:'',d:'',k:'',t:'',l1:'',uc:'',sc:'',q:''};
 function dimBlock(title,key,lab){const m={};IT.filter(CNT).forEach(x=>{const k=x[key]||'（没标）';(m[k]??={V:0,S:0,N:0,O:0,n:0});m[k][x.k]++;m[k].n++});
