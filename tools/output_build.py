@@ -282,7 +282,7 @@ def ag_uc(s):
 
 def agency(folder, kv, T):
     """外部 agency 的成片（Reina 11/13）：知定堂星广（排期和审核 et1SeP，成片审核「通过」，一行按视频链接里的视频数算条数，日期取交付日期，晚于今天的算今天）、
-    悦普抖音星图（执行表 5cypAT，只算抖音、合作形式星图，已发布或有发布链接，日期取发布档期）、AnyMedia（「国区投放素材」Today KOL/KOC 视频 tab，代理商写 AnyMedia、有视频链接的，日期取发布日期）。
+    悦普抖音星图（执行表 5cypAT，只算抖音、合作形式星图，已发布或有发布链接，日期取发布档期）、AnyMedia（「国区投放素材」Today KOL/KOC 视频 tab，代理商写 AnyMedia、平台是抖音、有视频链接的，日期取发布日期；小红书不放）。
     结果存 notes/output-agency.json；哪家这次没读到就沿用上次的。"""
     p = os.path.join(ROOT, 'notes/output-agency.json')
     store = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
@@ -326,7 +326,7 @@ def agency(folder, kv, T):
         g = lambda r, h: (r[ix[h]] if h in ix and ix[h] < len(r) else '').strip()
         out = []
         for r in v[1:]:
-            if g(r, '代理商').lower().replace(' ', '') != 'anymedia' or not g(r, '视频链接'):
+            if g(r, '代理商').lower().replace(' ', '') != 'anymedia' or not g(r, '视频链接') or g(r, '平台') != '抖音':  # 小红书达人不放（Reina 11/13）
                 continue
             d = ag_day(g(r, '发布日期'), T)
             if not d:

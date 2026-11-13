@@ -131,7 +131,7 @@ const TG=D.target||{A:150,B:150};
 const wdays=D.days.filter(d=>d<D.T&&![0,6].includes(new Date(d+'T00:00:00').getDay())).length;
 document.getElementById('legend').innerHTML=`<div class="lr"><b>目标</b><span>A 组一周 ${TG.A} 条、B 组一周 ${TG.B} 条（AI 和真人二创都算），按周一到周五排，看总数</span><span>其中头部模板变式约 70%、每天至少 20 条，新测试约 30%</span></div>
 <div class="lr"><b>颜色</b><span><i style="background:var(--v)"></i>头部模板变式：照「头部素材结构提取和变式（11/9）」22 个模板做的</span><span><i style="background:var(--s)"></i>同脚本换画面：台词照原片，只换人设和画面</span><span><i style="background:var(--n)"></i>新测试：其余新脚本、新角度、其他原片二创</span></div>
-<div class="lr"><b>说明</b><span><b>只算审核通过的成片</b>：飞书表「成片状态」写了「通过」才计数、才放链接；需修改、修改后待审核、还没审的折叠在每天下面，不算数</span><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><b>外部 agency</b>：知定堂星广按成片审核「通过」、一行按视频数算；悦普只算抖音星图、已发布；AnyMedia 按已发布的视频</span><span><span class="pl"></span>空心框 = 这天排了多少</span><span><span class="m"></span>虚线 = 20 条变式</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
+<div class="lr"><b>说明</b><span><b>只算审核通过的成片</b>：飞书表「成片状态」写了「通过」才计数、才放链接；需修改、修改后待审核、还没审的折叠在每天下面，不算数</span><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><b>外部 agency</b>：知定堂星广按成片审核「通过」、一行按视频数算；悦普只算抖音星图、已发布；AnyMedia 只算抖音、已发布的视频</span><span><span class="pl"></span>空心框 = 这天排了多少</span><span><span class="m"></span>虚线 = 20 条变式</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
 document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
   const L=IT.filter(x=>x.g===g),C=L.filter(CNT),vs=C.filter(isVar).length,n=C.length-vs,ai=C.filter(x=>x.t==='A').length,tg=TG[g]||150;
   const Y=C.filter(x=>x.d===YD),yv=Y.filter(isVar).length,yp=D.batches.filter(b=>b.g===g&&b.d===YD&&b.n!=null).reduce((a,b)=>a+b.n,0);
@@ -149,7 +149,7 @@ document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
     <div class="tot"><b>${n}</b><span>${t?`/ ${t.t} ${unit}`:unit} · ${srcs} 本周${typ==='星广'?'成片通过':'已发布'}${t&&t.stale?'（目标沿用上周）':''}</span></div>
     ${t?`<div class="prog"><i style="width:${Math.min(100,n/t.t*100)}%"></i></div>`:''}
     ${note?`<p class="note">${note}</p>`:''}${D.ag_asof&&D.ag_asof[tg]?`<p class="note">数据读到 ${md(D.ag_asof[tg])}</p>`:''}</div>`};
-  return card('星广','星广','ZDT','条','')+card('星图','抖音星图','YP','个',am?`另有 AnyMedia 达人 ${am} 条（抖音、小红书都有，表里没标水上水下，没算进星图），在下面「每天的成片」里来源选 AnyMedia 能看到。`:'')})();
+  return card('星广','星广','ZDT','条','')+card('星图','抖音星图','YP','个',am?`另有 AnyMedia 抖音达人 ${am} 条（表里没标水上水下，没算进星图），在下面「每天的成片」里来源选 AnyMedia 能看到。`:'')})();
 // 还没成片的脚本（Reina 11/11）：只看最新时间点，放进上面两张卡片里一行，不单独占一块
 if(D.stage&&(D.stage.A||D.stage.B)){
   const li=x=>`<li><span class="uc">${esc(x.uc||'')}${D.ucn[x.uc]?' '+esc(D.ucn[x.uc]):''}</span><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a>${x.st&&x.st!=='可制作'?` <span class="st-mu">${esc(x.st)}</span>`:''}</li>`;

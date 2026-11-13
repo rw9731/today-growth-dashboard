@@ -227,7 +227,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 1之三. 外部 agency（Reina 11/13）：知定堂、悦普用排期看板那一步读好的 /tmp/sched/agency/et1SeP.json、5cypAT.json（tools/agency_read.js）；AnyMedia 用 Google Sheets 连接器读「国区投放素材」`'Today KOL/KOC 视频'!A2:U1000`（第 2 行是表头），结果原样存成 /tmp/out/kv.json。
 2. `python3 tools/output_build.py --dir /tmp/out --date T --sheet <投放数据_分日文件> --agency /tmp/sched/agency --kv /tmp/out/kv.json`：合进 notes/output-items.json（按组 + 素材名去重，同一条在扩量表和脚本表都登记的留扩量表那条），重写这周和上周的页面。
 3. 提交 output/、outputs.json、notes/output-items.json、notes/output-stage.json。
-- 类型和来源（Reina 11/13）：表里「类型」放最前面（AI、二创、星广、抖音星图、抖音达人、小红书达人），「来源」替代原来的「组」（唯西 A 组、唯西 B 组、知定堂、悦普、AnyMedia）。知定堂星广按成片审核「通过」算，一行按视频链接里的视频数（真人版、AI 版各算一条），日期取交付日期，晚于今天的算今天；悦普只算抖音、合作形式星图，已发布或有发布链接，日期取发布档期；AnyMedia 按「Today KOL/KOC 视频」里代理商写 AnyMedia、有视频链接的，日期取发布日期。结果存 notes/output-agency.json，哪家这次没读到就沿用上次的。外部的不分变式/新测试，不算进 A、B 组的进度。
+- 类型和来源（Reina 11/13）：表里「类型」放最前面（AI、二创、星广、抖音星图、抖音达人、小红书达人），「来源」替代原来的「组」（唯西 A 组、唯西 B 组、知定堂、悦普、AnyMedia）。知定堂星广按成片审核「通过」算，一行按视频链接里的视频数（真人版、AI 版各算一条），日期取交付日期，晚于今天的算今天；悦普只算抖音、合作形式星图，已发布或有发布链接，日期取发布档期；AnyMedia 按「Today KOL/KOC 视频」里代理商写 AnyMedia、平台是抖音、有视频链接的，日期取发布日期，小红书达人不放（Reina 11/13）。结果存 notes/output-agency.json，哪家这次没读到就沿用上次的。外部的不分变式/新测试，不算进 A、B 组的进度。
 - 分类规则：扩量表那一行「怎么改」或「依据」写了「头部模板」的算变式；名字带「同脚本换画面」的算同脚本换画面；名字带 22 个模板原片标识（output_build.py 的 TEMPLATE_KEYS）的也算变式；其余算新测试。新加头部模板时把它的原片标识加进 TEMPLATE_KEYS。
 - 细分场景：扩量表取那一行的细分场景；脚本表没有这一列，投出去以后从 notes/scene-map.json 补。
 - 头部模板变式的「细分场景」写换了什么（Reina 11/10）：先取素材名里模板标识后面的变量（如「LOL比赛」），再按「换角度+NN」对上 tools/templates.json 里这个模板的第几个角度，再取排期行「怎么改」里写的「这次换（…）」，都没有就写「没写变量，原片场景：…」。换了 use case 的写「换 use case：…」。

@@ -286,38 +286,6 @@
   "items": [
    {
     "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-03",
-    "uc": "SH04",
-    "name": "AnyMedia_小红书KOL_屠歌",
-    "link": "https://xhslink.cn/o/565UwyEfrce"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-03",
-    "uc": "PS01",
-    "name": "AnyMedia_小红书KOL_亚哲Josh",
-    "link": "https://xhslink.cn/o/725U4rrcu4m"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-03",
-    "uc": "PS03",
-    "name": "AnyMedia_小红书KOL_懒布懒妈",
-    "link": "https://xhslink.cn/o/3Vr8kOhUaIT"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-03",
-    "uc": "PS01",
-    "name": "AnyMedia_小红书KOL_羊仔码头",
-    "link": "https://xhslink.cn/o/3t9kv5zwYCI"
-   },
-   {
-    "g": "AM",
     "typ": "抖音达人",
     "d": "2026-11-03",
     "uc": "SH02",
@@ -334,14 +302,6 @@
    },
    {
     "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-04",
-    "uc": "WK01",
-    "name": "AnyMedia_小红书KOL_豆芽AI笔记本",
-    "link": "https://xhslink.cn/o/7WA0IgxhhtE"
-   },
-   {
-    "g": "AM",
     "typ": "抖音达人",
     "d": "2026-11-04",
     "uc": "WK01",
@@ -355,118 +315,6 @@
     "uc": "TR01",
     "name": "AnyMedia_抖音KOC_囡宝在旅行",
     "link": "https://v.douyin.com/BmZdHsPr-Ic/"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-06",
-    "uc": "",
-    "name": "AnyMedia_小红书KOL_Tommy不是托尼",
-    "link": "https://xhslink.cn/o/GnLVREY4ia"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-07",
-    "uc": "",
-    "name": "AnyMedia_小红书KOL_柯煊",
-    "link": "https://www.xiaohongshu.com/discovery/item/6aeef8d5000000001a027cef"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-07",
-    "uc": "TR01",
-    "name": "AnyMedia_小红书KOC_一粒嘉梨",
-    "link": "https://xhslink.cn/o/52YrRIgVm3O"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-08",
-    "uc": "AI00",
-    "name": "AnyMedia_小红书KOL_鲤哥builder",
-    "link": "https://www.xiaohongshu.com/discovery/item/6af05e3300000000140294f0"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-08",
-    "uc": "IN01",
-    "name": "AnyMedia_小红书KOL_章妙妙",
-    "link": "https://www.xiaohongshu.com/discovery/item/6af033e20000000015023359"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-09",
-    "uc": "PS02",
-    "name": "AnyMedia_小红书KOL_阿虾Hana.",
-    "link": "https://www.xiaohongshu.com/discovery/item/6af19fc600000000330126ac"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-10",
-    "uc": "HL02",
-    "name": "AnyMedia_小红书KOL_小弓加油",
-    "link": "https://xhslink.cn/o/9voRA1iNbh3"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-10",
-    "uc": "AI00",
-    "name": "AnyMedia_小红书KOL_草莓派PIE",
-    "link": "https://xhslink.cn/o/8v6PLXxjrRZ"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-10",
-    "uc": "WK05",
-    "name": "AnyMedia_小红书KOL_李多肉打怪升级",
-    "link": "https://xhslink.cn/o/6BITuCc7AFd"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-11",
-    "uc": "",
-    "name": "AnyMedia_小红书KOL_灰金叔叔",
-    "link": "https://www.xiaohongshu.com/explore/6af43234000000002501152e"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-11",
-    "uc": "WK01",
-    "name": "AnyMedia_小红书KOL_黄紫怡Tina",
-    "link": "https://xhslink.cn/o/7CTl74dFyLg"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-12",
-    "uc": "PS02",
-    "name": "AnyMedia_小红书KOL_🍊草苞妈妈🍊",
-    "link": "https://xhslink.cn/o/9PXPWFGdFkw"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-12",
-    "uc": "HL00",
-    "name": "AnyMedia_小红书KOL_李东成Daniel",
-    "link": "https://xhslink.cn/o/4PGdk9BX9jZ"
-   },
-   {
-    "g": "AM",
-    "typ": "小红书达人",
-    "d": "2026-11-12",
-    "uc": "",
-    "name": "AnyMedia_小红书KOC_Lvy韩- -",
-    "link": "https://xhslink.cn/o/1pHNALzUm51"
    }
   ]
  }
