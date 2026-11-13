@@ -32,8 +32,15 @@ def calc(sheet, X):
             ret[r['id']] += r['ret']
     A, Rt, C = sum(act.values()), sum(ret.values()), sum(cost.values())
     items = {i: [round(act[i]), round(ret[i]), round(cost[i], 2)] for i in set(act) | set(cost) if act[i] > 0 or cost[i] > 0}
+    # 二、按 use case（Reina 11/13）：每个 use case 的当天次留，和到 X 为止最近 7 天每天的次留率（悬浮折线用）
+    ucs = json.load(open(os.path.join(HERE, 'ucs.json')))
+    Xd = dt.date.fromisoformat(X)
+    d7 = [(Xd - dt.timedelta(days=k)).isoformat() for k in range(6, -1, -1)]
+    st, av = compute.uc_cohort_days(rows, ucs, d7)
+    uc = {u: [round(v[0]), round(v[1]), round(v[2], 2)] for (u, d), v in st.items() if d == X and u != '__all__' and (v[0] or v[2])}
+    r7 = {u: compute.rate_series(st, u, d7, av) for u in {k[0] for k in st}}
     return {'date': X, 'fields': ['X 激活', 'X 激活的次留', 'X 消耗'], 'act': round(A), 'ret': round(Rt), 'cost': round(C, 2),
-            'rate': Rt / A if A else None, 'cpr': C / Rt if Rt else None, 'items': items}
+            'rate': Rt / A if A else None, 'cpr': C / Rt if Rt else None, 'items': items, 'uc': uc, 'rate7': r7}
 
 
 def apply(res, note, th_act):
@@ -53,6 +60,23 @@ def apply(res, note, th_act):
             m['rtd_cpr'] = c / r if r else None
         m['rtd_small'] = a < th_act
     res['rtday_meta'] = [{'date': note['date'], 'rate': note.get('rate'), 'cpr': note.get('cpr'), 'act': note.get('act')}]
+    # 二、按 use case 的当天次留和 7 天折线（Reina 11/13）；旧的 rtday 文件没有这两项就不动
+    ucn, r7 = note.get('uc'), note.get('rate7')
+    for u in res.get('uc_tbl', []):
+        if r7 and u.get('uc') in r7:
+            u['rate7'] = r7[u['uc']]
+        if ucn is None:
+            continue
+        for f in ('rtd_act', 'rtd_rate', 'rtd_cpr', 'rtd_small'):
+            u.pop(f, None)
+        a, r, c = ucn.get(u.get('uc'), [0, 0, 0])
+        u['rtd_act'] = a
+        if a > 0:
+            u['rtd_rate'] = r / a
+            u['rtd_cpr'] = c / r if r else None
+        u['rtd_small'] = a < th_act
+    if r7 and '__all__' in r7:
+        res['rate7_all'] = [{'s': r7['__all__']}]
     return res
 
 

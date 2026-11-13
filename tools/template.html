@@ -145,6 +145,11 @@
   .lx-cspanel[hidden] { display: none; }
   .lx-cstag { display: inline-block; margin: 1px 4px 2px 0; padding: 1px 6px; border-radius: 4px; font-size: 11px; line-height: 1.5; background: rgba(127,127,127,.12); color: var(--color-fg-muted); white-space: normal; }
   .lx-cstag.bad { background: rgba(239,107,95,.14); color: var(--color-bad); }
+  .lx-r7 { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .lx-r7box { position: fixed; z-index: 60; padding: 8px 10px; border-radius: 6px; background: var(--color-bg, #fff); color: var(--color-fg, #222); border: 1px solid var(--color-border, #ddd); box-shadow: 0 4px 14px rgba(0,0,0,.18); pointer-events: none; font-size: 11px; }
+  .lx-r7box b { font-weight: 600; }
+  .lx-arrow { display: inline-block; margin-left: 4px; font-weight: 700; cursor: help; }
+  .lx-arrow.up { color: var(--good, #1a7f37); } .lx-arrow.down { color: var(--bad, #cf222e); } .lx-arrow.flat { color: var(--color-fg-muted, #888); }
   .lx-tip { border-bottom: 1px dotted currentColor; cursor: help; }
   .lx-tipbox { position: fixed; z-index: 60; max-width: 360px; padding: 8px 10px; border-radius: 6px; background: #22211f; color: #f4f3ef; font-size: 12px; line-height: 1.6; font-weight: 400; white-space: normal; box-shadow: 0 4px 12px rgba(0,0,0,.2); pointer-events: none; }
   .lx-cspanel .lx-table th { position: static; }
@@ -328,7 +333,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。<b>点一行能展开这个 use case 昨天按消耗排的素材</b>，看是哪几条把它带起来的。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。</p>
+    <p class="lx-note">按昨天消耗排。<b>点一行能展开这个 use case 昨天按消耗排的素材</b>，看是哪几条把它带起来的。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。<b>鼠标放在次留率上</b>看这个 use case 最近 7 天每天激活的人的次留率（虚线是全盘），最新一天没回传完会偏低；<b>当天次留率</b>、<b>当天次留成本</b>是 {{D}} 当天激活的人的次留，后天出日报时回补，口径同四。<b>标签后面的箭头</b>是和前一天日报比：↑ 变好、↓ 变差、→ 没变，鼠标放上去看前一天的标签和次留率。</p>
     <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留贵,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留贵,量小 + 次留差,样本不够,新上线"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -345,12 +350,14 @@
             <th class="num">消耗<span class="th-sub">{{W}}</span></th>
             <th class="num">激活<span class="th-sub">{{W}}</span></th>
             <th class="num">激活成本<span class="th-sub">{{W}}</span></th>
-            <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）</span></th>
+            <th class="num">次留率<span class="th-sub">{{W}} 激活（{{D}} 次留未出全）；悬浮看 7 天</span></th>
             <th class="num">次留成本<span class="th-sub">{{W}}</span></th>
+            <th class="num">当天次留率<span class="th-sub">{{D}} 激活，后天回补</span></th>
+            <th class="num">当天次留成本<span class="th-sub">{{D}}</span></th>
             <th class="num">连续 3 留率<span class="th-sub">{{W3}} 激活</span></th>
             <th class="num">连续 3 留成本<span class="th-sub">{{W3}}</span></th>
             <th class="num">好素材<span class="th-sub">条数</span></th>
-            <th>标签<span class="th-sub">按 {{W}}</span></th>
+            <th>标签<span class="th-sub">按 {{W}}；箭头 = 比前一天</span></th>
           </tr>
         </thead>
         <tbody data-draw="ucrows"></tbody>
@@ -714,6 +721,35 @@
   const tagCls = (t) => { const s = t || ''; const r = /次留差|次留贵|拖后腿/.test(s) ? 'r-bad' : /次留一般/.test(s) ? 'r-mid' : /新上线/.test(s) ? 'r-new' : /次留好/.test(s) ? 'r-good' : 'r-na'; return 'tg ' + (s.startsWith('能放量') ? 's-big' : 's-small') + ' ' + r; };
   document.querySelectorAll('[data-draw="tag-legend"]').forEach((box) => { box.className = 'tg-legend'; for (const t of box.dataset.tags.split(',')) { const p = document.createElement('span'); p.className = tagCls(t); p.textContent = t; box.appendChild(p); } });
   const statusCls = {'能放量 + 次留好': 'g-scale', '次留好、量还小': 'g-pot', '能放量 + 次留好但贵': 'g-pricey', '次留好但贵、量还小': 'g-pricey', '次留好但贵': 'g-pricey', '能放量 + 次留差': 'g-bad', '次留差、量还小': 'g-bad', '拖后腿': 'g-bad', '能放量 + 成本略高': 'g-mid', '成本略高、量还小': 'g-mid', '能放量 + 次留略低': 'g-mid', '次留略低、量还小': 'g-mid', '一般': 'g-mid', '激活太少': 'g-mid', '新上线': 'g-new'};
+  // 标签和前一天比的箭头（Reina 11/13）：次留好 > 次留一般 > 次留贵 > 次留差，同一档里能放量比量小好
+  const tagScore = (st) => { const s = st || ''; const q = /次留好/.test(s) ? 3 : /次留一般/.test(s) ? 2 : /次留贵/.test(s) ? 1 : /次留差/.test(s) ? 0 : null; return q == null ? null : q + (s.startsWith('能放量') ? 0.5 : 0); };
+  const tagArrow = (cell, r) => { if (!r.prev_status) return; const a = tagScore(r.status), b = tagScore(r.prev_status); if (a == null || b == null) return;
+    const sp = document.createElement('span'); const k = a > b ? 'up' : a < b ? 'down' : 'flat'; sp.className = 'lx-arrow ' + k; sp.textContent = {up: '↑', down: '↓', flat: '→'}[k];
+    const dr = (r.rate != null && r.prev_rate != null) ? '，次留率 ' + fmtP0(r.prev_rate) + ' → ' + fmtP0(r.rate) : '';
+    sp.title = '前一天：' + r.prev_status + dr; cell.appendChild(sp); };
+  // 次留率悬浮：最近 7 天每天激活的人的次留率折线（Reina 11/13）
+  let r7box = null;
+  const r7Hide = () => { if (r7box) r7box.hidden = true; };
+  const r7Show = (e, r) => {
+    if (!r7box) { r7box = document.createElement('div'); r7box.className = 'lx-r7box'; document.body.appendChild(r7box); }
+    const all = (one('rate7_all') || {}).s || []; const W = 260, H = 120, m = {l: 30, r: 34, t: 18, b: 22};
+    const pts = r.rate7.map((x, i) => [i, x[1], x[0], x[2]]); const ap = all.map((x, i) => [i, x[1]]);
+    const vals = pts.concat(ap).map((p) => p[1]).filter((v) => v != null); const lo = Math.max(0, (d3.min(vals) || 0) - 0.03), hi = Math.min(1, (d3.max(vals) || 0.4) + 0.03);
+    const x = d3.scaleLinear([0, pts.length - 1], [m.l, W - m.r]), y = d3.scaleLinear([lo, hi], [H - m.b, m.t]);
+    r7box.innerHTML = '<div><b>' + r.uc + ' ' + (r.short || '') + '</b> 每天激活的人的次留率</div>';
+    const svg = d3.select(r7box).append('svg').attr('width', W).attr('height', H);
+    svg.append('g').attr('transform', 'translate(0,' + (H - m.b) + ')').call(d3.axisBottom(x).ticks(pts.length).tickFormat((i) => (pts[i] || [])[2] || '').tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
+    svg.append('g').attr('transform', 'translate(' + m.l + ',0)').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.0%')).tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
+    const line = d3.line().defined((p) => p[1] != null).x((p) => x(p[0])).y((p) => y(p[1]));
+    svg.append('path').attr('d', line(ap)).attr('fill', 'none').attr('stroke', 'var(--color-fg-muted, #888)').attr('stroke-dasharray', '3 3').attr('stroke-width', 1.5);
+    svg.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', 'var(--bar, #3b6fd8)').attr('stroke-width', 2);
+    pts.filter((p) => p[1] != null).forEach((p) => { svg.append('circle').attr('cx', x(p[0])).attr('cy', y(p[1])).attr('r', 2.5).attr('fill', 'var(--bar, #3b6fd8)');
+      svg.append('text').attr('x', x(p[0])).attr('y', y(p[1]) - 5).attr('text-anchor', 'middle').attr('font-size', 9).attr('fill', 'currentColor').text(d3.format('.0%')(p[1])); });
+    const lastAll = ap.filter((p) => p[1] != null).pop(); if (lastAll) svg.append('text').attr('x', x(lastAll[0]) + 4).attr('y', y(lastAll[1]) + 3).attr('font-size', 9).attr('fill', 'var(--color-fg-muted, #888)').text('全盘');
+    const miss = pts.filter((p) => p[1] == null).map((p) => p[2]);
+    r7box.insertAdjacentHTML('beforeend', '<div style="color:var(--color-fg-muted,#888)">' + (miss.length ? miss.join('、') + ' 还没回传（后天回补）；' : '') + '最新一天没回传完，会偏低约 1 个点</div>');
+    r7box.hidden = false; const b = e.currentTarget.getBoundingClientRect(); const bw = W + 24;
+    r7box.style.left = Math.max(8, Math.min(b.left - bw / 2, innerWidth - bw - 8)) + 'px'; r7box.style.top = (b.bottom + 6 + H + 60 > innerHeight ? b.top - H - 66 : b.bottom + 6) + 'px'; };
   const UCM = d3.group(data('uc_mats') || [], (m) => m.uc);
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
@@ -731,10 +767,16 @@
       td('num muted').textContent = fmtN(r.act_w);
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
+      if (r.rate7 && r.rate7.some((x) => x[1] != null)) { cr.classList.add('lx-r7'); cr.addEventListener('mouseenter', (e) => r7Show(e, r)); cr.addEventListener('mouseleave', r7Hide); }
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
+      { const rm = one('rtday_meta');
+        if (!rm || r.rtd_act == null) { td('num muted').textContent = '待回补'; td('num muted').textContent = ''; }
+        else if (r.rtd_rate == null) { td('num muted').textContent = r.rtd_act ? '—' : '没激活'; td('num muted').textContent = '—'; }
+        else if (r.rtd_small) { td('num muted').textContent = fmtP0(r.rtd_rate) + '（' + fmtN(r.rtd_act) + ' 激活）'; td('num muted').textContent = r.rtd_cpr == null ? '—' : fmtY(r.rtd_cpr); }
+        else { const od = {rate_w: rm.rate, cpr_w: rm.cpr}; td(rateCls(r.rtd_rate, od, t)).textContent = fmtP0(r.rtd_rate); td(r.rtd_cpr == null ? 'num lx-badv' : cprCls(r.rtd_cpr, od, t)).textContent = r.rtd_cpr == null ? '没次留' : fmtY(r.rtd_cpr); } }
       ret3(td, r, o);
       td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
-      pill(td(), r.status, tagCls(r.status));
+      { const tc = td(); pill(tc, r.status, tagCls(r.status)); tagArrow(tc, r); }
       tb.appendChild(tr);
       // 点开：这个 use case 昨天按消耗排的素材（Reina 11/12）
       const ms = UCM.get(r.uc) || [];

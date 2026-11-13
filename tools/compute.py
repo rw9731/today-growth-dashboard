@@ -165,6 +165,45 @@ def shift_ret(rows):
     return sorted(rows + extra, key=lambda r: r['date'])
 
 
+def map_uc(r, ucs):
+    """和二、按 use case 的 7 天消耗一样：库外的按素材名模糊归到 use case。"""
+    uc = r['uc']
+    if uc == '库外':
+        for key, u in FUZZY:
+            if key in r['name'] and u in ucs:
+                return u
+    return uc
+
+
+def uc_cohort_days(rows, ucs, days):
+    """每个 use case 每天激活的人的次留（Reina 11/13，二的次留率悬浮折线和当天次留回补）。
+    读表时 shift_ret 已把次留挪到第二天，所以 d 天激活的人的次留在 d+1 那行；d+1 还没有数的天不算。
+    返回 ({(uc, d): [激活, 次留, 消耗]}，有次留的天)。全盘用 uc = '__all__'。"""
+    last = max((r['date'] for r in rows if r['cost'] > 0 or r['act'] > 0), default='')
+    nxt = {d: (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat() for d in days}
+    back = {v: k for k, v in nxt.items()}
+    st = defaultdict(lambda: [0.0, 0.0, 0.0])
+    for r in rows:
+        d = r['date']
+        if d in nxt and (r['act'] or r['cost']):
+            for u in (map_uc(r, ucs), '__all__'):
+                st[(u, d)][0] += r['act']; st[(u, d)][2] += r['cost']
+        if r['ret'] and d in back:
+            for u in (map_uc(r, ucs), '__all__'):
+                st[(u, back[d])][1] += r['ret']
+    avail = {d for d in days if nxt[d] <= last}
+    return st, avail
+
+
+def rate_series(st, uc, days, avail):
+    """[[M/D, 次留率或 None, 激活]]，没回传完的天次留率写 None。"""
+    out = []
+    for d in days:
+        a, rt, _ = st.get((uc, d), [0, 0, 0])
+        out.append([f'{int(d[5:7])}/{int(d[8:])}', (rt / a if a and d in avail else None), round(a)])
+    return out
+
+
 # 八、核心 insight 和下一步：use case 分层（Reina 10/31 定的逻辑）
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
@@ -622,6 +661,22 @@ def main():
         cost7[(uc, r['date'])] += r['cost']
     for u in uct:
         u['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7[(u['uc'], d)], 2)] for d in d7]
+    # 每个 use case 最近 7 天每天激活的人的次留率（Reina 11/13：二的次留率悬浮看折线；{D} 当天的要后天回补）
+    st7, av7 = uc_cohort_days(allrows, ucs, d7)
+    for u in uct:
+        u['rate7'] = rate_series(st7, u['uc'], d7, av7)
+    rate7_all = rate_series(st7, '__all__', d7, av7)
+    # 标签和前一天比（Reina 11/13：标签后面加箭头）：读前一天日报页面里存的 uc_tbl
+    prev_d = (Dd - dt.timedelta(days=1)).isoformat()
+    prev_page = os.path.join(os.path.dirname(HERE), prev_d, 'index.html')
+    if os.path.exists(prev_page):
+        mm = re.search(r'<script type="application/json" id="results">(.*?)</script>', open(prev_page).read(), re.S)
+        if mm:
+            pu = {x['uc']: x for x in json.loads(mm.group(1).replace('<\\/', '</')).get('uc_tbl', [])}
+            for u in uct:
+                x = pu.get(u['uc'])
+                if x:
+                    u['prev_status'] = x.get('status'); u['prev_rate'] = x.get('rate'); u['prev_cpr'] = x.get('cpr')
     # 每条素材最近 7 天消耗（Reina 11/4 定，四、昨天消耗排行的柱状图）
     cost7_m = defaultdict(float)
     for r in allrows:
@@ -1159,7 +1214,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
+           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     if rtd_note:
         import rt_backfill
