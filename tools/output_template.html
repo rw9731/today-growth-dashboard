@@ -85,7 +85,7 @@ tr.we td{color:var(--sub)}
 .dim .row.uc .tg{cursor:pointer;color:var(--sub);font-weight:400;padding:0 2px}.dim .scs{margin:0 0 6px 16px;border-left:2px solid var(--line);padding-left:8px}.dim .row.sc{grid-template-columns:1fr auto 0;font-size:12px}.dim .row.uc{grid-template-columns:minmax(120px,190px) 1fr 58px}
 .dim{grid-template-columns:repeat(auto-fit,minmax(380px,1fr));align-items:start}
 .dim .more{margin-top:6px;font:inherit;font-size:12px;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer}
-.stg{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}.stg summary{cursor:pointer;color:var(--fg);font-size:16px;line-height:1.4}.stg summary b{font-size:22px;font-variant-numeric:tabular-nums;margin:0 3px}.stg summary .st-mu{font-size:13px}
+.stg{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}.stg summary{cursor:pointer;color:var(--fg);list-style:none;display:grid;grid-template-columns:auto auto 1fr;gap:4px 20px;align-items:end}.stg summary::-webkit-details-marker{display:none}.stg summary .ar{color:var(--sub);font-size:12px;align-self:center}.stg[open] summary .ar{transform:rotate(90deg)}.stg summary .sc{display:flex;flex-direction:column;min-width:0}.stg summary .sc span{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stg summary .sc b{font-size:20px;font-variant-numeric:tabular-nums;line-height:1.2}.stg summary .st-mu{grid-column:2/-1;font-size:12px;color:var(--sub)}
 .stg .sh{margin:8px 0 2px;font-weight:700}.stg ul{margin:0;padding-left:18px}.stg li{margin:2px 0;overflow-wrap:anywhere}.stg .uc{color:var(--sub);margin-right:4px}
 </style>
 </head>
@@ -120,7 +120,7 @@ const KC={V:'var(--v)',S:'var(--s)',N:'var(--n)',X:'var(--x)',O:'var(--o)'};
 const SRC=D.src||{A:'唯西 A 组',B:'唯西 B 组'};const sn=g=>SRC[g]||g;
 const TYO=['AI','二创','星广','抖音星图','抖音达人','小红书达人'];const tyo=s=>{const i=TYO.indexOf(s);return i<0?99:i};const ty=x=>x.typ||(x.t==='A'?'AI':'二创');
 const SO=['A','B','ZDT','YP','AM'];const so=g=>{const i=SO.indexOf(g);return i<0?99:i};const AGS=['ZDT','YP','AM'];
-document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组和外部 agency（知定堂、悦普、AnyMedia）实际交的成片，数据截至 ${md(D.T)}。每天下面折叠着这天还排着、没交的。`;
+document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组和外部 agency（知定堂、悦普、AnyMedia）实际交的成片，数据截至 ${md(D.T)}。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
 // KPI
@@ -154,7 +154,7 @@ if(D.stage&&(D.stage.A||D.stage.B)){
   const cards=document.querySelectorAll('#kpis .card');
   ['A','B'].forEach((g,i)=>{const S=D.stage[g],c=cards[i];if(!S||!c)return;
     const skip=[S.old?`本周以前一直没做的 ${S.old} 条`:'',S.killed?`说了不要做或弃用的 ${S.killed} 条`:'',S.done&&S.done.length?`成片没回填但已交的 ${S.done.length} 条`:''].filter(Boolean).join('、');
-    c.insertAdjacentHTML('beforeend',`<details class="stg"><summary>还在脚本中 <b>${S.in_script.length}</b> · 脚本已完成没开始做 <b>${S.ready.length}</b>（本周）<span class="st-mu"> 截至 ${md(S.asof)}</span></summary>
+    c.insertAdjacentHTML('beforeend',`<details class="stg"><summary><span class="ar">▸</span><span class="sc"><span>还在脚本中</span><b>${S.in_script.length}</b></span><span class="sc"><span>脚本完成待开拍</span><b>${S.ready.length}</b></span><span class="st-mu">待开拍只算本周 · 截至 ${md(S.asof)} · 点开看清单</span></summary>
      ${S.in_script.length?`<p class="sh">还在脚本中</p><ul>${S.in_script.map(li).join('')}</ul>`:''}${S.ready.length?`<p class="sh">脚本已完成、还没开始做</p><ul>${S.ready.map(li).join('')}</ul>`:''}
      <p class="note">按脚本表「脚本状态」：需修改、修改后待审核、未审核算还在脚本中；可制作、成片空着、交付日在本周的算已完成没开始做。${skip?'没算：'+skip+'。':''}</p></details>`)});
 }
