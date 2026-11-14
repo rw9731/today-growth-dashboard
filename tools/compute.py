@@ -135,13 +135,18 @@ def load_rows(path):
     miss = [v for v in need.values() if v not in col]
     if miss:
         sys.exit('missing columns: ' + ', '.join(miss))
+    # 巨量报表常给新素材返回空素材名（11/13 起），用 notes/names.json（巨量工作台素材库、素材映射 B 列、星广清单补的名字）兜底（Reina 11/14）
+    try:
+        names = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notes', 'names.json')))
+    except Exception:
+        names = {}
     out = []
     for r in vals[1:]:
         if not r or not r[0]:
             continue
         g = lambda k: r[col[need[k]]] if col[need[k]] < len(r) else ''
         opt = lambda h: r[col[h]] if h in col and col[h] < len(r) else ''
-        out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name'),
+        out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name').strip() or names.get(g('id'), ''),
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
                     'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
                     'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != '', 'show': num(opt('展示'))})
@@ -1216,6 +1221,17 @@ def main():
     out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
+    # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
+    try:
+        star = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notes', 'star.json')))
+    except Exception:
+        star = {}
+    star_ids = set(star) | {r['id'] for r in R if r.get('src') == '星广'}
+    names_by_id = {}
+    for r in R:
+        if r['id'] in star_ids and r['name']:
+            names_by_id[r['id']] = r['name']
+    out['star'] = [{'id': i, 'name': names_by_id.get(i) or (star.get(i) or [''])[0], 'nick': (star.get(i) or ['', ''])[1]} for i in sorted(star_ids)]
     if rtd_note:
         import rt_backfill
         rt_backfill.apply(out, rtd_note, th['act'])

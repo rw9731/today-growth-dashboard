@@ -102,6 +102,9 @@
   .uc-sub th { font-weight: 500; color: var(--color-fg-muted); }
   .uc-sub td.name { white-space: normal; min-width: 16rem; max-width: 30rem; }
   .uc-sub .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .lx-star { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: 600; color: #8a4b00; background: #ffe9c7; vertical-align: 1px; white-space: nowrap; }
+  .lx-table tr.uc-row td.l1c::before { content: '▸'; display: inline-block; width: 1em; color: var(--color-fg-muted); transition: transform .15s; }
+  .lx-table tr.uc-row.open td.l1c::before { transform: rotate(90deg); }
   .lx-good { color: var(--color-ok); font-weight: 600; }
   .lx-badv { color: var(--color-bad); font-weight: 600; }
   .lx-warnv { color: var(--color-warn); font-weight: 600; }
@@ -616,6 +619,19 @@
   const REL = '{{REL}}';
   const RESULTS = JSON.parse(document.getElementById('results').textContent);
   const data = (id) => RESULTS[id] || [];
+  // 星广素材标记（Reina 11/14）：按素材名对上 star 列表就在名字后加「星广」
+  const STAR = new Map((RESULTS.star || []).filter((x) => x.name).map((x) => [x.name.trim(), x]));
+  const STAR_ID = new Map((RESULTS.star || []).map((x) => [x.id, x]));
+  function markStar(root) {
+    if (!STAR.size && !STAR_ID.size) return;
+    for (const el of (root || document).querySelectorAll('td.name, a.lx-namelink')) {
+      if (el.querySelector('.lx-star') || (el.tagName === 'TD' && el.querySelector('a.lx-namelink'))) continue;
+      const tx = el.textContent.trim(); const x = STAR.get(tx) || STAR_ID.get(tx);
+      if (!x) continue;
+      const b = document.createElement('span'); b.className = 'lx-star'; b.textContent = '星广'; b.title = '星广视频' + (x.nick ? '：' + x.nick : '');
+      (el.tagName === 'A' ? el.parentNode : el).appendChild(b);
+    }
+  }
   const one = (id) => (RESULTS[id] && RESULTS[id].length ? RESULTS[id][0] : null);
   const META = one('meta');
   const COLOR = getComputedStyle(document.documentElement).getPropertyValue('--bar').trim() || '#3d6fd8';
@@ -691,7 +707,7 @@
     const rows = data('by_l1'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
-      td().textContent = r.l1;
+      { const c = td('l1c'); c.textContent = r.l1; c.style.whiteSpace = 'nowrap'; }
       const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
       td('num muted').textContent = fmtN(r.n26);
       barCell(td(), r.cost27, max, 80);
@@ -711,8 +727,39 @@
       svg.selectAll('circle').data(valid).join('circle').attr('cx', (p) => x(p[0])).attr('cy', (p) => y(p[1])).attr('r', 2.5).style('fill', COLOR);
       if (r.rate26 !== null) svg.append('text').attr('x', 66).attr('y', h / 2 + 4).style('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(fmtP0(r.rate26));
       tb.appendChild(tr);
+      // 点开：这个一级分类下各 use case 的消耗分布（Reina 11/14）
+      const ucs = (data('uc_tbl') || []).filter((u) => u.l1 === r.l1 && u.cost27 > 0).sort((a, b) => b.cost27 - a.cost27);
+      if (!ucs.length) continue;
+      tr.classList.add('uc-row'); tr.title = '点开看这个一级分类下各 use case 的消耗分布';
+      const dr = document.createElement('tr'); dr.className = 'uc-detail'; dr.hidden = true;
+      const dc = document.createElement('td'); dc.colSpan = tr.children.length; dr.appendChild(dc); tb.appendChild(dr);
+      let built = false;
+      tr.addEventListener('click', () => { if (!built) { buildL1Sub(dc, ucs, r); built = true; } dr.hidden = !dr.hidden; tr.classList.toggle('open', !dr.hidden); });
     }
   });
+  function buildL1Sub(box, ucs, l1) {
+    const tbl = document.createElement('table'); tbl.className = 'uc-sub';
+    tbl.innerHTML = '<thead><tr><th>UC</th><th>Use case</th><th>消耗<span class="th-sub">{{D}}</span></th><th class="num">占这个分类</th><th class="num">在跑素材<span class="th-sub">{{D}}</span></th><th class="num">激活<span class="th-sub">{{D}}</span></th><th class="num">激活成本<span class="th-sub">{{D}}</span></th><th class="num">次留率<span class="th-sub">{{W}}</span></th><th class="num">次留成本<span class="th-sub">{{W}}</span></th><th>标签</th></tr></thead>';
+    const tb = document.createElement('tbody'); tbl.appendChild(tb);
+    const tot = d3.sum(ucs, (u) => u.cost27) || 1, max = d3.max(ucs, (u) => u.cost27) || 1;
+    for (const u of ucs) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td('uc').textContent = u.uc;
+      td('short').textContent = u.short || '';
+      barCell(td(), u.cost27, max, 40);
+      td('num').textContent = fmtP0(u.cost27 / tot);
+      td('num').textContent = fmtN(u.n27);
+      td('num').textContent = u.act27 ? fmtN(u.act27) : '—';
+      td('num').textContent = u.act27 ? fmtY(u.cost27 / u.act27) : '—';
+      const cr = td(u.rate == null ? 'num muted' : rateCls(u.rate, o, t)); cr.textContent = u.rate == null ? '激活太少' : fmtP0(u.rate);
+      const cc = td(u.rate == null ? 'num muted' : cprCls(u.cpr, o, t)); cc.textContent = u.rate == null ? '' : fmtY(u.cpr);
+      const gc = td(); if (u.status) pill(gc, u.status, tagCls(u.status));
+      tb.appendChild(tr);
+    }
+    const rest = l1.cost27 - d3.sum(ucs, (u) => u.cost27);
+    if (rest > 1) { const tr = document.createElement('tr'); const td = cellMaker(tr); td('muted'); td('muted').textContent = '没对上 use case 的素材'; td('num muted').textContent = fmtY(rest); td('num muted').textContent = fmtP0(rest / l1.cost27); tb.appendChild(tr); }
+    box.appendChild(tbl);
+  }
 
   const spark7 = (cell, days) => { const sp = document.createElement('span'); sp.className = 'uc-spark'; const dmax = d3.max(days || [], (x) => x[1]) || 1;
     sp.title = (days || []).map((x) => x[0] + ' ' + fmtY(x[1])).join('\n');
@@ -823,7 +870,7 @@
       const gc = td(); if (m.group) pill(gc, m.group, tagCls(m.group));
       tb.appendChild(tr);
     }
-    box.appendChild(tbl);
+    box.appendChild(tbl); markStar(tbl);
   }
 
   fill('kindrows', (tb) => {
@@ -1535,6 +1582,7 @@
       tb.appendChild(tr);
     }
   });
+  try { markStar(document); } catch (e) {}
 </script>
 <script>
 // 表头吸顶（Reina 11/11）：宽表格横向滚动时，原生 sticky 只能贴住滚动框、贴不住窗口顶。这时在窗口顶上复制一份表头，宽度和横向位置跟着原表走。
