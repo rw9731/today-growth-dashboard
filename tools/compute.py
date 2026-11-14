@@ -1232,6 +1232,21 @@ def main():
         if r['id'] in star_ids and r['name']:
             names_by_id[r['id']] = r['name']
     out['star'] = [{'id': i, 'name': names_by_id.get(i) or (star.get(i) or [''])[0], 'nick': (star.get(i) or ['', ''])[1]} for i in sorted(star_ids)]
+    # 制作方标记（Reina 11/14）：唯西 A 组、唯西 B 组、唯西星广、唯西自建号、知定堂星广、客供，规则见 tools/maker.py
+    from maker import maker as _maker
+    try:
+        zjh_acc = set(json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notes', 'zjh_accounts.json')))['accounts'])
+    except Exception:
+        zjh_acc = set()
+    mk = {}
+    for r in R:
+        st = star.get(r['id'])
+        m = _maker(r['name'], r.get('src', ''), st, bool(st and len(st) > 1 and st[1] in zjh_acc))
+        if not m and r.get('src') == '星广':
+            m = '星广'
+        if m:
+            mk[r['id']] = (r['name'] or (st or [''])[0], m)
+    out['maker'] = [{'id': i, 'name': n, 'm': m} for i, (n, m) in sorted(mk.items())]
     if rtd_note:
         import rt_backfill
         rt_backfill.apply(out, rtd_note, th['act'])

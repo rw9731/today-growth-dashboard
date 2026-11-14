@@ -102,6 +102,8 @@
   .uc-sub th { font-weight: 500; color: var(--color-fg-muted); }
   .uc-sub td.name { white-space: normal; min-width: 16rem; max-width: 30rem; }
   .uc-sub .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .lx-maker { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: 500; color: #4a5568; background: #edf0f4; vertical-align: 1px; white-space: nowrap; }
+  @media (prefers-color-scheme: dark) { .lx-maker { color: #c9d1dc; background: #2d3540; } }
   .lx-star { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: 600; color: #8a4b00; background: #ffe9c7; vertical-align: 1px; white-space: nowrap; }
   .lx-table tr.uc-row td.l1c::before { content: '▸'; display: inline-block; width: 1em; color: var(--color-fg-muted); transition: transform .15s; }
   .lx-table tr.uc-row.open td.l1c::before { transform: rotate(90deg); }
@@ -619,17 +621,39 @@
   const REL = '{{REL}}';
   const RESULTS = JSON.parse(document.getElementById('results').textContent);
   const data = (id) => RESULTS[id] || [];
-  // 星广素材标记（Reina 11/14）：按素材名对上 star 列表就在名字后加「星广」
-  const STAR = new Map((RESULTS.star || []).filter((x) => x.name).map((x) => [x.name.trim(), x]));
-  const STAR_ID = new Map((RESULTS.star || []).map((x) => [x.id, x]));
+  // 制作方标记（Reina 11/14）：按素材名或素材 ID 对上 maker 列表，在名字后加「唯西A组」「唯西B组」「知定堂星广」等；星广的用橙色
+  const STAR_NICK = new Map((RESULTS.star || []).map((x) => [x.id, x.nick]));
+  const MK = new Map(); const MK_ID = new Map();
+  for (const x of (RESULTS.maker || [])) { if (x.name) MK.set(x.name.trim(), x); MK_ID.set(x.id, x); }
+  for (const x of (RESULTS.star || [])) { if (!MK_ID.has(x.id)) { const y = { id: x.id, name: x.name, m: '星广' }; MK_ID.set(x.id, y); if (x.name) MK.set(x.name.trim(), y); } }
+  // 和 tools/maker.py 同一套按名字判断的规则，给 maker 列表里没有的素材（比如还没花钱的新素材）用
+  const A_ED = new Set(['zxc', 'sjl', 'cw', 'xyn', 'zl', 'wq', 'lst', 'ltq', 'hxq', 'hyq', 'yyz', 'zx', 'wzy', 'fjh', 'ljq', 'sj', 'cxx']);
+  const B_ED = new Set(['小李', '耶耶', '小月', '包子', '叮叮', '白白']);
+  function mkName(n) {
+    if (!n) return '';
+    if (/[aA]组/.test(n)) return '唯西A组';
+    if (/[bB]组|_b-\d/.test(n)) return '唯西B组';
+    if (n.includes('新角度扩量')) return '唯西A组';
+    let last = ''; const re = /(?<![A-Za-z])(?:精剪|精简)?\d?([a-z]{2,3})\d{0,2}(?![A-Za-z])|(小李|耶耶|小月|包子|叮叮|白白)/g; let m;
+    while ((m = re.exec(n))) { const t = m[1] || m[2]; if (A_ED.has(t) || B_ED.has(t)) last = t; }
+    if (A_ED.has(last)) return '唯西A组';
+    if (B_ED.has(last)) return '唯西B组';
+    if (/^(learning|work|home&family|health|money|ai个人助手|life)_/i.test(n) || /today ko[cl]_/.test(n)) return '唯西';
+    return '';
+  }
   function markStar(root) {
-    if (!STAR.size && !STAR_ID.size) return;
+    if (!MK.size && !MK_ID.size) return;
     for (const el of (root || document).querySelectorAll('td.name, a.lx-namelink')) {
-      if (el.querySelector('.lx-star') || (el.tagName === 'TD' && el.querySelector('a.lx-namelink'))) continue;
-      const tx = el.textContent.trim(); const x = STAR.get(tx) || STAR_ID.get(tx);
+      if (el.querySelector('.lx-star, .lx-maker') || (el.tagName === 'TD' && el.querySelector('a.lx-namelink'))) continue;
+      const host = el.tagName === 'A' ? el.parentNode : el;
+      if (host.querySelector(':scope > .lx-star, :scope > .lx-maker')) continue;
+      const tx = el.textContent.trim(); let x = MK.get(tx) || MK_ID.get(tx);
+      if (!x) { const m = mkName(tx); if (m) x = { id: '', m }; }
       if (!x) continue;
-      const b = document.createElement('span'); b.className = 'lx-star'; b.textContent = '星广'; b.title = '星广视频' + (x.nick ? '：' + x.nick : '');
-      (el.tagName === 'A' ? el.parentNode : el).appendChild(b);
+      const isStar = /星广|自建号/.test(x.m); const nick = STAR_NICK.get(x.id);
+      const b = document.createElement('span'); b.className = isStar ? 'lx-star' : 'lx-maker'; b.textContent = x.m;
+      b.title = '制作方：' + x.m + (nick ? '｜抖音号：' + nick : '');
+      host.appendChild(b);
     }
   }
   const one = (id) => (RESULTS[id] && RESULTS[id].length ? RESULTS[id][0] : null);
