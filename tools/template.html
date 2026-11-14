@@ -179,6 +179,9 @@
   #plan { margin-top: 28px; padding-top: 20px; border-top: 2px solid var(--color-fg); }
   #plan .lx-h2 { font-size: 24px; border-left-width: 6px; }
   .pl-headline { font-family: var(--font-serif); font-size: 21px; line-height: 1.45; margin: 4px 0 2px; font-weight: 600; }
+  .pl-bets, .pl-bets + .pl-blk { margin-bottom: 8px; }
+  .pl-bets li b.t { font-size: 15px; }
+  .pl-blk li .why { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 4px; font-size: 11px; line-height: 17px; font-weight: 600; color: var(--color-panel); background: var(--t3); }
   .pl-quad4 { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @media (max-width: 900px) { .pl-quad4 { grid-template-columns: minmax(0, 1fr); } }
   .pl-blk { background: var(--color-panel); border: 1px solid var(--color-border-line); border-top: 4px solid var(--bc); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
@@ -568,6 +571,8 @@
   <section class="lx-sec" id="plan" hidden>
     <h2 class="lx-h2">九、核心 insight 和下一步</h2>
     <p class="pl-headline" data-draw="pl-headline" hidden></p>
+    <div class="pl-blk pl-bets" style="--bc:var(--t1)" data-draw="pl-betsbox" hidden><h3>最大的机会<span>按二八原则，80% 的精力押这里</span></h3><ol data-draw="pl-bets"></ol></div>
+    <div class="pl-blk" style="--bc:var(--t3)" data-draw="pl-diagbox" hidden><h3>能放量但次留差：可能是什么原因<span>看了这几个 use case 里花钱最多的素材内容，下面是猜测，要拿下一批素材验证</span></h3><ol data-draw="pl-diag"></ol></div>
     <div class="pl-quad4">
       <div class="pl-blk" style="--bc:var(--color-fg)"><h3>全局 insight<span>整盘看，钱和次留在往哪走</span></h3><ol data-draw="pl-global"></ol></div>
       <div class="pl-blk" style="--bc:var(--bar)"><h3>下一步行动<span>今明两天就能做的小步</span></h3><ol data-draw="pl-next"></ol></div>
@@ -1466,6 +1471,9 @@
       if (!ol.children.length) ol.hidden = true;
     });
     list('pl-global', P.global); list('pl-next', P.next); list('pl-delta', P.delta); list('pl-steady', P.steady);
+    // 最大的机会、能放量但次留差的原因（Reina 11/14）：老的 plan.json 没有这两块就不显示
+    if ((P.bets || []).length) { fill('pl-betsbox', (el) => { el.hidden = false; }); list('pl-bets', P.bets); }
+    if ((P.diag || []).length) { fill('pl-diagbox', (el) => { el.hidden = false; }); list('pl-diag', P.diag.map((x) => ({t: x.t, d: (x.why ? '<span class="why">' + x.why + '</span>' : '') + (x.d || '')}))); }
 
     const chip = (box, html) => { const c = document.createElement('span'); c.className = 'pl-chip'; c.innerHTML = html; box.appendChild(c); };
     const tg = (t) => `<span class="tg" style="color:${TC[t] || 'var(--color-fg-muted)'}">${t ? TN[t] : '无'}</span>`;
