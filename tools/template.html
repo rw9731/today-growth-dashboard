@@ -727,6 +727,37 @@
   fill('rtd-all', (el) => { const rm = one('rtday_meta'); if (rm && rm.rate != null) el.textContent = '（全盘 ' + fmtP(rm.rate) + '、¥' + d3.format(',.0f')(rm.cpr) + '）'; });
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
 
+  // 次留率悬浮：最近 7 天每天激活的人的次留率折线（Reina 11/13），下面是每天消耗的柱状图（Reina 11/14，一和二都有）
+  let r7box = null;
+  const r7Hide = () => { if (r7box) r7box.hidden = true; };
+  const r7Show = (e, r, title) => {
+    if (!r7box) { r7box = document.createElement('div'); r7box.className = 'lx-r7box'; document.body.appendChild(r7box); }
+    const all = (one('rate7_all') || {}).s || []; const W = 300, H = 120, HB = 64, m = {l: 34, r: 34, t: 18, b: 6};
+    const dc = new Map((r.days7 || []).map((x) => [x[0], x[1]]));
+    const pts = r.rate7.map((x, i) => [i, x[1], x[0], x[2], x[3] != null ? x[3] : (dc.get(x[0]) || 0)]); const ap = all.map((x, i) => [i, x[1]]);
+    const vals = pts.concat(ap).map((p) => p[1]).filter((v) => v != null); const lo = Math.max(0, (d3.min(vals) || 0) - 0.03), hi = Math.min(1, (d3.max(vals) || 0.4) + 0.03);
+    const x = d3.scaleLinear([-0.5, pts.length - 0.5], [m.l, W - m.r]), y = d3.scaleLinear([lo, hi], [H - m.b, m.t]);
+    r7box.style.width = W + 'px'; r7box.innerHTML = '<div><b>' + title + '</b> 最近 7 天</div><div style="color:var(--color-fg-muted,#888);margin-top:2px">次留率（每天激活的人第二天还在的比例）</div>';
+    const svg = d3.select(r7box).append('svg').attr('width', W).attr('height', H);
+    svg.append('g').attr('transform', 'translate(' + m.l + ',0)').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.0%')).tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
+    const line = d3.line().defined((p) => p[1] != null).x((p) => x(p[0])).y((p) => y(p[1]));
+    svg.append('path').attr('d', line(ap)).attr('fill', 'none').attr('stroke', 'var(--color-fg-muted, #888)').attr('stroke-dasharray', '3 3').attr('stroke-width', 1.5);
+    svg.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', 'var(--bar, #3b6fd8)').attr('stroke-width', 2);
+    pts.filter((p) => p[1] != null).forEach((p) => { svg.append('circle').attr('cx', x(p[0])).attr('cy', y(p[1])).attr('r', 2.5).attr('fill', 'var(--bar, #3b6fd8)');
+      svg.append('text').attr('x', x(p[0])).attr('y', y(p[1]) - 5).attr('text-anchor', 'middle').attr('font-size', 9).attr('fill', 'currentColor').text(d3.format('.0%')(p[1])); });
+    const lastAll = ap.filter((p) => p[1] != null).pop(); if (lastAll) svg.append('text').attr('x', x(lastAll[0]) + 6).attr('y', y(lastAll[1]) + 3).attr('font-size', 9).attr('fill', 'var(--color-fg-muted, #888)').text('全盘');
+    // 消耗柱状图，和上面同一条横轴
+    r7box.insertAdjacentHTML('beforeend', '<div style="color:var(--color-fg-muted,#888);margin-top:4px">消耗</div>');
+    const yb = d3.scaleLinear([0, d3.max(pts, (p) => p[4]) || 1], [HB - 18, 12]);
+    const sb = d3.select(r7box).append('svg').attr('width', W).attr('height', HB);
+    const bw = Math.min(22, (x(1) - x(0)) * 0.6);
+    pts.forEach((p) => { sb.append('rect').attr('x', x(p[0]) - bw / 2).attr('y', yb(p[4])).attr('width', bw).attr('height', Math.max(0, yb(0) - yb(p[4]))).attr('rx', 2).attr('fill', 'var(--bar, #3b6fd8)').attr('opacity', 0.55);
+      if (p[4] > 0) sb.append('text').attr('x', x(p[0])).attr('y', yb(p[4]) - 3).attr('text-anchor', 'middle').attr('font-size', 9).attr('fill', 'currentColor').text(p[4] >= 10000 ? (p[4] / 10000).toFixed(1) + '万' : d3.format(',.0f')(p[4])); });
+    sb.append('g').attr('transform', 'translate(0,' + yb(0) + ')').call(d3.axisBottom(x).tickValues(pts.map((p) => p[0])).tickFormat((i) => (pts[i] || [])[2] || '').tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
+    const miss = pts.filter((p) => p[1] == null).map((p) => p[2]);
+    r7box.insertAdjacentHTML('beforeend', '<div style="color:var(--color-fg-muted,#888)">' + (miss.length ? miss.join('、') + ' 次留还没回传（后天回补）；' : '') + '最新一天没回传完，会偏低约 1 个点；虚线是全盘</div>');
+    r7box.hidden = false; const bb = e.currentTarget.getBoundingClientRect(); const bwid = W + 24, bh = H + HB + 80;
+    r7box.style.left = Math.max(8, Math.min(bb.left - bwid / 2, innerWidth - bwid - 8)) + 'px'; r7box.style.top = (bb.bottom + 6 + bh > innerHeight ? Math.max(8, bb.top - bh - 6) : bb.bottom + 6) + 'px'; };
   fill('l1rows', (tb) => {
     const rows = data('by_l1'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
@@ -740,6 +771,7 @@
       td('num').textContent = fmtY(r.cpa27);
       td('num muted').textContent = fmtY(r.cost26);
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtP0(r.rate);
+      if (r.rate7 && r.rate7.some((x) => x[1] != null)) { cr.classList.add('lx-r7'); cr.addEventListener('mouseenter', (e) => r7Show(e, r, r.l1)); cr.addEventListener('mouseleave', r7Hide); }
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       ret3(td, r, o);
       const sp = td(); const w = 96, h = 18;
@@ -798,29 +830,6 @@
     const sp = document.createElement('span'); const k = a > b ? 'up' : a < b ? 'down' : 'flat'; sp.className = 'lx-arrow ' + k; sp.textContent = {up: '↑', down: '↓', flat: '→'}[k];
     const dr = (r.rate != null && r.prev_rate != null) ? '，次留率 ' + fmtP0(r.prev_rate) + ' → ' + fmtP0(r.rate) : '';
     sp.title = '前一天：' + r.prev_status + dr; cell.appendChild(sp); };
-  // 次留率悬浮：最近 7 天每天激活的人的次留率折线（Reina 11/13）
-  let r7box = null;
-  const r7Hide = () => { if (r7box) r7box.hidden = true; };
-  const r7Show = (e, r) => {
-    if (!r7box) { r7box = document.createElement('div'); r7box.className = 'lx-r7box'; document.body.appendChild(r7box); }
-    const all = (one('rate7_all') || {}).s || []; const W = 260, H = 120, m = {l: 30, r: 34, t: 18, b: 22};
-    const pts = r.rate7.map((x, i) => [i, x[1], x[0], x[2]]); const ap = all.map((x, i) => [i, x[1]]);
-    const vals = pts.concat(ap).map((p) => p[1]).filter((v) => v != null); const lo = Math.max(0, (d3.min(vals) || 0) - 0.03), hi = Math.min(1, (d3.max(vals) || 0.4) + 0.03);
-    const x = d3.scaleLinear([0, pts.length - 1], [m.l, W - m.r]), y = d3.scaleLinear([lo, hi], [H - m.b, m.t]);
-    r7box.innerHTML = '<div><b>' + r.uc + ' ' + (r.short || '') + '</b> 每天激活的人的次留率</div>';
-    const svg = d3.select(r7box).append('svg').attr('width', W).attr('height', H);
-    svg.append('g').attr('transform', 'translate(0,' + (H - m.b) + ')').call(d3.axisBottom(x).ticks(pts.length).tickFormat((i) => (pts[i] || [])[2] || '').tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
-    svg.append('g').attr('transform', 'translate(' + m.l + ',0)').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.0%')).tickSizeOuter(0)).call((g) => g.selectAll('text').attr('font-size', 10));
-    const line = d3.line().defined((p) => p[1] != null).x((p) => x(p[0])).y((p) => y(p[1]));
-    svg.append('path').attr('d', line(ap)).attr('fill', 'none').attr('stroke', 'var(--color-fg-muted, #888)').attr('stroke-dasharray', '3 3').attr('stroke-width', 1.5);
-    svg.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', 'var(--bar, #3b6fd8)').attr('stroke-width', 2);
-    pts.filter((p) => p[1] != null).forEach((p) => { svg.append('circle').attr('cx', x(p[0])).attr('cy', y(p[1])).attr('r', 2.5).attr('fill', 'var(--bar, #3b6fd8)');
-      svg.append('text').attr('x', x(p[0])).attr('y', y(p[1]) - 5).attr('text-anchor', 'middle').attr('font-size', 9).attr('fill', 'currentColor').text(d3.format('.0%')(p[1])); });
-    const lastAll = ap.filter((p) => p[1] != null).pop(); if (lastAll) svg.append('text').attr('x', x(lastAll[0]) + 4).attr('y', y(lastAll[1]) + 3).attr('font-size', 9).attr('fill', 'var(--color-fg-muted, #888)').text('全盘');
-    const miss = pts.filter((p) => p[1] == null).map((p) => p[2]);
-    r7box.insertAdjacentHTML('beforeend', '<div style="color:var(--color-fg-muted,#888)">' + (miss.length ? miss.join('、') + ' 还没回传（后天回补）；' : '') + '最新一天没回传完，会偏低约 1 个点</div>');
-    r7box.hidden = false; const b = e.currentTarget.getBoundingClientRect(); const bw = W + 24;
-    r7box.style.left = Math.max(8, Math.min(b.left - bw / 2, innerWidth - bw - 8)) + 'px'; r7box.style.top = (b.bottom + 6 + H + 60 > innerHeight ? b.top - H - 66 : b.bottom + 6) + 'px'; };
   const UCM = d3.group(data('uc_mats') || [], (m) => m.uc);
   fill('ucrows', (tb) => {
     const rows = data('uc_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
@@ -838,7 +847,7 @@
       td('num muted').textContent = fmtN(r.act_w);
       td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
       const cr = td(rateCls(r.rate, o, t)); cr.textContent = fmtP0(r.rate);
-      if (r.rate7 && r.rate7.some((x) => x[1] != null)) { cr.classList.add('lx-r7'); cr.addEventListener('mouseenter', (e) => r7Show(e, r)); cr.addEventListener('mouseleave', r7Hide); }
+      if (r.rate7 && r.rate7.some((x) => x[1] != null)) { cr.classList.add('lx-r7'); cr.addEventListener('mouseenter', (e) => r7Show(e, r, r.uc + ' ' + (r.short || ''))); cr.addEventListener('mouseleave', r7Hide); }
       const cc = td(cprCls(r.cpr, o, t)); cc.textContent = fmtY(r.cpr);
       { const rm = one('rtday_meta');
         if (!rm || r.rtd_act == null) { td('num muted').textContent = '待回补'; td('num muted').textContent = ''; }

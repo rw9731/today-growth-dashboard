@@ -180,7 +180,7 @@ def map_uc(r, ucs):
     return uc
 
 
-def uc_cohort_days(rows, ucs, days):
+def uc_cohort_days(rows, ucs, days, key=None):
     """每个 use case 每天激活的人的次留（Reina 11/13，二的次留率悬浮折线和当天次留回补）。
     读表时 shift_ret 已把次留挪到第二天，所以 d 天激活的人的次留在 d+1 那行；d+1 还没有数的天不算。
     返回 ({(uc, d): [激活, 次留, 消耗]}，有次留的天)。全盘用 uc = '__all__'。"""
@@ -191,21 +191,21 @@ def uc_cohort_days(rows, ucs, days):
     for r in rows:
         d = r['date']
         if d in nxt and (r['act'] or r['cost']):
-            for u in (map_uc(r, ucs), '__all__'):
+            for u in ((key(r) if key else map_uc(r, ucs)), '__all__'):
                 st[(u, d)][0] += r['act']; st[(u, d)][2] += r['cost']
         if r['ret'] and d in back:
-            for u in (map_uc(r, ucs), '__all__'):
+            for u in ((key(r) if key else map_uc(r, ucs)), '__all__'):
                 st[(u, back[d])][1] += r['ret']
     avail = {d for d in days if nxt[d] <= last}
     return st, avail
 
 
 def rate_series(st, uc, days, avail):
-    """[[M/D, 次留率或 None, 激活]]，没回传完的天次留率写 None。"""
+    """[[M/D, 次留率或 None, 激活, 消耗]]，没回传完的天次留率写 None（消耗 Reina 11/14 加，悬浮框下面的柱状图）。"""
     out = []
     for d in days:
-        a, rt, _ = st.get((uc, d), [0, 0, 0])
-        out.append([f'{int(d[5:7])}/{int(d[8:])}', (rt / a if a and d in avail else None), round(a)])
+        a, rt, c = st.get((uc, d), [0, 0, 0])
+        out.append([f'{int(d[5:7])}/{int(d[8:])}', (rt / a if a and d in avail else None), round(a), round(c, 2)])
     return out
 
 
@@ -671,6 +671,10 @@ def main():
     for u in uct:
         u['rate7'] = rate_series(st7, u['uc'], d7, av7)
     rate7_all = rate_series(st7, '__all__', d7, av7)
+    # 一级分类同样的 7 天次留率和消耗（Reina 11/14：一、按一级分类的次留率也要悬浮看走势）
+    st7l, av7l = uc_cohort_days(allrows, ucs, d7, key=lambda r: r['l1'])
+    for b_ in bl:
+        b_['rate7'] = rate_series(st7l, b_['l1'], d7, av7l)
     # 标签和前一天比（Reina 11/13：标签后面加箭头）：读前一天日报页面里存的 uc_tbl
     prev_d = (Dd - dt.timedelta(days=1)).isoformat()
     prev_page = os.path.join(os.path.dirname(HERE), prev_d, 'index.html')
