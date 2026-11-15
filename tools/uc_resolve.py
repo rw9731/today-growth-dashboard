@@ -2,6 +2,7 @@
 
 compute.load_rows 读表时调用 resolve_rows，所以日报、周报、排期、回补都会用同一套结果。
 顺序：
+0. 唯西排期表、成片表里这条素材名对应的 UC（notes/plan_uc.json，tools/plan_uc_read.js 读；11/12 前的 LG02 是旧口径，不用）。
 0. 同一个素材ID 别的行已经有 UC 的直接用。
 1. notes/uc_fix.json：人工定的（看过字幕或标题定的），{素材ID: {"uc": "PS03", "why": "一句依据", "checked": "日期"}}，优先级最高。
 2. 同原片继承：名字去掉「推送视频_」、「_二创…」「_扩量…」「-扩量…」「-数字-」这类后缀以后，和已经有 UC 的素材同根，就用同根素材里最多的那个 UC（二创、扩量继承原片）。
@@ -33,9 +34,19 @@ def root_name(n):
     return n.strip('_- ')
 
 
+def norm_name(n):
+    n = (n or '').strip()
+    n = re.sub(r'^推送视频_', '', n)
+    n = re.sub(r'\.mp4.*$', '', n)
+    n = re.sub(r'\s*[\(（]\d+[\)）]$', '', n)
+    n = re.sub(r'(-1|_b组|-b组|_b|-b)$', '', n)
+    return re.sub(r'\s+', '', n)
+
+
 def resolve_rows(rows, ucs):
     """就地改 rows 里待对应的 uc、l1、l2；返回 {素材ID: (uc, 来源)}。"""
     fix = _load(os.path.join(ROOT, 'notes', 'uc_fix.json'), {})
+    plan = (_load(os.path.join(ROOT, 'notes', 'plan_uc.json'), {}) or {}).get('map', {})
     codes = _load(os.path.join(HERE, 'uc_codes.json'), {})
     codes = {k: v for k, v in codes.items() if not k.startswith('_')}
     for r in rows:
@@ -71,6 +82,9 @@ def resolve_rows(rows, ucs):
             f = fix.get(mid)
             if f and f.get('uc') in ucs:
                 u, how = f['uc'], '人工'
+            pu = plan.get(norm_name(nm.get(mid, r['name'])))
+            if not u and pu and len(pu) == 1 and pu[0] in ucs and pu[0] != 'LG02':
+                u, how = pu[0], '排期表'
             if not u and same_id.get(mid):
                 u, how = same_id[mid].most_common(1)[0][0], '同素材其他行'
             name = nm.get(mid, r['name'])
