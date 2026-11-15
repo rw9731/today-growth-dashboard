@@ -38,6 +38,10 @@ def resolve_rows(rows, ucs):
     fix = _load(os.path.join(ROOT, 'notes', 'uc_fix.json'), {})
     codes = _load(os.path.join(HERE, 'uc_codes.json'), {})
     codes = {k: v for k, v in codes.items() if not k.startswith('_')}
+    for r in rows:
+        f = fix.get(r['id'])
+        if f and f.get('force') and f.get('uc') in ucs:
+            r['uc'] = f['uc']
     by_root = defaultdict(Counter)
     ok = lambda u: u in ucs and u not in EMPTY and bool(ucs[u].get('l1'))
     for r in rows:
@@ -50,6 +54,12 @@ def resolve_rows(rows, ucs):
         if r['name'] and len(r['name']) > len(nm.get(r['id'], '')):
             nm[r['id']] = r['name']
     done = {}
+    # notes/uc_fix.json 里 "force": true 的是看内容改判的（Reina 11/15：表里标错的也要改，比如职场妈妈备考标成了 LG02），表里有 UC 也照它改
+    for r in rows:
+        f = fix.get(r['id'])
+        if f and f.get('force') and f.get('uc') in ucs and r['uc'] != f['uc']:
+            r['uc'], r['l1'], r['l2'] = f['uc'], ucs[f['uc']].get('l1', ''), ucs[f['uc']].get('l2', '')
+            r['uc_how'] = '人工改判'
     for r in rows:
         if r['uc'] not in EMPTY and r['uc'] in ucs and ucs[r['uc']].get('l1'):
             continue
