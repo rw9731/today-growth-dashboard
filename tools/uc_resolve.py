@@ -2,7 +2,7 @@
 
 compute.load_rows 读表时调用 resolve_rows，所以日报、周报、排期、回补都会用同一套结果。
 顺序：
-0. 唯西排期表、成片表里这条素材名对应的 UC（notes/plan_uc.json，tools/plan_uc_read.js 读；11/12 前的 LG02 是旧口径，不用）。
+0. 唯西排期表、成片表里这条素材名对应的 UC（notes/plan_uc.json，tools/plan_uc_read.js 读、tools/plan_build.py 按 notes/plan_fix.json 改完生成）。排期表为准：表里已经有 UC 但和排期表不一样的，也照排期表改（只有 uc_fix 里 force 的优先）。
 0. 同一个素材ID 别的行已经有 UC 的直接用。
 1. notes/uc_fix.json：人工定的（看过字幕或标题定的），{素材ID: {"uc": "PS03", "why": "一句依据", "checked": "日期"}}，优先级最高。
 2. 同原片继承：名字去掉「推送视频_」、「_二创…」「_扩量…」「-扩量…」「-数字-」这类后缀以后，和已经有 UC 的素材同根，就用同根素材里最多的那个 UC（二创、扩量继承原片）。
@@ -53,8 +53,22 @@ def resolve_rows(rows, ucs):
         f = fix.get(r['id'])
         if f and f.get('force') and f.get('uc') in ucs:
             r['uc'] = f['uc']
+    ok = lambda u: u in ucs and u not in EMPTY and bool(ucs[u].get('l1')) and u not in codes
+    # 排期表为准（Reina 11/15）：唯西排期表、成片表里这条素材名只对应一个 UC 时，表里写的不一样也照排期表改；
+    # 排期表本身填错、没跟着拆分改的先在 notes/plan_fix.json 改好（tools/plan_build.py 生成 plan_uc.json 时用）。只有 uc_fix 里 force 的比它优先。
+    for r in rows:
+        f = fix.get(r['id'])
+        if f and f.get('force'):
+            continue
+        pu = plan.get(norm_name(r['name'] or ''))
+        if not pu or len(pu) != 1:
+            continue
+        u = codes.get(pu[0], pu[0]) if pu[0] in codes else pu[0]
+        if ok(u) and r['uc'] != u:
+            r['uc_was'] = r['uc']
+            r['uc'], r['l1'], r['l2'] = u, ucs[u].get('l1', ''), ucs[u].get('l2', '')
+            r['uc_how'] = '排期表'
     by_root = defaultdict(Counter)
-    ok = lambda u: u in ucs and u not in EMPTY and bool(ucs[u].get('l1'))
     for r in rows:
         if ok(r['uc']) and r['name']:
             by_root[root_name(r['name'])][r['uc']] += 1
@@ -72,7 +86,7 @@ def resolve_rows(rows, ucs):
             r['uc'], r['l1'], r['l2'] = f['uc'], ucs[f['uc']].get('l1', ''), ucs[f['uc']].get('l2', '')
             r['uc_how'] = '人工改判'
     for r in rows:
-        if r['uc'] not in EMPTY and r['uc'] in ucs and ucs[r['uc']].get('l1'):
+        if r['uc'] not in EMPTY and ok(r['uc']):
             continue
         if r['uc'] not in EMPTY and r['uc'] not in ucs and r['uc'] not in codes:
             continue  # 客供、库外这类保留原样（库外 compute 另有模糊归类）
@@ -83,7 +97,8 @@ def resolve_rows(rows, ucs):
             if f and f.get('uc') in ucs:
                 u, how = f['uc'], '人工'
             pu = plan.get(norm_name(nm.get(mid, r['name'])))
-            if not u and pu and len(pu) == 1 and pu[0] in ucs and pu[0] != 'LG02':
+            if not u and pu and len(pu) == 1 and ok(codes.get(pu[0], pu[0])):
+                pu = [codes.get(pu[0], pu[0])]
                 u, how = pu[0], '排期表'
             if not u and same_id.get(mid):
                 u, how = same_id[mid].most_common(1)[0][0], '同素材其他行'
