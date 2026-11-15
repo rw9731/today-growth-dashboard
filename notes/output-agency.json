@@ -1,6 +1,6 @@
 {
  "ZDT": {
-  "asof": "2026-11-14",
+  "asof": "2026-11-15",
   "items": [
    {
     "g": "ZDT",
@@ -77,6 +77,14 @@
    {
     "g": "ZDT",
     "typ": "星广",
+    "d": "2026-11-09",
+    "uc": "PS01",
+    "name": "知定堂_星广_账号未填_PS01_第8行",
+    "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STg"
+   },
+   {
+    "g": "ZDT",
+    "typ": "星广",
     "d": "2026-11-11",
     "uc": "IN01",
     "name": "知定堂_星广_账号未填_IN01_第12行_1",
@@ -137,6 +145,14 @@
     "uc": "WK02",
     "name": "知定堂_星广_小七同学_WK02_第21行",
     "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STIx"
+   },
+   {
+    "g": "ZDT",
+    "typ": "星广",
+    "d": "2026-11-12",
+    "uc": "PS03",
+    "name": "知定堂_星广_账号未填_PS03_第24行",
+    "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STI0"
    },
    {
     "g": "ZDT",
@@ -221,6 +237,14 @@
    {
     "g": "ZDT",
     "typ": "星广",
+    "d": "2026-11-13",
+    "uc": "WK02",
+    "name": "知定堂_星广_账号未填_WK02_第47行",
+    "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STQ3"
+   },
+   {
+    "g": "ZDT",
+    "typ": "星广",
     "d": "2026-11-14",
     "uc": "IN01",
     "name": "知定堂_星广_账号未填_IN01_第53行",
@@ -237,7 +261,7 @@
    {
     "g": "ZDT",
     "typ": "星广",
-    "d": "2026-11-14",
+    "d": "2026-11-15",
     "uc": "NT01",
     "name": "知定堂_星广_一颗蛋_NT01_第64行",
     "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STY0"
@@ -249,11 +273,19 @@
     "uc": "WK02",
     "name": "知定堂_星广_一颗蛋_WK02_第70行",
     "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STcw"
+   },
+   {
+    "g": "ZDT",
+    "typ": "星广",
+    "d": "2026-11-15",
+    "uc": "WK04",
+    "name": "知定堂_星广_油猫饼啊_WK04_第75行",
+    "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STc1"
    }
   ]
  },
  "YP": {
-  "asof": "2026-11-14",
+  "asof": "2026-11-15",
   "items": [
    {
     "g": "YP",
@@ -362,7 +394,7 @@
   ]
  },
  "AM": {
-  "asof": "2026-11-14",
+  "asof": "2026-11-15",
   "items": [
    {
     "g": "AM",
@@ -643,6 +675,22 @@
     "uc": "TR01",
     "name": "AnyMedia_抖音KOC_囡宝在旅行",
     "link": "https://v.douyin.com/BmZdHsPr-Ic/"
+   },
+   {
+    "g": "AM",
+    "typ": "抖音达人",
+    "d": "2026-11-13",
+    "uc": "PS03",
+    "name": "AnyMedia_抖音KOL_梨白白Ari",
+    "link": "https://v.douyin.com/QdOQVUSaKwk/"
+   },
+   {
+    "g": "AM",
+    "typ": "抖音达人",
+    "d": "2026-11-13",
+    "uc": "PS01",
+    "name": "AnyMedia_抖音KOC_曼如不在曼谷",
+    "link": "https://v.douyin.com/TPv0KjZH2I8/"
    }
   ]
  }
