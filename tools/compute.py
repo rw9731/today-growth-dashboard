@@ -84,20 +84,27 @@ def kind_of(src, track, name, mid=None, kl=True):
         if t == '7702316618969333810':
             return '唯西星广'
     # 名字比「来源」列准（Reina 11/15：柯煊这类 B 组真人二创，表里来源写成 AIGC，被算成 AI 短剧）：
-    # 名字里有 today koc / today kol（或 _koc_、_kol_）、又没写 AI素材 / AI重拍 / _AI_ 的，按真人 KOC / KOL 算；
-    # 写了 AI素材、AI重拍 的是照真人用 AI 重拍，算 AI 短剧。
-    mk = re.search(r'(?i)today\s*(koc|kol)|[_-](koc|kol)[_-]', name)
-    ai_mark = re.search(r'AI素材|AI重拍|[_-]AI[_-]', name)
-    if mk and not ai_mark:
-        src = (mk.group(1) or mk.group(2)).upper()
+    # 名字里有 today koc / today kol（或 _koc_、_kol_、KOC非原生、KOL非原生）、又没写 AI素材 / AI重拍 / _AI_ / 照真人 的，按真人 KOC / KOL 算
+    # （KOC非原生_全文重配 = 真人 KOC 画面重新配音，Reina 11/15 发发科技说那条）；写了 AI素材、AI重拍、照真人 的算 AI 短剧 · AI 重拍。
+    mk = re.search(r'(?i)today\s*(koc|kol)|[_-](koc|kol)[_-]|[_-](koc|kol)非原生', name)
+    # 照真人 = AI 照着真人素材重新生成（B 组「…_照真人-b组」、A 组「换…_sjl-…-照真人」），算 AI 短剧 · AI 重拍
+    ai_mark = re.search(r'AI素材|AI重拍|[_-]AI[_-]|照真人', name)
+    real = bool(mk and not ai_mark)
+    if real:
+        src = (mk.group(1) or mk.group(2) or mk.group(3)).upper()
     elif mk and ai_mark and src in ('KOC', 'KOL'):
         src = 'AIGC'
-    if src == 'AIGC' or 'AI短剧' in track:
+    if not real and (src == 'AIGC' or 'AI短剧' in track):
         base = 'AI 短剧'
         dft = 'AI 重拍' if ('照真人' in name or 'AI重拍' in name) else ('改法未核对' if '扩量' in name else '原片')
     elif src in ('KOC', 'KOL'):
         base = src
-        dft = '二剪（未核对）' if ('二创' in track or '二创' in name or '扩量' in name) else '原片'
+        dft = '二剪（未核对）' if ('二创' in track or '二创' in name or '扩量' in name or '非原生' in name) else '原片'
+        # 名字里写了改法的先用名字的（「KOC非原生_只剪辑」「KOL非原生_全文重配」这类），对过字幕的以 gaifa.json 为准
+        for key, val in (('全文重配', '全片重配'), ('全片重配', '全片重配'), ('只剪辑', '只剪辑'), ('换开头', '换开头')):
+            if key in name:
+                dft = val
+                break
     else:
         base, dft = (src or '未标'), ''
     g = (GAIFA.get(mid) or {}).get('gaifa') if mid else None
