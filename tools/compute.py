@@ -63,6 +63,10 @@ GAIFA = json.load(open(GAIFA_PATH)) if os.path.exists(GAIFA_PATH) else {}
 ZJH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zijianhao.json')
 ZJH = (json.load(open(ZJH_PATH)).get('ids') or {}) if os.path.exists(ZJH_PATH) else {}
 ZJH_NAME = '唯西自建号'
+try:
+    STAR = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notes', 'star.json')))
+except Exception:  # noqa: BLE001
+    STAR = {}
 
 
 def kind_of(src, track, name, mid=None, kl=True):
@@ -72,9 +76,25 @@ def kind_of(src, track, name, mid=None, kl=True):
     if (mid and mid in ZJH) or src in (ZJH_NAME, '自建号'):
         # 唯西自建号（Reina 11/9）：视频挂在星广任务里，来源会写星广，按 tools/zijianhao.json 的素材ID 单独算一类
         return ZJH_NAME
+    if src == '星广' and mid:
+        # 星广按任务分两家（Reina 11/15）：知定堂星广的次留没回传，和唯西星广分开看
+        t = (STAR.get(mid) or [None, None, None])[2] if len(STAR.get(mid) or []) > 2 else None
+        if t == '7706501371755200522':
+            return '知定堂星广'
+        if t == '7702316618969333810':
+            return '唯西星广'
+    # 名字比「来源」列准（Reina 11/15：柯煊这类 B 组真人二创，表里来源写成 AIGC，被算成 AI 短剧）：
+    # 名字里有 today koc / today kol（或 _koc_、_kol_）、又没写 AI素材 / AI重拍 / _AI_ 的，按真人 KOC / KOL 算；
+    # 写了 AI素材、AI重拍 的是照真人用 AI 重拍，算 AI 短剧。
+    mk = re.search(r'(?i)today\s*(koc|kol)|[_-](koc|kol)[_-]', name)
+    ai_mark = re.search(r'AI素材|AI重拍|[_-]AI[_-]', name)
+    if mk and not ai_mark:
+        src = (mk.group(1) or mk.group(2)).upper()
+    elif mk and ai_mark and src in ('KOC', 'KOL'):
+        src = 'AIGC'
     if src == 'AIGC' or 'AI短剧' in track:
         base = 'AI 短剧'
-        dft = 'AI 重拍' if '照真人' in name else ('改法未核对' if '扩量' in name else '原片')
+        dft = 'AI 重拍' if ('照真人' in name or 'AI重拍' in name) else ('改法未核对' if '扩量' in name else '原片')
     elif src in ('KOC', 'KOL'):
         base = src
         dft = '二剪（未核对）' if ('二创' in track or '二创' in name or '扩量' in name) else '原片'
@@ -150,6 +170,26 @@ def load_rows(path):
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
                     'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
                     'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != '', 'show': num(opt('展示'))})
+    # 待对应、未标的素材定好 use case（Reina 11/15：日报里不能再有「无 UC」），规则见 tools/uc_resolve.py
+    try:
+        import uc_resolve
+        ucs = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ucs.json')))
+        uc_resolve.resolve_rows(out, ucs)
+    except Exception as e:  # noqa: BLE001
+        print('WARNING uc_resolve:', e, file=sys.stderr)
+    # 次留没回传的星广任务（Reina 11/15 问星广次留率 1%）：知定堂星广任务的投放账户在巨量后台深度转化数就是 0，
+    # 激活成本只有 ¥2 到 ¥4，激活和次留不是同一个口径。这些素材的激活不算进激活和次留率（消耗照算），
+    # 素材类型单独叫「知定堂星广」，页面上次留写「—」。任务列表在 notes/noret_tasks.json，回传修好了就删掉。
+    try:
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        noret = set(json.load(open(os.path.join(root, 'notes', 'noret_tasks.json'))).get('tasks', {}))
+        star = json.load(open(os.path.join(root, 'notes', 'star.json')))
+        bad = {k for k, v in star.items() if len(v) > 2 and v[2] in noret}
+        for r in out:
+            if r['id'] in bad:
+                r['act_raw'], r['act'], r['ret'], r['r3'], r['noret'] = r['act'], 0.0, 0.0, 0.0, True
+    except Exception:  # noqa: BLE001
+        pass
     return shift_ret(out)
 
 
@@ -1153,6 +1193,8 @@ def main():
         rate = rt / a_ if ok else None
         cpr = (c / rt) if ok and rt else None
         st = share_label(rate, cpr, c + c27)
+        if any(r.get('noret') for r in rs):
+            st = '次留没回传，激活不算'
         kt.append({'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
                    'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
                    'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if kind_id.get(m['id']) == k)})
@@ -1254,8 +1296,15 @@ def main():
     if rtd_note:
         import rt_backfill
         rt_backfill.apply(out, rtd_note, th['act'])
+    # 还没定 UC 的素材（Reina 11/15：一条都不能留，要看字幕或标题定好写进 notes/uc_fix.json 再跑）
+    um = defaultdict(lambda: [0.0, ''])
+    for r in R:
+        if (r['uc'] not in ucs or not ucs[r['uc']].get('l1')) and (r['cost'] > 0 or r['act'] > 0):
+            um[r['id']][0] += r['cost']; um[r['id']][1] = r['name'] or names.get(r['id'], '')
+    unmapped = [[k, round(v[0]), v[1][:60]] for k, v in sorted(um.items(), key=lambda x: -x[1][0])]
+    out['unmapped'] = unmapped
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
-    print(json.dumps({'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
+    print(json.dumps({'unmapped_n': len(unmapped), 'unmapped_cost': round(sum(x[1] for x in unmapped)), 'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
                       'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl), 'new_D': len(newd), 'new_D_spent': sum(1 for m in newd if m['first']), 'uploads_file': bool(upl),
