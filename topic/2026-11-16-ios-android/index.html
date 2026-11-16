@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>专题：iOS 和安卓 · 投放素材</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  :root {
+    --font-anthropic-sans: var(--font-sans); --font-anthropic-serif: var(--font-serif);
+    --cds-font-size-caption: var(--fs-caption); --cds-font-size-body: var(--fs-body); --cds-font-size-heading: var(--fs-heading); --cds-font-size-title: var(--fs-title);
+    --cds-font-weight-medium: var(--fw-medium);
+    --cds-gap-xs: var(--gap-xs); --cds-gap-sm: var(--gap-sm); --cds-gap-md: var(--gap-md); --cds-gap-lg: var(--gap-lg); --cds-gap-xl: var(--gap-xl);
+    --cds-pad-xs: var(--pad-xs); --cds-pad-sm: var(--pad-sm); --cds-pad-md: var(--pad-md); --cds-pad-lg: var(--pad-lg); --cds-radius: var(--radius);
+    --cds-border: var(--color-border-line); --cds-surface-popover: var(--color-panel); --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .12);
+    --cds-text-secondary: var(--color-fg-muted); --cds-dur-slow: .3s;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 48px; }
+  .topic-top { margin-bottom: 20px; }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
+  .lx-nav-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg-muted); font-weight: 600; margin-right: 4px; }
+  .lx-nav-label svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .lx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg); text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lx-chip:hover { border-color: var(--color-fg-muted); }
+  .lx-chip[aria-current="page"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-chip .new { font-size: 11px; font-weight: 600; color: var(--color-ok); }
+  .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
+  .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
+  .dash-select { font: inherit; color: var(--color-fg); background-color: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 8px; padding: 5px 10px; }
+  .dash-skeleton { background: var(--color-border-line); border-radius: 6px; opacity: .5; }
+
+.wk { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-lg); }
+.wk h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.wk .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; }
+.wk .take { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.6; }
+.wk .take .muted { color: var(--color-fg-muted); }
+.wk .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.wk .card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.wk .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+.wk .sec { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-sm) 0 calc(-1 * var(--cds-gap-sm)); }
+.wk .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 36rem), 1fr)); gap: var(--cds-gap-md); }
+.wk .scroll { overflow: auto; max-height: 36rem; }
+.wk table { border-collapse: separate; border-spacing: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; width: 100%; }
+.wk th, .wk td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.wk th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); vertical-align: bottom; z-index: 1; }
+.wk th:first-child, .wk td:first-child { text-align: left; position: sticky; left: 0; background: var(--color-panel); }
+.wk th:first-child { z-index: 2; }
+.wk .txt { text-align: left; }
+.wk td.muted { color: var(--color-fg-muted); }
+.wk .d { border-right: 2px solid var(--color-border-line); }
+.wk td.wrap { white-space: normal; min-width: 18rem; text-align: left; color: var(--color-fg-muted); }
+.wk td.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.wk .chart { position: relative; min-height: 300px; }
+.wk .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; z-index: 3; }
+.wk .tip .h { color: var(--cds-text-secondary); margin-bottom: 2px; }
+.wk .pick { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wk summary { cursor: pointer; color: var(--color-fg); font-size: var(--cds-font-size-body); }
+.wk dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px var(--cds-gap-md); margin: var(--cds-gap-md) 0 0; }
+.wk dt { color: var(--color-fg); }
+.wk dd { margin: 0; }
+.wk .fail { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wk .fail i { display: inline-block; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wk [data-dash-source-state=empty] { color: transparent; }
+.wk [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.wk .say p { margin: 0 0 var(--cds-gap-sm); line-height: 1.6; font-size: var(--cds-font-size-body); }
+.wk .sub2 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); }
+.wk .dbw { overflow-x: auto; }
+.wk .db-row { display: grid; grid-template-columns: minmax(9rem, 1.2fr) minmax(7rem, 1.2fr) 8rem 4.5rem 7.5rem 10rem 11rem 5.5rem; align-items: center; gap: 0 var(--cds-gap-sm); min-width: 68rem; border-bottom: 1px solid var(--color-border-line); padding: 5px 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wk .db-head { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); align-items: end; }
+.wk .db-row .num { text-align: right; }
+.wk .db-row .muted { color: var(--color-fg-muted); }
+.wk .db-name { font-size: var(--cds-font-size-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk .db-plot svg { display: block; }
+.wk .db-v { text-align: right; }
+.wk .db-v.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .db-body { min-height: 3rem; }
+.wk .dbkey { display: inline-flex; align-items: center; gap: 4px; }
+.wk .dbkey i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.wk .dbkey .o { border: 1.5px solid var(--color-fg-muted); }
+.wk .dbkey .g { background: var(--color-ok); }
+.wk .dbkey .r { background: var(--color-bad); }
+.wk .sum h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+.wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .sum .muted { color: var(--color-fg-muted); }
+.wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .hint { position: relative; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; outline: none; }
+.wk .hint-l { text-align: left; }
+.wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
+.wk .hint-l .hint-tip { left: 0; right: auto; }
+.wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
+.wk .ops td { white-space: normal; text-align: left; vertical-align: top; min-width: 16rem; line-height: 1.55; }
+.wk .ops td:first-child { min-width: 0; white-space: nowrap; }
+.wk .ops th { text-align: left; }
+.wk .ops .r { color: var(--color-fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+
+.wk td.g { color: var(--color-ok); font-weight: 600; }
+.wk td.b { color: var(--color-bad); }
+.wk .scroll { overflow-x: auto; }
+.wk td.nm { text-align: left; white-space: normal; min-width: 16rem; max-width: 26rem; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topic-top">
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" href="../">全部专题</a><a class="lx-chip" aria-current="page" href="./">iOS 和安卓</a></span></div>
+  </nav>
+</div>
+<div class="wk">
+  <header>
+    <h1>iOS 和安卓：两端跑出来的素材、use case 和用户差在哪</h1>
+    <p class="sub">国区 11/9 到 11/15。消耗按这 7 天；次留、次留成本按 11/9 到 11/14 激活的人（11/15 的次留还没回传），按巨量计费时间。数据来自「国区投放素材」投放数据_分日（11/16 导出）和巨量智擎投放管理的项目（11/6 到 11/15）。</p>
+  </header>
+
+  <section class="card sum" id="summary">
+    <h2>结论</h2>
+    <p class="sum-lead"><b>两端用户的次留率差不多，差的是价钱和素材：同一天激活的人，iOS 次留率和安卓只差 0 到 2 个点，但 iOS 激活贵 30% 到 50%，所以每个次留用户贵四到五成；两端跑起来的几乎是两套素材、两套 use case，现在看到的 use case 差异主要是系统各自挑中的素材不同，还不能说明两边用户想要的不一样。</b></p>
+    <ul>
+      <li><b>iOS 这周才放起来：</b>iOS 消耗占比 11/11 只有 3%，11/14 53%，11/15 60%。</li>
+      <li><b>同一天次留率接近：</b>11/12 iOS 31.4%、安卓 29.0%；11/13 29.8% 对 29.9%；11/14 29.5% 对 29.9%。一周合计 iOS 29.2%、安卓 30.3%。</li>
+      <li><b>贵在激活：</b>激活成本 iOS ¥26 到 ¥35、安卓 ¥16 到 ¥23；次留成本一周合计 iOS ¥106、安卓 ¥71。</li>
+      <li><b>两套素材：</b>iOS 69% 的钱花在「八成以上消耗都在 iOS」的素材上，安卓这个比例是 88%；两端各自激活 80 人以上的素材只有 5 条。iOS 前 10 条素材吃掉 iOS 62% 的钱，安卓前 10 条是 40%，iOS 更集中。</li>
+      <li><b>两套 use case：</b>iOS 的钱集中在早晚报 PS01（这周 iOS 占 68%）、追踪关注的事 IN01（63%）、读书 LG01（53%）、工作和孩子 PS03（48%）、在职考证 LG04（43%）；人情往来 NT01、持仓 FN01、学语言 LG03、待办 WK02、会议 WK01 几乎只在安卓跑（iOS 占 0% 到 6%）。</li>
+      <li><b>同一个 use case 两端次留有高有低：</b>iOS 更好的是学生备考 LG02（34.4% 对 30.3%）、早晚报 PS01（33.5% 对 32.1%）、工作和孩子 PS03（27.5% 对 25.4%）；iOS 明显差的是攻略 TR01（23.4% 对 32.0%）、家庭综述 PS02（21.3% 对 32.3%）、读书 LG01（30.2% 对 34.1%）。两端跑的素材不同，这些差异不能直接算到用户头上。</li>
+      <li><b>用户本身的差异，现在只有弱信号：</b>11/9 到 11/12 激活的人连续 3 留 iOS 8.2%、安卓 6.9%，但 iOS 只有 1,019 个激活，样本小；同一条素材两端都跑的 5 条，次留高低方向不一致。</li>
+    </ul>
+    <p class="note">建议：想确认两端用户是不是真不一样，要让同一批素材两端都拿到量再比。下一步在第五节。</p>
+  </section>
+
+  <section class="card" id="daily">
+    <h2>一、每天分端</h2>
+    <p class="note">绿色是这一天两端里更好的那一端。周日（11/15）的次留下周一才出。</p>
+    <div class="scroll"><table>
+      <thead><tr><th>日期</th><th>iOS 消耗占比</th><th>消耗 iOS</th><th>消耗 安卓</th><th>激活 iOS</th><th>激活 安卓</th><th>激活成本 iOS</th><th>激活成本 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
+      <tbody>
+<tr><td>11/9</td><td>16%</td><td>¥5,572</td><td>¥29,122</td><td>160</td><td>1,766</td><td class="">¥35</td><td class="g">¥16</td><td class="">21.9%</td><td class="g">33.9%</td><td class="">¥159</td><td class="g">¥49</td></tr>
+<tr><td>11/10</td><td>20%</td><td>¥11,036</td><td>¥45,355</td><td>305</td><td>2,542</td><td class="">¥36</td><td class="g">¥18</td><td class="">25.6%</td><td class="g">35.5%</td><td class="">¥141</td><td class="g">¥50</td></tr>
+<tr><td>11/11</td><td>3%</td><td>¥3,183</td><td>¥112,754</td><td>96</td><td>5,015</td><td class="">¥33</td><td class="g">¥22</td><td class="">18.8%</td><td class="g">30.3%</td><td class="">¥177</td><td class="g">¥74</td></tr>
+<tr><td>11/12</td><td>6%</td><td>¥15,471</td><td>¥237,507</td><td>458</td><td>10,859</td><td class="">¥34</td><td class="g">¥22</td><td class="g">31.4%</td><td class="">29.0%</td><td class="">¥107</td><td class="g">¥75</td></tr>
+<tr><td>11/13</td><td>22%</td><td>¥52,231</td><td>¥182,937</td><td>1,615</td><td>8,424</td><td class="">¥32</td><td class="g">¥22</td><td class="">29.8%</td><td class="g">29.9%</td><td class="">¥108</td><td class="g">¥73</td></tr>
+<tr><td>11/14</td><td>53%</td><td>¥158,947</td><td>¥138,620</td><td>5,326</td><td>6,019</td><td class="">¥30</td><td class="g">¥23</td><td class="">29.5%</td><td class="g">29.9%</td><td class="">¥101</td><td class="g">¥77</td></tr>
+<tr><td>11/15</td><td>60%</td><td>¥143,220</td><td>¥94,031</td><td>5,470</td><td>4,008</td><td class="">¥26</td><td class="g">¥23</td><td class="">—</td><td class="">—</td><td class="">—</td><td class="">—</td></tr>
+<tr class="strong"><td>一周合计</td><td>32%</td><td>¥389,660</td><td>¥840,326</td><td>13,430</td><td>38,633</td><td class="">¥29</td><td class="g">¥22</td><td class="">29.2%</td><td class="g">30.3%</td><td class="">¥106</td><td class="g">¥71</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">11/9 到 11/11 iOS 每天只花 ¥3,000 到 ¥11,000，次留率 18.8% 到 25.6% 是小样本；放量之后（11/12 起）两端次留率基本持平。</p>
+  </section>
+
+  <section class="card" id="uc">
+    <h2>二、按 use case 分端（这周消耗 ¥8,000 以上）</h2>
+    <p class="note">次留只算单端激活 30 人以上的，不到的写「—」。iOS 占比是这周这个 use case 的消耗里 iOS 的比例。</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Use case</th><th>这周消耗</th><th>iOS 占比</th><th>激活成本 iOS</th><th>激活成本 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
+      <tbody>
+<tr><td>LG01 读书接着读和推书</td><td>¥158,962</td><td>53%</td><td class="">¥28</td><td class="g">¥23</td><td class="">30.2%</td><td class="g">34.1%</td><td class="">¥103</td><td class="g">¥67</td></tr>
+<tr><td>PS03 工作和孩子</td><td>¥152,547</td><td>48%</td><td class="">¥29</td><td class="g">¥19</td><td class="g">27.5%</td><td class="">25.4%</td><td class="">¥108</td><td class="g">¥74</td></tr>
+<tr><td>NT01 人情往来</td><td>¥119,485</td><td>1%</td><td class="">¥48</td><td class="g">¥20</td><td class="">—</td><td class="">28.1%</td><td class="">—</td><td class="">¥72</td></tr>
+<tr><td>PS01 早晚报和日程安排</td><td>¥108,281</td><td>68%</td><td class="">¥30</td><td class="g">¥22</td><td class="g">33.5%</td><td class="">32.1%</td><td class="">¥91</td><td class="g">¥68</td></tr>
+<tr><td>LG04 在职考证和转行</td><td>¥105,222</td><td>43%</td><td class="">¥28</td><td class="g">¥24</td><td class="">29.6%</td><td class="g">32.6%</td><td class="">¥103</td><td class="g">¥71</td></tr>
+<tr><td>FN01 持仓公告和研究</td><td>¥92,455</td><td>0%</td><td class="">¥42</td><td class="g">¥22</td><td class="">—</td><td class="">31.6%</td><td class="">—</td><td class="">¥70</td></tr>
+<tr><td>IN01 追踪自己关注的事</td><td>¥62,237</td><td>63%</td><td class="">¥29</td><td class="g">¥23</td><td class="">28.5%</td><td class="g">29.7%</td><td class="">¥109</td><td class="g">¥79</td></tr>
+<tr><td>LG02 学生课表作业和备考</td><td>¥53,218</td><td>36%</td><td class="">¥34</td><td class="g">¥24</td><td class="g">34.4%</td><td class="">30.3%</td><td class="">¥82</td><td class="g">¥80</td></tr>
+<tr><td>TR01 攻略变行程</td><td>¥48,226</td><td>20%</td><td class="">¥26</td><td class="g">¥22</td><td class="">23.4%</td><td class="g">32.0%</td><td class="">¥165</td><td class="g">¥70</td></tr>
+<tr><td>LG03 学语言和新技能</td><td>¥44,954</td><td>3%</td><td class="">¥31</td><td class="g">¥24</td><td class="">—</td><td class="">30.8%</td><td class="">—</td><td class="">¥78</td></tr>
+<tr><td>WK02 待办提醒和回邮件</td><td>¥38,466</td><td>6%</td><td class="">¥73</td><td class="g">¥22</td><td class="">—</td><td class="">32.2%</td><td class="">—</td><td class="">¥69</td></tr>
+<tr><td>PS02 家庭综述</td><td>¥37,991</td><td>18%</td><td class="">¥30</td><td class="g">¥21</td><td class="">21.3%</td><td class="g">32.3%</td><td class="">¥142</td><td class="g">¥66</td></tr>
+<tr><td>WK01 会议前后全管</td><td>¥33,247</td><td>5%</td><td class="">¥49</td><td class="g">¥22</td><td class="">—</td><td class="">34.4%</td><td class="">—</td><td class="">¥63</td></tr>
+<tr><td>WK05 发票报销</td><td>¥26,366</td><td>0%</td><td class="">¥102</td><td class="g">¥23</td><td class="">—</td><td class="">29.3%</td><td class="">—</td><td class="">¥78</td></tr>
+<tr><td>SH01 查扣费和关会员</td><td>¥18,420</td><td>17%</td><td class="">¥30</td><td class="g">¥24</td><td class="">—</td><td class="">34.1%</td><td class="">—</td><td class="">¥68</td></tr>
+<tr><td>TR00 出行综述</td><td>¥16,478</td><td>18%</td><td class="">¥27</td><td class="g">¥21</td><td class="">—</td><td class="">30.1%</td><td class="">—</td><td class="">¥82</td></tr>
+<tr><td>SH03 退款售后申诉</td><td>¥16,238</td><td>3%</td><td class="">¥24</td><td class="g">¥20</td><td class="">—</td><td class="">32.0%</td><td class="">—</td><td class="">¥62</td></tr>
+<tr><td>SH02 大件比价和盯机酒价</td><td>¥14,350</td><td>3%</td><td class="">¥36</td><td class="g">¥22</td><td class="">—</td><td class="">34.2%</td><td class="">—</td><td class="">¥62</td></tr>
+<tr><td>PS04 全家晚饭和买菜</td><td>¥12,949</td><td>4%</td><td class="">¥29</td><td class="g">¥16</td><td class="">—</td><td class="">20.8%</td><td class="">—</td><td class="">¥75</td></tr>
+<tr><td>HL02 个性化训练和饮食</td><td>¥12,508</td><td>16%</td><td class="">¥23</td><td class="g">¥18</td><td class="">—</td><td class="">26.2%</td><td class="">—</td><td class="">¥67</td></tr>
+<tr><td>SH04 挑吃什么去哪家</td><td>¥12,323</td><td>77%</td><td class="">¥25</td><td class="g">¥16</td><td class="g">22.9%</td><td class="">15.3%</td><td class="">¥143</td><td class="g">¥96</td></tr>
+<tr><td>PS05 张罗聚会活动</td><td>¥10,623</td><td>54%</td><td class="">¥25</td><td class="g">¥22</td><td class="">30.8%</td><td class="g">40.4%</td><td class="">¥81</td><td class="g">¥56</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">规律：iOS 跑起来的多是「一个人管工作和生活的日程」（PS01、PS03、IN01）和学习类（LG01、LG04、LG02）；安卓独有的大头是人情往来、持仓公告、学语言、待办和会议。</p>
+  </section>
+
+  <section class="card" id="kind">
+    <h2>三、按素材类型分端</h2>
+    <p class="note">消耗 11/9 到 11/15；次留 11/9 到 11/14 激活、单端激活 50 人以上。</p>
+    <div class="scroll"><table>
+      <thead><tr><th>素材类型</th><th>消耗 iOS</th><th>消耗 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
+      <tbody>
+        <tr><td>AI 短剧 · 原片</td><td>¥172,189</td><td>¥320,273</td><td>29.7%</td><td class="g">31.4%</td><td>¥103</td><td class="g">¥71</td></tr>
+        <tr><td>KOC（真人二剪）</td><td>¥115,659</td><td>¥210,405</td><td>27.5%</td><td class="g">30.0%</td><td>¥108</td><td class="g">¥68</td></tr>
+        <tr><td>KOL（真人二剪）</td><td>¥41,784</td><td>¥102,608</td><td class="g">31.8%</td><td>31.5%</td><td>¥101</td><td class="g">¥70</td></tr>
+        <tr><td>AI 短剧 · AI 重拍</td><td>¥30,212</td><td>¥29,597</td><td class="g">34.9%</td><td>30.6%</td><td>¥96</td><td class="g">¥74</td></tr>
+        <tr><td>AI 短剧 · 全片重配</td><td>¥12,522</td><td>¥71,706</td><td>27.4%</td><td class="g">29.4%</td><td>¥108</td><td class="g">¥67</td></tr>
+        <tr><td>悦普星图</td><td>¥6,641</td><td>¥3,534</td><td>25.6%</td><td>—</td><td>¥123</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">AI 重拍在 iOS 次留比安卓高 4 个点（「群里一堆事没回」那条 iOS 35.7%），KOC 真人二剪在 iOS 低 2.5 个点。唯西自建号、唯西星广、全片重配的扩量这周几乎只在安卓跑。</p>
+  </section>
+
+  <section class="card" id="mats">
+    <h2>四、两端各自花钱最多的素材</h2>
+    <p class="note">「这端占比」= 这条素材这周的消耗里这一端的比例。次留只算这一端激活 80 人以上的。</p>
+    <h3>iOS</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>素材</th><th>iOS 消耗</th><th>iOS 占比</th><th>iOS 激活（算次留的）</th><th>iOS 次留率</th><th>iOS 次留成本</th></tr></thead>
+      <tbody>
+<tr><td class="nm">推送视频_信息检索与追踪-比赛信息提前晓-IN01-02-小李-261105<br><span class="muted">IN01 · AI 短剧 · 原片 · ID 7705005598383996991</span></td><td>¥34,748</td><td>96%</td><td>878</td><td>29.4%</td><td>¥104</td></tr>
+<tr><td class="nm">个人日程与事务助理_today kol_PS01_柯煊_01_二创_精剪_耶耶_20261110_b组<br><span class="muted">PS01 · KOL · 全片重配 · ID 7707471682756624426</span></td><td>¥32,433</td><td>99%</td><td>676</td><td>34.3%</td><td>¥96</td></tr>
+<tr><td class="nm">推送视频_home&amp;family_today koc_提前协调工作与接娃安排_01_二创_精简2zxc_扩量01_换开头<br><span class="muted">PS03 · KOC · 全片重配 · ID 7702455520289079338</span></td><td>¥27,122</td><td>97%</td><td>915</td><td>23.6%</td><td>¥115</td></tr>
+<tr><td class="nm">学习与成长-职场妈妈备考-LG02-02-小李-261109-b组<br><span class="muted">LG04 · AI 短剧 · 原片 · ID 7706481569847279659</span></td><td>¥25,053</td><td>86%</td><td>481</td><td>32.8%</td><td>¥99</td></tr>
+<tr><td class="nm">个人日程与事务助理-群里一堆事没回-PS01-02-小月-20261111_照真人-b组<br><span class="muted">PS01 · AI 短剧 · AI 重拍 · ID 7707478096456482835</span></td><td>¥22,925</td><td>99%</td><td>518</td><td>35.7%</td><td>¥89</td></tr>
+<tr><td class="nm">learning_today koc_个性化读书与自我提升计划_02_二创_精剪1cw<br><span class="muted">LG01 · KOC · 只剪辑 · ID 7697203458292695090</span></td><td>¥22,759</td><td>62%</td><td>579</td><td>31.3%</td><td>¥96</td></tr>
+<tr><td class="nm">学习与成长-把转行、考证这类大目标拆成每周能做的事，按你每天的空档推学习任务、记住学到哪；备考错题推同类题，加班了说一声<br><span class="muted">LG02 · AI 短剧 · 原片 · ID 7701921467383316521</span></td><td>¥18,404</td><td>97%</td><td>28</td><td>—</td><td>—</td></tr>
+<tr><td class="nm">学习与成长-微信读书里读了一半的书，提醒你接着读-LG01-05-lst-20261102<br><span class="muted">LG01 · AI 短剧 · 原片 · ID 7703774725395267634</span></td><td>¥17,562</td><td>98%</td><td>125</td><td>35.2%</td><td>¥66</td></tr>
+<tr><td class="nm">learning_碎片时间读书与知识应用指导_01<br><span class="muted">LG01 · AI 短剧 · 原片 · ID 7694987389777838121</span></td><td>¥17,556</td><td>99%</td><td>326</td><td>30.4%</td><td>¥113</td></tr>
+<tr><td class="nm">learning_读书路线规划与每日摘要推送_01<br><span class="muted">LG01 · AI 短剧 · 原片 · ID 7694987349353644051</span></td><td>¥17,136</td><td>99%</td><td>6</td><td>—</td><td>—</td></tr>
+<tr><td class="nm">home&amp;family_today koc_提前协调工作与接娃安排_01_二创_精简2zxc_扩量01_换开头_wq_扩<br><span class="muted">PS03 · KOC · 全片重配 · ID 7701263581258154025</span></td><td>¥15,335</td><td>65%</td><td>448</td><td>30.8%</td><td>¥106</td></tr>
+<tr><td class="nm">推送视频_个人日程与事务助理_today koc_PS03_奈奈惠子_二创_精剪_ltq02_20261103<br><span class="muted">PS03 · KOC · 二剪（未核对） · ID 7703888402757484582</span></td><td>¥15,128</td><td>80%</td><td>531</td><td>32.6%</td><td>¥86</td></tr>
+      </tbody>
+    </table></div>
+    <h3>安卓</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>素材</th><th>安卓消耗</th><th>安卓占比</th><th>安卓激活（算次留的）</th><th>安卓次留率</th><th>安卓次留成本</th></tr></thead>
+      <tbody>
+<tr><td class="nm">财务与投资-持仓有公告和异动时推给你-FN01-02-zxc-20261104-热点<br><span class="muted">FN01 · AI 短剧 · 原片 · ID 7704612088995790898</span></td><td>¥83,004</td><td>100%</td><td>3,398</td><td>31.9%</td><td>¥70</td></tr>
+<tr><td class="nm">推送视频_学习与成长-把转行、考证这类大目标拆成每周能做的事-LG02-05-zl-20261029<br><span class="muted">LG04 · AI 短剧 · 原片 · ID 7702455579841740810</span></td><td>¥40,836</td><td>96%</td><td>1,641</td><td>33.2%</td><td>¥68</td></tr>
+<tr><td class="nm">learning_英语口语陪练与个性化带学_01<br><span class="muted">LG03 · AI 短剧 · 原片 · ID 7696097539917971466</span></td><td>¥39,966</td><td>100%</td><td>1,483</td><td>31.1%</td><td>¥77</td></tr>
+<tr><td class="nm">随身记事与个人资料管理-NT01-说来惭愧_扩量01_二创新剪_wq_A组_20261107<br><span class="muted">NT01 · AI 短剧 · 全片重配 · ID 7705431731503628324</span></td><td>¥36,898</td><td>100%</td><td>1,798</td><td>29.6%</td><td>¥66</td></tr>
+<tr><td class="nm">随身记事与个人资料管理-NT01-说来惭愧_扩量02_二创新剪_wq_A组_20261107<br><span class="muted">NT01 · AI 短剧 · 全片重配 · ID 7705431640915427337</span></td><td>¥33,381</td><td>100%</td><td>1,644</td><td>29.5%</td><td>¥66</td></tr>
+<tr><td class="nm">推送视频_学习与成长-把转行、考证这类大目标拆成每周能做的事，按你每天的空档推学习任务、记住学到哪；备考错题推同类题，加<br><span class="muted">LG02 · AI 短剧 · 原片 · ID 7702037035383046163</span></td><td>¥25,792</td><td>98%</td><td>1,039</td><td>31.6%</td><td>¥78</td></tr>
+<tr><td class="nm">learning_today kol_个性化读书与自我提升计划_01-二创-精简1zl_扩量03_二创新剪_wq_202<br><span class="muted">LG01 · KOL · 只剪辑 · ID 7701658572506693686</span></td><td>¥24,037</td><td>100%</td><td>1,049</td><td>35.7%</td><td>¥64</td></tr>
+<tr><td class="nm">work_today koc_找出工作邮箱里遗漏的重要邮件_01_二创_精简1zl<br><span class="muted">WK02 · KOC · 只剪辑 · ID 7697218765478068266</span></td><td>¥16,643</td><td>97%</td><td>633</td><td>34.0%</td><td>¥66</td></tr>
+<tr><td class="nm">随身记事与个人资料管理-同事结婚随份子-NT01-01-包子-20261108-b组-1<br><span class="muted">NT01 · AI 短剧 · 原片 · ID 7706116383600836634</span></td><td>¥15,386</td><td>100%</td><td>650</td><td>30.5%</td><td>¥77</td></tr>
+<tr><td class="nm">出行与旅行-把收藏的攻略变成能走的行程-TR01-07-wq-20261029<br><span class="muted">TR01 · AI 短剧 · 原片 · ID 7702385056959217718</span></td><td>¥13,722</td><td>87%</td><td>554</td><td>32.5%</td><td>¥68</td></tr>
+<tr><td class="nm">learning_today koc_个性化读书与自我提升计划_02_二创_精剪1cw<br><span class="muted">LG01 · KOC · 只剪辑 · ID 7697203458292695090</span></td><td>¥13,678</td><td>38%</td><td>561</td><td>35.1%</td><td>¥68</td></tr>
+<tr><td class="nm">随身记事与个人资料管理_today kol_NT01_是滢滢吖_01_二创_精剪_小李_20261106<br><span class="muted">NT01 · KOL · 二剪（未核对） · ID 7706116413912170523</span></td><td>¥9,335</td><td>100%</td><td>364</td><td>26.1%</td><td>¥98</td></tr>
+      </tbody>
+    </table></div>
+    <h3>两端都拿到量的素材（各自激活 80 人以上）</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>素材</th><th>激活 iOS</th><th>激活 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
+      <tbody>
+<tr><td class="nm">learning_today koc_个性化读书与自我提升计划_02_二创_精剪1cw<br><span class="muted">LG01 · ID 7697203458292695090</span></td><td>579</td><td>561</td><td class="">31.3%</td><td class="g">35.1%</td><td class="">¥96</td><td class="g">¥68</td></tr>
+<tr><td class="nm">home&amp;family_today koc_提前协调工作与接娃安排_01_二创_精简2zxc_扩量01_换开头_wq_扩<br><span class="muted">PS03 · ID 7701263581258154025</span></td><td>448</td><td>622</td><td class="g">30.8%</td><td class="">15.1%</td><td class="">¥106</td><td class="g">¥86</td></tr>
+<tr><td class="nm">推送视频_个人日程与事务助理_today koc_PS03_奈奈惠子_二创_精剪_ltq02_20261103<br><span class="muted">PS03 · ID 7703888402757484582</span></td><td>531</td><td>144</td><td class="">32.6%</td><td class="g">41.0%</td><td class="">¥86</td><td class="g">¥53</td></tr>
+<tr><td class="nm">推送视频_home&amp;family_today koc_提前协调工作与接娃安排_01_二创_精简2zxc_扩量01_换开头<br><span class="muted">PS03 · ID 7702455566770323492</span></td><td>141</td><td>318</td><td class="">20.6%</td><td class="g">40.6%</td><td class="">¥157</td><td class="g">¥50</td></tr>
+<tr><td class="nm">推送视频_个人日程与事务助理_today koc_PS05_是茵宝呀_二创_精剪_ltq01_20261103<br><span class="muted">PS05 · ID 7703890808151769130</span></td><td>136</td><td>190</td><td class="">31.6%</td><td class="g">41.1%</td><td class="">¥75</td><td class="g">¥55</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">只有 5 条，方向不一致：「老板临时安排开会」iOS 30.8%、安卓 15.1%；同一原片另一版「夫妻俩都忙没关系」反过来，iOS 20.6%、安卓 40.6%。样本太少，看不出哪端用户更认同一类内容。</p>
+  </section>
+
+  <section class="card" id="why">
+    <h2>五、为什么两端跑出来的不一样，下一步怎么验证</h2>
+    <ul>
+      <li><b>投放结构不同：</b>智擎项目里 iOS 381 个、安卓 432 个，但 11/6 到 11/15 花到 ¥100 的只有 iOS 75 个、安卓 198 个；iOS 项目每个塞 90 条素材（中位），安卓 67 条。iOS 钱更集中在少数项目和少数素材上，系统挑中哪条，哪个 use case 就占比高。</li>
+      <li><b>iOS 是这周新放量的：</b>放量前几天的素材池和安卓不同（11/12 起才有大批 iOS 项目花钱），所以 iOS 里还没有 FN01 金价、NT01 说来惭愧这些安卓头部。</li>
+      <li><b>用户差异是推测：</b>iOS 激活贵、次留率持平、连续 3 留略高（样本小），可能是 iOS 用户更「贵但不更留」；只看这周数据定不了。</li>
+    </ul>
+    <h3>建议</h3>
+    <ul>
+      <li>挑 6 到 10 条两端都想验证的素材，两端同时建项目、同样出价：安卓头部（FN01「金价又动了」、NT01「公公过寿」「客户下周生日」、LG03 口语陪练、WK02 漏回邮件）放进 iOS；iOS 头部（PS01 柯煊、「群里一堆事没回」、IN01 比赛集锦）放进安卓。跑 3 天比同一条素材两端的次留率和次留成本。</li>
+      <li>iOS 每个次留用户贵 ¥35 左右：iOS 先只放两端都次留好、iOS 次留率不低于安卓的素材（这周 LG02、PS01、AI 重拍这几类），iOS 次留明显差的 TR01、PS02 先别在 iOS 加量。</li>
+      <li>日报和周报已经加了分端表，之后每天看两端次留率和次留成本，等 iOS 累计激活过 3,000 人再看连续 3 留差异。</li>
+    </ul>
+  </section>
+</div>
+</div>
+<!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
+<style id="gtoc-style">
+  .gtoc-anchor { scroll-margin-top: 12px; }
+  #gtoc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20; box-sizing: border-box;
+    background: var(--color-panel, #fff); color: var(--color-fg, #1f1f1d); border: 1px solid var(--color-border-line, #e4e2dc); border-radius: 12px; padding: 10px 8px; font-size: 13px; }
+  #gtoc[hidden], #gtoc-btn[hidden] { display: none !important; }
+  #gtoc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted, #6b6a66); font-weight: 600; }
+  #gtoc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  #gtoc a { display: block; padding: 5px 8px; border-radius: 8px; color: inherit; text-decoration: none; line-height: 1.35; }
+  #gtoc a.sub { padding-left: 18px; color: var(--color-fg-muted, #6b6a66); }
+  #gtoc a:hover { background: var(--color-bg, #f7f6f2); }
+  #gtoc a[aria-current="true"] { background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); font-weight: 600; }
+  #gtoc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { body.gtoc-on .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { #gtoc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    #gtoc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    #gtoc.open { display: block; }
+    #gtoc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line, #e4e2dc); background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { #gtoc, #gtoc-btn { display: none !important; } body.gtoc-on .wrap { margin-left: auto !important; } }
+</style>
+<nav id="gtoc" aria-label="目录" hidden><h4>目录</h4><ol></ol></nav>
+<button id="gtoc-btn" type="button" aria-controls="gtoc" aria-expanded="false" hidden>目录</button>
+<script id="gtoc-script">
+addEventListener('load', () => {
+  const toc = document.getElementById('gtoc'), ol = toc.querySelector('ol'), btn = document.getElementById('gtoc-btn');
+  const root = document.querySelector('.wrap') || document.body;
+  const visible = (el) => !el.closest('[hidden]') && el.getClientRects().length > 0;
+  const heads = [...root.querySelectorAll('h2')].filter(visible);
+  if (heads.length < 2) return;
+  const items = [];
+  const top = document.querySelector('h1');
+  if (top) { if (!top.id) top.id = 'top'; top.classList.add('gtoc-anchor'); items.push([top, '总览', false]); }
+  let group = '';
+  const seen = {};
+  heads.forEach((h, i) => {
+    const t = h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim();
+    if (h.classList.contains('sec')) group = t;
+    if (!h.id) h.id = 'sec-' + (i + 1);
+    h.classList.add('gtoc-anchor');
+    seen[t] = (seen[t] || 0) + 1;
+    const dup = heads.filter((x) => x.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim() === t).length > 1;
+    items.push([h, dup && group && !h.classList.contains('sec') ? t + '（' + group + '）' : t, !!group && !h.classList.contains('sec')]);
+  });
+  const links = items.map(([el, t, sub]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + el.id; a.textContent = t; if (sub) a.className = 'sub'; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.hidden = false; btn.hidden = false; document.body.classList.add('gtoc-on');
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const mark = () => { let k = 0; items.forEach(([el], i) => { if (el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
+</body>
+</html>
