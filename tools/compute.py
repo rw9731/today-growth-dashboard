@@ -63,6 +63,9 @@ GAIFA = json.load(open(GAIFA_PATH)) if os.path.exists(GAIFA_PATH) else {}
 ZJH_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zijianhao.json')
 ZJH = (json.load(open(ZJH_PATH)).get('ids') or {}) if os.path.exists(ZJH_PATH) else {}
 ZJH_NAME = '唯西自建号'
+# 星图达人视频（Reina 11/16）：表里来源写 AIGC 的代理星图视频，按 tools/xingtu.json 的素材ID 归「悦普星图」「唯西星图」
+XT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'xingtu.json')
+XT = (json.load(open(XT_PATH)).get('ids') or {}) if os.path.exists(XT_PATH) else {}
 try:
     STAR = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notes', 'star.json')))
 except Exception:  # noqa: BLE001
@@ -76,6 +79,8 @@ def kind_of(src, track, name, mid=None, kl=True):
     if (mid and mid in ZJH) or src in (ZJH_NAME, '自建号'):
         # 唯西自建号（Reina 11/9）：视频挂在星广任务里，来源会写星广，按 tools/zijianhao.json 的素材ID 单独算一类
         return ZJH_NAME
+    if mid and mid in XT:
+        return XT[mid][0]
     if src == '星广' and mid:
         # 星广按任务分两家（Reina 11/15）：知定堂星广的次留没回传，和唯西星广分开看
         t = (STAR.get(mid) or [None, None, None])[2] if len(STAR.get(mid) or []) > 2 else None
