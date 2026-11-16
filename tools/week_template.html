@@ -127,6 +127,26 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="plat">
+    <h2 class="lx-h2">分端：iOS 和安卓</h2>
+    <p class="lx-note">按计费时间：消耗、激活是当天的，次留率 = 当天激活的人第二天回来的比例（周日的次留下周一才出）。绿色是两端里更好的那一端。专题「iOS 和安卓」里有分端的素材和用户差异。</p>
+    <p class="lx-take" data-draw="plat-take"></p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead><tr><th>日期</th><th class="num">iOS 消耗占比</th><th class="num">消耗<span class="th-sub">iOS</span></th><th class="num">消耗<span class="th-sub">安卓</span></th><th class="num">激活<span class="th-sub">iOS</span></th><th class="num">激活<span class="th-sub">安卓</span></th><th class="num">激活成本<span class="th-sub">iOS</span></th><th class="num">激活成本<span class="th-sub">安卓</span></th><th class="num">次留率<span class="th-sub">iOS</span></th><th class="num">次留率<span class="th-sub">安卓</span></th><th class="num">次留成本<span class="th-sub">iOS</span></th><th class="num">次留成本<span class="th-sub">安卓</span></th></tr></thead>
+        <tbody data-draw="platrows"></tbody>
+      </table>
+    </div>
+    <h3 class="lx-h3">按 use case 分端（这周消耗 ¥3,000 以上）</h3>
+    <p class="lx-note">次留只算周一到周六激活、单端激活 30 人以上的；不到的写「—」。</p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead><tr><th>Use case</th><th class="num">这周消耗</th><th class="num">iOS 占比</th><th class="num">激活成本<span class="th-sub">iOS</span></th><th class="num">激活成本<span class="th-sub">安卓</span></th><th class="num">次留率<span class="th-sub">iOS</span></th><th class="num">次留率<span class="th-sub">安卓</span></th><th class="num">次留成本<span class="th-sub">iOS</span></th><th class="num">次留成本<span class="th-sub">安卓</span></th></tr></thead>
+        <tbody data-draw="platuc"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="l1">
     <h2 class="lx-h2">二、一级分类：钱花在哪、留得住吗</h2>
     <p class="lx-note">绿 = 次留率不低于全盘，或次留成本不高于全盘，红 = 次留率低于全盘 85% 或次留成本超过 1.2 倍。右边列出这个分类里留存好、能放量但留存不达标、留存差的 use case。</p>
@@ -381,6 +401,37 @@
 
   // 一、两周走势
   fill('trend-legend', (el) => { el.innerHTML = `<span><i style="background:${COLOR};opacity:.35"></i>上周消耗</span><span><i style="background:${COLOR}"></i>本周消耗</span><span><i class="ln" style="background:${css('--color-ok')}"></i>次留率</span><span><i class="ln" style="background:${css('--color-warn')}"></i>连续 3 留率（虚线）</span>`; });
+
+  // 分端（Reina 11/16）
+  const better2 = (a, b, low) => (a == null || b == null ? [0, 0] : (low ? (a < b ? [1, 0] : a > b ? [0, 1] : [0, 0]) : (a > b ? [1, 0] : a < b ? [0, 1] : [0, 0])));
+  const pair = (td, r, k, low, f) => { const [gi, ga] = better2(r.ios[k], r.and[k], low); for (const [v, g] of [[r.ios[k], gi], [r.and[k], ga]]) { const c = td('num' + (g ? ' lx-good' : '') + (v == null ? ' muted' : '')); c.textContent = v == null ? '—' : f(v); } };
+  fill('platrows', (tb) => {
+    for (const r of data('plat') || []) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr); if (r.date === 'sum') tr.style.fontWeight = '600';
+      td('').textContent = r.date === 'sum' ? '一周合计' : fmtD(r.date);
+      td('num').textContent = r.ios_share == null ? '—' : d3.format('.0%')(r.ios_share);
+      td('num').textContent = fmtY(r.ios.cost); td('num').textContent = fmtY(r.and.cost);
+      td('num').textContent = fmtN(r.ios.act); td('num').textContent = fmtN(r.and.act);
+      pair(td, r, 'cpa', 1, fmtY); pair(td, r, 'rate', 0, fmtP); pair(td, r, 'cpr', 1, fmtY);
+      tb.appendChild(tr);
+    }
+  });
+  fill('platuc', (tb) => {
+    for (const r of data('plat_uc') || []) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr);
+      td('').textContent = r.uc + ' ' + (r.short || '');
+      td('num').textContent = fmtY(r.cost); td('num').textContent = r.ios_share == null ? '—' : d3.format('.0%')(r.ios_share);
+      pair(td, r, 'cpa', 1, fmtY); pair(td, r, 'rate', 0, fmtP); pair(td, r, 'cpr', 1, fmtY);
+      tb.appendChild(tr);
+    }
+  });
+  fill('plat-take', (el) => {
+    const all = data('plat') || []; const rows = all.filter((r) => r.date !== 'sum'); const s = all.find((r) => r.date === 'sum'); if (!s) return;
+    const f = rows[0], l = rows[rows.length - 1];
+    el.innerHTML = 'iOS 消耗占比 ' + fmtD(f.date) + ' <b>' + d3.format('.0%')(f.ios_share) + '</b> → ' + fmtD(l.date) + ' <b>' + d3.format('.0%')(l.ios_share) + '</b>，一周合计 <b>' + d3.format('.0%')(s.ios_share) + '</b>。'
+      + '次留率 iOS <b>' + fmtP(s.ios.rate) + '</b>、安卓 <b>' + fmtP(s.and.rate) + '</b>；次留成本 iOS <b>' + fmtY(s.ios.cpr) + '</b>、安卓 <b>' + fmtY(s.and.cpr) + '</b>；激活成本 iOS <b>' + fmtY(s.ios.cpa) + '</b>、安卓 <b>' + fmtY(s.and.cpa) + '</b>。';
+  });
+
   fill('trend', (box) => {
     const ds = data('daily'); const W = 1240, H = 300, m = {l: 48, r: 44, t: 18, b: 26};
     const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`);

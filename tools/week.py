@@ -356,7 +356,9 @@ def main():
             'w_ret': f'{lab(W[0])}–{lab(W[5])}', 'w_ret3': f'{lab(W[0])}–{lab(W[3])}', 'built': dt.date.today().isoformat(),
             'top_bar': top_bar, 'uc_bar': max(WTH['uc_big_min'], WTH['uc_big_share'] * tot), 'n_good_all': len(good_all)}
     out = {'meta': [meta], 'th': [WTH], 'overview': [o], 'daily': daily, 'uc': uct, 'l1': l1t, 'top': top, 'bad': bad, 'heads': heads, 'kind': kt,
-           'wk': [wk], 'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns]}
+           'wk': [wk], 'prod': prod, 'method': method, 'scope': scope, 'patterns': [patterns],
+           # 分端（Reina 11/16）：这周每天 iOS 和安卓，和按 use case 分端
+           'plat': C.plat_split(allrows, dt.date.fromisoformat(W[6]), 7), 'plat_uc': C.plat_uc(allrows, W, ucs)}
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(json.dumps({'week': meta['label'], 'spend': round(o['spend']), 'p_spend': round(o['p_spend']),
                       'rate': o['rate'] and round(o['rate'], 4), 'cpr': o['cpr'] and round(o['cpr'], 1),

@@ -441,6 +441,93 @@ def build_plan(allrows, ucs, Dd, kt, th):
     return {'uc': rows, 'meta': meta, 'method': method}
 
 
+
+def plat_split(allrows, Dd, n=5):
+    """分端（Reina 11/16）：近 n 天每天 iOS 和安卓各自的消耗、激活、激活成本、次留率、次留成本、连续 3 留率。
+    次留按计费时间口径：X 天激活的人的次留在 shift_ret 之后记在 X+1 天，所以用 X+1 天的 ret；最新一天还没回传，写 None。
+    连续 3 留按激活日记、约 3 天才稳，只给 D-3 及更早、表里有 3日留存 的天。"""
+    days = [(Dd - dt.timedelta(days=k)).isoformat() for k in range(n - 1, -1, -1)]
+    last = Dd.isoformat()
+    agg = defaultdict(lambda: defaultdict(float))
+    has3 = set()
+    for r in allrows:
+        p = r['platform'] if r['platform'] in ('iOS', '安卓') else None
+        if not p:
+            continue
+        a = agg[(r['date'], p)]
+        a['cost'] += r['cost']; a['act'] += r['act']; a['ret'] += r['ret']; a['r3'] += r['r3']
+        if r.get('has3') and r['act']:
+            has3.add(r['date'])
+    nxt = lambda d: (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
+    lim3 = (Dd - dt.timedelta(days=3)).isoformat()
+    out = []
+    tot = {p: defaultdict(float) for p in ('iOS', '安卓')}
+    for d in days:
+        row = {'date': d}
+        for p, k in (('iOS', 'ios'), ('安卓', 'and')):
+            a, b = agg[(d, p)], agg[(nxt(d), p)]
+            c, ac = a['cost'], a['act']
+            ret = b['ret'] if d < last else None
+            ok3 = d <= lim3 and d in has3
+            row[k] = {'cost': c, 'act': ac, 'cpa': c / ac if ac else None,
+                      'ret': ret, 'rate': (ret / ac if ac and ret is not None else None),
+                      'cpr': (c / ret if ret else None),
+                      'rate3': (a['r3'] / ac if ok3 and ac else None), 'cpr3': (c / a['r3'] if ok3 and a['r3'] else None)}
+            t = tot[p]; t['cost'] += c; t['act'] += ac
+            if ret is not None:
+                t['c_r'] += c; t['a_r'] += ac; t['ret'] += ret
+            if ok3:
+                t['c3'] += c; t['a3'] += ac; t['r3'] += a['r3']
+        allc = row['ios']['cost'] + row['and']['cost']
+        row['ios_share'] = row['ios']['cost'] / allc if allc else None
+        out.append(row)
+    sm = {'date': 'sum'}
+    for p, k in (('iOS', 'ios'), ('安卓', 'and')):
+        t = tot[p]
+        sm[k] = {'cost': t['cost'], 'act': t['act'], 'cpa': t['cost'] / t['act'] if t['act'] else None,
+                 'ret': t['ret'], 'rate': t['ret'] / t['a_r'] if t['a_r'] else None, 'cpr': t['c_r'] / t['ret'] if t['ret'] else None,
+                 'rate3': t['r3'] / t['a3'] if t['a3'] else None, 'cpr3': t['c3'] / t['r3'] if t['r3'] else None}
+    allc = sm['ios']['cost'] + sm['and']['cost']
+    sm['ios_share'] = sm['ios']['cost'] / allc if allc else None
+    return out + [sm]
+
+
+def plat_uc(allrows, days, ucs=None, min_cost=3000):
+    """分端看 use case（Reina 11/16）：days 这几天激活的人，按 use case × 端算消耗、激活、次留率、次留成本。
+    次留按计费时间口径（shift_ret 之后 X 天激活的人的次留在 X+1 天）；days 里最新一天的次留没回传就不算进次留。"""
+    last = max(r['date'] for r in allrows)
+    nxt = lambda d: (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
+    dset = set(days); rset = {d for d in days if nxt(d) <= last}
+    rset_next = {nxt(d) for d in rset}
+    g = defaultdict(lambda: defaultdict(float))
+    for r in allrows:
+        p = {'iOS': 'ios', '安卓': 'and'}.get(r['platform'])
+        if not p:
+            continue
+        k = r['uc'] or '—'
+        if r['date'] in dset:
+            g[(k, p)]['cost'] += r['cost']; g[(k, p)]['act'] += r['act']
+        if r['date'] in rset:
+            g[(k, p)]['c_r'] += r['cost']; g[(k, p)]['a_r'] += r['act']
+        if r['date'] in rset_next:
+            g[(k, p)]['ret'] += r['ret']
+    keys = {k for k, _ in g}
+    out = []
+    for k in keys:
+        row = {'uc': k, 'short': ((ucs or {}).get(k) or {}).get('short', ''), 'l1': ((ucs or {}).get(k) or {}).get('l1', '')}
+        for p in ('ios', 'and'):
+            a = g[(k, p)]
+            row[p] = {'cost': a['cost'], 'act': a['act'], 'cpa': a['cost'] / a['act'] if a['act'] else None,
+                      'rate': a['ret'] / a['a_r'] if a['a_r'] >= 30 else None, 'cpr': a['c_r'] / a['ret'] if a['ret'] and a['a_r'] >= 30 else None,
+                      'a_r': a['a_r']}
+        row['cost'] = row['ios']['cost'] + row['and']['cost']
+        row['ios_share'] = row['ios']['cost'] / row['cost'] if row['cost'] else None
+        if row['cost'] >= min_cost:
+            out.append(row)
+    out.sort(key=lambda x: -x['cost'])
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--sheet', required=True)
@@ -1276,7 +1363,7 @@ def main():
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
-    out = {'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
+    out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
            'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
