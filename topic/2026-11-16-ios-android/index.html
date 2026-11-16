@@ -125,6 +125,16 @@
 .wk td.g { color: var(--color-ok); font-weight: 600; }
 .wk td.b { color: var(--color-bad); }
 .wk .scroll { overflow-x: auto; }
+.wk { --c-ios: #2a78d6; --c-and: #eb6834; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wk { --c-ios: #3987e5; --c-and: #d95926; } }
+:root[data-theme="dark"] .wk { --c-ios: #3987e5; --c-and: #d95926; }
+.wk .ch { width: 100%; margin: 6px 0 4px; }
+.wk .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .wk .two { grid-template-columns: 1fr; } }
+.wk .lg { display: flex; gap: 16px; font-size: 13px; color: var(--color-fg); margin: 4px 0 8px; }
+.wk .sw.ios { background: var(--c-ios); } .wk .sw.and { background: var(--c-and); }
+.wk details { margin-top: 10px; } .wk summary { cursor: pointer; color: var(--color-fg-muted); font-size: 13px; }
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--color-panel); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; line-height: 1.55; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
 .wk td.nm { text-align: left; white-space: normal; min-width: 16rem; max-width: 26rem; line-height: 1.45; }
 </style>
 </head>
@@ -161,7 +171,15 @@
 
   <section class="card" id="daily">
     <h2>一、每天分端</h2>
-    <p class="note">绿色是这一天两端里更好的那一端。周日（11/15）的次留下周一才出。</p>
+    <div class="lg"><span><i class="sw ios"></i>iOS</span><span><i class="sw and"></i>安卓</span></div>
+    <h3>每天消耗：iOS 和安卓各花多少（柱上数字是 iOS 占比）</h3>
+    <div class="ch" id="ch-daily"></div>
+    <div class="two">
+      <div><h3>次留率</h3><div class="ch" id="ch-rate"></div></div>
+      <div><h3>次留成本</h3><div class="ch" id="ch-cpr"></div></div>
+    </div>
+    <p class="note">11/15（周日）的次留下周一才出，线只画到 11/14。11/9 到 11/11 iOS 每天只有一两百个激活，次留率波动大。</p>
+    <details><summary>看表格</summary>
     <div class="scroll"><table>
       <thead><tr><th>日期</th><th>iOS 消耗占比</th><th>消耗 iOS</th><th>消耗 安卓</th><th>激活 iOS</th><th>激活 安卓</th><th>激活成本 iOS</th><th>激活成本 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
       <tbody>
@@ -174,12 +192,18 @@
 <tr><td>11/15</td><td>60%</td><td>¥143,220</td><td>¥94,031</td><td>5,470</td><td>4,008</td><td class="">¥26</td><td class="g">¥23</td><td class="">—</td><td class="">—</td><td class="">—</td><td class="">—</td></tr>
 <tr class="strong"><td>一周合计</td><td>32%</td><td>¥389,660</td><td>¥840,326</td><td>13,430</td><td>38,633</td><td class="">¥29</td><td class="g">¥22</td><td class="">29.2%</td><td class="g">30.3%</td><td class="">¥106</td><td class="g">¥71</td></tr>
       </tbody>
-    </table></div>
-    <p class="note">11/9 到 11/11 iOS 每天只花 ¥3,000 到 ¥11,000，次留率 18.8% 到 25.6% 是小样本；放量之后（11/12 起）两端次留率基本持平。</p>
+    </table></div></details>
   </section>
 
   <section class="card" id="uc">
     <h2>二、按 use case 分端（这周消耗 ¥8,000 以上）</h2>
+    <div class="lg"><span><i class="sw ios"></i>iOS</span><span><i class="sw and"></i>安卓</span></div>
+    <h3>每个 use case 的钱有多少在 iOS（按 iOS 占比排，右边是这周总消耗）</h3>
+    <div class="ch" id="ch-ucshare"></div>
+    <h3>同一个 use case，两端的次留率（两端各自激活 30 人以上的才画）</h3>
+    <p class="note"><i class="sw ios"></i>iOS　<i class="sw and"></i>安卓。连线越长差得越多，按差值排，上面是 iOS 更好的。注意两端跑的素材不同，差异不一定是用户本身。</p>
+    <div class="ch" id="ch-ucrate"></div>
+    <details><summary>看表格</summary>
     <p class="note">次留只算单端激活 30 人以上的，不到的写「—」。iOS 占比是这周这个 use case 的消耗里 iOS 的比例。</p>
     <div class="scroll"><table>
       <thead><tr><th>Use case</th><th>这周消耗</th><th>iOS 占比</th><th>激活成本 iOS</th><th>激活成本 安卓</th><th>次留率 iOS</th><th>次留率 安卓</th><th>次留成本 iOS</th><th>次留成本 安卓</th></tr></thead>
@@ -207,7 +231,7 @@
 <tr><td>SH04 挑吃什么去哪家</td><td>¥12,323</td><td>77%</td><td class="">¥25</td><td class="g">¥16</td><td class="g">22.9%</td><td class="">15.3%</td><td class="">¥143</td><td class="g">¥96</td></tr>
 <tr><td>PS05 张罗聚会活动</td><td>¥10,623</td><td>54%</td><td class="">¥25</td><td class="g">¥22</td><td class="">30.8%</td><td class="g">40.4%</td><td class="">¥81</td><td class="g">¥56</td></tr>
       </tbody>
-    </table></div>
+    </table></div></details>
     <p class="note">规律：iOS 跑起来的多是「一个人管工作和生活的日程」（PS01、PS03、IN01）和学习类（LG01、LG04、LG02）；安卓独有的大头是人情往来、持仓公告、学语言、待办和会议。</p>
   </section>
 
@@ -297,6 +321,90 @@
   </section>
 </div>
 </div>
+<div class="tip" id="tip" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script type="application/json" id="pdata">{"plat":[{"date":"2026-11-09","ios":{"cost":5571.990000000005,"act":160.0,"cpa":34.82493750000003,"ret":35.0,"rate":0.21875,"cpr":159.19971428571444,"rate3":0.06875,"cpr3":506.5445454545459},"and":{"cost":29122.33999999999,"act":1766.0,"cpa":16.490566251415622,"ret":598.0,"rate":0.33861834654586637,"cpr":48.69956521739129,"rate3":0.10588901472253681,"cpr3":155.73443850267373},"ios_share":0.1606023232038205},{"date":"2026-11-10","ios":{"cost":11035.60000000001,"act":305.0,"cpa":36.18229508196725,"ret":78.0,"rate":0.25573770491803277,"cpr":141.4820512820514,"rate3":0.10163934426229508,"cpr3":355.98709677419384},"and":{"cost":45354.77999999995,"act":2542.0,"cpa":17.842163650668745,"ret":902.0,"rate":0.3548387096774194,"cpr":50.28246119733919,"rate3":0.08733280881195908,"cpr3":204.3008108108106},"ios_share":0.1957000467100952},{"date":"2026-11-11","ios":{"cost":3183.3400000000097,"act":96.0,"cpa":33.15979166666677,"ret":18.0,"rate":0.1875,"cpr":176.85222222222276,"rate3":0.08333333333333333,"cpr3":397.9175000000012},"and":{"cost":112753.78999999998,"act":5015.0,"cpa":22.483308075772676,"ret":1522.0,"rate":0.30348953140578266,"cpr":74.08264783180024,"rate3":0.05722831505483549,"cpr3":392.87034843205566},"ios_share":0.027457467680975112},{"date":"2026-11-12","ios":{"cost":15471.390000000009,"act":458.0,"cpa":33.78032751091705,"ret":144.0,"rate":0.314410480349345,"cpr":107.44020833333339,"rate3":0.07423580786026202,"cpr3":455.0408823529414},"and":{"cost":237507.1199999999,"act":10859.0,"cpa":21.87191454093378,"ret":3154.0,"rate":0.29045031770881297,"cpr":75.30346227013314,"rate3":0.06391012063725941,"cpr3":342.2292795389048},"ios_share":0.0611569338439064},{"date":"2026-11-13","ios":{"cost":52231.39999999996,"act":1615.0,"cpa":32.341424148606784,"ret":482.0,"rate":0.29845201238390096,"cpr":108.36390041493767,"rate3":null,"cpr3":null},"and":{"cost":182936.73000000016,"act":8424.0,"cpa":21.71613603988606,"ret":2518.0,"rate":0.29890788224121556,"cpr":72.65160047656877,"rate3":null,"cpr3":null},"ios_share":0.22210237416098827},{"date":"2026-11-14","ios":{"cost":158946.74000000028,"act":5326.0,"cpa":29.84354862936543,"ret":1571.0,"rate":0.29496808111152834,"cpr":101.17551877784868,"rate3":null,"cpr3":null},"and":{"cost":138620.41000000015,"act":6019.0,"cpa":23.030471839175966,"ret":1798.0,"rate":0.2987207177271972,"cpr":77.0970022246942,"rate3":null,"cpr3":null},"ios_share":0.534154190071048},{"date":"2026-11-15","ios":{"cost":143219.9800000002,"act":5470.0,"cpa":26.182811700182853,"ret":null,"rate":null,"cpr":null,"rate3":null,"cpr3":null},"and":{"cost":94031.31999999986,"act":4008.0,"cpa":23.4609081836327,"ret":null,"rate":null,"cpr":null,"rate3":null,"cpr3":null},"ios_share":0.6036636258684365},{"date":"sum","ios":{"cost":389660.4400000005,"act":13430.0,"cpa":29.014180193596466,"ret":2328.0,"rate":0.29246231155778896,"cpr":105.85930412371147,"rate3":0.08243375858684986,"cpr3":419.7895238095242},"and":{"cost":840326.49,"act":38633.0,"cpa":21.75152046178138,"ret":10492.0,"rate":0.30301805054151626,"cpr":71.1299247045368,"rate3":0.06887325339411357,"cpr3":305.5669280575538},"ios_share":0.3168004720180241}],"uc":[{"uc":"LG01","short":"读书接着读和推书","l1":"学习与成长","ios":{"cost":83826.33999999998,"act":3023.0,"cpa":27.729520344029105,"rate":0.30153321976149916,"cpr":102.86872881355922,"a_r":1174.0},"and":{"cost":75135.46999999997,"act":3264.0,"cpa":23.019445465686267,"rate":0.3408631153068105,"cpr":66.82996043521263,"a_r":2966.0},"cost":158961.80999999994,"ios_share":0.5273363457549962},{"uc":"PS03","short":"工作和孩子","l1":"个人日程与事务助理","ios":{"cost":73756.44000000005,"act":2512.0,"cpa":29.361640127388554,"rate":0.2750431778929188,"cpr":108.15712715855575,"a_r":2316.0},"and":{"cost":78790.17999999995,"act":4093.0,"cpa":19.249982897630087,"rate":0.25375494071146243,"cpr":74.49670820353059,"a_r":3795.0},"cost":152546.62,"ios_share":0.483500978258319},{"uc":"NT01","short":"人情往来","l1":"随身记事与个人资料管理","ios":{"cost":1235.3699999999997,"act":26.0,"cpa":47.51423076923076,"rate":null,"cpr":null,"a_r":18.0},"and":{"cost":118249.66999999997,"act":5819.0,"cpa":20.321304347826082,"rate":0.2807144145769439,"cpr":72.17134318766065,"a_r":5543.0},"cost":119485.03999999996,"ios_share":0.010339118604303936},{"uc":"PS01","short":"早晚报和日程安排","l1":"个人日程与事务助理","ios":{"cost":74163.37999999998,"act":2466.0,"cpa":30.074363341443622,"rate":0.3352059925093633,"cpr":91.35819366852887,"a_r":1602.0},"and":{"cost":34117.48,"act":1552.0,"cpa":21.982912371134024,"rate":0.32070365358592695,"cpr":67.93651898734177,"a_r":1478.0},"cost":108280.85999999999,"ios_share":0.6849167987768104},{"uc":"LG04","short":"在职考证和转行","l1":"学习与成长","ios":{"cost":45165.109999999986,"act":1607.0,"cpa":28.10523335407591,"rate":0.296078431372549,"cpr":102.7201324503311,"a_r":1020.0},"and":{"cost":60057.05,"act":2525.0,"cpa":23.784970297029705,"rate":0.3262279888785913,"cpr":71.21112215909092,"a_r":2158.0},"cost":105222.15999999999,"ios_share":0.42923572372967816},{"uc":"FN01","short":"持仓公告和研究","l1":"财务与投资","ios":{"cost":375.41,"act":9.0,"cpa":41.71222222222222,"rate":null,"cpr":null,"a_r":7.0},"and":{"cost":92079.99999999999,"act":4119.0,"cpa":22.354940519543575,"rate":0.316108621144213,"cpr":69.84841534612175,"a_r":3793.0},"cost":92455.40999999999,"ios_share":0.00406044383990077},{"uc":"IN01","short":"追踪自己关注的事","l1":"信息检索与追踪","ios":{"cost":39314.05,"act":1375.0,"cpa":28.592036363636367,"rate":0.2851445663010967,"cpr":108.69503496503498,"a_r":1003.0},"and":{"cost":22922.55000000001,"act":994.0,"cpa":23.060915492957758,"rate":0.29717514124293787,"cpr":78.98125475285173,"a_r":885.0},"cost":62236.60000000001,"ios_share":0.6316869816153196},{"uc":"LG02","short":"学生课表作业和备考","l1":"学习与成长","ios":{"cost":19071.6,"act":567.0,"cpa":33.63597883597883,"rate":0.34375,"cpr":82.28545454545456,"a_r":32.0},"and":{"cost":34146.6,"act":1403.0,"cpa":24.338275124732714,"rate":0.30307576894223553,"cpr":80.18487623762377,"a_r":1333.0},"cost":53218.2,"ios_share":0.3583661228677407},{"uc":"TR01","short":"攻略变行程","l1":"出行与旅行","ios":{"cost":9882.619999999995,"act":375.0,"cpa":26.35365333333332,"rate":0.23423423423423423,"cpr":164.84307692307678,"a_r":111.0},"and":{"cost":38343.520000000004,"act":1720.0,"cpa":22.292744186046512,"rate":0.3204853675945753,"cpr":69.79679287305122,"a_r":1401.0},"cost":48226.14,"ios_share":0.20492247565324523},{"uc":"LG03","short":"学语言和新技能","l1":"学习与成长","ios":{"cost":1171.0900000000001,"act":38.0,"cpa":30.818157894736846,"rate":null,"cpr":null,"a_r":14.0},"and":{"cost":43782.809999999976,"act":1794.0,"cpa":24.4051337792642,"rate":0.3083645443196005,"cpr":77.92305668016192,"a_r":1602.0},"cost":44953.89999999998,"ios_share":0.026050909932174977},{"uc":"WK02","short":"待办提醒和回邮件","l1":"工作沟通与协作","ios":{"cost":2416.9899999999993,"act":33.0,"cpa":73.24212121212119,"rate":null,"cpr":null,"a_r":21.0},"and":{"cost":36048.69,"act":1620.0,"cpa":22.252277777777778,"rate":0.32193732193732194,"cpr":68.70462389380528,"a_r":1404.0},"cost":38465.68,"ios_share":0.0628349739300072},{"uc":"PS02","short":"家庭综述","l1":"个人日程与事务助理","ios":{"cost":6650.4900000000025,"act":222.0,"cpa":29.957162162162174,"rate":0.21256038647342995,"cpr":142.21272727272728,"a_r":207.0},"and":{"cost":31340.71000000001,"act":1477.0,"cpa":21.2191672308734,"rate":0.3229768786127168,"cpr":66.17561521252796,"a_r":1384.0},"cost":37991.20000000001,"ios_share":0.1750534334266883},{"uc":"WK01","short":"会议前后全管","l1":"工作沟通与协作","ios":{"cost":1682.99,"act":34.0,"cpa":49.49970588235294,"rate":null,"cpr":null,"a_r":21.0},"and":{"cost":31563.759999999987,"act":1436.0,"cpa":21.980334261838433,"rate":0.3443858327053504,"cpr":62.98461706783368,"a_r":1327.0},"cost":33246.749999999985,"ios_share":0.05062118853722546},{"uc":"WK05","short":"发票报销","l1":"工作沟通与协作","ios":{"cost":102.29,"act":1.0,"cpa":102.29,"rate":null,"cpr":null,"a_r":0.0},"and":{"cost":26263.930000000004,"act":1152.0,"cpa":22.798550347222225,"rate":0.2925958965209634,"cpr":78.02036585365856,"a_r":1121.0},"cost":26366.220000000005,"ios_share":0.0038795853178802265},{"uc":"SH01","short":"查扣费和关会员","l1":"购物与生活服务","ios":{"cost":3044.0899999999997,"act":102.0,"cpa":29.844019607843133,"rate":null,"cpr":null,"a_r":24.0},"and":{"cost":15375.919999999998,"act":652.0,"cpa":23.582699386503066,"rate":0.3406113537117904,"cpr":68.4826282051282,"a_r":458.0},"cost":18420.01,"ios_share":0.16525995371338018},{"uc":"TR00","short":"出行综述","l1":"出行与旅行","ios":{"cost":2979.8800000000006,"act":110.0,"cpa":27.08981818181819,"rate":null,"cpr":null,"a_r":28.0},"and":{"cost":13497.840000000002,"act":651.0,"cpa":20.734009216589865,"rate":0.3008849557522124,"cpr":82.22696078431372,"a_r":339.0},"cost":16477.72,"ios_share":0.18084298070364105},{"uc":"SH03","short":"退款售后申诉","l1":"购物与生活服务","ios":{"cost":513.58,"act":21.0,"cpa":24.45619047619048,"rate":null,"cpr":null,"a_r":11.0},"and":{"cost":15724.209999999995,"act":796.0,"cpa":19.754032663316575,"rate":0.3204930662557781,"cpr":62.08754807692306,"a_r":649.0},"cost":16237.789999999995,"ios_share":0.03162868838678171},{"uc":"SH02","short":"大件比价和盯机酒价","l1":"购物与生活服务","ios":{"cost":364.4,"act":10.0,"cpa":36.44,"rate":null,"cpr":null,"a_r":6.0},"and":{"cost":13985.26,"act":644.0,"cpa":21.716242236024843,"rate":0.34205607476635513,"cpr":62.1344262295082,"a_r":535.0},"cost":14349.66,"ios_share":0.025394329900499384},{"uc":"PS04","short":"全家晚饭和买菜","l1":"个人日程与事务助理","ios":{"cost":465.0300000000001,"act":16.0,"cpa":29.064375000000005,"rate":null,"cpr":null,"a_r":12.0},"and":{"cost":12484.190000000002,"act":793.0,"cpa":15.742988650693572,"rate":0.20816864295125165,"cpr":75.28784810126584,"a_r":759.0},"cost":12949.220000000003,"ios_share":0.03591181553792429},{"uc":"HL02","short":"个性化训练和饮食","l1":"健康与运动","ios":{"cost":2039.6299999999999,"act":89.0,"cpa":22.917191011235953,"rate":null,"cpr":null,"a_r":1.0},"and":{"cost":10467.880000000006,"act":587.0,"cpa":17.83284497444635,"rate":0.2624254473161034,"cpr":66.61704545454548,"a_r":503.0},"cost":12507.510000000006,"ios_share":0.1630724260864072},{"uc":"SH04","short":"挑吃什么去哪家","l1":"购物与生活服务","ios":{"cost":9453.220000000003,"act":372.0,"cpa":25.411881720430117,"rate":0.2288135593220339,"cpr":143.41296296296295,"a_r":118.0},"and":{"cost":2869.6800000000003,"act":179.0,"cpa":16.03173184357542,"rate":0.15267175572519084,"cpr":95.69450000000002,"a_r":131.0},"cost":12322.900000000003,"ios_share":0.7671262446339742},{"uc":"PS05","short":"张罗聚会活动","l1":"个人日程与事务助理","ios":{"cost":5727.98,"act":232.0,"cpa":24.68956896551724,"rate":0.3076923076923077,"cpr":81.41113636363636,"a_r":143.0},"and":{"cost":4894.620000000001,"act":222.0,"cpa":22.047837837837843,"rate":0.40414507772020725,"cpr":56.30205128205129,"a_r":193.0},"cost":10622.6,"ios_share":0.5392258015928303},{"uc":"SH05","short":"盯赛事演出开票","l1":"购物与生活服务","ios":{"cost":3154.3600000000006,"act":93.0,"cpa":33.917849462365595,"rate":null,"cpr":null,"a_r":14.0},"and":{"cost":3928.8799999999997,"act":129.0,"cpa":30.45643410852713,"rate":0.22807017543859648,"cpr":174.04384615384612,"a_r":57.0},"cost":7083.24,"ios_share":0.44532727960650786},{"uc":"WK04","short":"用自己资料写汇报","l1":"工作沟通与协作","ios":{"cost":16.47,"act":0.0,"cpa":null,"rate":null,"cpr":null,"a_r":0.0},"and":{"cost":5206.69,"act":242.0,"cpa":21.515247933884297,"rate":0.2818181818181818,"cpr":75.89983870967743,"a_r":220.0},"cost":5223.16,"ios_share":0.0031532635416108255},{"uc":"HL04","short":"宠物健康","l1":"健康与运动","ios":{"cost":428.11999999999995,"act":17.0,"cpa":25.183529411764702,"rate":null,"cpr":null,"a_r":2.0},"and":{"cost":3865.1900000000005,"act":196.0,"cpa":19.720357142857146,"rate":0.3108108108108108,"cpr":63.43456521739132,"a_r":148.0},"cost":4293.31,"ios_share":0.09971793324963721},{"uc":"WK03","short":"客户跟进和找客户","l1":"工作沟通与协作","ios":{"cost":175.63,"act":0.0,"cpa":null,"rate":null,"cpr":null,"a_r":0.0},"and":{"cost":3161.19,"act":19.0,"cpa":166.37842105263158,"rate":null,"cpr":null,"a_r":19.0},"cost":3336.82,"ios_share":0.052633944893641246},{"uc":"WK00","short":"工作综述","l1":"工作沟通与协作","ios":{"cost":431.3299999999998,"act":11.0,"cpa":39.21181818181817,"rate":null,"cpr":null,"a_r":11.0},"and":{"cost":2604.6600000000003,"act":96.0,"cpa":27.131875000000004,"rate":0.4807692307692308,"cpr":61.3588,"a_r":52.0},"cost":3035.9900000000002,"ios_share":0.1420722729653259},{"uc":"PS06","short":"周末去哪玩","l1":"个人日程与事务助理","ios":{"cost":1149.3,"act":48.0,"cpa":23.943749999999998,"rate":0.3,"cpr":82.935,"a_r":40.0},"and":{"cost":1868.01,"act":88.0,"cpa":21.227386363636363,"rate":0.2222222222222222,"cpr":77.62642857142858,"a_r":63.0},"cost":3017.31,"ios_share":0.3809021943386659}]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('pdata').textContent);
+  const css = getComputedStyle(document.querySelector('.wk'));
+  const C = { ios: css.getPropertyValue('--c-ios').trim(), and: css.getPropertyValue('--c-and').trim(), grid: css.getPropertyValue('--color-border-line').trim(), mut: css.getPropertyValue('--color-fg-muted').trim(), fg: css.getPropertyValue('--color-fg').trim(), panel: css.getPropertyValue('--color-panel').trim() };
+  const Y = (v) => (v == null ? '—' : '¥' + d3.format(',.0f')(v)), P = (v) => (v == null ? '—' : d3.format('.1%')(v)), P0 = (v) => (v == null ? '—' : d3.format('.0%')(v));
+  const fd = (s) => Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10));
+  const tip = document.getElementById('tip');
+  const show = (e, html) => { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; };
+  const hide = () => { tip.hidden = true; };
+  const days = D.plat.filter((r) => r.date !== 'sum');
+  // 1 每天消耗堆叠柱
+  { const el = document.getElementById('ch-daily'); const W = el.clientWidth || 900, H = 280, m = { l: 56, r: 12, t: 26, b: 28 };
+    const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scaleBand(days.map((d) => d.date), [m.l, W - m.r]).padding(0.35);
+    const y = d3.scaleLinear([0, d3.max(days, (d) => d.ios.cost + d.and.cost) * 1.08], [H - m.b, m.t]).nice();
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', C.grid);
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', m.l - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('fill', C.mut).attr('font-size', 11).text((d) => '¥' + d / 10000 + '万');
+    const g = svg.append('g').selectAll('g').data(days).join('g');
+    g.append('rect').attr('x', (d) => x(d.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d.ios.cost)).attr('height', (d) => Math.max(0, y(0) - y(d.ios.cost))).attr('fill', C.ios);
+    g.append('rect').attr('x', (d) => x(d.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d.ios.cost + d.and.cost)).attr('height', (d) => Math.max(0, y(d.ios.cost) - y(d.ios.cost + d.and.cost) - 2)).attr('rx', 4).attr('fill', C.and);
+    g.append('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', (d) => y(d.ios.cost + d.and.cost) - 7).attr('text-anchor', 'middle').attr('font-size', 12).attr('font-weight', 600).attr('fill', C.fg).text((d) => 'iOS ' + P0(d.ios_share));
+    svg.append('g').selectAll('text').data(days).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle').attr('fill', C.mut).attr('font-size', 12).text((d) => fd(d.date));
+    g.append('rect').attr('x', (d) => x(d.date) - x.step() * x.padding() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (e, d) => show(e, '<b>' + fd(d.date) + '</b><br>iOS ' + Y(d.ios.cost) + '（' + P0(d.ios_share) + '）<br>安卓 ' + Y(d.and.cost) + '<br>激活 iOS ' + d3.format(',')(d.ios.act) + ' · 安卓 ' + d3.format(',')(d.and.act))).on('mouseleave', hide);
+  }
+  // 2 次留率、次留成本折线
+  const lineChart = (id, key, fmt, axisFmt) => { const el = document.getElementById(id); const W = el.clientWidth || 440, H = 220, m = { l: 50, r: 46, t: 14, b: 26 };
+    const ds = days.filter((d) => d.ios[key] != null && d.and[key] != null);
+    const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scalePoint(days.map((d) => d.date), [m.l, W - m.r]).padding(0.3);
+    const vals = ds.flatMap((d) => [d.ios[key], d.and[key]]);
+    const y = d3.scaleLinear([d3.min(vals) * 0.9, d3.max(vals) * 1.05], [H - m.b, m.t]).nice();
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', C.grid);
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', m.l - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('fill', C.mut).attr('font-size', 11).text(axisFmt);
+    svg.append('g').selectAll('text').data(days).join('text').attr('x', (d) => x(d.date)).attr('y', H - 8).attr('text-anchor', 'middle').attr('fill', C.mut).attr('font-size', 11).text((d) => fd(d.date));
+    for (const p of ['and', 'ios']) {
+      svg.append('path').datum(ds).attr('fill', 'none').attr('stroke', C[p]).attr('stroke-width', 2).attr('d', d3.line((d) => x(d.date), (d) => y(d[p][key])));
+      svg.append('g').selectAll('circle').data(ds).join('circle').attr('cx', (d) => x(d.date)).attr('cy', (d) => y(d[p][key])).attr('r', 4.5).attr('fill', C[p]).attr('stroke', C.panel).attr('stroke-width', 2);
+      const l = ds[ds.length - 1]; const yi = y(l.ios[key]), ya = y(l.and[key]); let yy = y(l[p][key]); if (Math.abs(yi - ya) < 14) { const mid = (yi + ya) / 2; const up = (p === 'ios') === (l.ios[key] >= l.and[key]); yy = mid + (up ? -8 : 8); } svg.append('text').attr('x', x(l.date) + 8).attr('y', yy + 4).attr('font-size', 11).attr('fill', C.fg).text(p === 'ios' ? 'iOS' : '安卓');
+    }
+    svg.append('g').selectAll('rect').data(ds).join('rect').attr('x', (d) => x(d.date) - 20).attr('width', 40).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (e, d) => show(e, '<b>' + fd(d.date) + ' 激活的人</b><br>iOS ' + fmt(d.ios[key]) + '<br>安卓 ' + fmt(d.and[key]))).on('mouseleave', hide);
+  };
+  lineChart('ch-rate', 'rate', P, (v) => d3.format('.0%')(v));
+  lineChart('ch-cpr', 'cpr', Y, (v) => '¥' + v);
+  // 3 use case 占比 100% 横条
+  { const rows = D.uc.filter((u) => u.cost >= 8000).sort((a, b) => b.ios_share - a.ios_share);
+    const el = document.getElementById('ch-ucshare'); const W = el.clientWidth || 900, rh = 24, m = { l: 160, r: 90, t: 22, b: 8 }, H = m.t + rows.length * rh + m.b;
+    const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scaleLinear([0, 1], [m.l, W - m.r]);
+    svg.append('g').selectAll('text').data([0, 0.5, 1]).join('text').attr('x', x).attr('y', 14).attr('text-anchor', (d) => (d === 0 ? 'start' : d === 1 ? 'end' : 'middle')).attr('fill', C.mut).attr('font-size', 11).text((d) => d3.format('.0%')(d));
+    svg.append('line').attr('x1', x(0.5)).attr('x2', x(0.5)).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', C.mut).attr('stroke-dasharray', '3 3');
+    const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d, i) => 'translate(0,' + (m.t + i * rh) + ')');
+    g.append('text').attr('x', m.l - 8).attr('y', rh / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', C.fg).text((d) => d.uc + ' ' + d.short);
+    g.append('rect').attr('x', x(0)).attr('width', (d) => Math.max(0, x(d.ios_share) - x(0) - (d.ios_share > 0 && d.ios_share < 1 ? 1 : 0))).attr('y', 4).attr('height', rh - 8).attr('fill', C.ios);
+    g.append('rect').attr('x', (d) => x(d.ios_share) + (d.ios_share > 0 ? 1 : 0)).attr('width', (d) => Math.max(0, x(1) - x(d.ios_share) - (d.ios_share > 0 ? 1 : 0))).attr('y', 4).attr('height', rh - 8).attr('fill', C.and);
+    g.append('text').attr('x', (d) => (d.ios_share >= 0.12 ? x(d.ios_share) - 5 : x(d.ios_share) + 5)).attr('y', rh / 2 + 4).attr('text-anchor', (d) => (d.ios_share >= 0.12 ? 'end' : 'start')).attr('font-size', 11).attr('font-weight', 600).attr('fill', '#ffffff').text((d) => P0(d.ios_share));
+    g.append('text').attr('x', W - m.r + 8).attr('y', rh / 2 + 4).attr('font-size', 11).attr('fill', C.mut).text((d) => Y(d.cost));
+    g.append('rect').attr('x', 0).attr('width', W).attr('height', rh).attr('fill', 'transparent')
+      .on('mousemove', (e, d) => show(e, '<b>' + d.uc + ' ' + d.short + '</b><br>这周 ' + Y(d.cost) + '<br>iOS ' + Y(d.ios.cost) + '（' + P0(d.ios_share) + '）<br>安卓 ' + Y(d.and.cost))).on('mouseleave', hide);
+  }
+  // 4 use case 次留率哑铃
+  { const rows = D.uc.filter((u) => u.ios.rate != null && u.and.rate != null).sort((a, b) => (b.ios.rate - b.and.rate) - (a.ios.rate - a.and.rate));
+    const el = document.getElementById('ch-ucrate'); const W = el.clientWidth || 900, rh = 28, m = { l: 160, r: 120, t: 22, b: 8 }, H = m.t + rows.length * rh + m.b;
+    const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const all = rows.flatMap((u) => [u.ios.rate, u.and.rate]);
+    const x = d3.scaleLinear([Math.min(0.15, d3.min(all)) , Math.max(0.42, d3.max(all))], [m.l, W - m.r]).nice();
+    svg.append('g').selectAll('line').data(x.ticks(6)).join('line').attr('x1', x).attr('x2', x).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', C.grid);
+    svg.append('g').selectAll('text').data(x.ticks(6)).join('text').attr('x', x).attr('y', 14).attr('text-anchor', 'middle').attr('fill', C.mut).attr('font-size', 11).text((d) => d3.format('.0%')(d));
+    const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d, i) => 'translate(0,' + (m.t + i * rh + rh / 2) + ')');
+    g.append('text').attr('x', m.l - 8).attr('y', 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', C.fg).text((d) => d.uc + ' ' + d.short);
+    g.append('line').attr('x1', (d) => x(d.ios.rate)).attr('x2', (d) => x(d.and.rate)).attr('stroke', C.mut).attr('stroke-width', 2);
+    g.append('circle').attr('cx', (d) => x(d.and.rate)).attr('r', 6).attr('fill', C.and).attr('stroke', C.panel).attr('stroke-width', 2);
+    g.append('circle').attr('cx', (d) => x(d.ios.rate)).attr('r', 6).attr('fill', C.ios).attr('stroke', C.panel).attr('stroke-width', 2);
+    g.append('text').attr('x', W - m.r + 8).attr('y', 4).attr('font-size', 11).attr('fill', C.mut).text((d) => { const v = (d.ios.rate - d.and.rate) * 100; return 'iOS ' + (v >= 0 ? '+' : '') + v.toFixed(1) + ' 个点'; });
+    g.append('rect').attr('x', 0).attr('y', -rh / 2).attr('width', W).attr('height', rh).attr('fill', 'transparent')
+      .on('mousemove', (e, d) => show(e, '<b>' + d.uc + ' ' + d.short + '</b><br>次留率 iOS ' + P(d.ios.rate) + ' · 安卓 ' + P(d.and.rate) + '<br>次留成本 iOS ' + Y(d.ios.cpr) + ' · 安卓 ' + Y(d.and.cpr) + '<br>激活（算次留的）iOS ' + d3.format(',')(d.ios.a_r) + ' · 安卓 ' + d3.format(',')(d.and.a_r))).on('mouseleave', hide);
+  }
+})();
+</script>
 <!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
 <style id="gtoc-style">
   .gtoc-anchor { scroll-margin-top: 12px; }
