@@ -124,7 +124,7 @@ document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
 // KPI
-const YD=(()=>{const t=new Date(D.T+'T00:00:00');t.setDate(t.getDate()-1);return t.toISOString().slice(0,10)})();
+const YD=(()=>{const t=new Date(D.T+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-1);return t.toISOString().slice(0,10)})();
 const TG=D.target||{A:150,B:150};
 const wdays=D.days.filter(d=>d<D.T&&![0,6].includes(new Date(d+'T00:00:00').getDay())).length;
 document.getElementById('legend').innerHTML=`<div class="lr"><b>目标</b><span>A 组一周 ${TG.A} 条、B 组一周 ${TG.B} 条（AI 和真人二创都算），按周一到周五排，看总数</span><span>其中头部模板变式约 70%、每天至少 20 条，新测试约 30%</span></div>
