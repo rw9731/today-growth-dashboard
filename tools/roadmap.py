@@ -202,7 +202,7 @@ def main():
         if wk > mon(D):
             break
         prog.append({'wk': wk, 'lit': sum(1 for x in out if x['lit_wk'] and x['lit_wk'] <= wk), 'tested': sum(1 for x in out if x['first_wk'] and x['first_wk'] <= wk),
-                     'new_lit': [x['uc'] + ' ' + x['name'] for x in out if x['lit_wk'] == wk]})
+                     'new_lit': [x['uc'] + ' ' + x['name'] for x in out if x['lit_wk'] == wk], 'new_test': sum(1 for x in out if x['first_wk'] == wk)})
     TL = {'weeks': weeks, 'cur': mon(D), 'prog': prog}
 
     ORDER = {'已点亮': 0, '测试中': 1, '判弱': 2, '没测': 3, '储备': 4, '暂不做': 5}
@@ -301,17 +301,44 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         trs.append(f'<tr><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td><td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}</span></td>{tds}<td class="num">{lit_txt}</td></tr>')
     th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}">{E(wlab(w))}</th>' for w in wks)
     prog = TL['prog']
-    mx_p = max([p['tested'] for p in prog] + [1])
-    pg = ''.join(
-        f'<div class="pw{" cur" if p["wk"] == cur else ""}"><div class="pb"><i class="t" style="height:{p["tested"] / mx_p * 100:.0f}%"></i><i class="l" style="height:{p["lit"] / mx_p * 100:.0f}%"></i></div>'
-        f'<b>{p["lit"]}</b><span>点亮 / 测过 {p["tested"]}</span><span class="wl">{E(wlab(p["wk"]))}</span>'
-        f'<span class="nl">{E("、".join(n.split(" ")[0] for n in p["new_lit"])) or "—"}</span></div>' for p in prog)
+    n_all = len(out)
+    nP = len(prog)
+    VW, L, R, T, B = 1200, 46, 12, 26, 52
+    PH = 230
+    slot = (VW - L - R) / max(nP, 1)
+    bw = min(64, slot * 0.46)
+    ymax = max(n_all, 1)
+    ys = ymax * 1.12
+    yy = lambda v: T + PH - v / ys * PH
+    sv = [f'<svg class="pgsvg" viewBox="0 0 {VW} {T + PH + B}" role="img" aria-label="每周累计点亮和测过的 use case 数">']
+    for g in range(0, ymax + 1, 10):
+        sv.append(f'<line class="gl" x1="{L}" x2="{VW - R}" y1="{yy(g):.1f}" y2="{yy(g):.1f}"/><text class="ax" x="{L - 8}" y="{yy(g) + 4:.1f}" text-anchor="end">{g}</text>')
+    sv.append(f'<line class="tot" x1="{L}" x2="{VW - R}" y1="{yy(n_all):.1f}" y2="{yy(n_all):.1f}"/><text class="ax" x="{VW - R}" y="{yy(n_all) - 6:.1f}" text-anchor="end">库里一共 {n_all} 个 use case</text>')
+    for i, p in enumerate(prog):
+        cx = L + slot * (i + 0.5)
+        x0 = cx - bw / 2
+        lit, tst = p['lit'], p['tested']
+        sv.append(f'<rect class="bt" x="{x0:.1f}" y="{yy(tst):.1f}" width="{bw:.1f}" height="{yy(0) - yy(tst):.1f}" rx="3"/>')
+        if lit:
+            sv.append(f'<rect class="bl" x="{x0:.1f}" y="{yy(lit):.1f}" width="{bw:.1f}" height="{yy(0) - yy(lit):.1f}"/>')
+            if yy(0) - yy(lit) >= 18:
+                sv.append(f'<text class="vl" x="{cx:.1f}" y="{yy(lit) + 15:.1f}" text-anchor="middle">{lit}</text>')
+        sv.append(f'<text class="vt" x="{cx:.1f}" y="{yy(tst) - 6:.1f}" text-anchor="middle">{tst}</text>')
+        we = (dt.date.fromisoformat(p['wk']) + dt.timedelta(days=6)).isoformat()
+        lab = md(p['wk']) + '–' + md(we)
+        cc = ' cur' if p['wk'] == cur else ''
+        sv.append(f'<text class="xl{cc}" x="{cx:.1f}" y="{T + PH + 20}" text-anchor="middle">{"本周 " if p["wk"] == cur else ""}{lab}</text>')
+        sv.append(f'<text class="xs" x="{cx:.1f}" y="{T + PH + 38}" text-anchor="middle">新点亮 {len(p["new_lit"])}　新测 {p["new_test"]}</text>')
+    sv.append('</svg>')
+    cols = ''.join(
+        f'<div class="pc{" cur" if p["wk"] == cur else ""}"><b>这周新点亮</b>'
+        + (''.join(f'<span>{E(n)}</span>' for n in p['new_lit']) or '<span class="mu">没有新点亮</span>') + '</div>' for p in prog)
+    pg = ''.join(sv) + f'<div class="pcols" style="grid-template-columns: repeat({nP}, 1fr); margin-left: {L / VW * 100:.2f}%; margin-right: {R / VW * 100:.2f}%">{cols}</div>'
     tl_html = f'''
   <section class="card" id="roadmap">
     <h2>路线图：每周测了什么、哪周点亮</h2>
     <h3>点亮进度（累计 use case 数）</h3>
-    <div class="prog">{pg}</div>
-    <p class="note">深色柱是到这周为止点亮的 use case 数，浅色柱是测过的；最下面一行是这周新点亮的。点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000。</p>
+    <div class="lgd"><span><i style="background:#2f8f5b"></i>到这周为止已点亮（柱内数字）</span><span><i style="background:#cfe5d7"></i>测过、还没点亮（柱顶数字是测过的总数）</span><span>横轴是周（周一到周日）；「新测」= 这周第一次花钱的 use case 数</span></div>\n    <div class="prog">{pg}</div>\n    <p class="note">点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000，算在到 ¥5,000 那天所在的周。下面每列是这周新点亮的 use case。</p>
     <h3>每个 use case 每周</h3>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
     <div class="rmwrap"><table class="rm tl">
@@ -370,15 +397,23 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   .wk .tl .fut.has { outline: 1.5px dashed #6fb38c; outline-offset: -4px; color: #1f5f3c; }
   .wk .tl th.cur, .wk .tl td.cur { box-shadow: inset 0 0 0 2px #c98a00; }
   .wk .tl thead th.cur { box-shadow: inset 0 0 0 2px #c98a00, 0 1px 0 var(--color-border-line); }
-  .wk .prog { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; }
-  .wk .pw { flex: 0 0 7.6rem; width: 7.6rem; display: flex; flex-direction: column; font-size: 11px; color: var(--color-fg-muted); }
-  .wk .pw.cur { color: var(--color-fg); }
-  .wk .pw .pb { position: relative; height: 70px; border-bottom: 1px solid var(--color-border-line); margin-bottom: 4px; }
-  .wk .pw .pb i { position: absolute; bottom: 0; width: 46%; border-radius: 3px 3px 0 0; }
-  .wk .pw .pb i.t { left: 0; background: #dcebe1; } .wk .pw .pb i.l { right: 0; background: #2f8f5b; }
-  .wk .pw b { font-size: 20px; color: var(--color-fg); font-variant-numeric: tabular-nums; }
-  .wk .pw .wl { font-weight: 600; margin-top: 2px; }
-  .wk .pw .nl { white-space: normal; color: #2f8f5b; }
+  .wk .prog { margin: 6px 0 4px; }
+  .wk .pgsvg { display: block; width: 100%; height: auto; }
+  .wk .pgsvg .gl { stroke: var(--color-border-line); stroke-width: 1; }
+  .wk .pgsvg .tot { stroke: var(--color-fg-muted); stroke-dasharray: 4 4; stroke-width: 1; }
+  .wk .pgsvg .ax { fill: var(--color-fg-muted); font-size: 12px; }
+  .wk .pgsvg .bt { fill: #cfe5d7; } .wk .pgsvg .bl { fill: #2f8f5b; }
+  .wk .pgsvg .vl { fill: #fff; font-size: 13px; font-weight: 700; }
+  .wk .pgsvg .vt { fill: var(--color-fg); font-size: 13px; font-weight: 600; }
+  .wk .pgsvg .xl { fill: var(--color-fg); font-size: 13px; font-weight: 600; }
+  .wk .pgsvg .xl.cur { fill: #b07800; }
+  .wk .pgsvg .xs { fill: var(--color-fg-muted); font-size: 11.5px; }
+  .wk .pcols { display: grid; gap: 6px; font-size: 11.5px; line-height: 1.5; }
+  .wk .pc { display: flex; flex-direction: column; border-top: 2px solid #2f8f5b; padding-top: 4px; min-width: 0; }
+  .wk .pc.cur { border-top-color: #c98a00; }
+  .wk .pc b { font-size: 11px; color: var(--color-fg-muted); font-weight: 600; }
+  .wk .pc span { color: var(--color-fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wk .pc .mu { color: var(--color-fg-muted); }
   .wk .def { margin: var(--cds-gap-sm) 0 0; padding: 10px 14px; background: #f1f7f3; border-left: 3px solid #2f8f5b; border-radius: 4px; font-size: var(--cds-font-size-caption); line-height: 1.7; }
 </style>'''
     th_types = ''.join(f'<th class="num" style="text-align:center">{E(t)}</th>' for t in TYPES)
