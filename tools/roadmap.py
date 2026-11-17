@@ -107,11 +107,11 @@ def main():
     wk1 = (dt.date.fromisoformat(wk0) + dt.timedelta(days=6)).isoformat() if wk0 else None
     sched = defaultdict(lambda: defaultdict(int))
     for e in plan.get('E', []):
-        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut':
+        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut' and '顺延' not in (e.get('to') or ''):
             sched[e['uc']][e.get('t', '')] += int(e.get('n') or 0)
     sched_e = defaultdict(list)
     for e in plan.get('E', []):
-        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut':
+        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut' and '顺延' not in (e.get('to') or ''):
             sched_e[e['uc']].append(e)
     SCN = json.load(open(os.path.join(ROOT, 'tools', 'scenes.json')))
     SM = json.load(open(os.path.join(ROOT, 'notes', 'scene-map.json')))
@@ -228,7 +228,7 @@ def main():
                 break
     plan_wk = defaultdict(lambda: defaultdict(int))
     for e in plan.get('E', []):
-        if e.get('s') != 'cut' and e.get('d'):
+        if e.get('s') != 'cut' and '顺延' not in (e.get('to') or '') and e.get('d'):
             plan_wk[e['uc']][mon(e['d'])] += int(e.get('n') or 0)
     for x in out:
         ms = [m for m in by.get(x['uc'], []) if m['cost'] > 0]
@@ -250,7 +250,7 @@ def main():
             tagd = lambda m: SM.get(m['id']) if SM.get(m['id'], {}).get('uc') == x['uc'] else None
             pw = defaultdict(lambda: defaultdict(int))
             for e in plan.get('E', []):
-                if e.get('uc') == x['uc'] and e.get('s') != 'cut' and e.get('d'):
+                if e.get('uc') == x['uc'] and e.get('s') != 'cut' and '顺延' not in (e.get('to') or '') and e.get('d'):
                     h = hits(x['uc'], e.get('sc', ''))
                     for k, v in (split(int(e.get('n') or 0), h) if h else {0: int(e.get('n') or 0)}).items():
                         pw[k][mon(e['d'])] += v
