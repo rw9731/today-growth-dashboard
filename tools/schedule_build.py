@@ -38,7 +38,7 @@ NAV_HTML = """<nav class="sx-nav" aria-label="素材看板和往期排期">
 <a class="sx-back" href="{rel}">← 素材看板</a>
 <span class="sx-lab">排期</span>
 <a class="sx-back" href="{rel}output/">素材产出</a>
-<a class="sx-back" href="{rel}roadmap/">方向地图</a>
+<a class="sx-back" href="{rel}roadmap/">点亮路线图</a>
 <span class="sx-chips" id="sx-chips"><a class="sx-chip" aria-current="page" href="{rel}schedule/{date}/">{label}</a></span>
 <select id="sx-more" aria-label="更早的排期" hidden></select>
 </nav>"""
