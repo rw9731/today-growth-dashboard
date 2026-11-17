@@ -159,6 +159,52 @@ def main():
                     'cells': cells, 'sched': sum(sc.values()), 'sched_t': dict(sc), 'tier': tier.get(u, ('', 0))[0],
                     'note': NOT_NOW.get(u, '')})
 
+    # 时间线（Reina 11/17：要有 roadmap 的时间感）：按周看每个 use case 新测了几条、花了多少、哪周点亮、排了几条
+    mon = lambda d: (dt.date.fromisoformat(d) - dt.timedelta(days=dt.date.fromisoformat(d).weekday())).isoformat()
+    plan_weeks = {mon(e['d']) for e in plan.get('E', []) if e.get('d')}
+    W0 = mon(first_day)
+    W1 = max([mon(D)] + list(plan_weeks))
+    weeks = []
+    w = dt.date.fromisoformat(W0)
+    while w.isoformat() <= W1:
+        weeks.append(w.isoformat())
+        w += dt.timedelta(days=7)
+    wk_tot = defaultdict(float)
+    for r in rows:
+        wk_tot[mon(r['date'])] += r['cost']
+    # 每条素材累计花到 ¥5,000 的那天
+    for m in M.values():
+        acc, m['lit_day'] = 0.0, None
+        for d_ in sorted(m['days']):
+            acc += m['days'][d_]
+            if acc >= LIT:
+                m['lit_day'] = d_
+                break
+    plan_wk = defaultdict(lambda: defaultdict(int))
+    for e in plan.get('E', []):
+        if e.get('s') != 'cut' and e.get('d'):
+            plan_wk[e['uc']][mon(e['d'])] += int(e.get('n') or 0)
+    for x in out:
+        ms = [m for m in by.get(x['uc'], []) if m['cost'] > 0]
+        tl = {}
+        for wk in weeks:
+            new = sum(1 for m in ms if mon(m['first']) == wk)
+            cost = sum(c for m in ms for d_, c in m['days'].items() if mon(d_) == wk)
+            tl[wk] = {'new': new, 'cost': round(cost), 'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0, 'plan': plan_wk[x['uc']].get(wk, 0)}
+        lits = sorted(m['lit_day'] for m in ms if m['lit_day'])
+        x['lit_day'] = lits[0] if lits else ''
+        x['lit_wk'] = mon(lits[0]) if lits else ''
+        x['first_wk'] = mon(x['first']) if x['first'] else ''
+        x['tl'] = tl
+        x['lit_mat'] = next((m['name'] for m in ms if m['lit_day'] == x['lit_day']), '') if lits else ''
+    prog = []
+    for wk in weeks:
+        if wk > mon(D):
+            break
+        prog.append({'wk': wk, 'lit': sum(1 for x in out if x['lit_wk'] and x['lit_wk'] <= wk), 'tested': sum(1 for x in out if x['first_wk'] and x['first_wk'] <= wk),
+                     'new_lit': [x['uc'] + ' ' + x['name'] for x in out if x['lit_wk'] == wk]})
+    TL = {'weeks': weeks, 'cur': mon(D), 'prog': prog}
+
     ORDER = {'已点亮': 0, '测试中': 1, '判弱': 2, '没测': 3, '储备': 4, '暂不做': 5}
     out.sort(key=lambda x: (x['l1'], ORDER[x['st']], -x['c30']))
     cnt = defaultdict(int)
@@ -173,7 +219,7 @@ def main():
     untested = [x for x in out if x['st'] == '没测']
     near = [x for x in out if x['st'] == '测试中' and x['n30'] >= 5]
 
-    page = render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near)
+    page = render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     open(a.out, 'w').write(page)
     print(json.dumps({'date': D, 'ucs': len(out), 'status': dict(cnt), 'week': wk0, 'sched_by_tier': dict(tier_n)}, ensure_ascii=False))
@@ -183,7 +229,7 @@ def fy(v):
     return '¥' + format(int(round(v)), ',')
 
 
-def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near):
+def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL):
     E = html.escape
     md = lambda s: (str(int(s[5:7])) + '/' + str(int(s[8:10]))) if s else '—'
     STC = {'已点亮': 'st-lit', '测试中': 'st-test', '判弱': 'st-weak', '没测': 'st-none', '储备': 'st-none', '暂不做': 'st-none'}
@@ -218,6 +264,63 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
             f'<td class="num">{ret}</td>'
             f'<td class="num">{md(x["first"])}<span class="sub">{"最近 " + md(x["last"]) if x["last"] else ""}</span></td>'
             f'<td class="num">{sch}</td></tr>')
+    # 路线图时间线
+    wks, cur = TL['weeks'], TL['cur']
+    nxt = (dt.date.fromisoformat(cur) + dt.timedelta(days=7)).isoformat()
+    wlab = lambda w: ('本周 ' if w == cur else '下周 ' if w == nxt else '') + md(w) + ' 起'
+    lv = lambda sh: 'l4' if sh >= 0.05 else 'l3' if sh >= 0.02 else 'l2' if sh >= 0.005 else 'l1'
+    RO = {'已点亮': 0, '测试中': 1, '判弱': 2, '没测': 3, '储备': 4, '暂不做': 5}
+    tl_rows = sorted(out, key=lambda x: (RO[x['st']], x['lit_wk'] or '9999', x['first_wk'] or '9999', -x['c30']))
+    trs = []
+    for x in tl_rows:
+        tds = ''
+        for w in wks:
+            c = x['tl'][w]
+            tip = f"{x['uc']} {wlab(w)}：新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.1%}）" + (f"，排期 {c['plan']} 条" if c['plan'] else '')
+            if w == x['lit_wk']:
+                tip += f"；{md(x['lit_day'])} 点亮（{x['lit_mat']} 累计花到 ¥5,000）"
+            inner = ''
+            if w == x['lit_wk']:
+                inner += '<span class="star">★</span>'
+            if c['new']:
+                inner += f'<b>+{c["new"]}</b>'
+            if w == x['first_wk']:
+                inner += '<span class="tg">首测</span>'
+            if c['plan']:
+                inner += f'<span class="pl">排 {c["plan"]}</span>'
+            if w > cur:
+                cls = 'fut' + (' has' if c['plan'] else '')
+            elif c['cost'] > 0 or c['new']:
+                cls = lv(c['share'])
+            else:
+                cls = 'emp'
+            if w == cur:
+                cls += ' cur'
+            tds += f'<td class="tc {cls}" title="{E(tip)}">{inner}</td>'
+        lit_txt = md(x['lit_day']) if x['lit_day'] else ''
+        trs.append(f'<tr><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td><td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}</span></td>{tds}<td class="num">{lit_txt}</td></tr>')
+    th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}">{E(wlab(w))}</th>' for w in wks)
+    prog = TL['prog']
+    mx_p = max([p['tested'] for p in prog] + [1])
+    pg = ''.join(
+        f'<div class="pw{" cur" if p["wk"] == cur else ""}"><div class="pb"><i class="t" style="height:{p["tested"] / mx_p * 100:.0f}%"></i><i class="l" style="height:{p["lit"] / mx_p * 100:.0f}%"></i></div>'
+        f'<b>{p["lit"]}</b><span>点亮 / 测过 {p["tested"]}</span><span class="wl">{E(wlab(p["wk"]))}</span>'
+        f'<span class="nl">{E("、".join(n.split(" ")[0] for n in p["new_lit"])) or "—"}</span></div>' for p in prog)
+    tl_html = f'''
+  <section class="card" id="roadmap">
+    <h2>路线图：每周测了什么、哪周点亮</h2>
+    <h3>点亮进度（累计 use case 数）</h3>
+    <div class="prog">{pg}</div>
+    <p class="note">深色柱是到这周为止点亮的 use case 数，浅色柱是测过的；最下面一行是这周新点亮的。点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000。</p>
+    <h3>每个 use case 每周</h3>
+    <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
+    <div class="scroll"><table class="rm tl">
+      <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">点亮日</th></tr></thead>
+      <tbody>{''.join(trs)}</tbody>
+    </table></div>
+    <p class="note">排期从 11/3 那周开始有记录，之前的周只有实际测了多少。排序：已点亮的按点亮先后，后面是测试中、判弱、没测和储备。</p>
+  </section>'''
+
     tsum = sum(tier_n.values())
     tier_line = '、'.join(f'{E(g)} {tier_n.get(g, 0)} 条（{tier_n.get(g, 0) / tsum:.0%}，目标 {s}%）' for g, s in groups) if tsum else '这周还没有排期'
     if tier_n.get('没分档'):
@@ -250,6 +353,27 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   .wk .kp b { display: block; font-size: 22px; color: var(--color-fg); font-variant-numeric: tabular-nums; }
   .wk .lgd { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-sm) 0; }
   .wk .lgd i { display: inline-block; width: 14px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .wk .tl td.tc, .wk .tl th.tc { text-align: center; min-width: 4.4rem; padding: 4px 3px; border-left: 2px solid var(--color-bg, #fff); white-space: nowrap; }
+  .wk .tl th.tc { font-size: 11px; }
+  .wk .tl td.tc b { font-size: 12px; }
+  .wk .tl td.tc .star { color: #c98a00; font-size: 14px; margin-right: 2px; }
+  .wk .tl td.tc .tg { display: block; font-size: 10px; opacity: .75; }
+  .wk .tl td.tc .pl { display: block; font-size: 10px; opacity: .85; }
+  .wk .tl .l4 { background: #2f8f5b; color: #fff; } .wk .tl .l3 { background: #6fb38c; color: #fff; }
+  .wk .tl .l2 { background: #b9dcc6; color: #1f5f3c; } .wk .tl .l1 { background: #e6f1ea; color: #1f5f3c; }
+  .wk .tl .emp { background: transparent; }
+  .wk .tl .fut { background: transparent; color: var(--color-fg-muted); }
+  .wk .tl .fut.has { outline: 1.5px dashed #6fb38c; outline-offset: -4px; color: #1f5f3c; }
+  .wk .tl th.cur, .wk .tl td.cur { box-shadow: inset 0 0 0 2px #c98a00; }
+  .wk .prog { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; }
+  .wk .pw { flex: 0 0 7.6rem; width: 7.6rem; display: flex; flex-direction: column; font-size: 11px; color: var(--color-fg-muted); }
+  .wk .pw.cur { color: var(--color-fg); }
+  .wk .pw .pb { position: relative; height: 70px; border-bottom: 1px solid var(--color-border-line); margin-bottom: 4px; }
+  .wk .pw .pb i { position: absolute; bottom: 0; width: 46%; border-radius: 3px 3px 0 0; }
+  .wk .pw .pb i.t { left: 0; background: #dcebe1; } .wk .pw .pb i.l { right: 0; background: #2f8f5b; }
+  .wk .pw b { font-size: 20px; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+  .wk .pw .wl { font-weight: 600; margin-top: 2px; }
+  .wk .pw .nl { white-space: normal; color: #2f8f5b; }
 </style>'''
     th_types = ''.join(f'<th class="num" style="text-align:center">{E(t)}</th>' for t in TYPES)
     return f'''<!DOCTYPE html>
@@ -274,7 +398,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
 </div>
 <div class="wk">
   <header>
-    <h1>方向地图：哪些 use case 测过、点亮了没有</h1>
+    <h1>方向地图：每个方向什么时候测、什么时候点亮、接下来排了什么</h1>
     <p class="sub">数据 {md(first_day)}–{md(D)}（投放数据_分日，两端合计）。一行一个 use case（Use case 库里在用和储备的），按一级分类分组；中间五格是素材类型，数字是花过钱的素材条数。状态按近 30 天（{md(d30)}–{md(D)}），和日报冷启那节「方向偏弱」同一套规则。</p>
   </header>
 
@@ -291,6 +415,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
       <li><b>库里在用、还没测过的：</b>{lst(untested)}。新方向的候选。</li>
     </ul>
   </section>
+
+{tl_html}
 
   <section class="card" id="map">
     <h2>use case × 素材类型</h2>
