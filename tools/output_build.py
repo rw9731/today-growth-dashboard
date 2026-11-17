@@ -10,7 +10,7 @@
 - 链接：飞书成片那一格（?sheet=…&range=列行的 base64），已经投出去的再带巨量视频（tools/links.json，按素材名在分日表找素材 ID）。
 """
 import argparse, base64, datetime as dt, glob, json, os, re
-from collections import Counter
+from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = {'A': 'https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc', 'B': 'https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb'}
@@ -468,11 +468,17 @@ def main():
     ag, ag_asof = agency(a.agency, a.kv, T)
     self_ids = {x['mid'] for x in ag if x['g'] == 'SELF' and x.get('mid')}
     team_items = [x for x in store.values() if x.get('mid') not in self_ids]
-    daily_counts = Counter((x['d'], x['g']) for x in team_items if x['ok'] and x['k'] != 'X')
-    daily_counts.update((x['d'], TREND_TYPES[x['typ']]) for x in ag if x['typ'] in TREND_TYPES)
     for x in ag:
         u = ucs.get(x.get('uc') or '', {})
         x['l1'], x['ucn'] = u.get('l1', ''), u.get('short', '')
+    trend_items = [x for x in team_items if x['ok'] and x['k'] != 'X']
+    trend_items += [x for x in ag if x['typ'] in TREND_TYPES]
+    daily_counts = Counter()
+    daily_l1 = defaultdict(Counter)
+    for x in trend_items:
+        group = TREND_TYPES.get(x['typ'], x['g'])
+        daily_counts[x['d'], group] += 1
+        daily_l1[x['d']][x['l1'] or '未标分类'] += 1
     names = set(x['name'] for x in store.values()) | sheet_names
     stg = stage(a.dir, names, T)
     mon = T - dt.timedelta(days=T.weekday())
@@ -500,7 +506,7 @@ def main():
         # Use complete days, ending within the displayed week when viewing an archive.
         trend_end = min(T - dt.timedelta(days=1), w0 + dt.timedelta(days=6))
         trend_dates = [(trend_end - dt.timedelta(days=i)).isoformat() for i in range(13, -1, -1)]
-        trend = [dict(d=d, counts={g: daily_counts[d, g] for g in TREND_KEYS}) for d in trend_dates]
+        trend = [dict(d=d, counts={g: daily_counts[d, g] for g in TREND_KEYS}, l1=daily_l1[d]) for d in trend_dates]
         data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks, trend=trend,
                     batches=batches(plan, [x for x in items if x['g'] in ('A', 'B')], w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}),
                     stage=stg if w0 == mon else None, src=SRC_NAME, agt=tg, ag_asof=ag_asof)

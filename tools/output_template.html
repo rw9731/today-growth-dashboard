@@ -118,17 +118,22 @@ tr.we td{color:var(--sub)}
 <h1>素材产出</h1>
 <p class="sub" id="sub"></p>
 <section class="card trend" id="trend" aria-labelledby="trend-title" hidden>
-  <div class="trend-head"><h2 id="trend-title">过去 14 天素材产量</h2><span class="trend-range" id="trend-range"></span></div>
-  <div class="trend-key" id="trend-key"></div>
+  <div class="trend-head"><h2 id="trend-title">过去 14 天素材产量</h2><span class="trend-range"></span></div>
+</section>
+<section class="card trend" id="trend-l1" aria-labelledby="trend-l1-title" hidden>
+  <div class="trend-head"><h2 id="trend-l1-title">过去 14 天素材产量 · 按一级分类</h2><span class="trend-range"></span></div>
+</section>
+<template id="trend-body">
+  <div class="trend-key"></div>
   <p class="trend-unit">产量（条）</p>
   <div class="trend-scroll">
     <div class="trend-plot">
-      <div class="trend-axis" id="trend-axis" aria-hidden="true"></div>
-      <div class="trend-days" id="trend-days"></div>
+      <div class="trend-axis" aria-hidden="true"></div>
+      <div class="trend-days"></div>
     </div>
   </div>
-  <div class="trend-detail" id="trend-detail"></div>
-</section>
+  <div class="trend-detail"></div>
+</template>
 <div class="legend card" id="legend"></div>
 
 <h2>本周交了多少</h2>
@@ -158,22 +163,20 @@ const SO=['A','B','ZDT','YP','AM','SELF'];const so=g=>{const i=SO.indexOf(g);ret
 document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组、自建号和外部合作的素材产出，数据截至 ${md(D.T)}。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
-function renderTrend(days){
+function renderTrend(id,days,sources){
   if(!days?.length)return;
-  const sources=[
-    ['A','A 组','#245da8'],['B','B 组','#7146a0'],['ZDT','星广','#137058'],
-    ['XT','星图','#99581e'],['SELF','自建号','#546375'],['XHS','小红书视频','#a83853']
-  ];
-  const totals=days.map(({counts})=>sources.reduce((sum,[g])=>sum+counts[g],0));
+  const chart=document.getElementById(id);
+  chart.append(document.getElementById('trend-body').content.cloneNode(true));
+  const totals=days.map(({counts})=>sources.reduce((sum,[g])=>sum+(counts[g]??0),0));
   const step=Math.max(1,Math.ceil(Math.max(...totals)/20)*5);
   const max=step*4;
   const ticks=[0,1,2,3,4];
-  const plot=document.getElementById('trend-days');
-  const detail=document.getElementById('trend-detail');
-  const breakdown=counts=>sources.map(([g,label])=>`${label} ${counts[g]}`);
-  document.getElementById('trend-range').textContent=`${md(days[0].d)}–${md(days.at(-1).d)}`;
-  document.getElementById('trend-key').innerHTML=sources.map(([,label,color])=>`<span><i style="background:${color}"></i>${label}</span>`).join('');
-  document.getElementById('trend-axis').innerHTML=ticks.map(i=>`<span style="bottom:${i*25}%">${i*step}</span>`).join('');
+  const plot=chart.querySelector('.trend-days');
+  const detail=chart.querySelector('.trend-detail');
+  const breakdown=counts=>sources.map(([g,label])=>`${label} ${counts[g]??0}`);
+  chart.querySelector('.trend-range').textContent=`${md(days[0].d)}–${md(days.at(-1).d)}`;
+  chart.querySelector('.trend-key').innerHTML=sources.map(([,label,color])=>`<span><i style="background:${color}"></i>${esc(label)}</span>`).join('');
+  chart.querySelector('.trend-axis').innerHTML=ticks.map(i=>`<span style="bottom:${i*25}%">${i*step}</span>`).join('');
   const grid=`<div class="trend-grid" aria-hidden="true">${ticks.map(i=>`<i style="bottom:${i*25}%"></i>`).join('')}</div>`;
   plot.innerHTML=grid+days.map(({d,counts},i)=>{
     const total=totals[i];
@@ -196,7 +199,7 @@ function renderTrend(days){
     const index=Number(button.dataset.index);
     const {d,counts}=days[index];
     detail.innerHTML=`<b>${md(d)} 周${wd(d)} · ${totals[index]} 条</b>`+
-      breakdown(counts).map(text=>`<span>${text}</span>`).join('');
+      breakdown(counts).map(text=>`<span>${esc(text)}</span>`).join('');
   };
   const interact=event=>{
     const button=event.target.closest('.trend-day');
@@ -204,9 +207,24 @@ function renderTrend(days){
   };
   for(const event of ['mouseover','focusin','click'])plot.addEventListener(event,interact);
   select(plot.lastElementChild);
-  document.getElementById('trend').hidden=false;
+  chart.hidden=false;
 }
-renderTrend(D.trend);
+renderTrend('trend',D.trend,[
+  ['A','A 组','#245da8'],['B','B 组','#7146a0'],['ZDT','星广','#137058'],
+  ['XT','星图','#99581e'],['SELF','自建号','#546375'],['XHS','小红书视频','#a83853']
+]);
+if(D.trend?.some(day=>day.l1)){
+  const colors={
+    '个人日程与事务助理':'#245da8','工作沟通与协作':'#7146a0','学习与成长':'#137058',
+    '购物与生活服务':'#99581e','健康与运动':'#a83853','信息检索与追踪':'#177386',
+    '随身记事与个人资料管理':'#4d579c','出行与旅行':'#a04417','财务与投资':'#646b20',
+    'AI 个人助理综述':'#366658','未标分类':'#60656d'
+  };
+  const categories=[...new Set(D.trend.flatMap(day=>Object.keys(day.l1??{})))];
+  categories.sort((a,b)=>(a==='未标分类')-(b==='未标分类')||a.localeCompare(b,'zh-CN'));
+  renderTrend('trend-l1',D.trend.map(({d,l1})=>({d,counts:l1??{}})),
+    categories.map(label=>[label,label,colors[label]??'#79534f']));
+}
 // KPI
 const YD=(()=>{const t=new Date(D.T+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-1);return t.toISOString().slice(0,10)})();
 const TG=D.target||{A:150,B:150};
