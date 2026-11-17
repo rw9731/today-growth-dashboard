@@ -153,16 +153,16 @@ const IT=D.items, CNT=x=>x.k!=='X';
 const isVar=x=>x.k==='V'||x.k==='S';
 const KC={V:'var(--v)',S:'var(--s)',N:'var(--n)',X:'var(--x)',O:'var(--o)'};
 const SRC=D.src||{A:'唯西 A 组',B:'唯西 B 组'};const sn=g=>SRC[g]||g;
-const TYO=['AI','二创','星广','抖音星图','抖音达人','小红书达人'];const tyo=s=>{const i=TYO.indexOf(s);return i<0?99:i};const ty=x=>x.typ||(x.t==='A'?'AI':'二创');
-const SO=['A','B','ZDT','YP','AM'];const so=g=>{const i=SO.indexOf(g);return i<0?99:i};const AGS=['ZDT','YP','AM'];
-document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组和外部 agency（知定堂、悦普、AnyMedia）实际交的成片，数据截至 ${md(D.T)}。`;
+const TYO=['AI','二创','星广','抖音星图','自建号','小红书视频','抖音达人'];const tyo=s=>{const i=TYO.indexOf(s);return i<0?99:i};const ty=x=>x.typ||(x.t==='A'?'AI':'二创');
+const SO=['A','B','ZDT','YP','AM','SELF'];const so=g=>{const i=SO.indexOf(g);return i<0?99:i};const AGS=['ZDT','YP','AM'];
+document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组、自建号和外部合作的素材产出，数据截至 ${md(D.T)}。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
 function renderTrend(days){
   if(!days?.length)return;
   const sources=[
     ['A','A 组','#245da8'],['B','B 组','#7146a0'],['ZDT','星广','#137058'],
-    ['YP','星图','#99581e'],['AM','AnyMedia','#546375']
+    ['XT','星图','#99581e'],['SELF','自建号','#546375'],['XHS','小红书视频','#a83853']
   ];
   const totals=days.map(({counts})=>sources.reduce((sum,[g])=>sum+counts[g],0));
   const step=Math.max(1,Math.ceil(Math.max(...totals)/20)*5);
@@ -213,7 +213,7 @@ const TG=D.target||{A:150,B:150};
 const wdays=D.days.filter(d=>d<D.T&&![0,6].includes(new Date(d+'T00:00:00').getDay())).length;
 document.getElementById('legend').innerHTML=`<div class="lr"><b>目标</b><span>A 组一周 ${TG.A} 条、B 组一周 ${TG.B} 条（AI 和真人二创都算），按周一到周五排，看总数</span><span>其中头部模板变式约 70%、每天至少 20 条，新测试约 30%</span></div>
 <div class="lr"><b>颜色</b><span><i style="background:var(--v)"></i>头部模板变式：照「头部素材结构提取和变式（11/9）」22 个模板做的</span><span><i style="background:var(--s)"></i>同脚本换画面：台词照原片，只换人设和画面</span><span><i style="background:var(--n)"></i>新测试：其余新脚本、新角度、其他原片二创</span></div>
-<div class="lr"><b>说明</b><span><b>只算审核通过的成片</b>：飞书表「成片状态」写了「通过」才计数、才放链接；需修改、修改后待审核、还没审的折叠在每天下面，不算数</span><span>只换前贴（只换开头 hook 画面）的不算数</span><span>交付日按成片文件名里的日期</span><span><b>外部 agency</b>：知定堂星广按成片审核「通过」、一行按视频数算；悦普只算抖音星图、已发布；AnyMedia 只算抖音、已发布的视频</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
+<div class="lr"><b>说明</b><span><b>A、B 组</b>按审核通过的成片计数，交付日取成片文件名日期。待审核和需修改的在每日明细折叠显示，只换前贴的单列</span><span><b>星广</b>按成片审核通过的视频数计</span><span><b>星图、小红书视频</b>按已发布视频计。星图需有抖音星图标记，小红书图文不计</span><span><b>自建号</b>按标记已发的成片完成日期计</span><span>红竖线 = 按工作日算到昨天应交的进度</span></div>`;
 document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
   const L=IT.filter(x=>x.g===g),C=L.filter(CNT),vs=C.filter(isVar).length,n=C.length-vs,ai=C.filter(x=>x.t==='A').length,tg=TG[g]||150;
   const Y=C.filter(x=>x.d===YD),yv=Y.filter(isVar).length,yp=D.batches.filter(b=>b.g===g&&b.d===YD&&b.n!=null).reduce((a,b)=>a+b.n,0);
@@ -224,7 +224,7 @@ document.getElementById('kpis').innerHTML=['A','B'].map(g=>{
   <div class="pn">到昨天应交约 ${pace} 条（${wdays} 个工作日）</div>
   <div class="l2"><div><b>${Y.length}${yp?`<small> / 排 ${yp}</small>`:''}</b><span>昨天 ${md(YD)} 交了</span></div><div><b>${vs} <small>${pc(vs)}%</small></b><span>头部模板变式</span></div><div><b>${n} <small>${pc(n)}%</small></b><span>新测试</span></div><div><b>${ai} / ${C.length-ai}</b><span>AI / 二创</span></div></div>
   ${L.length-C.length?`<p class="note">另有 ${L.length-C.length} 条只换前贴，不计数。</p>`:''}</div>`}).join('')+(()=>{
-  const AT=D.agt||{},A=IT.filter(x=>AGS.includes(x.g)),am=A.filter(x=>x.g==='AM').length;
+  const AT=D.agt||{},A=IT.filter(x=>AGS.includes(x.g)),am=A.filter(x=>x.g==='AM'&&x.typ==='抖音达人').length;
   const card=(title,typ,tg,unit,note)=>{const L=A.filter(x=>x.typ===typ),n=L.length,t=AT[tg];
     const srcs=[...new Set(L.map(x=>x.g))].map(sn).join('、')||sn(tg);
     return `<div class="card"><div class="hd"><h3>${title}</h3>${t?(n>=t.t?'<span class="chip ok">已到目标</span>':`<span class="chip mu">差 ${t.t-n} ${unit}</span>`):''}</div>
@@ -289,7 +289,9 @@ function draw(){
   const pass=x=>(!F.g||x.g===F.g)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.t||ty(x)===F.t)&&(!F.l1||x.l1===F.l1)&&(!F.uc||x.uc===F.uc)&&(!F.sc||SX(x)===F.sc)&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase()));
   const passB=b=>b.n!=null&&(!F.g||b.g===F.g)&&(!F.k||(F.k==='VS'?['V','S'].includes(bk(b)):bk(b)===F.k))&&(!F.uc||b.uc===F.uc)&&(!F.sc||(b.sc||'（没写）')===F.sc)&&(!F.q);
   const L=IT.filter(pass),v=L.filter(isVar).length,c=L.filter(CNT).length;
-  const cw=L.filter(x=>!AGS.includes(x.g)&&CNT(x)).length;document.getElementById('cnt').textContent=`${L.length} 条（唯西 ${cw} 条，变式占 ${cw?Math.round(v/cw*100):0}%；外部 ${L.length-L.filter(x=>!AGS.includes(x.g)).length} 条）`;
+  const cw=L.filter(x=>['A','B'].includes(x.g)&&CNT(x)).length;
+  const self=L.filter(x=>x.g==='SELF').length,external=L.filter(x=>AGS.includes(x.g)).length;
+  document.getElementById('cnt').textContent=`${L.length} 条（A、B 组 ${cw} 条，变式占 ${cw?Math.round(v/cw*100):0}%；自建号 ${self} 条；外部 ${external} 条）`;
   const days=[...D.days].reverse();
   document.getElementById('list').innerHTML=days.map(d=>{
     const X=L.filter(x=>x.d===d).sort((a,b)=>tyo(ty(a))-tyo(ty(b))||so(a.g)-so(b.g)||(KO[a.k]??9)-(KO[b.k]??9)||String(a.uc).localeCompare(b.uc));
@@ -297,7 +299,8 @@ function draw(){
     const Q=(D.pend||[]).filter(x=>x.d===d&&(!F.g||x.g===F.g)&&(!F.t||ty(x)===F.t)&&(!F.uc||x.uc===F.uc)&&(!F.k||(F.k==='VS'?isVar(x):x.k===F.k))&&(!F.q||x.name.toLowerCase().includes(F.q.toLowerCase()))&&x.k!=='X').sort((a,b)=>a.st.localeCompare(b.st)||a.g.localeCompare(b.g));
     if(!X.length&&!P.length&&!Q.length)return '';
     const sm=g=>{const n=X.filter(x=>x.g===g&&CNT(x)).length,pl=P.filter(b=>b.g===g).reduce((a,b)=>a+b.n,0);const q=Q.filter(x=>x.g===g).length;return (n||pl||q)?`<span>${sn(g)} 通过 <b>${n}</b>${pl?` / 排 ${pl}`:''}${q?` <small class="st-mu">另有 ${q} 条没通过</small>`:''}</span>`:''};
-    const head=`<div class="dayh"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'<span class="st-mu">今天</span>':d>D.T?'<span class="st-mu">还没到</span>':''}${sm('A')}${sm('B')}${(()=>{const n=X.filter(x=>AGS.includes(x.g)).length;return n?`<span>外部 agency <b>${n}</b></span>`:''})()}</div>`;
+    const selfCount=X.filter(x=>x.g==='SELF').length,externalCount=X.filter(x=>AGS.includes(x.g)).length;
+    const head=`<div class="dayh"><b>${md(d)} 周${wd(d)}</b>${d===D.T?'<span class="st-mu">今天</span>':d>D.T?'<span class="st-mu">还没到</span>':''}${sm('A')}${sm('B')}${selfCount?`<span>自建号 <b>${selfCount}</b></span>`:''}${externalCount?`<span>外部合作 <b>${externalCount}</b></span>`:''}</div>`;
     const tbl=X.length?`<div class="scroll list"><table><thead><tr><th>类型</th><th>来源</th><th>分类</th><th>一级分类</th><th>Use case</th><th>细分场景（变式写换了什么）</th><th>照哪个头部模板</th><th>成片</th><th class="n">累计消耗</th></tr></thead><tbody>${X.map(x=>`<tr><td class="nw"><span class="ty">${esc(ty(x))}</span></td><td class="nw">${esc(sn(x.g))}</td><td>${x.k==='O'?'<span class="st-mu">—</span>':`<span class="k k${x.k}">${D.kinds[x.k]}</span>`}</td><td class="nw">${esc(x.l1)}</td><td class="nw">${x.uc?`<code>${esc(x.uc)}</code> ${esc(x.ucn)}`:''}</td><td>${esc(x.var||x.sc||'')}</td><td class="nw">${x.tn?`<a href="${esc(x.tl)}" target="_blank" rel="noopener">${esc(x.tn)}</a>`:'<span class="st-mu">—</span>'}</td><td class="nm"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.name)}</a> <span class="lk">${x.lk==='v'?'视频':'飞书'}</span></td><td class="n">${x.k==='O'?'<span class="st-mu">—</span>':x.cost?money(x.cost):x.mid?'¥0':'没上线'}</td></tr>`).join('')}</tbody></table></div>`:(d<=D.T?'<p class="note">这天还没有审核通过的成片。</p>':'');
     const op=OPEN.has(d);
     const plan=open.length?`<div class="plan${op?' open':''}" data-d="${d}"><div class="ph">${op?'▾':'▸'} 这天还排着没交的：${open.length} 项、${open.reduce((a,b)=>a+b.n-b.got,0)} 条</div>${op?`<div class="scroll list"><table><thead><tr><th>来源</th><th>分类</th><th>Use case</th><th>细分场景 / 做什么</th><th>照哪个头部模板</th><th class="n">排了</th><th class="n">已交</th></tr></thead><tbody>${open.map(b=>`<tr><td class="nw">${esc(sn(b.g))}</td><td><span class="k k${bk(b)}">${D.kinds[bk(b)]}</span></td><td class="nw">${b.uc&&b.uc!=='自选'?`<code>${esc(b.uc)}</code> ${esc(UCN[b.uc]||'')}`:'自选'}</td><td>${esc(b.sc||'')}${b.how?`<small class="note" style="display:block;margin:2px 0 0">${esc(b.how)}</small>`:''}</td><td class="nw">${b.tn?`<a href="${esc(b.tl)}" target="_blank" rel="noopener">${esc(b.tn)}</a>`:'<span class="st-mu">—</span>'}</td><td class="n">${b.n}</td><td class="n">${b.got}</td></tr>`).join('')}</tbody></table></div>`:''}</div>`:'';
