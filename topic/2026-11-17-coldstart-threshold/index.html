@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>专题：冷启门槛怎么定 · 投放素材</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  :root {
+    --font-anthropic-sans: var(--font-sans); --font-anthropic-serif: var(--font-serif);
+    --cds-font-size-caption: var(--fs-caption); --cds-font-size-body: var(--fs-body); --cds-font-size-heading: var(--fs-heading); --cds-font-size-title: var(--fs-title);
+    --cds-font-weight-medium: var(--fw-medium);
+    --cds-gap-xs: var(--gap-xs); --cds-gap-sm: var(--gap-sm); --cds-gap-md: var(--gap-md); --cds-gap-lg: var(--gap-lg); --cds-gap-xl: var(--gap-xl);
+    --cds-pad-xs: var(--pad-xs); --cds-pad-sm: var(--pad-sm); --cds-pad-md: var(--pad-md); --cds-pad-lg: var(--pad-lg); --cds-radius: var(--radius);
+    --cds-border: var(--color-border-line); --cds-surface-popover: var(--color-panel); --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .12);
+    --cds-text-secondary: var(--color-fg-muted); --cds-dur-slow: .3s;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 48px; }
+  .topic-top { margin-bottom: 20px; }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
+  .lx-nav-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg-muted); font-weight: 600; margin-right: 4px; }
+  .lx-nav-label svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .lx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg); text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lx-chip:hover { border-color: var(--color-fg-muted); }
+  .lx-chip[aria-current="page"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-chip .new { font-size: 11px; font-weight: 600; color: var(--color-ok); }
+  .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
+  .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
+  .dash-select { font: inherit; color: var(--color-fg); background-color: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 8px; padding: 5px 10px; }
+  .dash-skeleton { background: var(--color-border-line); border-radius: 6px; opacity: .5; }
+
+.wk { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-lg); }
+.wk h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.wk .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; }
+.wk .take { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.6; }
+.wk .take .muted { color: var(--color-fg-muted); }
+.wk .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.wk .card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.wk .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+.wk .sec { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-sm) 0 calc(-1 * var(--cds-gap-sm)); }
+.wk .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 36rem), 1fr)); gap: var(--cds-gap-md); }
+.wk .scroll { overflow: auto; max-height: 36rem; }
+.wk table { border-collapse: separate; border-spacing: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; width: 100%; }
+.wk th, .wk td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.wk th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); vertical-align: bottom; z-index: 1; }
+.wk th:first-child, .wk td:first-child { text-align: left; position: sticky; left: 0; background: var(--color-panel); }
+.wk th:first-child { z-index: 2; }
+.wk .txt { text-align: left; }
+.wk td.muted { color: var(--color-fg-muted); }
+.wk .d { border-right: 2px solid var(--color-border-line); }
+.wk td.wrap { white-space: normal; min-width: 18rem; text-align: left; color: var(--color-fg-muted); }
+.wk td.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.wk .chart { position: relative; min-height: 300px; }
+.wk .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; z-index: 3; }
+.wk .tip .h { color: var(--cds-text-secondary); margin-bottom: 2px; }
+.wk .pick { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wk summary { cursor: pointer; color: var(--color-fg); font-size: var(--cds-font-size-body); }
+.wk dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px var(--cds-gap-md); margin: var(--cds-gap-md) 0 0; }
+.wk dt { color: var(--color-fg); }
+.wk dd { margin: 0; }
+.wk .fail { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wk .fail i { display: inline-block; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wk [data-dash-source-state=empty] { color: transparent; }
+.wk [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.wk .say p { margin: 0 0 var(--cds-gap-sm); line-height: 1.6; font-size: var(--cds-font-size-body); }
+.wk .sub2 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); }
+.wk .dbw { overflow-x: auto; }
+.wk .db-row { display: grid; grid-template-columns: minmax(9rem, 1.2fr) minmax(7rem, 1.2fr) 8rem 4.5rem 7.5rem 10rem 11rem 5.5rem; align-items: center; gap: 0 var(--cds-gap-sm); min-width: 68rem; border-bottom: 1px solid var(--color-border-line); padding: 5px 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wk .db-head { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); align-items: end; }
+.wk .db-row .num { text-align: right; }
+.wk .db-row .muted { color: var(--color-fg-muted); }
+.wk .db-name { font-size: var(--cds-font-size-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk .db-plot svg { display: block; }
+.wk .db-v { text-align: right; }
+.wk .db-v.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .db-body { min-height: 3rem; }
+.wk .dbkey { display: inline-flex; align-items: center; gap: 4px; }
+.wk .dbkey i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.wk .dbkey .o { border: 1.5px solid var(--color-fg-muted); }
+.wk .dbkey .g { background: var(--color-ok); }
+.wk .dbkey .r { background: var(--color-bad); }
+.wk .sum h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+.wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .sum .muted { color: var(--color-fg-muted); }
+.wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .hint { position: relative; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; outline: none; }
+.wk .hint-l { text-align: left; }
+.wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
+.wk .hint-l .hint-tip { left: 0; right: auto; }
+.wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
+.wk .ops td { white-space: normal; text-align: left; vertical-align: top; min-width: 16rem; line-height: 1.55; }
+.wk .ops td:first-child { min-width: 0; white-space: nowrap; }
+.wk .ops th { text-align: left; }
+.wk .ops .r { color: var(--color-fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+
+.wk td.g { color: var(--color-ok); font-weight: 600; }
+.wk td.b { color: var(--color-bad); }
+.wk .scroll { overflow-x: auto; max-height: none; }
+.wk { --c-ios: #2a78d6; --c-and: #eb6834; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wk { --c-ios: #3987e5; --c-and: #d95926; } }
+:root[data-theme="dark"] .wk { --c-ios: #3987e5; --c-and: #d95926; }
+.wk .ch { width: 100%; margin: 6px 0 4px; }
+.wk .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .wk .two { grid-template-columns: 1fr; } }
+.wk .lg { display: flex; gap: 16px; font-size: 13px; color: var(--color-fg); margin: 4px 0 8px; }
+.wk .sw.ios { background: var(--c-ios); } .wk .sw.and { background: var(--c-and); }
+.wk details { margin-top: 10px; } .wk summary { cursor: pointer; color: var(--color-fg-muted); font-size: 13px; }
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--color-panel); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; line-height: 1.55; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.wk td.nm a { color: var(--color-fg); text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 3px; } .wk td.nm a:hover { text-decoration-color: currentColor; }
+.wk .seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: 6px; overflow: hidden; margin: 4px 0; } .wk .seg button { border: 0; background: transparent; color: var(--color-fg-muted); padding: 4px 12px; font-size: 13px; cursor: pointer; } .wk .seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-panel); }
+.wk td.fnew { background: #fff3cc; font-weight: 600; } .wk td.fnew2 { background: #ffd966; font-weight: 600; } .wk .hl { display: inline-block; padding: 0 6px; border-radius: 3px; font-weight: 600; } .wk .hl.a { background: #fff3cc; } .wk .hl.b { background: #ffd966; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wk td.fnew, :root:not([data-theme="light"]) .wk .hl.a { background: #4a3f1a; } :root:not([data-theme="light"]) .wk td.fnew2, :root:not([data-theme="light"]) .wk .hl.b { background: #7a5f12; } }
+.wk td.sep { white-space: nowrap; } #mats td.nm { min-width: 13rem; max-width: 17rem; font-size: 12px; } #mats th, #mats td { padding: 5px 6px; } .wk th.oth, .wk td.oth { border-left: 1px solid var(--color-border-line); }
+.wk td.nm { text-align: left; white-space: normal; min-width: 16rem; max-width: 26rem; line-height: 1.45; }
+</style>
+<style>
+  .wk .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: var(--cds-gap-md); margin-top: var(--cds-gap-sm); }
+  .wk h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+  .wk .mat h2 { margin-bottom: 2px; }
+  .wk .mname { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg); word-break: break-all; }
+  .wk .muted { color: var(--color-fg-muted); }
+  .wk .kpis { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: var(--cds-gap-sm) 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .wk .kpis b { color: var(--color-fg); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; margin-right: 4px; }
+  .wk .say1 { margin: 0; line-height: 1.65; font-size: var(--cds-font-size-body); }
+  .wk .say p, .wk .card > p.p { line-height: 1.65; font-size: var(--cds-font-size-body); margin: var(--cds-gap-sm) 0 0; }
+  .wk .ch svg { display: block; overflow: visible; }
+  .wk .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-sm) 0 0; }
+  .wk .lg i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .wk .lg i.ln { height: 3px; border-radius: 2px; vertical-align: 2px; }
+  .wk .lg i.dash { height: 0; border-top: 2px dashed currentColor; background: none !important; vertical-align: 3px; }
+  #tip { position: fixed; z-index: 30; }
+  .wk ol.steps { margin: var(--cds-gap-sm) 0 0; padding-left: 1.3em; display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); line-height: 1.65; }
+  .wk ol.steps .why { color: var(--color-fg-muted); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<div class="topic-top">
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" href="../">全部专题</a><a class="lx-chip" aria-current="page" href="./">冷启门槛</a></span></div>
+  </nav>
+</div>
+<div class="wk">
+  <header>
+    <h1>冷启门槛怎么定：过冷启 ¥400、测够了 6 个项目、方向弱看 30 天</h1>
+    <p class="sub">11/17 定，日报第六节「冷启动率」从 11/18 起按这套口径算，11/7–11/16 的日报已按新口径重算。冷启窗口 = 上传当天 + 第二天。数据：「国区投放素材」投放数据_分日、日报每天存的巨量智擎项目数据（notes/proj-日期.json）、11/17 读的巨量智擎投放管理项目和素材清单。</p>
+  </header>
+
+  <section class="card sum" id="summary">
+    <h2>结论</h2>
+    <ul>
+      <li><b>过冷启：窗口两天花费 ≥ ¥400。</b>原来按前 7 个上传日的 80 分位激活定，上传一多就掉到个位数激活（约 ¥150），区分不出会跑起来的素材；两天激活 20 个以上（约 ¥400）是第一个明显分得开的点。</li>
+      <li><b>测试不充分：实测项目不到 6 个；12 个以上算测够了。</b>实测项目 = 素材自己真花到钱的项目个数。原来是 3 个 / 10 个，3 到 5 个项目的素材窗口里中位只花了 ¥14，算不上测过。</li>
+      <li><b>方向偏弱：按 use case 长期能不能起量判，不看冷启率。</b>过去 30 天有消耗的素材 ≥ 10 条、没有一条累计花到 ¥5,000、消耗占大盘不到 1% 的 use case 才算弱；起过量的 use case 不算弱。</li>
+      <li><b>冷启没过按顺序归一类：</b>内容硬伤 → 测试不充分（实测 &lt; 6 个） → 方向偏弱（所在 use case 长期起不了量） → 测够了、方向也正常，单条没跑出来。</li>
+    </ul>
+  </section>
+
+  <section class="card" id="cost">
+    <h2>一、过冷启门槛：两天花到 ¥400</h2>
+    <p class="note">10/27–11/11 上传的 773 条素材，按上传当天 + 第二天的激活分组，看到 11/16 为止累计花了多少。窗口里的激活成本约 ¥20。</p>
+    <div class="scroll"><table><thead><tr><th>窗口激活</th><th>条数</th><th>窗口花费中位</th><th>后来累计 ≥ ¥2,000</th><th>后来累计 ≥ ¥5,000</th><th>后来累计 ≥ ¥1 万</th></tr></thead><tbody><tr><td>0</td><td>324</td><td>¥1</td><td>7%</td><td>2%</td><td>1%</td></tr><tr><td>1–2</td><td>102</td><td>¥25</td><td>15%</td><td>7%</td><td>3%</td></tr><tr><td>3–5</td><td>67</td><td>¥76</td><td>15%</td><td>6%</td><td>4%</td></tr><tr><td><b>6–9</b>（原门槛水平）</td><td>53</td><td>¥130</td><td>17%</td><td>11%</td><td>8%</td></tr><tr><td>10–19</td><td>59</td><td>¥280</td><td>25%</td><td>8%</td><td>5%</td></tr><tr><td><b>20–49</b>（约 ¥400 起）</td><td>89</td><td>¥626</td><td><b>43%</b></td><td>12%</td><td>8%</td></tr><tr><td>50 以上</td><td>79</td><td>¥1,962</td><td>81%</td><td>44%</td><td>23%</td></tr></tbody></table></div>
+    <p class="note">6–9 个激活的素材后面的表现和 1–5 个差不多；到 20 个激活（约 ¥400）以上，后来累计花到 ¥2,000 的比例才跳到 43%。原门槛 11/7 那批是 26 个激活，11/12 以后掉到 6–9 个，因为门槛取的是同期新素材的 80 分位，而新素材里多数两天只有 0–2 个激活。</p>
+    <p class="note">「去掉预算影响」那列的门槛 = ¥400 × 这批窗口里全盘每天平均花费 ÷ 10/27–11/11 全盘每天平均花费（约 ¥10 万），大盘缩量的批次门槛跟着降。</p>
+  </section>
+
+  <section class="card" id="test">
+    <h2>二、测试不充分：实测项目不到 6 个</h2>
+    <p class="note">实测项目 = 素材自己真花到钱的项目个数。一个智擎项目里通常塞几十到上百条素材，系统只挑少数几条花钱，所以“进了几个项目”说明不了测没测过，要看真花到钱的项目。两份数据都指向 6 个。</p>
+    <h3>冷启窗口里：11/9–11/15 上传的 329 条（窗口最后一天有当天的项目数据）</h3>
+    <div class="scroll"><table><thead><tr><th>窗口里实测项目</th><th>条数</th><th>过冷启</th><th>窗口花费中位</th></tr></thead><tbody><tr><td>0</td><td>71</td><td>0%</td><td>¥0</td></tr><tr><td>1–2</td><td>36</td><td>0%</td><td>¥14</td></tr><tr><td>3–5</td><td>103</td><td>6%</td><td>¥14</td></tr><tr><td>6–9</td><td>81</td><td>21%</td><td>¥59</td></tr><tr><td>10 个以上</td><td>38</td><td>71%</td><td>¥702</td></tr></tbody></table></div>
+    <p class="note">这里“过冷启”是当时日报的口径；过了的 50 条里 44 条（88%）窗口实测 ≥ 6 个，没有一条在 3 个以下。3–5 个项目的窗口花费中位只有 ¥14，算不上测过。</p>
+    <h3>拉长看：10/20–11/10 上传、最后跑起来的 327 条</h3>
+    <p class="note">909 条素材里有 327 条出现过一条花到 ¥100 的基建。这条基建是它的第几个实测项目（同一天建的按那天建完算）：中位数第 4 个，75% 在前 6 个以内，90% 在前 12 个以内。所以到 6 个，一条正常素材该有的机会基本给了；12 个以上算测够了。</p>
+  </section>
+
+  <section class="card" id="dir">
+    <h2>三、方向偏弱：use case 长期起不了量</h2>
+    <p class="note">原来按最近 10 个上传日的冷启率、比整体低一半算弱，会把 NT01 人情往来（30 天占大盘 5.6%）、WK01 会议（3.9%）、WK02 待办回邮件（4.1%）、IN01 追踪关注的事（4.2%）这些起过量的 use case 判成弱，已停用。现在看 30 天：有消耗的素材 ≥ 10 条（给过机会）、没有一条累计花到 ¥5,000（一直没跑出过量）、消耗占大盘不到 1%，三条都满足才算弱。</p>
+    <h3>11/16 日报口径（10/18–11/16）下被判弱的 use case</h3>
+    <div class="scroll"><table><thead><tr><th>use case</th><th>30 天有消耗的素材</th><th>单条最高累计花费</th><th>占大盘</th></tr></thead><tbody><tr><td>WK03 客户跟进和找客户</td><td>18</td><td>¥2,592</td><td>0.28%</td></tr><tr><td>HL04 宠物健康</td><td>15</td><td>¥3,804</td><td>0.31%</td></tr><tr><td>WK07 求职投递和面试</td><td>14</td><td>¥1,891</td><td>0.25%</td></tr><tr><td>PS06 周末去哪玩</td><td>12</td><td>¥3,723</td><td>0.16%</td></tr><tr><td>WK04 用自己资料写汇报</td><td>12</td><td>¥2,192</td><td>0.20%</td></tr><tr><td>HL01 健康数据解读</td><td>10</td><td>¥4,064</td><td>0.35%</td></tr></tbody></table></div>
+    <p class="note">素材不到 10 条的 use case（如 NT02 随口记 4 条、HL03 看病体检 9 条）先不判，测得还不够。起过量的 use case 里没过冷启的素材，归到“单条没跑出来”：方向没问题，是这条素材本身没做好。</p>
+  </section>
+</div>
+</div>
+<!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
+<style id="gtoc-style">
+  .gtoc-anchor { scroll-margin-top: 12px; }
+  #gtoc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20; box-sizing: border-box;
+    background: var(--color-panel, #fff); color: var(--color-fg, #1f1f1d); border: 1px solid var(--color-border-line, #e4e2dc); border-radius: 12px; padding: 10px 8px; font-size: 13px; }
+  #gtoc[hidden], #gtoc-btn[hidden] { display: none !important; }
+  #gtoc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted, #6b6a66); font-weight: 600; }
+  #gtoc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  #gtoc a { display: block; padding: 5px 8px; border-radius: 8px; color: inherit; text-decoration: none; line-height: 1.35; }
+  #gtoc a.sub { padding-left: 18px; color: var(--color-fg-muted, #6b6a66); }
+  #gtoc a:hover { background: var(--color-bg, #f7f6f2); }
+  #gtoc a[aria-current="true"] { background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); font-weight: 600; }
+  #gtoc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { body.gtoc-on .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { #gtoc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    #gtoc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    #gtoc.open { display: block; }
+    #gtoc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line, #e4e2dc); background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { #gtoc, #gtoc-btn { display: none !important; } body.gtoc-on .wrap { margin-left: auto !important; } }
+</style>
+<nav id="gtoc" aria-label="目录" hidden><h4>目录</h4><ol></ol></nav>
+<button id="gtoc-btn" type="button" aria-controls="gtoc" aria-expanded="false" hidden>目录</button>
+<script id="gtoc-script">
+addEventListener('load', () => {
+  const toc = document.getElementById('gtoc'), ol = toc.querySelector('ol'), btn = document.getElementById('gtoc-btn');
+  const root = document.querySelector('.wrap') || document.body;
+  const visible = (el) => !el.closest('[hidden]') && el.getClientRects().length > 0;
+  const heads = [...root.querySelectorAll('h2')].filter(visible);
+  if (heads.length < 2) return;
+  const items = [];
+  const top = document.querySelector('h1');
+  if (top) { if (!top.id) top.id = 'top'; top.classList.add('gtoc-anchor'); items.push([top, '总览', false]); }
+  let group = '';
+  const seen = {};
+  heads.forEach((h, i) => {
+    const t = h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim();
+    if (h.classList.contains('sec')) group = t;
+    if (!h.id) h.id = 'sec-' + (i + 1);
+    h.classList.add('gtoc-anchor');
+    seen[t] = (seen[t] || 0) + 1;
+    const dup = heads.filter((x) => x.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim() === t).length > 1;
+    items.push([h, dup && group && !h.classList.contains('sec') ? t + '（' + group + '）' : t, !!group && !h.classList.contains('sec')]);
+  });
+  const links = items.map(([el, t, sub]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + el.id; a.textContent = t; if (sub) a.className = 'sub'; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.hidden = false; btn.hidden = false; document.body.classList.add('gtoc-on');
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const mark = () => { let k = 0; items.forEach(([el], i) => { if (el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
+</body>
+</html>
