@@ -314,7 +314,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     <p class="note">深色柱是到这周为止点亮的 use case 数，浅色柱是测过的；最下面一行是这周新点亮的。点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000。</p>
     <h3>每个 use case 每周</h3>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
-    <div class="scroll"><table class="rm tl">
+    <div class="scroll rmwrap"><table class="rm tl">
       <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">点亮日</th></tr></thead>
       <tbody>{''.join(trs)}</tbody>
     </table></div>
@@ -331,7 +331,11 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     EXTRA = '''<style>
   .wk .rm { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); }
   .wk .rm th, .wk .rm td { padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; text-align: left; }
-  .wk .rm th { position: sticky; top: 0; background: var(--color-bg, #fff); z-index: 1; font-weight: 600; white-space: nowrap; }
+  .wk .rmwrap { max-height: 82vh; overflow: auto; }
+  .wk .rm thead th { position: sticky; top: 0; background: #fff; z-index: 3; font-weight: 600; white-space: nowrap; box-shadow: 0 1px 0 var(--color-border-line); }
+  .wk .tl td:nth-child(1), .wk .tl th:nth-child(1) { position: sticky; left: 0; background: #fff; z-index: 2; width: 4.6rem; min-width: 4.6rem; }
+  .wk .tl td:nth-child(2), .wk .tl th:nth-child(2) { position: sticky; left: 4.6rem; background: #fff; z-index: 2; box-shadow: 1px 0 0 var(--color-border-line); }
+  .wk .tl thead th:nth-child(1), .wk .tl thead th:nth-child(2) { z-index: 4; }
   .wk .rm td.num, .wk .rm th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .wk .rm .sub { display: block; color: var(--color-fg-muted); font-size: 11px; font-weight: 400; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wk .rm td.num .sub { margin-left: auto; }
@@ -365,6 +369,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   .wk .tl .fut { background: transparent; color: var(--color-fg-muted); }
   .wk .tl .fut.has { outline: 1.5px dashed #6fb38c; outline-offset: -4px; color: #1f5f3c; }
   .wk .tl th.cur, .wk .tl td.cur { box-shadow: inset 0 0 0 2px #c98a00; }
+  .wk .tl thead th.cur { box-shadow: inset 0 0 0 2px #c98a00, 0 1px 0 var(--color-border-line); }
   .wk .prog { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; }
   .wk .pw { flex: 0 0 7.6rem; width: 7.6rem; display: flex; flex-direction: column; font-size: 11px; color: var(--color-fg-muted); }
   .wk .pw.cur { color: var(--color-fg); }
@@ -422,7 +427,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     <h2>use case × 素材类型</h2>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>点亮：有一条素材累计花到 ¥5,000</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 ¥5,000</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
     <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 第二天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周排期来自素材排期看板，小字是 AI / 二创各几条，分档沿用排期看板的三档。</p>
-    <div class="scroll"><table class="rm">
+    <div class="scroll rmwrap"><table class="rm">
       <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周排期</th></tr></thead>
       <tbody>{''.join(body)}</tbody>
     </table></div>
