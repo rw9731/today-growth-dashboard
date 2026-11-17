@@ -319,3 +319,10 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - 分组按花钱的账户：账户名带「B组」的是 2 组投放（熊斌、吕阳），群「Today-唯西2组 巨量投放对接」；不带的是 1 组投放（金铭、陈妍），群「Today-唯西 巨量投放1群」。两组都在花就两个群都发，各自只列自己那组在花的。名字上的「唯西A组 / B组」是出片的组，不决定发哪个群。
 - 截图：`node tools/shot_stuck.js D` 出 shots/stuck-D.png（只截七那块的「判差 3 天以上还在花」表），提交推上去，在飞书页面里 fetch https://rw9731.github.io/today-growth-dashboard/shots/stuck-D.png 转成 File，用 ClipboardEvent 粘贴进输入框发出（群里有代理，不发看板链接，图里也没有链接）。
 - 消息：@ 这组两位投放（输入 @ 加名字，点 .mention-suggestion_identity），一条一行：素材的口语名（比如接娃「老板临时安排开会」全片重配）、判差第几天、昨天花多少、判差后累计多少、今天到现在花多少，然后问一句现在是什么情况、是在观察还是有别的考虑。只问，不替投放决定关不关。发完读回确认图和 @ 都在。
+
+## 方向地图（roadmap/，Reina 11/17 定）
+
+会上说的「素材分类方向图，挨个点亮」：每个 use case × 素材类型测了多少、点没点亮、本周排了几条。重画：
+- 读 `'投放数据_分日'!A1:AB`（日报读过就复用；一次读不下就分 A1:AB9000 和 A9001:AB 两次，拼成一个 {"values": [...]} 文件）和 `'✅ Use case 库'!A1:G200`，存成文件。
+- `python3 tools/roadmap.py --sheet <分日文件> --uclib <Use case 库文件>`，写 roadmap/index.html。
+- 口径写在 roadmap.py 文件头：状态和日报冷启「方向偏弱」同一套（近 30 天、≥ 10 条、¥5,000、占大盘 1%），过冷启 = 两天花费 ≥ ¥400，本周排期读 tools/schedule_plan.json。暂不做的方向写在 roadmap.py 的 NOT_NOW。
