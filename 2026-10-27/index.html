@@ -312,6 +312,35 @@
     </div>
   </section>
 
+  <section class="lx-sec" id="plat">
+    <h2 class="lx-h2">分端：iOS 和安卓（近 5 天）</h2>
+    <p class="lx-note">每天按计费时间：消耗、激活是当天的，次留率 = 当天激活的人第二天回来的比例（最新一天还没回传）。连续 3 留约 3 天才稳，只给 10/24 及更早。绿色是这一天两端里更好的那一端。</p>
+    <p class="lx-take" data-draw="plat-take"></p>
+    <div class="lx-card lx-scroll">
+      <table class="lx-table">
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th class="num">iOS 消耗占比</th>
+            <th class="num">消耗<span class="th-sub">iOS</span></th>
+            <th class="num">消耗<span class="th-sub">安卓</span></th>
+            <th class="num">激活<span class="th-sub">iOS</span></th>
+            <th class="num">激活<span class="th-sub">安卓</span></th>
+            <th class="num">激活成本<span class="th-sub">iOS</span></th>
+            <th class="num">激活成本<span class="th-sub">安卓</span></th>
+            <th class="num">次留率<span class="th-sub">iOS</span></th>
+            <th class="num">次留率<span class="th-sub">安卓</span></th>
+            <th class="num">次留成本<span class="th-sub">iOS</span></th>
+            <th class="num">次留成本<span class="th-sub">安卓</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">iOS</span></th>
+            <th class="num">连续 3 留率<span class="th-sub">安卓</span></th>
+          </tr>
+        </thead>
+        <tbody data-draw="platrows"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="lx-sec" id="by-l1">
     <h2 class="lx-h2">一、按一级分类</h2>
     <p class="lx-note">按昨天消耗排。<span data-draw="l1-note"></span>绿 = 好于三天全盘；红 = 次留率低于全盘 <b data-draw="th-low">—</b> 或次留成本超过全盘 <b data-draw="th-high">—</b>；激活不到 <b data-draw="th-act">—</b> 不算次留率；虚线 = 10/26 全盘。</p>
@@ -911,6 +940,34 @@
     box.appendChild(tbl); markStar(tbl);
   }
 
+
+  // 分端（Reina 11/16）：近 5 天 iOS 和安卓
+  fill('platrows', (tb) => {
+    const rows = data('plat') || [];
+    const better = (a, b, lowGood) => (a == null || b == null ? [0, 0] : (lowGood ? (a < b ? [1, 0] : a > b ? [0, 1] : [0, 0]) : (a > b ? [1, 0] : a < b ? [0, 1] : [0, 0])));
+    for (const r of rows) {
+      const tr = document.createElement('tr'); const td = cellMaker(tr); const sum = r.date === 'sum';
+      if (sum) tr.style.fontWeight = '600';
+      td('short').textContent = sum ? '5 天合计' : fmtD(r.date);
+      td('num').textContent = fmtP0(r.ios_share);
+      td('num').textContent = fmtY(r.ios.cost); td('num').textContent = fmtY(r.and.cost);
+      td('num').textContent = fmtN(r.ios.act); td('num').textContent = fmtN(r.and.act);
+      for (const [k, low, f] of [['cpa', 1, fmtY], ['rate', 0, fmtP], ['cpr', 1, fmtY], ['rate3', 0, fmtP]]) {
+        const [gi, ga] = better(r.ios[k], r.and[k], low);
+        const a = td('num' + (gi ? ' lx-good' : '') + (r.ios[k] == null ? ' muted' : '')); a.textContent = r.ios[k] == null ? (k === 'rate' || k === 'cpr' ? '未回传' : '—') : f(r.ios[k]);
+        const b = td('num' + (ga ? ' lx-good' : '') + (r.and[k] == null ? ' muted' : '')); b.textContent = r.and[k] == null ? (k === 'rate' || k === 'cpr' ? '未回传' : '—') : f(r.and[k]);
+      }
+      tb.appendChild(tr);
+    }
+  });
+  fill('plat-take', (el) => {
+    const rows = (data('plat') || []).filter((r) => r.date !== 'sum'); const s = (data('plat') || []).find((r) => r.date === 'sum');
+    if (!rows.length || !s) return;
+    const f = rows[0], l = rows[rows.length - 1], lr = [...rows].reverse().find((r) => r.ios.rate != null);
+    el.innerHTML = 'iOS 消耗占比 ' + fmtD(f.date) + ' <b>' + fmtP0(f.ios_share) + '</b> → ' + fmtD(l.date) + ' <b>' + fmtP0(l.ios_share) + '</b>。'
+      + '5 天合计次留率 iOS <b>' + fmtP(s.ios.rate) + '</b>、安卓 <b>' + fmtP(s.and.rate) + '</b>；次留成本 iOS <b>' + fmtY(s.ios.cpr) + '</b>、安卓 <b>' + fmtY(s.and.cpr) + '</b>；激活成本 iOS <b>' + fmtY(s.ios.cpa) + '</b>、安卓 <b>' + fmtY(s.and.cpa) + '</b>。'
+      + (lr ? '最近一天能看次留的 ' + fmtD(lr.date) + '：iOS ' + fmtP(lr.ios.rate) + '、' + fmtY(lr.ios.cpr) + '，安卓 ' + fmtP(lr.and.rate) + '、' + fmtY(lr.and.cpr) + '。' : '');
+  });
   fill('kindrows', (tb) => {
     const rows = data('kind_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
