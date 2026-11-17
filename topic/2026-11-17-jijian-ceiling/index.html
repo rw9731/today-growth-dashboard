@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>专题：素材消耗天花板 · 投放素材</title>
+<style>
+  :root {
+    --color-fg: #1f1f1d; --color-fg-muted: #6b6a66; --color-bg: #f7f6f2; --color-panel: #ffffff; --color-border-line: #e4e2dc;
+    --color-ok: #1f7a4d; --color-warn: #a86400; --color-bad: #c0362c;
+    --cds-chart-reference: #9a978f; --cds-chart-muted: #d6d3cb;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --fs-caption: 13px; --fs-body: 15px; --fs-heading: 18px; --fs-title: 28px; --fw-medium: 600;
+    --gap-xs: 4px; --gap-sm: 8px; --gap-md: 14px; --gap-lg: 20px; --gap-xl: 32px;
+    --pad-xs: 4px; --pad-sm: 8px; --pad-md: 12px; --pad-lg: 18px; --radius: 8px;
+    --bar: #3d6fd8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  }
+  :root[data-theme="dark"] { --color-fg: #ecebe6; --color-fg-muted: #a3a19a; --color-bg: #1b1b19; --color-panel: #242422; --color-border-line: #3a3936;
+      --color-ok: #5fc48f; --color-warn: #e0a33c; --color-bad: #ef6b5f; --cds-chart-reference: #77756f; --cds-chart-muted: #4a4945; --bar: #7da2ef; }
+  :root {
+    --font-anthropic-sans: var(--font-sans); --font-anthropic-serif: var(--font-serif);
+    --cds-font-size-caption: var(--fs-caption); --cds-font-size-body: var(--fs-body); --cds-font-size-heading: var(--fs-heading); --cds-font-size-title: var(--fs-title);
+    --cds-font-weight-medium: var(--fw-medium);
+    --cds-gap-xs: var(--gap-xs); --cds-gap-sm: var(--gap-sm); --cds-gap-md: var(--gap-md); --cds-gap-lg: var(--gap-lg); --cds-gap-xl: var(--gap-xl);
+    --cds-pad-xs: var(--pad-xs); --cds-pad-sm: var(--pad-sm); --cds-pad-md: var(--pad-md); --cds-pad-lg: var(--pad-lg); --cds-radius: var(--radius);
+    --cds-border: var(--color-border-line); --cds-surface-popover: var(--color-panel); --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .12);
+    --cds-text-secondary: var(--color-fg-muted); --cds-dur-slow: .3s;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 14px 16px 48px; }
+  .topic-top { margin-bottom: 20px; }
+  .lx-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; }
+  .lx-nav-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg-muted); font-weight: 600; margin-right: 4px; }
+  .lx-nav-label svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .lx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lx-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg); text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lx-chip:hover { border-color: var(--color-fg-muted); }
+  .lx-chip[aria-current="page"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); font-weight: 600; }
+  .lx-chip .new { font-size: 11px; font-weight: 600; color: var(--color-ok); }
+  .lx-chip[aria-current="page"] .new { color: inherit; opacity: .7; }
+  .lx-nav select { font: inherit; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 10px; }
+  .lx-nav [hidden] { display: none; }
+  .lx-nav { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .lx-navrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; }
+  .lx-navrow + .lx-navrow { border-top: 1px solid var(--color-border-line); }
+  .lx-nav-label { min-width: 34px; color: var(--color-fg); }
+  .dash-select { font: inherit; color: var(--color-fg); background-color: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 8px; padding: 5px 10px; }
+  .dash-skeleton { background: var(--color-border-line); border-radius: 6px; opacity: .5; }
+
+.wk { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-lg); }
+.wk h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.wk .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; }
+.wk .take { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.6; }
+.wk .take .muted { color: var(--color-fg-muted); }
+.wk .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.wk .card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.wk .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+.wk .sec { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-sm) 0 calc(-1 * var(--cds-gap-sm)); }
+.wk .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 36rem), 1fr)); gap: var(--cds-gap-md); }
+.wk .scroll { overflow: auto; max-height: 36rem; }
+.wk table { border-collapse: separate; border-spacing: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; width: 100%; }
+.wk th, .wk td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.wk th { position: sticky; top: 0; background: var(--color-panel); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); vertical-align: bottom; z-index: 1; }
+.wk th:first-child, .wk td:first-child { text-align: left; position: sticky; left: 0; background: var(--color-panel); }
+.wk th:first-child { z-index: 2; }
+.wk .txt { text-align: left; }
+.wk td.muted { color: var(--color-fg-muted); }
+.wk .d { border-right: 2px solid var(--color-border-line); }
+.wk td.wrap { white-space: normal; min-width: 18rem; text-align: left; color: var(--color-fg-muted); }
+.wk td.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.wk .chart { position: relative; min-height: 300px; }
+.wk .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; z-index: 3; }
+.wk .tip .h { color: var(--cds-text-secondary); margin-bottom: 2px; }
+.wk .pick { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wk details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wk summary { cursor: pointer; color: var(--color-fg); font-size: var(--cds-font-size-body); }
+.wk dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px var(--cds-gap-md); margin: var(--cds-gap-md) 0 0; }
+.wk dt { color: var(--color-fg); }
+.wk dd { margin: 0; }
+.wk .fail { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wk .fail i { display: inline-block; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wk [data-dash-source-state=empty] { color: transparent; }
+.wk [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.wk .say p { margin: 0 0 var(--cds-gap-sm); line-height: 1.6; font-size: var(--cds-font-size-body); }
+.wk .sub2 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); }
+.wk .dbw { overflow-x: auto; }
+.wk .db-row { display: grid; grid-template-columns: minmax(9rem, 1.2fr) minmax(7rem, 1.2fr) 8rem 4.5rem 7.5rem 10rem 11rem 5.5rem; align-items: center; gap: 0 var(--cds-gap-sm); min-width: 68rem; border-bottom: 1px solid var(--color-border-line); padding: 5px 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wk .db-head { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); align-items: end; }
+.wk .db-row .num { text-align: right; }
+.wk .db-row .muted { color: var(--color-fg-muted); }
+.wk .db-name { font-size: var(--cds-font-size-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk .db-plot svg { display: block; }
+.wk .db-v { text-align: right; }
+.wk .db-v.strong { font-weight: var(--cds-font-weight-medium); }
+.wk .db-body { min-height: 3rem; }
+.wk .dbkey { display: inline-flex; align-items: center; gap: 4px; }
+.wk .dbkey i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.wk .dbkey .o { border: 1.5px solid var(--color-fg-muted); }
+.wk .dbkey .g { background: var(--color-ok); }
+.wk .dbkey .r { background: var(--color-bad); }
+.wk .sum h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+.wk .sum ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .sum .muted { color: var(--color-fg-muted); }
+.wk .sum-lead { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); line-height: 1.65; }
+.wk .hint { position: relative; cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; outline: none; }
+.wk .hint-l { text-align: left; }
+.wk .hint .hint-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; width: 19rem; white-space: normal; text-align: left; font-weight: 400; color: var(--color-fg); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.55; }
+.wk .hint-l .hint-tip { left: 0; right: auto; }
+.wk .hint:hover .hint-tip, .wk .hint:focus .hint-tip { display: block; }
+.wk .ops td { white-space: normal; text-align: left; vertical-align: top; min-width: 16rem; line-height: 1.55; }
+.wk .ops td:first-child { min-width: 0; white-space: nowrap; }
+.wk .ops th { text-align: left; }
+.wk .ops .r { color: var(--color-fg-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+
+.wk td.g { color: var(--color-ok); font-weight: 600; }
+.wk td.b { color: var(--color-bad); }
+.wk .scroll { overflow-x: auto; max-height: none; }
+.wk { --c-ios: #2a78d6; --c-and: #eb6834; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wk { --c-ios: #3987e5; --c-and: #d95926; } }
+:root[data-theme="dark"] .wk { --c-ios: #3987e5; --c-and: #d95926; }
+.wk .ch { width: 100%; margin: 6px 0 4px; }
+.wk .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .wk .two { grid-template-columns: 1fr; } }
+.wk .lg { display: flex; gap: 16px; font-size: 13px; color: var(--color-fg); margin: 4px 0 8px; }
+.wk .sw.ios { background: var(--c-ios); } .wk .sw.and { background: var(--c-and); }
+.wk details { margin-top: 10px; } .wk summary { cursor: pointer; color: var(--color-fg-muted); font-size: 13px; }
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--color-panel); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; line-height: 1.55; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.wk td.nm a { color: var(--color-fg); text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 3px; } .wk td.nm a:hover { text-decoration-color: currentColor; }
+.wk .seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: 6px; overflow: hidden; margin: 4px 0; } .wk .seg button { border: 0; background: transparent; color: var(--color-fg-muted); padding: 4px 12px; font-size: 13px; cursor: pointer; } .wk .seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-panel); }
+.wk td.fnew { background: #fff3cc; font-weight: 600; } .wk td.fnew2 { background: #ffd966; font-weight: 600; } .wk .hl { display: inline-block; padding: 0 6px; border-radius: 3px; font-weight: 600; } .wk .hl.a { background: #fff3cc; } .wk .hl.b { background: #ffd966; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wk td.fnew, :root:not([data-theme="light"]) .wk .hl.a { background: #4a3f1a; } :root:not([data-theme="light"]) .wk td.fnew2, :root:not([data-theme="light"]) .wk .hl.b { background: #7a5f12; } }
+.wk td.sep { white-space: nowrap; } #mats td.nm { min-width: 13rem; max-width: 17rem; font-size: 12px; } #mats th, #mats td { padding: 5px 6px; } .wk th.oth, .wk td.oth { border-left: 1px solid var(--color-border-line); }
+.wk td.nm { text-align: left; white-space: normal; min-width: 16rem; max-width: 26rem; line-height: 1.45; }
+</style>
+<style>
+  .wk .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: var(--cds-gap-md); margin-top: var(--cds-gap-sm); }
+  .wk h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-md) 0 var(--cds-gap-xs); }
+  .wk .mat h2 { margin-bottom: 2px; }
+  .wk .mname { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg); word-break: break-all; }
+  .wk .muted { color: var(--color-fg-muted); }
+  .wk .kpis { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: var(--cds-gap-sm) 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .wk .kpis b { color: var(--color-fg); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; margin-right: 4px; }
+  .wk .say1 { margin: 0; line-height: 1.65; font-size: var(--cds-font-size-body); }
+  .wk .say p, .wk .card > p.p { line-height: 1.65; font-size: var(--cds-font-size-body); margin: var(--cds-gap-sm) 0 0; }
+  .wk .ch svg { display: block; overflow: visible; }
+  .wk .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-sm) 0 0; }
+  .wk .lg i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .wk .lg i.ln { height: 3px; border-radius: 2px; vertical-align: 2px; }
+  .wk .lg i.dash { height: 0; border-top: 2px dashed currentColor; background: none !important; vertical-align: 3px; }
+  #tip { position: fixed; z-index: 30; }
+  .wk ol.steps { margin: var(--cds-gap-sm) 0 0; padding-left: 1.3em; display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); line-height: 1.65; }
+  .wk ol.steps .why { color: var(--color-fg-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topic-top">
+  <nav class="lx-nav" aria-label="日报、周报、排期和专题">
+    <div class="lx-navrow"><span class="lx-nav-label">日报</span><span class="lx-chips"><a class="lx-chip" href="../../">最新日报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">周报</span><span class="lx-chips"><a class="lx-chip" href="../../week/">最新周报</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">排期</span><span class="lx-chips"><a class="lx-chip" href="../../schedule/">素材排期</a></span></div>
+    <div class="lx-navrow"><span class="lx-nav-label">专题</span><span class="lx-chips"><a class="lx-chip" href="../">全部专题</a><a class="lx-chip" aria-current="page" href="./">素材消耗天花板</a></span></div>
+  </nav>
+</div>
+<div class="wk">
+  <header>
+    <h1>素材消耗天花板：一条素材基建多少条就跑不出了</h1>
+    <p class="sub">国区 10/11 到 11/16。基建按巨量智擎项目算：一条素材放进一个项目就是 1 条基建，建了没花钱的也算。消耗、激活来自「国区投放素材」投放数据_分日（两端合计）；每条基建花了多少来自巨量智擎投放管理（296 个户、1,018 个项目，11/17 读取）。</p>
+  </header>
+
+  <section class="card sum" id="summary">
+    <h2>结论</h2>
+    <p class="sum-lead"><b>一条素材的量几乎全靠 1 到 3 条“主力基建”，基建到 20 条左右就到顶了。头部 75 条素材（这段时间基建里能对上 ¥5,000 以上消耗的），每条中位数挂在 84 个项目里，花过 ¥100 的基建只有 4 条；按建的先后排，前 20 条基建平均每条带来 ¥570 到 ¥700，第 21 到 30 条降到 ¥142，30 条以后每条只有 ¥50 左右。要新增消耗，靠上新素材和二创，不靠给老素材继续加基建。</b></p>
+    <ul>
+      <li><b>到顶点在 20 条左右：</b>57 条素材、只算建好满 6 天的基建：第 1–10 条每条平均 ¥696，第 11–20 条 ¥574，第 21–30 条 ¥142，第 31–40 条 ¥58，40 条以后 ¥17 到 ¥71（第一节）。和会上“用十次二十次就到顶”的判断一致。</li>
+      <li><b>钱集中在一两条基建上：</b>75 条素材里，最大一条基建占这条素材消耗的中位数是 66%，前三条 95%；58 条素材的最大一条超过一半。主力基建通常建得很早：中位数是第 3 条，75 条里 55 条在前 20 条之内。</li>
+      <li><b>起量以后 2 到 4 天就回落，加基建接不住：</b>FN01 持仓公告 11/13 单日 ¥3.2 万，之后基建从 58 条加到 72 条，11/16 只剩 ¥2,500；NT01 说来惭愧 11/12 ¥2.1 万，基建从 51 条加到 73 条，4 天后 ¥2,600。10 条头部素材里，花钱最多的 3 天占全部消耗 45% 到 99%。</li>
+      <li><b>按时间看，消耗随素材变老往下走：</b>扣掉大盘起伏后，51 条跑了两周以上的素材，第 1–3 天拿走它们消耗的 36%，第 4–7 天 26%，第 8–14 天 21%，15 天以后 18%；31 条在第一周就到最高点。</li>
+      <li><b>例外：起量常常要等大盘。</b>11/6 到 11/10 大盘每天只有 ¥1.9 万到 ¥5.6 万，11/12 以后每天 ¥23 万到 ¥30 万；10 条头部素材里 8 条的最高点在 11/11 以后，不少基建 10 天前就建好了，等预算放开才跑（微信读书接着读：95 条基建十天没花钱，11/15、11/16 每天 ¥1.5 万到 ¥1.7 万）。75 条里 17 条的主力基建是第 30 条以后建的，其中不少是 11/12 前后新建的项目，所以老素材偶尔能靠新项目再起一波，只是平均下来不值得大量铺。</li>
+      <li><b>原因在项目结构：</b>智擎一个项目里塞很多素材。花过 ¥1,000 的 202 个项目，中位数每个项目 121 条素材、15 条花过钱，最大一条素材拿走 51%，前 5 条拿走 97%。每次新建项目就是一批素材一起进去，素材的基建条数主要取决于建了多少个项目，系统在每个项目里只挑几条花钱。</li>
+    </ul>
+    <p class="note">下一步在第五节。项目怎么搭（一个项目放多少条、新项目里老素材会不会挤掉新素材）会上说往后放，这次只把项目层面看到的数写在上面最后一条。</p>
+  </section>
+
+  <section class="card" id="order">
+    <h2>一、第几条基建以后就没量了</h2>
+    <p class="note">57 条素材（10/11–11/16 基建里能对上 ¥5,000 以上消耗、11/5 以前开始建的），每条素材的基建按建的日期排先后；只算 11/10 以前建的基建，让每条至少有 6 天花钱的时间，避免后建的天然花得少。柱子是这一段基建平均每条花了多少，柱顶写“花过 ¥100 的占比”。</p>
+    <div class="ch" id="ch-order"></div>
+    <details><summary>看表格</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>第几条基建</th><th>基建条数</th><th>这段基建合计花费</th><th>平均每条</th><th>花过钱的占比</th><th>花过 ¥100 的占比</th></tr></thead>
+      <tbody><tr><td>第 1–10 条</td><td>559</td><td>¥389,230</td><td>¥696</td><td>54%</td><td>22%</td></tr><tr><td>第 11–20 条</td><td>537</td><td>¥308,464</td><td>¥574</td><td>45%</td><td>13%</td></tr><tr><td>第 21–30 条</td><td>502</td><td>¥71,369</td><td>¥142</td><td>45%</td><td>10%</td></tr><tr><td>第 31–40 条</td><td>478</td><td>¥27,746</td><td>¥58</td><td>40%</td><td>6%</td></tr><tr><td>第 41–60 条</td><td>779</td><td>¥38,476</td><td>¥49</td><td>30%</td><td>3%</td></tr><tr><td>第 61–80 条</td><td>462</td><td>¥33,015</td><td>¥71</td><td>14%</td><td>3%</td></tr><tr><td>第 81+ 条</td><td>92</td><td>¥1,593</td><td>¥17</td><td>32%</td><td>2%</td></tr></tbody>
+    </table></div></details>
+    <p class="note">按全部 75 条素材、不扣建好天数算，结论一样：第 1–10 条每条 ¥799，第 11–20 条 ¥480，第 21–40 条 ¥130，41 条以后 ¥69 到 ¥77。</p>
+  </section>
+
+  <section class="card" id="time">
+    <h2>二、按时间看：素材上线几天后消耗平了</h2>
+    <div class="two">
+      <div><h3>大盘每天消耗（两端合计）</h3><div class="ch" id="ch-day"></div></div>
+      <div><h3>素材上线后各阶段拿走的消耗（扣掉大盘起伏）</h3><div class="ch" id="ch-age"></div></div>
+    </div>
+    <p class="note">右图：51 条 11/1 以前开始花钱、累计 ¥1 万以上的素材，每天先换算成占当天大盘的比例再加总，避免 11/6–11/10 大盘缩量、11/12 以后大盘放量把曲线带偏。按天平均：第 1–3 天每天约 12%，第 4–7 天约 6.5%，第 8–14 天约 3%，15 天以后约 1.5%，大约每 4 到 5 天减半。</p>
+  </section>
+
+  <section class="card" id="mats">
+    <h2>三、10 条头部素材逐条看</h2>
+    <p class="note">10/11–11/16 消耗最高的素材里挑了 10 条（同一批项目、走势一样的扩量02 只放一条；已删除的项目太多、消耗对得上基建的不到六成的两条没放）。左图：线是每天消耗，柱是当天新建的基建（深色后来花过钱，浅色一直没花钱），虚线是花钱最多的那条主力基建当天的消耗。右图：累计基建（橙线）和每天消耗放在一起，看累计到多少以后消耗平了或掉了。鼠标放上去看当天数字和占大盘的比例。</p>
+    <div class="lg"><span><i style="background:var(--bar)" class="ln"></i>每天消耗（左轴）</span><span style="color:var(--color-fg-muted)"><i class="dash"></i>主力基建当天消耗（按所在户近似，左轴）</span><span><i style="background:#8f8c84"></i>当天新建、后来花过钱的基建（右轴）</span><span><i style="background:var(--cds-chart-muted)"></i>当天新建、一直没花钱的基建（右轴）</span><span><i style="background:var(--color-warn)" class="ln"></i>累计基建（右轴）</span></div>
+  </section>
+  
+  <section class="card mat">
+    <h2>1. FN01 持仓公告和异动</h2>
+    <p class="mname">财务与投资-持仓有公告和异动时推给你-FN01-02-zxc-20261104-热点 <span class="muted">（7704612088995790898）</span></p>
+    <div class="kpis">
+      <span><b>¥91,523</b>消耗 11/05–11/16</span>
+      <span><b>75</b>条基建</span>
+      <span><b>47</b>条花过钱</span>
+      <span><b>10</b>条过 ¥100</span>
+      <span><b>59%</b>最大一条基建占比</span>
+      <span><b>95%</b>前三条占比</span>
+      <span><b>11/6</b>主力基建建的日期</span>
+      <span class="muted"><b>100%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">11/5 到 11/7 建了 41 条，每天只花 ¥1,500 左右；11/6 建的那条主力基建到 11/13 才起量，11/12 到 11/14 三天花了 ¥7.0 万，占这条素材 77%。之后基建继续加到 72 条，消耗 11/15 掉到 ¥7,500、11/16 ¥2,500，没有被新基建接住。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a0"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b0"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>2. LG03 英语口语陪练</h2>
+    <p class="mname">learning_英语口语陪练与个性化带学_01 <span class="muted">（7696097539917971466）</span></p>
+    <div class="kpis">
+      <span><b>¥74,042</b>消耗 10/14–11/16</span>
+      <span><b>88</b>条基建</span>
+      <span><b>46</b>条花过钱</span>
+      <span><b>9</b>条过 ¥100</span>
+      <span><b>81%</b>最大一条基建占比</span>
+      <span><b>93%</b>前三条占比</span>
+      <span><b>10/31</b>主力基建建的日期</span>
+      <span class="muted"><b>64%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">10/30 到 11/4 基建从 6 条加到 57 条，每天 ¥1,900 到 ¥8,200；11/5 到 11/9 基建加到 65 条后停住，消耗每天不到 ¥600（同期大盘每天 ¥1.9 万到 ¥7.6 万，是这段时间最低的几天）。11/11、11/12 两天花了 ¥2.7 万，其中 ¥2.6 万来自 10/31 建的同一条主力基建，然后回落。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a1"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b1"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>3. LG02 转行考证拆成每周</h2>
+    <p class="mname">学习与成长-把转行、考证这类大目标拆成每周能做的事-LG02-05-zl-20261029 <span class="muted">（7702455579841740810）</span></p>
+    <div class="kpis">
+      <span><b>¥70,822</b>消耗 10/30–11/16</span>
+      <span><b>113</b>条基建</span>
+      <span><b>66</b>条花过钱</span>
+      <span><b>17</b>条过 ¥100</span>
+      <span><b>65%</b>最大一条基建占比</span>
+      <span><b>79%</b>前三条占比</span>
+      <span><b>10/31</b>主力基建建的日期</span>
+      <span class="muted"><b>74%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">11/2、11/3 基建到 45 条时跑出第一波，两天 ¥2.0 万；之后基建加到 85 条，消耗反而掉到每天 ¥100 到 ¥2,600。11/11、11/12 第二波 ¥2.9 万，基本都在 10/31 建的那条主力基建上（和英语口语、LG02-01 是同一个项目）。之后基建加到 109 条，回到每天 ¥1,400 到 ¥4,600。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a2"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b2"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>4. PS03 工作和接娃（KOC 扩量02）</h2>
+    <p class="mname">home&amp;family_today koc_提前协调工作与接娃安排_01_二创_精简2zxc_扩量01_换开头_wq_扩量02_二创新剪_wq_20261027 <span class="muted">（7701263581258154025）</span></p>
+    <div class="kpis">
+      <span><b>¥51,358</b>消耗 10/27–11/16</span>
+      <span><b>91</b>条基建</span>
+      <span><b>53</b>条花过钱</span>
+      <span><b>11</b>条过 ¥100</span>
+      <span><b>41%</b>最大一条基建占比</span>
+      <span><b>84%</b>前三条占比</span>
+      <span><b>11/12</b>主力基建建的日期</span>
+      <span class="muted"><b>75%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">前三周基建陆续加到 62 条，消耗在 ¥700 到 ¥6,800 之间波动、整体往下走。11/12 新建的一条基建 11/14 单日花了 ¥1.45 万（占当天 98%），第二天回到 ¥800。这是少数“后面新基建又起一波”的例子，但只撑了一天。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a3"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b3"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>5. LG01 读书和自我提升（KOC）</h2>
+    <p class="mname">learning_today koc_个性化读书与自我提升计划_02_二创_精剪1cw <span class="muted">（7697203458292695090）</span></p>
+    <div class="kpis">
+      <span><b>¥48,676</b>消耗 10/18–11/16</span>
+      <span><b>86</b>条基建</span>
+      <span><b>62</b>条花过钱</span>
+      <span><b>20</b>条过 ¥100</span>
+      <span><b>45%</b>最大一条基建占比</span>
+      <span><b>82%</b>前三条占比</span>
+      <span><b>10/30</b>主力基建建的日期</span>
+      <span class="muted"><b>91%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">10/30 到 11/3 基建加到 44 条，每天 ¥0 到 ¥2,800。11/10 以后大盘放量，这条每天 ¥3,100 到 ¥1.24 万，钱分在几条基建上：花过 ¥100 的有 20 条（10 条里最多），最大一条占 45%，11/16 还有 ¥4,200。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a4"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b4"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>6. IN01 比赛信息提前晓</h2>
+    <p class="mname">信息检索与追踪-比赛信息提前晓-IN01-02-小李-261105 <span class="muted">（7705005598383996991）</span></p>
+    <div class="kpis">
+      <span><b>¥48,350</b>消耗 11/06–11/16</span>
+      <span><b>51</b>条基建</span>
+      <span><b>18</b>条花过钱</span>
+      <span><b>4</b>条过 ¥100</span>
+      <span><b>96%</b>最大一条基建占比</span>
+      <span><b>99%</b>前三条占比</span>
+      <span><b>11/6</b>主力基建建的日期</span>
+      <span class="muted"><b>100%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">11/6 一天建了 19 条，之后只加到 45 条。11/6 建的主力基建从 11/12 起每天 ¥4,000 到 ¥1.2 万，11/16 还有 ¥1.17 万，这一条占全部消耗 96%。基建条数少、到 11/16 还在跑，量来自那一条，不来自条数。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a5"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b5"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>7. WK02 工作邮箱漏掉的邮件（KOC）</h2>
+    <p class="mname">work_today koc_找出工作邮箱里遗漏的重要邮件_01_二创_精简1zl <span class="muted">（7697218765478068266）</span></p>
+    <div class="kpis">
+      <span><b>¥40,667</b>消耗 10/19–11/16</span>
+      <span><b>42</b>条基建</span>
+      <span><b>39</b>条花过钱</span>
+      <span><b>15</b>条过 ¥100</span>
+      <span><b>28%</b>最大一条基建占比</span>
+      <span><b>61%</b>前三条占比</span>
+      <span><b>11/1</b>主力基建建的日期</span>
+      <span class="muted"><b>87%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">基建一共 42 条，39 条花过钱、15 条过 ¥100，最大一条只占 28%。11/4 第一波 ¥8,100，11/7 以后只加了 2 条基建，消耗还在 ¥500 到 ¥5,500 之间持续了两周。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a6"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b6"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>8. NT01 说来惭愧（扩量01）</h2>
+    <p class="mname">随身记事与个人资料管理-NT01-说来惭愧_扩量01_二创新剪_wq_A组_20261107 <span class="muted">（7705431731503628324）</span></p>
+    <div class="kpis">
+      <span><b>¥39,651</b>消耗 11/07–11/16</span>
+      <span><b>78</b>条基建</span>
+      <span><b>14</b>条花过钱</span>
+      <span><b>3</b>条过 ¥100</span>
+      <span><b>73%</b>最大一条基建占比</span>
+      <span><b>100%</b>前三条占比</span>
+      <span><b>11/7</b>主力基建建的日期</span>
+      <span class="muted"><b>100%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">11/7 一天建了 27 条。11/12 主力基建（11/7 建）起量，当天 ¥2.06 万；之后四天降到 ¥1,700 到 ¥7,200，同期基建从 51 条加到 73 条。78 条里只有 3 条花过 ¥100，前三条占 100%。扩量02（同一批项目）走势几乎一样，没单独放。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a7"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b7"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>9. LG01 微信读书接着读</h2>
+    <p class="mname">学习与成长-微信读书里读了一半的书，提醒你接着读-LG01-05-lst-20261102 <span class="muted">（7703774725395267634）</span></p>
+    <div class="kpis">
+      <span><b>¥34,674</b>消耗 11/03–11/16</span>
+      <span><b>113</b>条基建</span>
+      <span><b>46</b>条花过钱</span>
+      <span><b>10</b>条过 ¥100</span>
+      <span><b>51%</b>最大一条基建占比</span>
+      <span><b>81%</b>前三条占比</span>
+      <span><b>11/12</b>主力基建建的日期</span>
+      <span class="muted"><b>100%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">11/3 一天建了 41 条，到 11/13 已经 95 条，十天几乎没花钱。11/14 起量，11/15、11/16 每天 ¥1.5 万到 ¥1.7 万，最大的是 11/12 新建的那条基建。条数早就够了，起量靠的是某一条基建加上大盘预算。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a8"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b8"></div></div>
+    </div>
+  </section>
+  <section class="card mat">
+    <h2>10. LG01 恩泽哥哥和贝拉妹妹（KOC）</h2>
+    <p class="mname">学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027 <span class="muted">（7701367302910427187）</span></p>
+    <div class="kpis">
+      <span><b>¥33,517</b>消耗 10/27–11/16</span>
+      <span><b>110</b>条基建</span>
+      <span><b>19</b>条花过钱</span>
+      <span><b>7</b>条过 ¥100</span>
+      <span><b>67%</b>最大一条基建占比</span>
+      <span><b>88%</b>前三条占比</span>
+      <span><b>10/27</b>主力基建建的日期</span>
+      <span class="muted"><b>96%</b>消耗能对上基建</span>
+    </div>
+    <p class="say1">10/27 建了 9 条，第二天就到最高 ¥1.27 万（主力基建 ¥1.12 万）；之后基建加到 108 条，单日再没超过 ¥4,500。110 条里 19 条花过钱。最典型的“前 10 条就到顶”。</p>
+    <div class="two">
+      <div><h3>每天消耗和每天新建的基建</h3><div class="ch" id="a9"></div></div>
+      <div><h3>累计基建和每天消耗</h3><div class="ch" id="b9"></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="how">
+    <h2>四、口径</h2>
+    <ul class="take">
+      <li>1 条基建 = 一条素材在一个巨量智擎项目里；建了没花钱的也算。项目里的素材清单和每条素材 10/11–11/16 在这个项目里的花费，来自巨量智擎投放管理，11/17 读取，读了头部 14 条素材花过钱的 296 个户里全部项目，共 1,018 个项目（其中 260 个这段时间没花钱），其他素材也在这些项目里，一起算。</li>
+      <li>基建的日期按项目创建日。素材是在项目建好以后才加进去的（素材上传比项目晚），按素材上传日算。</li>
+      <li>看不到的：已经删除的项目、旧版（非智擎）户里的基建。所以 10 月中旬早期的基建会少算，每条素材卡片上写了“消耗能对上基建”的比例。</li>
+      <li>主力基建那条虚线是这条基建所在户当天这条素材的消耗（巨量工作台分户分天），同一个户里还有别的基建在花钱时会偏高。</li>
+      <li>每天消耗、激活来自投放数据_分日，两端合计，智擎和旧版都算。</li>
+    </ul>
+  </section>
+
+  <section class="card" id="next">
+    <h2>五、下一步</h2>
+    <ol class="steps">
+      <li>单条素材的基建以 20 条左右为参考上限，过了 20 条还没跑出一条花到 ¥100 以上的基建，不建议继续给它加。<span class="why">原因：第 21–30 条基建平均每条只有 ¥142，30 条以后 ¥50 左右，而且每个项目只挑几条素材花钱，多铺的老素材占的是新素材的位置。</span></li>
+      <li>想要下一波量，排产按“头部素材回落以后由新素材和二创接上”来排，不靠给头部素材加基建。<span class="why">原因：主力基建起量后 2 到 4 天回落，FN01 持仓公告、NT01 说来惭愧、LG02 转行考证回落以后基建又加了 14 到 22 条，都没把量拉回来。</span></li>
+      <li>判断一条新素材跑没跑出来，看它前 20 条基建里有没有一条起量，同时对照大盘：大盘缩量的日子没量，不等于素材不行，等大盘恢复再看 2 到 3 天。<span class="why">原因：75 条里 55 条的主力基建在前 20 条之内；但微信读书接着读、英语口语这类素材是建好十天后、11/11 大盘放量时才起量的。</span></li>
+      <li>项目搭建（一个项目放多少条素材、新项目里老素材会不会挤新素材）按会上安排往后放，排到时用这次的项目数据接着看。<span class="why">原因：现在花过钱的项目中位数塞了 121 条素材，前 5 条拿走 97% 的钱，项目结构很可能也在影响新素材能不能冷启。</span></li>
+    </ol>
+  </section>
+</div>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script type="application/json" id="pdata">{"mats":[{"k":0,"rows":[{"d":"2026-11-05","cost":1523.58,"b":17,"bs":13,"cum":17,"win":0,"share":0.02,"act":70.0,"ret":18.0},{"d":"2026-11-06","cost":1518.39,"b":15,"bs":12,"cum":32,"win":100,"share":0.0394,"act":80.0,"ret":28.0},{"d":"2026-11-07","cost":1518.43,"b":9,"bs":9,"cum":41,"win":200,"share":0.0448,"act":119.0,"ret":32.0},{"d":"2026-11-08","cost":1362.93,"b":0,"bs":0,"cum":41,"win":1200,"share":0.0724,"act":111.0,"ret":35.0},{"d":"2026-11-09","cost":1211.3,"b":0,"bs":0,"cum":41,"win":800,"share":0.0349,"act":78.0,"ret":31.0},{"d":"2026-11-10","cost":2315.91,"b":8,"bs":3,"cum":49,"win":2200,"share":0.0411,"act":138.0,"ret":41.0},{"d":"2026-11-11","cost":1545.01,"b":0,"bs":0,"cum":49,"win":100,"share":0.0133,"act":61.0,"ret":20.0},{"d":"2026-11-12","cost":17067.56,"b":5,"bs":4,"cum":54,"win":300,"share":0.0675,"act":719.0,"ret":211.0},{"d":"2026-11-13","cost":31833.47,"b":4,"bs":3,"cum":58,"win":21700,"share":0.1354,"act":1462.0,"ret":468.0},{"d":"2026-11-14","cost":21637.91,"b":6,"bs":1,"cum":64,"win":19700,"share":0.0727,"act":1008.0,"ret":361.0},{"d":"2026-11-15","cost":7452.26,"b":4,"bs":2,"cum":68,"win":7300,"share":0.0314,"act":317.0,"ret":123.0},{"d":"2026-11-16","cost":2536.05,"b":4,"bs":0,"cum":72,"win":900,"share":0.0101,"act":107.0,"ret":33.0}]},{"k":1,"rows":[{"d":"2026-10-14","cost":472.7,"b":0,"bs":0,"cum":0,"win":0,"share":0.0062,"act":38.0,"ret":5.0},{"d":"2026-10-15","cost":2661.9,"b":0,"bs":0,"cum":0,"win":0,"share":0.0304,"act":156.0,"ret":19.0},{"d":"2026-10-16","cost":135.52,"b":0,"bs":0,"cum":0,"win":0,"share":0.0067,"act":19.0,"ret":2.0},{"d":"2026-10-17","cost":12.86,"b":0,"bs":0,"cum":0,"win":0,"share":0.0088,"act":1.0,"ret":0.0},{"d":"2026-10-18","cost":89.73,"b":0,"bs":0,"cum":0,"win":0,"share":0.0086,"act":7.0,"ret":2.0},{"d":"2026-10-19","cost":4.23,"b":1,"bs":1,"cum":1,"win":0,"share":0.0002,"act":0.0,"ret":0.0},{"d":"2026-10-20","cost":187.98,"b":0,"bs":0,"cum":1,"win":0,"share":0.0039,"act":15.0,"ret":6.0},{"d":"2026-10-21","cost":4.66,"b":0,"bs":0,"cum":1,"win":0,"share":0.0005,"act":0.0,"ret":0.0},{"d":"2026-10-22","cost":0.96,"b":0,"bs":0,"cum":1,"win":0,"share":0.0001,"act":0.0,"ret":0.0},{"d":"2026-10-23","cost":0.18,"b":0,"bs":0,"cum":1,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-10-24","cost":20.65,"b":0,"bs":0,"cum":1,"win":0,"share":0.0009,"act":1.0,"ret":0.0},{"d":"2026-10-25","cost":2022.17,"b":0,"bs":0,"cum":1,"win":0,"share":0.1137,"act":122.0,"ret":38.0},{"d":"2026-10-26","cost":397.75,"b":2,"bs":2,"cum":3,"win":0,"share":0.0077,"act":31.0,"ret":13.0},{"d":"2026-10-27","cost":95.42,"b":3,"bs":2,"cum":6,"win":0,"share":0.0035,"act":8.0,"ret":4.0},{"d":"2026-10-28","cost":1131.31,"b":0,"bs":0,"cum":6,"win":0,"share":0.0134,"act":65.0,"ret":23.0},{"d":"2026-10-29","cost":1990.59,"b":0,"bs":0,"cum":6,"win":0,"share":0.0211,"act":112.0,"ret":37.0},{"d":"2026-10-30","cost":3625.63,"b":10,"bs":6,"cum":16,"win":0,"share":0.0238,"act":176.0,"ret":46.0},{"d":"2026-10-31","cost":8158.31,"b":4,"bs":3,"cum":20,"win":0,"share":0.0507,"act":451.0,"ret":174.0},{"d":"2026-11-01","cost":1904.19,"b":1,"bs":0,"cum":21,"win":0,"share":0.0126,"act":92.0,"ret":28.0},{"d":"2026-11-02","cost":3924.77,"b":13,"bs":11,"cum":34,"win":0,"share":0.0213,"act":157.0,"ret":50.0},{"d":"2026-11-03","cost":3216.84,"b":10,"bs":6,"cum":44,"win":400,"share":0.0181,"act":137.0,"ret":32.0},{"d":"2026-11-04","cost":3102.9,"b":13,"bs":5,"cum":57,"win":200,"share":0.0158,"act":173.0,"ret":33.0},{"d":"2026-11-05","cost":170.98,"b":6,"bs":3,"cum":63,"win":0,"share":0.0022,"act":7.0,"ret":1.0},{"d":"2026-11-06","cost":136.38,"b":2,"bs":0,"cum":65,"win":0,"share":0.0035,"act":3.0,"ret":1.0},{"d":"2026-11-07","cost":35.84,"b":0,"bs":0,"cum":65,"win":0,"share":0.0011,"act":1.0,"ret":0.0},{"d":"2026-11-08","cost":49.19,"b":0,"bs":0,"cum":65,"win":0,"share":0.0026,"act":1.0,"ret":0.0},{"d":"2026-11-09","cost":624.66,"b":0,"bs":0,"cum":65,"win":400,"share":0.018,"act":31.0,"ret":15.0},{"d":"2026-11-10","cost":2669.0,"b":7,"bs":2,"cum":72,"win":2200,"share":0.0473,"act":135.0,"ret":46.0},{"d":"2026-11-11","cost":9318.78,"b":0,"bs":0,"cum":72,"win":8000,"share":0.0804,"act":339.0,"ret":79.0},{"d":"2026-11-12","cost":17993.46,"b":7,"bs":4,"cum":79,"win":17900,"share":0.0711,"act":771.0,"ret":244.0},{"d":"2026-11-13","cost":4940.92,"b":4,"bs":1,"cum":83,"win":4900,"share":0.021,"act":201.0,"ret":74.0},{"d":"2026-11-14","cost":252.11,"b":1,"bs":0,"cum":84,"win":100,"share":0.0008,"act":11.0,"ret":5.0},{"d":"2026-11-15","cost":4344.56,"b":0,"bs":0,"cum":84,"win":4200,"share":0.0183,"act":185.0,"ret":68.0},{"d":"2026-11-16","cost":344.44,"b":0,"bs":0,"cum":84,"win":200,"share":0.0014,"act":10.0,"ret":2.0}]},{"k":2,"rows":[{"d":"2026-10-30","cost":0,"b":17,"bs":12,"cum":17,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-31","cost":772.63,"b":4,"bs":3,"cum":21,"win":0,"share":0.0048,"act":33.0,"ret":12.0},{"d":"2026-11-01","cost":1407.72,"b":1,"bs":1,"cum":22,"win":0,"share":0.0093,"act":59.0,"ret":20.0},{"d":"2026-11-02","cost":8943.16,"b":13,"bs":10,"cum":35,"win":0,"share":0.0485,"act":366.0,"ret":98.0},{"d":"2026-11-03","cost":11030.03,"b":10,"bs":9,"cum":45,"win":400,"share":0.0621,"act":421.0,"ret":105.0},{"d":"2026-11-04","cost":2624.45,"b":12,"bs":10,"cum":57,"win":100,"share":0.0133,"act":126.0,"ret":22.0},{"d":"2026-11-05","cost":1642.05,"b":6,"bs":2,"cum":63,"win":0,"share":0.0216,"act":100.0,"ret":22.0},{"d":"2026-11-06","cost":442.08,"b":7,"bs":0,"cum":70,"win":0,"share":0.0115,"act":30.0,"ret":5.0},{"d":"2026-11-07","cost":53.56,"b":6,"bs":0,"cum":76,"win":0,"share":0.0016,"act":5.0,"ret":1.0},{"d":"2026-11-08","cost":50.18,"b":2,"bs":0,"cum":78,"win":0,"share":0.0027,"act":4.0,"ret":1.0},{"d":"2026-11-09","cost":1321.06,"b":0,"bs":0,"cum":78,"win":300,"share":0.0381,"act":54.0,"ret":25.0},{"d":"2026-11-10","cost":1033.38,"b":7,"bs":6,"cum":85,"win":0,"share":0.0183,"act":53.0,"ret":17.0},{"d":"2026-11-11","cost":13087.81,"b":0,"bs":0,"cum":85,"win":12800,"share":0.1129,"act":510.0,"ret":159.0},{"d":"2026-11-12","cost":15489.96,"b":6,"bs":5,"cum":91,"win":13900,"share":0.0612,"act":738.0,"ret":252.0},{"d":"2026-11-13","cost":4601.1,"b":4,"bs":3,"cum":95,"win":4100,"share":0.0196,"act":204.0,"ret":72.0},{"d":"2026-11-14","cost":2500.25,"b":6,"bs":3,"cum":101,"win":300,"share":0.0084,"act":122.0,"ret":36.0},{"d":"2026-11-15","cost":4464.03,"b":4,"bs":2,"cum":105,"win":2300,"share":0.0188,"act":190.0,"ret":67.0},{"d":"2026-11-16","cost":1358.5,"b":4,"bs":0,"cum":109,"win":200,"share":0.0054,"act":54.0,"ret":21.0}]},{"k":3,"rows":[{"d":"2026-10-27","cost":1852.59,"b":8,"bs":5,"cum":8,"win":0,"share":0.0674,"act":119.0,"ret":41.0},{"d":"2026-10-28","cost":5544.37,"b":2,"bs":1,"cum":10,"win":0,"share":0.0657,"act":285.0,"ret":92.0},{"d":"2026-10-29","cost":2600.3,"b":1,"bs":1,"cum":11,"win":0,"share":0.0276,"act":156.0,"ret":44.0},{"d":"2026-10-30","cost":1166.77,"b":10,"bs":7,"cum":21,"win":0,"share":0.0077,"act":43.0,"ret":14.0},{"d":"2026-10-31","cost":708.9,"b":2,"bs":1,"cum":23,"win":0,"share":0.0044,"act":33.0,"ret":9.0},{"d":"2026-11-01","cost":6788.13,"b":5,"bs":3,"cum":28,"win":0,"share":0.0448,"act":284.0,"ret":69.0},{"d":"2026-11-02","cost":3076.1,"b":15,"bs":7,"cum":43,"win":0,"share":0.0167,"act":109.0,"ret":43.0},{"d":"2026-11-03","cost":2211.9,"b":14,"bs":5,"cum":57,"win":0,"share":0.0125,"act":88.0,"ret":22.0},{"d":"2026-11-04","cost":850.97,"b":4,"bs":1,"cum":61,"win":0,"share":0.0043,"act":36.0,"ret":12.0},{"d":"2026-11-05","cost":99.6,"b":0,"bs":0,"cum":61,"win":0,"share":0.0013,"act":1.0,"ret":1.0},{"d":"2026-11-06","cost":51.03,"b":1,"bs":0,"cum":62,"win":0,"share":0.0013,"act":1.0,"ret":0.0},{"d":"2026-11-07","cost":7.7,"b":0,"bs":0,"cum":62,"win":0,"share":0.0002,"act":4.0,"ret":1.0},{"d":"2026-11-08","cost":37.71,"b":0,"bs":0,"cum":62,"win":0,"share":0.002,"act":4.0,"ret":0.0},{"d":"2026-11-09","cost":818.6,"b":0,"bs":0,"cum":62,"win":0,"share":0.0236,"act":80.0,"ret":19.0},{"d":"2026-11-10","cost":283.39,"b":6,"bs":4,"cum":68,"win":0,"share":0.005,"act":9.0,"ret":4.0},{"d":"2026-11-11","cost":3884.37,"b":0,"bs":0,"cum":68,"win":0,"share":0.0335,"act":333.0,"ret":42.0},{"d":"2026-11-12","cost":2748.13,"b":7,"bs":7,"cum":75,"win":0,"share":0.0109,"act":184.0,"ret":23.0},{"d":"2026-11-13","cost":281.04,"b":4,"bs":2,"cum":79,"win":100,"share":0.0012,"act":14.0,"ret":5.0},{"d":"2026-11-14","cost":14752.16,"b":6,"bs":6,"cum":85,"win":14500,"share":0.0496,"act":461.0,"ret":144.0},{"d":"2026-11-15","cost":784.69,"b":4,"bs":3,"cum":89,"win":600,"share":0.0033,"act":30.0,"ret":7.0},{"d":"2026-11-16","cost":2809.65,"b":2,"bs":0,"cum":91,"win":600,"share":0.0112,"act":134.0,"ret":37.0}]},{"k":4,"rows":[{"d":"2026-10-18","cost":320.71,"b":0,"bs":0,"cum":0,"win":0,"share":0.0309,"act":25.0,"ret":1.0},{"d":"2026-10-19","cost":1145.93,"b":1,"bs":1,"cum":1,"win":0,"share":0.0578,"act":65.0,"ret":10.0},{"d":"2026-10-20","cost":209.73,"b":0,"bs":0,"cum":1,"win":0,"share":0.0044,"act":16.0,"ret":5.0},{"d":"2026-10-21","cost":31.18,"b":0,"bs":0,"cum":1,"win":0,"share":0.0033,"act":3.0,"ret":0.0},{"d":"2026-10-22","cost":1.62,"b":0,"bs":0,"cum":1,"win":0,"share":0.0002,"act":0.0,"ret":0.0},{"d":"2026-10-23","cost":2.69,"b":0,"bs":0,"cum":1,"win":0,"share":0.0001,"act":0.0,"ret":0.0},{"d":"2026-10-24","cost":1.46,"b":0,"bs":0,"cum":1,"win":0,"share":0.0001,"act":0.0,"ret":0.0},{"d":"2026-10-25","cost":0,"b":0,"bs":0,"cum":1,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-26","cost":0.55,"b":2,"bs":1,"cum":3,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-10-27","cost":0.1,"b":3,"bs":2,"cum":6,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-10-28","cost":217.94,"b":0,"bs":0,"cum":6,"win":0,"share":0.0026,"act":8.0,"ret":2.0},{"d":"2026-10-29","cost":65.37,"b":0,"bs":0,"cum":6,"win":0,"share":0.0007,"act":2.0,"ret":1.0},{"d":"2026-10-30","cost":686.98,"b":10,"bs":7,"cum":16,"win":0,"share":0.0045,"act":27.0,"ret":5.0},{"d":"2026-10-31","cost":256.48,"b":4,"bs":4,"cum":20,"win":0,"share":0.0016,"act":17.0,"ret":3.0},{"d":"2026-11-01","cost":55.1,"b":1,"bs":0,"cum":21,"win":0,"share":0.0004,"act":2.0,"ret":1.0},{"d":"2026-11-02","cost":384.51,"b":13,"bs":11,"cum":34,"win":100,"share":0.0021,"act":10.0,"ret":3.0},{"d":"2026-11-03","cost":2776.47,"b":10,"bs":8,"cum":44,"win":100,"share":0.0156,"act":122.0,"ret":32.0},{"d":"2026-11-04","cost":690.3,"b":3,"bs":1,"cum":47,"win":0,"share":0.0035,"act":29.0,"ret":6.0},{"d":"2026-11-05","cost":94.35,"b":1,"bs":1,"cum":48,"win":0,"share":0.0012,"act":2.0,"ret":0.0},{"d":"2026-11-06","cost":146.84,"b":2,"bs":0,"cum":50,"win":0,"share":0.0038,"act":4.0,"ret":0.0},{"d":"2026-11-07","cost":145.28,"b":0,"bs":0,"cum":50,"win":0,"share":0.0043,"act":1.0,"ret":0.0},{"d":"2026-11-08","cost":827.91,"b":0,"bs":0,"cum":50,"win":300,"share":0.044,"act":18.0,"ret":4.0},{"d":"2026-11-09","cost":998.16,"b":0,"bs":0,"cum":50,"win":200,"share":0.0288,"act":37.0,"ret":17.0},{"d":"2026-11-10","cost":3614.47,"b":7,"bs":7,"cum":57,"win":2000,"share":0.0641,"act":130.0,"ret":46.0},{"d":"2026-11-11","cost":3653.08,"b":0,"bs":0,"cum":57,"win":500,"share":0.0315,"act":138.0,"ret":39.0},{"d":"2026-11-12","cost":12397.51,"b":7,"bs":6,"cum":64,"win":5600,"share":0.049,"act":460.0,"ret":164.0},{"d":"2026-11-13","cost":7046.51,"b":4,"bs":3,"cum":68,"win":5400,"share":0.03,"act":245.0,"ret":76.0},{"d":"2026-11-14","cost":3058.52,"b":6,"bs":4,"cum":74,"win":2600,"share":0.0103,"act":135.0,"ret":51.0},{"d":"2026-11-15","cost":5668.39,"b":4,"bs":4,"cum":78,"win":2100,"share":0.0239,"act":261.0,"ret":103.0},{"d":"2026-11-16","cost":4175.18,"b":4,"bs":2,"cum":82,"win":1200,"share":0.0167,"act":163.0,"ret":33.0}]},{"k":5,"rows":[{"d":"2026-11-06","cost":50.8,"b":19,"bs":14,"cum":19,"win":0,"share":0.0013,"act":4.0,"ret":2.0},{"d":"2026-11-07","cost":182.3,"b":0,"bs":0,"cum":19,"win":100,"share":0.0054,"act":5.0,"ret":3.0},{"d":"2026-11-08","cost":110.55,"b":0,"bs":0,"cum":19,"win":100,"share":0.0059,"act":3.0,"ret":2.0},{"d":"2026-11-09","cost":450.66,"b":0,"bs":0,"cum":19,"win":400,"share":0.013,"act":12.0,"ret":2.0},{"d":"2026-11-10","cost":883.41,"b":7,"bs":3,"cum":26,"win":900,"share":0.0157,"act":20.0,"ret":5.0},{"d":"2026-11-11","cost":489.17,"b":0,"bs":0,"cum":26,"win":500,"share":0.0042,"act":10.0,"ret":2.0},{"d":"2026-11-12","cost":4060.58,"b":3,"bs":0,"cum":29,"win":3900,"share":0.0161,"act":122.0,"ret":32.0},{"d":"2026-11-13","cost":12074.74,"b":4,"bs":0,"cum":33,"win":11100,"share":0.0513,"act":398.0,"ret":115.0},{"d":"2026-11-14","cost":10225.91,"b":6,"bs":1,"cum":39,"win":9900,"share":0.0344,"act":396.0,"ret":131.0},{"d":"2026-11-15","cost":8080.18,"b":4,"bs":0,"cum":43,"win":8000,"share":0.0341,"act":386.0,"ret":135.0},{"d":"2026-11-16","cost":11741.98,"b":2,"bs":0,"cum":45,"win":11600,"share":0.047,"act":493.0,"ret":90.0}]},{"k":6,"rows":[{"d":"2026-10-19","cost":0,"b":2,"bs":1,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-20","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-21","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-22","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-23","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-24","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-25","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-26","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-27","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-28","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-29","cost":0,"b":0,"bs":0,"cum":2,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-10-30","cost":25.52,"b":2,"bs":2,"cum":4,"win":0,"share":0.0002,"act":3.0,"ret":1.0},{"d":"2026-10-31","cost":467.49,"b":3,"bs":2,"cum":7,"win":0,"share":0.0029,"act":18.0,"ret":7.0},{"d":"2026-11-01","cost":62.0,"b":6,"bs":6,"cum":13,"win":0,"share":0.0004,"act":5.0,"ret":2.0},{"d":"2026-11-02","cost":1251.99,"b":3,"bs":3,"cum":16,"win":0,"share":0.0068,"act":40.0,"ret":19.0},{"d":"2026-11-03","cost":4488.3,"b":2,"bs":2,"cum":18,"win":0,"share":0.0253,"act":167.0,"ret":48.0},{"d":"2026-11-04","cost":8059.62,"b":6,"bs":5,"cum":24,"win":700,"share":0.041,"act":433.0,"ret":108.0},{"d":"2026-11-05","cost":1355.12,"b":7,"bs":7,"cum":31,"win":500,"share":0.0178,"act":73.0,"ret":21.0},{"d":"2026-11-06","cost":5497.32,"b":4,"bs":4,"cum":35,"win":3700,"share":0.1425,"act":340.0,"ret":97.0},{"d":"2026-11-07","cost":957.21,"b":5,"bs":5,"cum":40,"win":100,"share":0.0282,"act":76.0,"ret":21.0},{"d":"2026-11-08","cost":810.89,"b":0,"bs":0,"cum":40,"win":0,"share":0.0431,"act":55.0,"ret":22.0},{"d":"2026-11-09","cost":569.08,"b":0,"bs":0,"cum":40,"win":0,"share":0.0164,"act":48.0,"ret":17.0},{"d":"2026-11-10","cost":1994.18,"b":0,"bs":0,"cum":40,"win":0,"share":0.0354,"act":110.0,"ret":41.0},{"d":"2026-11-11","cost":4944.43,"b":0,"bs":0,"cum":40,"win":3400,"share":0.0426,"act":192.0,"ret":67.0},{"d":"2026-11-12","cost":1967.65,"b":2,"bs":2,"cum":42,"win":100,"share":0.0078,"act":83.0,"ret":25.0},{"d":"2026-11-13","cost":3451.96,"b":0,"bs":0,"cum":42,"win":0,"share":0.0147,"act":151.0,"ret":50.0},{"d":"2026-11-14","cost":1658.48,"b":0,"bs":0,"cum":42,"win":400,"share":0.0056,"act":74.0,"ret":20.0},{"d":"2026-11-15","cost":2620.27,"b":0,"bs":0,"cum":42,"win":700,"share":0.011,"act":146.0,"ret":48.0},{"d":"2026-11-16","cost":485.93,"b":0,"bs":0,"cum":42,"win":100,"share":0.0019,"act":26.0,"ret":9.0}]},{"k":7,"rows":[{"d":"2026-11-07","cost":0,"b":27,"bs":9,"cum":27,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-11-08","cost":145.14,"b":3,"bs":3,"cum":30,"win":0,"share":0.0077,"act":14.0,"ret":3.0},{"d":"2026-11-09","cost":124.67,"b":2,"bs":0,"cum":32,"win":0,"share":0.0036,"act":12.0,"ret":2.0},{"d":"2026-11-10","cost":3122.18,"b":7,"bs":1,"cum":39,"win":0,"share":0.0554,"act":176.0,"ret":49.0},{"d":"2026-11-11","cost":485.6,"b":0,"bs":0,"cum":39,"win":400,"share":0.0042,"act":26.0,"ret":10.0},{"d":"2026-11-12","cost":20624.73,"b":12,"bs":1,"cum":51,"win":17500,"share":0.0815,"act":1036.0,"ret":303.0},{"d":"2026-11-13","cost":7197.45,"b":4,"bs":0,"cum":55,"win":6300,"share":0.0306,"act":390.0,"ret":122.0},{"d":"2026-11-14","cost":3641.57,"b":6,"bs":0,"cum":61,"win":2300,"share":0.0122,"act":169.0,"ret":53.0},{"d":"2026-11-15","cost":1702.48,"b":4,"bs":0,"cum":65,"win":600,"share":0.0072,"act":82.0,"ret":30.0},{"d":"2026-11-16","cost":2607.1,"b":8,"bs":0,"cum":73,"win":1700,"share":0.0104,"act":127.0,"ret":30.0}]},{"k":8,"rows":[{"d":"2026-11-03","cost":19.97,"b":41,"bs":15,"cum":41,"win":0,"share":0.0001,"act":1.0,"ret":0.0},{"d":"2026-11-04","cost":1.02,"b":12,"bs":2,"cum":53,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-11-05","cost":0.02,"b":6,"bs":1,"cum":59,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-11-06","cost":0,"b":7,"bs":0,"cum":66,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-11-07","cost":26.0,"b":6,"bs":0,"cum":72,"win":0,"share":0.0008,"act":1.0,"ret":0.0},{"d":"2026-11-08","cost":3.83,"b":2,"bs":0,"cum":74,"win":0,"share":0.0002,"act":2.0,"ret":0.0},{"d":"2026-11-09","cost":0.21,"b":0,"bs":0,"cum":74,"win":0,"share":0.0,"act":0.0,"ret":0.0},{"d":"2026-11-10","cost":0,"b":7,"bs":7,"cum":81,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-11-11","cost":0,"b":0,"bs":0,"cum":81,"win":0,"share":0.0,"act":0,"ret":0},{"d":"2026-11-12","cost":15.05,"b":10,"bs":7,"cum":91,"win":0,"share":0.0001,"act":1.0,"ret":0.0},{"d":"2026-11-13","cost":146.36,"b":4,"bs":4,"cum":95,"win":0,"share":0.0006,"act":8.0,"ret":4.0},{"d":"2026-11-14","cost":2899.06,"b":6,"bs":5,"cum":101,"win":400,"share":0.0097,"act":127.0,"ret":51.0},{"d":"2026-11-15","cost":14904.28,"b":4,"bs":4,"cum":105,"win":6000,"share":0.0628,"act":620.0,"ret":209.0},{"d":"2026-11-16","cost":16658.18,"b":4,"bs":1,"cum":109,"win":11300,"share":0.0666,"act":835.0,"ret":172.0}]},{"k":9,"rows":[{"d":"2026-10-27","cost":12.86,"b":9,"bs":6,"cum":9,"win":0,"share":0.0005,"act":3.0,"ret":1.0},{"d":"2026-10-28","cost":12737.82,"b":0,"bs":0,"cum":9,"win":11200,"share":0.151,"act":688.0,"ret":207.0},{"d":"2026-10-29","cost":3007.8,"b":0,"bs":0,"cum":9,"win":500,"share":0.0319,"act":165.0,"ret":48.0},{"d":"2026-10-30","cost":4525.8,"b":7,"bs":1,"cum":16,"win":0,"share":0.0297,"act":207.0,"ret":45.0},{"d":"2026-10-31","cost":1894.6,"b":4,"bs":0,"cum":20,"win":1400,"share":0.0118,"act":84.0,"ret":31.0},{"d":"2026-11-01","cost":1335.4,"b":1,"bs":0,"cum":21,"win":1100,"share":0.0088,"act":54.0,"ret":18.0},{"d":"2026-11-02","cost":612.79,"b":13,"bs":3,"cum":34,"win":100,"share":0.0033,"act":23.0,"ret":3.0},{"d":"2026-11-03","cost":1038.14,"b":11,"bs":1,"cum":45,"win":100,"share":0.0058,"act":42.0,"ret":16.0},{"d":"2026-11-04","cost":618.07,"b":12,"bs":1,"cum":57,"win":500,"share":0.0031,"act":39.0,"ret":7.0},{"d":"2026-11-05","cost":72.72,"b":6,"bs":1,"cum":63,"win":100,"share":0.001,"act":4.0,"ret":0.0},{"d":"2026-11-06","cost":16.1,"b":7,"bs":0,"cum":70,"win":0,"share":0.0004,"act":1.0,"ret":0.0},{"d":"2026-11-07","cost":1.33,"b":6,"bs":0,"cum":76,"win":0,"share":0.0,"act":1.0,"ret":0.0},{"d":"2026-11-08","cost":10.89,"b":2,"bs":0,"cum":78,"win":0,"share":0.0006,"act":0.0,"ret":0.0},{"d":"2026-11-09","cost":20.97,"b":0,"bs":0,"cum":78,"win":0,"share":0.0006,"act":0.0,"ret":0.0},{"d":"2026-11-10","cost":21.69,"b":7,"bs":2,"cum":85,"win":0,"share":0.0004,"act":1.0,"ret":0.0},{"d":"2026-11-11","cost":2212.1,"b":0,"bs":0,"cum":85,"win":2200,"share":0.0191,"act":95.0,"ret":30.0},{"d":"2026-11-12","cost":1479.66,"b":7,"bs":2,"cum":92,"win":800,"share":0.0058,"act":69.0,"ret":19.0},{"d":"2026-11-13","cost":168.19,"b":4,"bs":1,"cum":96,"win":100,"share":0.0007,"act":5.0,"ret":2.0},{"d":"2026-11-14","cost":2564.9,"b":6,"bs":1,"cum":102,"win":2400,"share":0.0086,"act":113.0,"ret":45.0},{"d":"2026-11-15","cost":129.56,"b":4,"bs":0,"cum":106,"win":100,"share":0.0005,"act":7.0,"ret":3.0},{"d":"2026-11-16","cost":1035.3,"b":2,"bs":0,"cum":108,"win":900,"share":0.0041,"act":47.0,"ret":9.0}]}],"day":{"2026-10-11":229,"2026-10-12":2347,"2026-10-13":525,"2026-10-14":75811,"2026-10-15":87488,"2026-10-16":20082,"2026-10-17":1457,"2026-10-18":10384,"2026-10-19":19830,"2026-10-20":47605,"2026-10-21":9399,"2026-10-22":7291,"2026-10-23":25541,"2026-10-24":24232,"2026-10-25":17779,"2026-10-26":51969,"2026-10-27":27495,"2026-10-28":84373,"2026-10-29":94188,"2026-10-30":152212,"2026-10-31":160854,"2026-11-01":151374,"2026-11-02":184254,"2026-11-03":177534,"2026-11-04":196691,"2026-11-05":76160,"2026-11-06":38582,"2026-11-07":33900,"2026-11-08":18816,"2026-11-09":34694,"2026-11-10":56390,"2026-11-11":115937,"2026-11-12":252979,"2026-11-13":235168,"2026-11-14":297567,"2026-11-15":237251,"2026-11-16":250001},"buckets":[{"k":"1–10","n":559,"cost":389230,"per":696,"any":54,"ge100":22},{"k":"11–20","n":537,"cost":308464,"per":574,"any":45,"ge100":13},{"k":"21–30","n":502,"cost":71369,"per":142,"any":45,"ge100":10},{"k":"31–40","n":478,"cost":27746,"per":58,"any":40,"ge100":6},{"k":"41–60","n":779,"cost":38476,"per":49,"any":30,"ge100":3},{"k":"61–80","n":462,"cost":33015,"per":71,"any":14,"ge100":3},{"k":"81+","n":92,"cost":1593,"per":17,"any":32,"ge100":2}]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('pdata').textContent);
+  const css = getComputedStyle(document.querySelector('.wk'));
+  const v = (n) => css.getPropertyValue(n).trim();
+  const C = { bar: v('--bar'), grid: v('--color-border-line'), mut: v('--color-fg-muted'), fg: v('--color-fg'), warn: v('--color-warn'), light: v('--cds-chart-muted'), dark: '#8f8c84' };
+  const fd = (s) => Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10));
+  const Y = (x) => '¥' + d3.format(',.0f')(x);
+  const Yk = (x) => (x >= 10000 ? '¥' + d3.format('.1f')(x / 10000) + '万' : '¥' + d3.format(',.0f')(x));
+  const tip = document.getElementById('tip');
+  const show = (e, h) => { tip.innerHTML = h; tip.hidden = false; const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; };
+  const hide = () => { tip.hidden = true; };
+  const axL = (svg, y, x0, x1) => { svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', x0).attr('x2', x1).attr('y1', y).attr('y2', y).attr('stroke', C.grid);
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', x0 - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('fill', C.mut).attr('font-size', 11).text(Yk); };
+  const axR = (svg, y, x1) => { svg.append('g').selectAll('text').data(y.ticks(4).filter(Number.isInteger)).join('text').attr('x', x1 + 6).attr('y', (d) => y(d) + 4).attr('fill', C.mut).attr('font-size', 11).text((d) => d + ' 条'); };
+  const axX = (svg, x, ds, H, m) => { const every = Math.ceil(ds.length / 10); svg.append('g').selectAll('text').data(ds.filter((d, i) => i % every === 0)).join('text').attr('x', (d) => x(d) + (x.bandwidth ? x.bandwidth() / 2 : 0)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').attr('fill', C.mut).attr('font-size', 11).text(fd); };
+  const tipHtml = (r) => '<b>' + fd(r.d) + '</b><br>消耗 ' + Y(r.cost) + '（占大盘 ' + d3.format('.1%')(r.share) + '）<br>主力基建所在户 ' + Y(r.win) + '<br>当天新建基建 ' + r.b + ' 条（后来花过钱 ' + r.bs + ' 条）<br>累计基建 ' + r.cum + ' 条<br>激活 ' + d3.format(',')(r.act);
+
+  D.mats.forEach((m) => {
+    const rows = m.rows, ds = rows.map((r) => r.d);
+    // 左图：每天消耗线 + 新建基建柱
+    { const el = document.getElementById('a' + m.k); const W = el.clientWidth || 520, H = 240, mg = { l: 52, r: 44, t: 12, b: 26 };
+      const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+      const x = d3.scaleBand(ds, [mg.l, W - mg.r]).padding(0.25);
+      const y = d3.scaleLinear([0, d3.max(rows, (r) => r.cost) * 1.1 || 1], [H - mg.b, mg.t]).nice();
+      const yb = d3.scaleLinear([0, Math.max(5, d3.max(rows, (r) => r.b)) * 1.15], [H - mg.b, mg.t]).nice();
+      axL(svg, y, mg.l, W - mg.r); axR(svg, yb, W - mg.r); axX(svg, x, ds, H, mg);
+      const g = svg.append('g');
+      g.selectAll('.u').data(rows).join('rect').attr('x', (r) => x(r.d)).attr('width', x.bandwidth()).attr('y', (r) => yb(r.b)).attr('height', (r) => yb(r.bs) - yb(r.b)).attr('fill', C.light).attr('rx', 2);
+      g.selectAll('.s').data(rows).join('rect').attr('x', (r) => x(r.d)).attr('width', x.bandwidth()).attr('y', (r) => yb(r.bs)).attr('height', (r) => yb(0) - yb(r.bs)).attr('fill', C.dark);
+      const cx = (r) => x(r.d) + x.bandwidth() / 2;
+      svg.append('path').datum(rows).attr('fill', 'none').attr('stroke', C.mut).attr('stroke-width', 1.5).attr('stroke-dasharray', '4 3').attr('d', d3.line().x(cx).y((r) => y(r.win)));
+      svg.append('path').datum(rows).attr('fill', 'none').attr('stroke', C.bar).attr('stroke-width', 2.2).attr('d', d3.line().x(cx).y((r) => y(r.cost)));
+      svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.d) - x.step() * x.padding() / 2).attr('width', x.step()).attr('y', mg.t).attr('height', H - mg.t - mg.b).attr('fill', 'transparent').on('mousemove', (e, r) => show(e, tipHtml(r))).on('mouseleave', hide);
+    }
+    // 右图：累计基建线 + 每天消耗线
+    { const el = document.getElementById('b' + m.k); const W = el.clientWidth || 520, H = 240, mg = { l: 52, r: 44, t: 12, b: 26 };
+      const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+      const x = d3.scalePoint(ds, [mg.l, W - mg.r]).padding(0.3);
+      const y = d3.scaleLinear([0, d3.max(rows, (r) => r.cost) * 1.1 || 1], [H - mg.b, mg.t]).nice();
+      const yc = d3.scaleLinear([0, d3.max(rows, (r) => r.cum) * 1.1 || 1], [H - mg.b, mg.t]).nice();
+      axL(svg, y, mg.l, W - mg.r); axR(svg, yc, W - mg.r); axX(svg, x, ds, H, mg);
+      svg.append('path').datum(rows).attr('fill', 'none').attr('stroke', C.warn).attr('stroke-width', 2.2).attr('d', d3.line().curve(d3.curveStepAfter).x((r) => x(r.d)).y((r) => yc(r.cum)));
+      svg.append('path').datum(rows).attr('fill', 'none').attr('stroke', C.bar).attr('stroke-width', 2.2).attr('d', d3.line().x((r) => x(r.d)).y((r) => y(r.cost)));
+      const pk = rows.reduce((a, r) => (r.cost > a.cost ? r : a), rows[0]);
+      svg.append('circle').attr('cx', x(pk.d)).attr('cy', y(pk.cost)).attr('r', 4).attr('fill', C.bar);
+      svg.append('text').attr('x', x(pk.d)).attr('y', Math.max(mg.t + 10, y(pk.cost) - 8)).attr('text-anchor', x(pk.d) > W * 0.75 ? 'end' : 'middle').attr('font-size', 11).attr('fill', C.fg).text('最高 ' + fd(pk.d) + '，此时累计 ' + pk.cum + ' 条');
+      svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.d) - x.step() / 2).attr('width', x.step()).attr('y', mg.t).attr('height', H - mg.t - mg.b).attr('fill', 'transparent').on('mousemove', (e, r) => show(e, tipHtml(r))).on('mouseleave', hide);
+    }
+  });
+
+  // 第几条基建
+  { const el = document.getElementById('ch-order'); const W = el.clientWidth || 900, H = 260, mg = { l: 56, r: 12, t: 28, b: 30 };
+    const B = D.buckets; const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scaleBand(B.map((b) => b.k), [mg.l, W - mg.r]).padding(0.35);
+    const y = d3.scaleLinear([0, d3.max(B, (b) => b.per) * 1.15], [H - mg.b, mg.t]).nice();
+    axL(svg, y, mg.l, W - mg.r);
+    svg.append('g').selectAll('rect').data(B).join('rect').attr('x', (b) => x(b.k)).attr('width', x.bandwidth()).attr('y', (b) => y(b.per)).attr('height', (b) => y(0) - y(b.per)).attr('rx', 4).attr('fill', (b, i) => (i < 2 ? C.bar : C.light))
+      .on('mousemove', (e, b) => show(e, '<b>第 ' + b.k + ' 条基建</b><br>' + d3.format(',')(b.n) + ' 条，合计 ' + Y(b.cost) + '<br>平均每条 ' + Y(b.per) + '<br>花过钱 ' + b.any + '%，过 ¥100 ' + b.ge100 + '%')).on('mouseleave', hide);
+    svg.append('g').selectAll('text').data(B).join('text').attr('x', (b) => x(b.k) + x.bandwidth() / 2).attr('y', (b) => y(b.per) - 18).attr('text-anchor', 'middle').attr('font-size', 12).attr('font-weight', 600).attr('fill', C.fg).text((b) => Y(b.per) + ' / 条');
+    svg.append('g').selectAll('text').data(B).join('text').attr('x', (b) => x(b.k) + x.bandwidth() / 2).attr('y', (b) => y(b.per) - 5).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', C.mut).text((b) => '过 ¥100 ' + b.ge100 + '%');
+    svg.append('g').selectAll('text').data(B).join('text').attr('x', (b) => x(b.k) + x.bandwidth() / 2).attr('y', H - 10).attr('text-anchor', 'middle').attr('font-size', 12).attr('fill', C.mut).text((b) => '第 ' + b.k + ' 条');
+  }
+  // 大盘每天
+  { const el = document.getElementById('ch-day'); const W = el.clientWidth || 520, H = 220, mg = { l: 52, r: 10, t: 12, b: 26 };
+    const ds = Object.keys(D.day).filter((d) => d >= '2026-10-11'); const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scaleBand(ds, [mg.l, W - mg.r]).padding(0.2); const y = d3.scaleLinear([0, d3.max(ds, (d) => D.day[d]) * 1.1], [H - mg.b, mg.t]).nice();
+    axL(svg, y, mg.l, W - mg.r); axX(svg, x, ds, H, mg);
+    svg.append('g').selectAll('rect').data(ds).join('rect').attr('x', (d) => x(d)).attr('width', x.bandwidth()).attr('y', (d) => y(D.day[d])).attr('height', (d) => y(0) - y(D.day[d])).attr('rx', 2).attr('fill', (d) => (d >= '2026-11-06' && d <= '2026-11-10' ? C.light : C.bar))
+      .on('mousemove', (e, d) => show(e, '<b>' + fd(d) + '</b><br>大盘 ' + Y(D.day[d]))).on('mouseleave', hide);
+  }
+  // 上线天数
+  { const el = document.getElementById('ch-age'); const W = el.clientWidth || 520, H = 220, mg = { l: 40, r: 10, t: 26, b: 26 };
+    const A = [['第 1–3 天', 0.36], ['第 4–7 天', 0.26], ['第 8–14 天', 0.21], ['15 天以后', 0.18]];
+    const svg = d3.select(el).append('svg').attr('viewBox', [0, 0, W, H]).attr('width', '100%');
+    const x = d3.scaleBand(A.map((a) => a[0]), [mg.l, W - mg.r]).padding(0.35); const y = d3.scaleLinear([0, 0.42], [H - mg.b, mg.t]);
+    svg.append('g').selectAll('rect').data(A).join('rect').attr('x', (a) => x(a[0])).attr('width', x.bandwidth()).attr('y', (a) => y(a[1])).attr('height', (a) => y(0) - y(a[1])).attr('rx', 4).attr('fill', C.bar);
+    svg.append('g').selectAll('text').data(A).join('text').attr('x', (a) => x(a[0]) + x.bandwidth() / 2).attr('y', (a) => y(a[1]) - 6).attr('text-anchor', 'middle').attr('font-size', 12).attr('font-weight', 600).attr('fill', C.fg).text((a) => d3.format('.0%')(a[1]));
+    svg.append('g').selectAll('text').data(A).join('text').attr('x', (a) => x(a[0]) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 12).attr('fill', C.mut).text((a) => a[0]);
+  }
+})();
+</script>
+<!-- 悬浮目录（Reina 11/9：所有页面都要有）。按页面里的 h2 自动生成，点了跳过去，滚动时高亮当前一节；窄屏右下角「目录」按钮。由 tools/add_toc.py 插入，别手改各页面里的副本。 -->
+<style id="gtoc-style">
+  .gtoc-anchor { scroll-margin-top: 12px; }
+  #gtoc { position: fixed; top: 16px; left: 16px; width: 168px; max-height: calc(100vh - 32px); overflow-y: auto; z-index: 20; box-sizing: border-box;
+    background: var(--color-panel, #fff); color: var(--color-fg, #1f1f1d); border: 1px solid var(--color-border-line, #e4e2dc); border-radius: 12px; padding: 10px 8px; font-size: 13px; }
+  #gtoc[hidden], #gtoc-btn[hidden] { display: none !important; }
+  #gtoc h4 { margin: 0 6px 6px; font-size: 12px; color: var(--color-fg-muted, #6b6a66); font-weight: 600; }
+  #gtoc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  #gtoc a { display: block; padding: 5px 8px; border-radius: 8px; color: inherit; text-decoration: none; line-height: 1.35; }
+  #gtoc a.sub { padding-left: 18px; color: var(--color-fg-muted, #6b6a66); }
+  #gtoc a:hover { background: var(--color-bg, #f7f6f2); }
+  #gtoc a[aria-current="true"] { background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); font-weight: 600; }
+  #gtoc-btn { display: none; }
+  @media (min-width: 1100px) and (max-width: 1659px) { body.gtoc-on .wrap { margin-left: 196px; } }
+  @media (min-width: 1660px) { #gtoc { left: calc(50% - 640px - 184px); } }
+  @media (max-width: 1099px) {
+    #gtoc { top: auto; bottom: 64px; left: auto; right: 16px; width: 220px; max-height: 60vh; box-shadow: 0 6px 24px rgba(0,0,0,.18); display: none; }
+    #gtoc.open { display: block; }
+    #gtoc-btn { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 21; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px;
+      border: 1px solid var(--color-border-line, #e4e2dc); background: var(--color-fg, #1f1f1d); color: var(--color-bg, #fff); box-shadow: 0 4px 16px rgba(0,0,0,.18); cursor: pointer; }
+  }
+  @media print { #gtoc, #gtoc-btn { display: none !important; } body.gtoc-on .wrap { margin-left: auto !important; } }
+</style>
+<nav id="gtoc" aria-label="目录" hidden><h4>目录</h4><ol></ol></nav>
+<button id="gtoc-btn" type="button" aria-controls="gtoc" aria-expanded="false" hidden>目录</button>
+<script id="gtoc-script">
+addEventListener('load', () => {
+  const toc = document.getElementById('gtoc'), ol = toc.querySelector('ol'), btn = document.getElementById('gtoc-btn');
+  const root = document.querySelector('.wrap') || document.body;
+  const visible = (el) => !el.closest('[hidden]') && el.getClientRects().length > 0;
+  const heads = [...root.querySelectorAll('h2')].filter(visible);
+  if (heads.length < 2) return;
+  const items = [];
+  const top = document.querySelector('h1');
+  if (top) { if (!top.id) top.id = 'top'; top.classList.add('gtoc-anchor'); items.push([top, '总览', false]); }
+  let group = '';
+  const seen = {};
+  heads.forEach((h, i) => {
+    const t = h.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim();
+    if (h.classList.contains('sec')) group = t;
+    if (!h.id) h.id = 'sec-' + (i + 1);
+    h.classList.add('gtoc-anchor');
+    seen[t] = (seen[t] || 0) + 1;
+    const dup = heads.filter((x) => x.textContent.trim().replace(/（.*?）/g, '').split('：')[0].trim() === t).length > 1;
+    items.push([h, dup && group && !h.classList.contains('sec') ? t + '（' + group + '）' : t, !!group && !h.classList.contains('sec')]);
+  });
+  const links = items.map(([el, t, sub]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#' + el.id; a.textContent = t; if (sub) a.className = 'sub'; li.appendChild(a); ol.appendChild(li); return a; });
+  toc.hidden = false; btn.hidden = false; document.body.classList.add('gtoc-on');
+  toc.addEventListener('click', (e) => { if (e.target.tagName === 'A') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', () => { const o = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  const mark = () => { let k = 0; items.forEach(([el], i) => { if (el.getBoundingClientRect().top <= 80) k = i; }); links.forEach((a, i) => a.setAttribute('aria-current', String(i === k))); };
+  addEventListener('scroll', mark, { passive: true }); mark();
+});
+</script>
+</body>
+</html>
