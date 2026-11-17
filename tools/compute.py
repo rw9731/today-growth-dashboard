@@ -975,20 +975,26 @@ def main():
     spent_w = {i: win3(i, up_day(i))[:2] for i in first_sp if up_day(i)}
     _thc = {}
 
+    # Reina 11/17：冷启门槛改成固定花费 ¥400（窗口两天花费 ≥ ¥400 算过）。原来的 80 分位激活门槛上传一多就掉到个位数（约 ¥150），区分不出会跑起来的素材：
+    # 10/27–11/11 上传的 773 条，两天激活 20 个以上（约 ¥400）的后来累计花到 ¥2,000 有 43%，6–9 个的 17%，和 1–5 个差不多。
+    # 「去掉预算影响」的门槛 = ¥400 × 这批窗口里全盘每天平均花费 ÷ 10/27–11/11 全盘每天平均花费。
+    CS_COST = 400
+    _bd = [day_tot.get((dt.date(2026, 10, 27) + dt.timedelta(days=k)).isoformat(), 0) for k in range(16)]
+    CS_BASE_MKT = sum(_bd) / len(_bd) if any(_bd) else None
+
     def cs_thr(u):
         if u in _thc:
             return _thc[u]
         u0 = dt.date.fromisoformat(u)
         f0, f1 = (u0 - dt.timedelta(days=CSW + 6)).isoformat(), (u0 - dt.timedelta(days=CSW)).isoformat()
         bw = [(a_, c_, up_day(i)) for i, (a_, c_) in spent_w.items() if f0 <= up_day(i) <= f1]
-        if not bw:
-            _thc[u] = None
-            return None
-        th_b = max(1, round(q([x[0] for x in bw], 0.8)))
-        sh = q([x[0] / mkt_act(x[2]) for x in bw if mkt_act(x[2])], 0.8)
+        u0_ = dt.date.fromisoformat(u)
+        wd_ = [(u0_ + dt.timedelta(days=k)).isoformat() for k in range(CSW) if u0_ + dt.timedelta(days=k) <= Dd]
+        mk_c = sum(day_tot.get(k, 0) for k in wd_) / len(wd_) if wd_ else 0
+        sh = None
         mk = mkt_act(u)
-        _thc[u] = {'b': th_b, 'c': max(1, round(sh * mk)) if sh and mk else None, 'share': sh, 'mkt': round(mk),
-                   'from': f0, 'to': f1, 'n': len(bw), 'med': q([x[0] for x in bw], 0.5), 'c80': round(q([x[1] for x in bw], 0.8))}
+        _thc[u] = {'b': CS_COST, 'c': round(CS_COST * mk_c / CS_BASE_MKT) if CS_BASE_MKT and mk_c else None, 'share': sh, 'mkt': round(mk),
+                   'from': f0, 'to': f1, 'n': len(bw), 'med': q([x[0] for x in bw], 0.5), 'c80': round(q([x[1] for x in bw], 0.8)) if bw else None}
         return _thc[u]
     upl_names, upl_days = {}, set()
     for k in range(60):
@@ -1038,8 +1044,8 @@ def main():
                  'acc_show': x[1] if x else None, 'acc_100': x[3] if x else None}
             a3, c3, r3, ar, done = win3(i, u)
             e.update({'first': first_sp.get(i, ''), 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
-                      'st': 'pass' if THU and a3 >= THU['b'] else ('fail' if done else 'wait'),
-                      'st_c': 'pass' if THU and THU['c'] and a3 >= THU['c'] else ('fail' if done else 'wait')})
+                      'st': 'pass' if c3 >= CS_COST else ('fail' if done else 'wait'),
+                      'st_c': 'pass' if THU and THU['c'] and c3 >= THU['c'] else ('fail' if done else 'wait')})
             if i not in first_sp or first_sp[i] > (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat():
                 e['nospend'] = True  # 窗口里一分钱没花
             m = rec_by.get(i)
