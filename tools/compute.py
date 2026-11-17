@@ -1246,20 +1246,25 @@ def main():
     dec_ = [m for m in cs_mats if m['st'] != 'wait']
     fair = [m for m in dec_ if not m['hard'] and m['got']]
     fr = sum(m['st'] == 'pass' for m in fair) / len(fair) if fair else None
+    # 方向（Reina 11/17 改）：按 use case 长期能不能起量判，不看冷启率、不看素材类型。
+    # 过去 30 天（到 D）有消耗的素材 ≥ 10 条、没有一条累计花到 ¥5,000、消耗占大盘不到 1% 的 use case 算方向弱；起过量的 use case 不算弱。
+    d30 = (Dd - dt.timedelta(days=29)).isoformat()
+    uc_c, uc_m, tot30 = defaultdict(float), defaultdict(lambda: defaultdict(float)), 0.0
+    for r in allrows:
+        if d30 <= r['date'] <= D[3] and r['cost'] > 0:
+            uc_c[r['uc']] += r['cost']
+            uc_m[r['uc']][r['id']] += r['cost']
+            tot30 += r['cost']
     cs_dir = []
-    for dim, key in (('uc', lambda m: m['uc']), ('kind', lambda m: m['kg'])):
-        g_ = defaultdict(list)
-        for m in dec_:
-            g_[key(m)].append(m)
-        for k, ms in g_.items():
-            fm = [m for m in ms if not m['hard'] and m['got']]
-            pf = sum(m['st'] == 'pass' for m in fm)
-            rate = pf / len(fm) if fm else None
-            verdict = ''
-            if fr and len(fm) >= 5:
-                verdict = '弱' if rate <= 0.5 * fr else '强' if rate >= 1.5 * fr else ''
-            cs_dir.append({'dim': dim, 'key': k, 'short': ucs.get(k, {}).get('short', '') if dim == 'uc' else '', 'n': len(ms),
-                           'pass': sum(m['st'] == 'pass' for m in ms), 'n_fair': len(fm), 'pass_fair': pf, 'rate_fair': rate, 'verdict': verdict})
+    for k in sorted(set(uc_c) | {m['uc'] for m in dec_}):
+        if k not in ucs or '旧编号' in ucs[k].get('short', ''):
+            continue
+        mats = uc_m.get(k, {})
+        n30, mx = len(mats), max(mats.values()) if mats else 0
+        sh = uc_c.get(k, 0) / tot30 if tot30 else 0
+        ms = [m for m in dec_ if m['uc'] == k]
+        cs_dir.append({'dim': 'uc', 'key': k, 'short': ucs[k].get('short', ''), 'n30': n30, 'max30': round(mx), 'share30': sh, 'cost30': round(uc_c.get(k, 0)),
+                       'n': len(ms), 'pass': sum(m['st'] == 'pass' for m in ms), 'verdict': '弱' if n30 >= 10 and mx < 5000 and sh < 0.01 else ''})
     weak = {(d['dim'], d['key']) for d in cs_dir if d['verdict'] == '弱'}
     for m in cs_mats:
         if m['st'] != 'fail':
@@ -1268,7 +1273,7 @@ def main():
             m['cause'] = '硬伤'
         elif not m['got']:
             m['cause'] = '测试'
-        elif ('uc', m['uc']) in weak or ('kind', m['kg']) in weak:
+        elif ('uc', m['uc']) in weak:
             m['cause'] = '方向'
         else:
             m['cause'] = '其他'

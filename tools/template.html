@@ -1272,7 +1272,7 @@
     const hardOf = (m) => (m.hard || []).map((x) => x.replace(/（.*?）/, ''));
     const cnt = (arr) => d3.rollups(arr, (v) => v.length, (x) => x).sort((a, b) => b[1] - a[1]);
     const triCell = (L) => { const f = L.filter((m) => m.st === 'fail'); return CAUSE.map(([k]) => f.filter((m) => m.cause === k).length); };
-    const dirLine = (v) => v.map((d) => esc(d.dim === 'uc' ? d.key + ' ' + d.short : d.key) + ' ' + d.pass_fair + '/' + d.n_fair).join('、');
+    const dirLine = (v) => v.map((d) => esc(d.key + ' ' + d.short) + '（' + d.n30 + ' 条，最高 ' + fmtY(d.max30) + '，占 ' + d3.format('.1%')(d.share30 || 0) + '）').join('、');
     const triAll = (dd, cm) => {
       if (!dd.length || !CS.some((m) => m.cause !== undefined)) return cm.length ? '<div style="margin-top:6px"><b>每天都有的共性问题</b><ol>' + cm.map((x) => '<li>' + x[1] + '</li>').join('') + '</ol></div>' : '';
       const all = CS.filter((m) => m.st !== 'wait' && dd.some((b) => b.up === m.up.slice(0, 10))), F = all.filter((m) => m.st === 'fail');
@@ -1289,9 +1289,9 @@
       h += '<li><b>测试不充分 ' + tst.length + ' 条</b>：' + (PJN ? '实测项目数不到 ' + PJN + ' 个（' + (nm.cs_pj_ok || 12) + ' 个以上算充分）。' + pjLine : WT + '展示不到 ' + d3.format(',')(SHOWN) + ' 次，算没拿到测试量（过了的素材窗口展示最少 ' + d3.format(',')(minShow || 0) + '）。') + '<br>没测够的原因：' + cnt(tst.map((m) => m.tst)).map(([k, n]) => esc(k) + ' ' + n).join('、') + '。'
         + '<br>「项目的钱给了更早的素材」= 它进的项目里有花钱，但钱基本给了比它早上传、已经跑起来的素材，新素材分不到探索量；「所在项目都没起量」= 进的项目一共花不到 ¥100；「只进了 iOS 项目」= 没进安卓项目。'
         + cm.filter((x) => x[0] === 'test').map((x) => '<br>' + x[1]).join('') + '</li>';
-      const dir = F.filter((m) => m.cause === '方向'), weak = DIR.filter((d) => d.verdict === '弱'), strong = DIR.filter((d) => d.verdict === '强');
-      h += '<li><b>方向偏弱 ' + dir.length + ' 条</b>：只看没硬伤、测够了的素材（' + (nm.cs_pj ? '实测项目 ≥ ' + nm.cs_pj + ' 个' : '窗口展示 ≥ ' + d3.format(',')(SHOWN)) + '；最近 10 个上传日 ' + (nm.cs_fair_n || 0) + ' 条，过冷启 ' + fmtP0(nm.cs_fair_rate) + '），按 use case 和素材类型算，至少 5 条、过冷启比例不到整体一半的算方向弱。'
-        + (weak.length ? '<br>偏弱：' + dirLine(weak) + '（过冷启/测够了的条数）。' : '<br>没有明显偏弱的方向。') + (strong.length ? '<br>偏强：' + dirLine(strong) + '。' : '')
+      const dir = F.filter((m) => m.cause === '方向'), weak = DIR.filter((d) => d.verdict === '弱');
+      h += '<li><b>方向偏弱 ' + dir.length + ' 条</b>：没硬伤、测够了还没过，而且所在 use case 长期起不了量（Reina 11/17）：过去 30 天有消耗的素材 ≥ 10 条、没有一条累计花到 ¥5,000、消耗占大盘不到 1%。起过量的 use case 不算弱，那里的素材没过算「单条没跑出来」。'
+        + (weak.length ? '<br>偏弱的 use case：' + dirLine(weak) + '。' : '<br>没有偏弱的 use case。')
         + cm.filter((x) => x[0] === 'dir').map((x) => '<br>' + x[1]).join('') + '</li>';
       const oth = F.filter((m) => m.cause === '其他');
       h += '<li><b>测够了、方向也正常，单条没跑出来 ' + oth.length + ' 条</b>：测够了，方向不弱，也没查到硬伤。要看片找原因，可能是开头不抓人或卖点没讲清。</li>';
@@ -1307,7 +1307,7 @@
       let h = '<div class="lx-csconc"><b>没过的 ' + L.length + ' 条，按三类排查</b><ol>';
       h += '<li><b>内容硬伤 ' + hd.length + ' 条</b>' + (hd.length ? '：' + hd.map((m) => link(m) + '（' + esc(hardOf(m).join('、')) + '）').join('；') : '') + '</li>';
       h += '<li><b>测试不充分 ' + ts.length + ' 条</b>' + (ts.length ? '：' + cnt(ts.map((m) => m.tst)).map(([k, n]) => esc(k) + ' ' + n).join('、') : '') + (b.mkt_prev && b.mkt < 0.6 * b.mkt_prev ? '；这批窗口里全盘每天只花 ' + wan(b.mkt) + '（上传前 7 天平均 ' + wan(b.mkt_prev) + '）' : '') + '</li>';
-      h += '<li><b>方向偏弱 ' + dr.length + ' 条</b>' + (dr.length ? '：' + d3.rollups(dr, (v) => v.length, (m) => (m.short || m.uc) + ' · ' + m.kg).sort((x, y) => y[1] - x[1]).map(([k, n]) => esc(k) + ' ' + n).join('、') : '') + '</li>';
+      h += '<li><b>方向偏弱 ' + dr.length + ' 条</b>' + (dr.length ? '：' + d3.rollups(dr, (v) => v.length, (m) => m.uc + ' ' + (m.short || '')).sort((x, y) => y[1] - x[1]).map(([k, n]) => esc(k) + ' ' + n).join('、') : '') + '</li>';
       h += '<li><b>测够了、单条没跑出来 ' + ot.length + ' 条</b>' + (ot.length ? '：' + ot.map(link).join('、') : '') + '</li>';
       return h + '</ol></div>';
     };
@@ -1412,7 +1412,7 @@
             + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td>'
             + '<td class="num' + (m.pj_sp != null && m.pj_sp < (nm.cs_pj || 6) ? ' lx-badv' : m.pj_sp >= (nm.cs_pj_ok || 12) ? ' lx-good' : '') + '">' + (m.pj_sp == null ? '—' : m.pj_sp + ' / ' + (m.npj == null ? '—' : m.npj)) + '</td>'
             + '<td class="num">' + (m.w_show == null ? '—' : fmtN(m.w_show)) + '</td>'
-            + '<td style="min-width:9rem">' + (st !== 'fail' || !m.cause ? '' : '<b>' + ({硬伤: '内容硬伤', 测试: '测试不充分', 方向: '方向偏弱', 其他: '单条没跑出来'})[m.cause] + '</b><br><span class="muted">' + esc(m.cause === '硬伤' ? hardOf(m).join('、') : m.cause === '测试' ? m.tst : m.cause === '方向' ? (m.short || m.uc) + ' · ' + m.kg : '测够了') + '</span>') + '</td>'
+            + '<td style="min-width:9rem">' + (st !== 'fail' || !m.cause ? '' : '<b>' + ({硬伤: '内容硬伤', 测试: '测试不充分', 方向: '方向偏弱', 其他: '单条没跑出来'})[m.cause] + '</b><br><span class="muted">' + esc(m.cause === '硬伤' ? hardOf(m).join('、') : m.cause === '测试' ? m.tst : m.cause === '方向' ? m.uc + ' ' + (m.short || '') + ' 长期起不了量' : '测够了') + '</span>') + '</td>'
             + '<td style="min-width:14rem">' + (st === 'pass' ? '' : tagsOf(m, medPj).map(([x, c, v]) => '<span class="lx-cstag' + (c ? ' ' + c : '') + '">' + esc(x) + (v ? ' <a href="' + esc(v) + '" target="_blank" rel="noopener">看对比的那条</a>' : '') + '</span>').join('')) + '</td></tr>').join('')
           + '</tbody></table></div>';
       }
