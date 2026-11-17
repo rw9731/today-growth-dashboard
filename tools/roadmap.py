@@ -7,8 +7,8 @@
 - 测过 = 花过钱的素材（投放数据_分日 里有消耗）。
 - 过冷启 = 上传当天 + 第二天花费 ≥ ¥400（日报 CS_COST）。只算上传日在数据开始之后、窗口已过完的素材。
 - use case 状态按近 30 天（到表里最新一天）：
-  已点亮 = 有一条素材 30 天里累计花到 ¥5,000，或 30 天消耗占大盘 ≥ 1%；
-  判弱 = 30 天花过钱的素材 ≥ 10 条、没点亮（和日报「方向偏弱」同一条规则）；
+  已点亮 = 这个 use case 里有一条素材累计花到 ¥5,000（只有约 10% 的素材能到，10/11–11/16 是 1,464 条里 143 条）；
+  判弱 = 30 天花过钱的素材 ≥ 10 条、没点亮（和日报「方向偏弱」结果一致：日报多一条「30 天占大盘 < 1%」，但占大盘 ≥ 1% 的 use case 都有 ¥5,000 的素材，这条从没起过作用）；
   测试中 = 花过钱、还不够 10 条、没点亮；没测 = 一条都没花过钱；
   储备 / 暂不做 = Use case 库状态是储备、而且没测过（暂不做的写在 NOT_NOW）。
 - 格子（use case × 素材类型）：这一格里有一条素材累计花到 ¥5,000 = 点亮；花过钱的 ≥ 10 条、都没到 ¥5,000 = 偏弱；有花过钱的 = 测过；空 = 没测。
@@ -127,7 +127,7 @@ def main():
         c30 = sum(m['c30'] for m in ms)
         sh = c30 / tot30 if tot30 else 0
         best = max(sp, key=lambda m: m['cost'], default=None)
-        lit = mx30 >= LIT or sh >= 0.01
+        lit = bool(best) and best['cost'] >= LIT  # 点亮：有一条素材累计花到 ¥5,000（Reina 11/17 问定义后统一成这一条）
         if u in NOT_NOW and not sp:
             st = '暂不做'
         elif not sp:
@@ -379,6 +379,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   .wk .pw b { font-size: 20px; color: var(--color-fg); font-variant-numeric: tabular-nums; }
   .wk .pw .wl { font-weight: 600; margin-top: 2px; }
   .wk .pw .nl { white-space: normal; color: #2f8f5b; }
+  .wk .def { margin: var(--cds-gap-sm) 0 0; padding: 10px 14px; background: #f1f7f3; border-left: 3px solid #2f8f5b; border-radius: 4px; font-size: var(--cds-font-size-caption); line-height: 1.7; }
 </style>'''
     th_types = ''.join(f'<th class="num" style="text-align:center">{E(t)}</th>' for t in TYPES)
     return f'''<!DOCTYPE html>
@@ -404,7 +405,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
 <div class="wk">
   <header>
     <h1>方向地图：每个方向什么时候测、什么时候点亮、接下来排了什么</h1>
-    <p class="sub">数据 {md(first_day)}–{md(D)}（投放数据_分日，两端合计）。一行一个 use case（Use case 库里在用和储备的），按一级分类分组；中间五格是素材类型，数字是花过钱的素材条数。状态按近 30 天（{md(d30)}–{md(D)}），和日报冷启那节「方向偏弱」同一套规则。</p>
+    <p class="sub">数据 {md(first_day)}–{md(D)}（投放数据_分日，两端合计），一行一个 use case（Use case 库里在用和储备的）。</p>
+    <p class="def"><b>点亮</b> = 这个 use case 里有一条素材累计花到 ¥5,000，点亮日就是第一条到 ¥5,000 的那天；格子（use case × 素材类型）也一样，这一格里有一条到 ¥5,000 就算点亮。¥5,000 大约是素材里前 10% 的水平（10/11–11/16 花过钱的 1,464 条里 143 条到了）。<b>判弱</b> = 近 30 天花过钱的素材 ≥ 10 条、还没点亮。<b>测试中</b> = 测过、不到 10 条、还没点亮。<b>没测</b> = 一条都没花过钱。</p>
   </header>
 
   <section class="card sum" id="summary">
@@ -436,8 +438,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   <section class="card" id="rule">
     <h2>口径</h2>
     <ul class="take">
-      <li>已点亮：近 30 天有一条素材累计花到 ¥5,000，或 30 天消耗占大盘 ≥ 1%。</li>
-      <li>判弱：近 30 天花过钱的素材 ≥ 10 条、没点亮。和日报冷启「方向偏弱」同一条规则。</li>
+      <li>已点亮：这个 use case 里有一条素材累计花到 ¥5,000（从开始投放算）。点亮日 = 第一条到 ¥5,000 的那天。</li>
+      <li>判弱：近 30 天花过钱的素材 ≥ 10 条、没点亮。和日报冷启「方向偏弱」的结果一致（日报多一条「30 天占大盘 < 1%」，但占大盘 ≥ 1% 的 use case 都有 ¥5,000 的素材，这条从没起过作用）。</li>
       <li>测试中：花过钱，但 30 天里还不到 10 条、没点亮。没测：一条都没花过钱。储备：Use case 库里状态是储备、还没测。暂不做：已经定了先不做的（订高铁票）。</li>
       <li>素材类型：AI 原片；AI 二剪和重拍（AI 短剧的只剪辑、换开头、全片重配、AI 重拍）；达人原片（KOC、KOL 原片）；达人二剪（KOC、KOL 的二剪、只剪辑、换开头、全片重配）；星广和自建号（唯西星广、知定堂星广、星图、唯西自建号）。客供和还没对上 use case 的素材不进格子。</li>
       <li>use case 归属和日报一致（UC_ID 列，待对应的按 tools/uc_resolve.py 补）。</li>
