@@ -1147,7 +1147,8 @@ def main():
     # 测试量：上传当天 + 第二天展示 ≥ CS_SHOW 算拿到了；没拿到的按项目数据找原因（没进智擎项目、只进 iOS、项目都没起量、项目的钱给了别的素材）。
     # 方向：最近 10 个上传日里「没硬伤、拿到测试量」的素材，按 use case 和素材类型算过冷启比例，比整体低一半算方向弱。
     CS_SHOW = 5000
-    CS_PJ = 3  # 实测项目数 ≥ 3 算测过；0–2 个不充分，10 个以上充分
+    CS_PJ = 6  # 实测项目数 ≥ 6 算测过；0–5 个不充分，12 个以上充分（Reina 11/17 从 3 / 10 改）
+    CS_PJ_OK = 12
     AUD_SKIP = {'疑似AIGC'}
     fl_path = os.path.join(os.path.dirname(HERE), 'notes', 'content-flags.json')
     FLAGS = json.load(open(fl_path)).get('items', {}) if os.path.exists(fl_path) else {}
@@ -1168,7 +1169,7 @@ def main():
         if os.path.basename(fn)[9:19] <= D[3]:
             AUD = {i: [t for t in dict.fromkeys(v.split(';')) if t and t not in AUD_SKIP] for i, v in json.load(open(fn)).get('items', {}).items()}
     AUD = {i: v for i, v in AUD.items() if v}
-    # 实测项目数（Reina 11/12：测试充分度看素材在几个项目里测过，1–2 个不充分，10 个以上充分）。进了项目不等于测了，这里数它自己真花到钱的项目
+    # 实测项目数（Reina 11/12：测试充分度看素材在几个项目里测过；11/17 改成不到 6 个不充分，12 个以上充分）。进了项目不等于测了，这里数它自己真花到钱的项目
     PJ_SP = defaultdict(int)
     if pjd:
         for pj in PJ:
@@ -1269,6 +1270,7 @@ def main():
     newd_meta['cs_fair_n'] = len(fair)
     newd_meta['cs_show'] = CS_SHOW
     newd_meta['cs_pj'] = CS_PJ if pjd else None
+    newd_meta['cs_pj_ok'] = CS_PJ_OK if pjd else None
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
