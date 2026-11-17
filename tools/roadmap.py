@@ -120,6 +120,19 @@ def main():
         A = {a[i:i + 2] for i in range(len(a) - 1)}
         B = {b[i:i + 2] for i in range(len(b) - 1)}
         return len(A & B) / len(A) if A else 0
+
+    def hits(u, sc_t):
+        # 排期一行写的细分场景对到库里的场景编号；一行写几个场景（如首测一条一个）就都算上，条数平分
+        scl = SCN.get(u, {}).get('scenes', [])
+        h = [c['n'] for c in scl if sim(c['t'], sc_t) >= 0.6]
+        if not h and scl:
+            b = max(scl, key=lambda c: sim(sc_t, c['t'] + c.get('full', '')))
+            if sim(sc_t, b['t'] + b.get('full', '')) >= 0.34:
+                h = [b['n']]
+        return h
+
+    def split(n_, h):
+        return {k: n_ // len(h) + (1 if i < n_ % len(h) else 0) for i, k in enumerate(h)}
     tier = {}
     for gname, ucs_, share, _ in plan.get('GROUPS', []):
         for u in ucs_:
@@ -173,14 +186,9 @@ def main():
                             'c30': round(sum(m['c30'] for m in sm_)), 'first': min((m['first'] for m in sm_), default=''),
                             'last': max((m['first'] for m in sm_), default=''), 'sched': 0})
             for e in sched_e.get(u, []):
-                sc_t, n_ = e.get('sc', ''), int(e.get('n') or 0)
-                hit = [i for i, c in enumerate(scs) if sim(c['t'], sc_t) >= 0.6]  # 一行写了好几个场景（如首测一条一个）就平分
-                if not hit:
-                    bi = max(range(len(scs)), key=lambda i: sim(sc_t, scs[i]['t'] + scs[i]['full']), default=None)
-                    if bi is not None and sim(sc_t, scs[bi]['t'] + scs[bi]['full']) >= 0.34:
-                        hit = [bi]
-                for k, i in enumerate(hit):
-                    scs[i]['sched'] += n_ // len(hit) + (1 if k < n_ % len(hit) else 0)
+                h = hits(u, e.get('sc', ''))
+                for k, v in (split(int(e.get('n') or 0), h) if h else {}).items():
+                    scs[k - 1]['sched'] += v
             none_ = [m for m in sp if (tag(m) or {}).get('st') == 'none']
             unk_ = [m for m in sp if not (tag(m) or {}).get('s') and (tag(m) or {}).get('st') != 'none']
         else:
@@ -235,6 +243,32 @@ def main():
         x['first_wk'] = mon(x['first']) if x['first'] else ''
         x['tl'] = tl
         x['lit_mat'] = next((m['name'] for m in ms if m['lit_day'] == x['lit_day']), '') if lits else ''
+        # 细分场景按周（Reina 11/17：在路线图里点 use case 展开，下面同样按周分格）
+        scl = SCN.get(x['uc'], {}).get('scenes', [])
+        x['tl_sc'] = []
+        if scl:
+            tagd = lambda m: SM.get(m['id']) if SM.get(m['id'], {}).get('uc') == x['uc'] else None
+            pw = defaultdict(lambda: defaultdict(int))
+            for e in plan.get('E', []):
+                if e.get('uc') == x['uc'] and e.get('s') != 'cut' and e.get('d'):
+                    h = hits(x['uc'], e.get('sc', ''))
+                    for k, v in (split(int(e.get('n') or 0), h) if h else {0: int(e.get('n') or 0)}).items():
+                        pw[k][mon(e['d'])] += v
+            grp = [(c['n'], c['t'], c.get('g', ''), c.get('full', ''), [m for m in ms if (tagd(m) or {}).get('s') == c['n']]) for c in scl]
+            other = [m for m in ms if not (tagd(m) or {}).get('s')]
+            if other or any(pw[0].values()):
+                grp.append((0, '没对上场景', '', '名字和字幕看不出场景、库里没有对应场景的素材，以及排期里对不上场景的行', other))
+            for n_, t_, g_, f_, mm in grp:
+                ltd = sorted(m['lit_day'] for m in mm if m['lit_day'])
+                tls = {}
+                for wk in weeks:
+                    cost = sum(c for m in mm for d_, c in m['days'].items() if mon(d_) == wk)
+                    tls[wk] = {'new': sum(1 for m in mm if mon(m['first']) == wk), 'cost': round(cost),
+                               'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0, 'plan': pw[n_].get(wk, 0)}
+                fst = min((m['first'] for m in mm), default='')
+                x['tl_sc'].append({'n': n_, 't': t_, 'g': g_, 'full': f_, 'cnt': len(mm), 'tl': tls,
+                                   'lit_day': ltd[0] if ltd else '', 'lit_wk': mon(ltd[0]) if ltd else '', 'first_wk': mon(fst) if fst else '',
+                                   'lit_mat': next((m['name'] for m in mm if ltd and m['lit_day'] == ltd[0]), '')})
     prog = []
     for wk in weeks:
         if wk > mon(D):
@@ -279,30 +313,6 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         l = sum(1 for c in x['scs'] if c['best'] >= LIT)
         return f'<span class="scv">场景测过 {t}/{len(x["scs"])}' + (f'，点亮 {l}' if l else '') + '</span>'
 
-    def sc_table(x):
-        trs = []
-        g0 = None
-        for c in x['scs']:
-            st = '点亮' if c['best'] >= LIT else ('测过' if c['cnt'] else '没测')
-            cls = {'点亮': 'st-lit', '测过': 'st-test', '没测': 'st-none'}[st]
-            grp = f'<span class="sg">{E(c["g"])}</span>' if c['g'] and c['g'] != g0 else ''
-            g0 = c['g']
-            bst = f'{fy(c["best"])}<span class="sub" title="{E(c["best_name"])}">{E(c["best_name"][:30])}</span>' if c['cnt'] else '—'
-            cs_ = f"{c['cs_pass']}/{c['cs_n']}" if c['cs_n'] else '—'
-            trs.append(f'<tr><td class="sn">{grp}<b>{c["n"]}</b> <span title="{E(c["full"])}">{E(c["t"])}</span></td><td><span class="pill {cls}">{st}</span></td>'
-                       f'<td class="num">{c["cnt"] or ""}</td><td class="num">{cs_}</td><td class="num">{bst}</td>'
-                       f'<td class="num">{fy(c["c30"]) if c["c30"] else "—"}</td><td class="num">{md(c["first"]) if c["first"] else "—"}<span class="sub">{"最近 " + md(c["last"]) if c["last"] and c["last"] != c["first"] else ""}</span></td>'
-                       f'<td class="num">{c["sched"] or ""}</td></tr>')
-        extra = []
-        if x['sc_none']:
-            extra.append(f'库里没有对应场景的 {x["sc_none"]} 条')
-        if x['sc_unk']:
-            extra.append(f'没标场景或名字看不出的 {x["sc_unk"]} 条')
-        foot = f'<p class="note">另有{"；".join(extra)}，没算进上面。</p>' if extra else ''
-        return ('<table class="sct"><thead><tr><th>细分场景（Use case 库）</th><th>状态</th><th class="num">花过钱的素材</th><th class="num">过冷启</th>'
-                '<th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">首测</th><th class="num">这周排</th></tr></thead><tbody>'
-                + ''.join(trs) + '</tbody></table>' + foot)
-
     body = []
     cur = None
     for x in out:
@@ -323,8 +333,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         note = f'<span class="sub">{E(x["note"])}</span>' if x['note'] else ''
         best = f'{fy(x["best"])}<span class="sub" title="{E(x["best_name"])}">{E(x["best_name"][:28])}</span>' if x['best'] else '—'
         body.append(
-            f'<tr{" class=\"ucr\" data-uc=\"" + E(x["uc"]) + "\"" if x["scs"] else ""}><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td>'
-            f'<td class="uc">{"<i class=\"car\">▸</i>" if x["scs"] else ""}<b>{E(x["uc"])}</b> {E(x["name"])}{sc_cov(x)}<span class="sub">{E(x["pri"])}{" · 库里是储备" if x["lib"] == "储备" else ""}{" · " + E(x["tier"]) if x["tier"] else ""}</span>{note}</td>'
+            f'<tr><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td>'
+            f'<td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["pri"])}{" · 库里是储备" if x["lib"] == "储备" else ""}{" · " + E(x["tier"]) if x["tier"] else ""}</span>{note}</td>'
             f'{cells}'
             f'<td class="num">{x["n"] or ""}<span class="sub">{"近 7 天 +" + str(x["new7"]) if x["new7"] else ""}</span></td>'
             f'<td class="num">{cs}</td>'
@@ -333,8 +343,6 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
             f'<td class="num">{ret}</td>'
             f'<td class="num">{md(x["first"])}<span class="sub">{"最近 " + md(x["last"]) if x["last"] else ""}</span></td>'
             f'<td class="num">{sch}</td></tr>')
-        if x['scs']:
-            body.append(f'<tr class="det" data-for="{E(x["uc"])}" hidden><td colspan="{9 + len(TYPES)}">{sc_table(x)}</td></tr>')
     # 路线图时间线
     wks, cur = TL['weeks'], TL['cur']
     nxt = (dt.date.fromisoformat(cur) + dt.timedelta(days=7)).isoformat()
@@ -343,19 +351,19 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     RO = {'已点亮': 0, '测试中': 1, '判弱': 2, '没测': 3, '储备': 4, '暂不做': 5}
     tl_rows = sorted(out, key=lambda x: (RO[x['st']], x['lit_wk'] or '9999', x['first_wk'] or '9999', -x['c30']))
     trs = []
-    for x in tl_rows:
+    def tl_tds(o, label):
         tds = ''
         for w in wks:
-            c = x['tl'][w]
-            tip = f"{x['uc']} {wlab(w)}：新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.1%}）" + (f"，排期 {c['plan']} 条" if c['plan'] else '')
-            if w == x['lit_wk']:
-                tip += f"；{md(x['lit_day'])} 点亮（{x['lit_mat']} 累计花到 ¥5,000）"
+            c = o['tl'][w]
+            tip = f"{label} {wlab(w)}：新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.1%}）" + (f"，排期 {c['plan']} 条" if c['plan'] else '')
+            if w == o['lit_wk']:
+                tip += f"；{md(o['lit_day'])} 点亮（{o['lit_mat']} 累计花到 ¥5,000）"
             inner = ''
-            if w == x['lit_wk']:
+            if w == o['lit_wk']:
                 inner += '<span class="star">★</span>'
             if c['new']:
                 inner += f'<b>+{c["new"]}</b>'
-            if w == x['first_wk']:
+            if w == o['first_wk']:
                 inner += '<span class="tg">首测</span>'
             if c['plan']:
                 inner += f'<span class="pl">排 {c["plan"]}</span>'
@@ -368,8 +376,24 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
             if w == cur:
                 cls += ' cur'
             tds += f'<td class="tc {cls}" title="{E(tip)}">{inner}</td>'
+        return tds
+
+    for x in tl_rows:
+        tds = tl_tds(x, x['uc'])
         lit_txt = md(x['lit_day']) if x['lit_day'] else ''
-        trs.append(f'<tr><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td><td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}</span></td>{tds}<td class="num">{lit_txt}</td></tr>')
+        has = bool(x.get('tl_sc'))
+        trs.append(f'<tr{" class=\"ucr\" data-uc=\"" + E(x["uc"]) + "\"" if has else ""}><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td>'
+                   f'<td class="uc">{"<i class=\"car\">▸</i>" if has else ""}<b>{E(x["uc"])}</b> {E(x["name"])}{sc_cov(x)}<span class="sub">{E(x["l1"])}</span></td>{tds}<td class="num">{lit_txt}</td></tr>')
+        g0 = None
+        for c in x.get('tl_sc', []):
+            st = '其他' if c['n'] == 0 else ('点亮' if c['lit_day'] else ('测过' if c['cnt'] else '没测'))
+            cls = {'点亮': 'st-lit', '测过': 'st-test', '没测': 'st-none', '其他': 'st-none'}[st]
+            gl = f'<span class="sg">{E(c["g"])}</span>' if c['g'] and c['g'] != g0 else ''
+            g0 = c['g'] or g0
+            num = f'<b>{c["n"]}</b> ' if c['n'] else ''
+            trs.append(f'<tr class="scr" data-for="{E(x["uc"])}" hidden><td><span class="pill sm {cls}">{st}</span></td>'
+                       f'<td class="uc sc">{gl}{num}<span title="{E(c["full"])}">{E(c["t"])}</span><span class="sub">{"花过钱 " + str(c["cnt"]) + " 条" if c["cnt"] else ""}</span></td>'
+                       f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"])}<td class="num">{md(c["lit_day"]) if c["lit_day"] else ""}</td></tr>')
     th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}">{E(wlab(w))}</th>' for w in wks)
     prog = TL['prog']
     n_all = len(out)
@@ -412,6 +436,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     <div class="lgd"><span><i style="background:#2f8f5b"></i>到这周为止已点亮（柱内数字）</span><span><i style="background:#cfe5d7"></i>测过、还没点亮（柱顶数字是测过的总数）</span><span>横轴是周（周一到周日）；「新测」= 这周第一次花钱的 use case 数</span></div>\n    <div class="prog">{pg}</div>\n    <p class="note">点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000，算在到 ¥5,000 那天所在的周。下面每列是这周新点亮的 use case。</p>
     <h3>每个 use case 每周</h3>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
+    <p class="note"><b>点一行 use case 展开它的细分场景</b>（Use case 库里的场景），每个场景一行、同样按周分格：哪周新测了几条、花了多少、哪周点亮、排了几条。<button type="button" class="tgl" id="scall">全部展开</button></p>
     <div class="rmwrap"><table class="rm tl">
       <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">点亮日</th></tr></thead>
       <tbody>{''.join(trs)}</tbody>
@@ -491,13 +516,13 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   .wk .car { display: inline-block; width: 1em; font-style: normal; color: var(--color-fg-muted); transition: transform .15s; }
   .wk tr.ucr.open .car { transform: rotate(90deg); }
   .wk .scv { display: block; font-size: 11px; color: #2f8f5b; font-weight: 600; }
-  .wk tr.det > td { background: var(--color-bg); padding: 8px 12px 10px 2.2rem; }
-  .wk .sct { border-collapse: collapse; width: auto; min-width: 70%; font-size: 12px; }
-  .wk .sct th, .wk .sct td { padding: 4px 10px; border-bottom: 1px solid var(--color-border-line); text-align: left; position: static; background: transparent; box-shadow: none; }
-  .wk .sct th { color: var(--color-fg-muted); font-weight: 600; }
-  .wk .sct .num { text-align: right; }
-  .wk .sct td.sn { min-width: 15rem; }
-  .wk .sct .sg { display: block; font-size: 11px; color: var(--color-fg-muted); margin-top: 4px; }
+  .wk .tl tr.scr td { padding-top: 3px; padding-bottom: 3px; }
+  .wk .tl tr.scr td:nth-child(1), .wk .tl tr.scr td:nth-child(2) { background: var(--color-bg); }
+  .wk .tl tr.scr td.uc { padding-left: 1.6rem; font-size: 12px; font-weight: 400; }
+  .wk .tl tr.scr td.tc { font-size: 11px; }
+  .wk .tl tr.ucr.open td { border-bottom-color: transparent; }
+  .wk .pill.sm { font-size: 10px; padding: 0 6px; }
+  .wk .sg { display: block; font-size: 10.5px; color: var(--color-fg-muted); margin-top: 2px; }
   .wk .tgl { margin-left: 8px; font: inherit; font-size: 12px; padding: 2px 10px; border: 1px solid var(--color-border-line); border-radius: 12px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
   .wk .def { margin: var(--cds-gap-sm) 0 0; padding: 10px 14px; background: color-mix(in srgb, #2f8f5b 10%, var(--color-panel)); color: var(--color-fg); border-left: 3px solid #2f8f5b; border-radius: 4px; font-size: var(--cds-font-size-caption); line-height: 1.7; }
 </style>'''
@@ -549,7 +574,6 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     <h2>use case × 素材类型</h2>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>点亮：有一条素材累计花到 ¥5,000</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 ¥5,000</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
     <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 第二天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周排期来自素材排期看板，小字是 AI / 二创各几条，分档沿用排期看板的三档。</p>
-    <p class="note"><b>点一行 use case 展开它的细分场景</b>（Use case 库里的场景）：每个场景测了几条、最好一条、有没有点亮、这周排了几条，一眼看出哪个场景还没测。<button type="button" class="tgl" id="scall">全部展开</button></p>
     <div class="rmwrap"><table class="rm">
       <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周排期</th></tr></thead>
       <tbody>{''.join(body)}</tbody>
@@ -564,7 +588,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
       <li>测试中：花过钱，但 30 天里还不到 10 条、没点亮。没测：一条都没花过钱。储备：Use case 库里状态是储备、还没测。暂不做：已经定了先不做的（订高铁票）。</li>
       <li>素材类型：AI 原片；AI 二剪和重拍（AI 短剧的只剪辑、换开头、全片重配、AI 重拍）；达人原片（KOC、KOL 原片）；达人二剪（KOC、KOL 的二剪、只剪辑、换开头、全片重配）；星广和自建号（唯西星广、知定堂星广、星图、唯西自建号）。客供和还没对上 use case 的素材不进格子。</li>
       <li>use case 归属和日报一致（UC_ID 列，待对应的按 tools/uc_resolve.py 补）。</li>
-      <li>细分场景：每条素材的场景取 notes/scene-map.json（日报每天给新素材打标；11/17 把花过钱还没标的按素材名、字幕和脚本表补了一遍）。场景点亮的口径和 use case 一样：这个场景里有一条素材累计花到 ¥5,000。「这周排」按排期里写的细分场景和库里的场景文字对，对不上的不算。名字和字幕看不出场景的、库里没有对应场景的，列在展开表下面，不算进任何场景。</li>
+      <li>细分场景（路线图里点 use case 展开）：每条素材的场景取 notes/scene-map.json（日报每天给新素材打标；11/17 把花过钱还没标的按素材名、字幕和脚本表补了一遍）。场景点亮的口径和 use case 一样：这个场景里有一条素材累计花到 ¥5,000。「排 N」按排期里写的细分场景和库里的场景文字对，一行写了几个场景就平分条数。名字和字幕看不出场景的、库里没有对应场景的素材，以及对不上场景的排期，都放在最后一行「没对上场景」。</li>
     </ul>
   </section>
 </div>
@@ -572,10 +596,10 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
 <script>
 (function(){{
   function tog(tr, open){{
-    var d = tr.nextElementSibling;
-    if(!d || !d.classList.contains('det')) return;
-    if(open === undefined) open = d.hidden;
-    d.hidden = !open; tr.classList.toggle('open', open);
+    var u = tr.getAttribute('data-uc'), rs = document.querySelectorAll('tr.scr[data-for="' + u + '"]');
+    if(!rs.length) return;
+    if(open === undefined) open = rs[0].hidden;
+    rs.forEach(function(r){{ r.hidden = !open; }}); tr.classList.toggle('open', open);
   }}
   document.querySelectorAll('tr.ucr').forEach(function(tr){{ tr.addEventListener('click', function(){{ tog(tr); }}); }});
   var b = document.getElementById('scall'), all = false;
