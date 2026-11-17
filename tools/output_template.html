@@ -87,6 +87,29 @@ tr.we td{color:var(--sub)}
 .dim .more{margin-top:6px;font:inherit;font-size:12px;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer}
 .stg{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}.stg summary{cursor:pointer;color:var(--fg);list-style:none;display:grid;grid-template-columns:auto auto 1fr;gap:4px 20px;align-items:end}.stg summary::-webkit-details-marker{display:none}.stg summary .ar{color:var(--sub);font-size:12px;align-self:center}.stg[open] summary .ar{transform:rotate(90deg)}.stg summary .sc{display:flex;flex-direction:column;min-width:0}.stg summary .sc span{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stg summary .sc b{font-size:20px;font-variant-numeric:tabular-nums;line-height:1.2}.stg summary .st-mu{grid-column:2/-1;font-size:12px;color:var(--sub)}
 .stg .sh{margin:8px 0 2px;font-weight:700}.stg ul{margin:0;padding-left:18px}.stg li{margin:2px 0;overflow-wrap:anywhere}.stg .uc{color:var(--sub);margin-right:4px}
+.trend{--plot-height:164px;margin:0 0 12px}
+.trend-head,.trend-key,.trend-detail{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.trend-head{justify-content:space-between;margin-bottom:4px}.trend-head h2{margin:0}
+.trend-range,.trend-unit,.trend-key,.trend-detail{font-size:12px;color:var(--sub)}
+.trend-key{margin-bottom:8px}.trend-key span,.trend-detail span{white-space:nowrap}
+.trend-key i{display:inline-block;width:9px;height:9px;margin-right:5px}
+.trend-unit{margin:0 0 2px}
+.trend-scroll{overflow-x:auto}
+.trend-plot{display:grid;grid-template-columns:32px 1fr;min-width:620px;padding-top:14px}
+.trend-axis{height:var(--plot-height);position:relative;font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+.trend-axis span{position:absolute;right:7px;transform:translateY(50%)}
+.trend-days{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));position:relative}
+.trend-grid{position:absolute;inset:0 0 auto;height:var(--plot-height);pointer-events:none}
+.trend-grid i{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.trend-day{display:block;position:relative;min-width:0;margin:0;padding:0;border:0;background:transparent;color:var(--fg);font:inherit;cursor:pointer}
+.trend-day:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
+.trend-column{display:flex;flex-direction:column-reverse;position:relative;width:min(72%,42px);height:var(--plot-height);margin:auto}
+.trend-segment{display:grid;place-items:center;box-sizing:border-box;color:#fff;font-size:10px;font-weight:600;line-height:1}
+.trend-total{position:absolute;left:50%;transform:translateX(-50%);padding-bottom:2px;font-size:12px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.trend-day time{display:block;padding:4px 0;font-size:12px;line-height:1.35;white-space:nowrap}
+.trend-day time small{display:block;color:var(--sub);font-size:11px}
+.trend-day[aria-current="true"] time{font-weight:700;background:var(--bg)}
+.trend-detail{border-top:1px solid var(--line);padding-top:6px;margin-top:6px}.trend-detail b{color:var(--fg)}
 </style>
 </head>
 <body>
@@ -94,6 +117,18 @@ tr.we td{color:var(--sub)}
 <nav><a href="{{REL}}">← 素材看板</a><a href="{{REL}}schedule/">素材排期</a><span class="cur">素材产出</span><select id="wk" aria-label="选周"></select></nav>
 <h1>素材产出</h1>
 <p class="sub" id="sub"></p>
+<section class="card trend" id="trend" aria-labelledby="trend-title" hidden>
+  <div class="trend-head"><h2 id="trend-title">过去 14 天素材产量</h2><span class="trend-range" id="trend-range"></span></div>
+  <div class="trend-key" id="trend-key"></div>
+  <p class="trend-unit">产量（条）</p>
+  <div class="trend-scroll">
+    <div class="trend-plot">
+      <div class="trend-axis" id="trend-axis" aria-hidden="true"></div>
+      <div class="trend-days" id="trend-days"></div>
+    </div>
+  </div>
+  <div class="trend-detail" id="trend-detail"></div>
+</section>
 <div class="legend card" id="legend"></div>
 
 <h2>本周交了多少</h2>
@@ -123,6 +158,55 @@ const SO=['A','B','ZDT','YP','AM'];const so=g=>{const i=SO.indexOf(g);return i<0
 document.getElementById('sub').textContent=`${md(D.days[0])}–${md(D.days[6])} 这周唯西两组和外部 agency（知定堂、悦普、AnyMedia）实际交的成片，数据截至 ${md(D.T)}。`;
 const wk=document.getElementById('wk');wk.innerHTML=D.weeks.map(w=>`<option value="${w}"${w===D.week?' selected':''}>${md(w)} 那周</option>`).join('');
 wk.onchange=()=>{const p=location.pathname.replace(/output\/(\d{4}-\d{2}-\d{2}\/)?(index\.html)?$/,'output/');location.href=p+wk.value+'/'};
+function renderTrend(days){
+  if(!days?.length)return;
+  const sources=[
+    ['A','A 组','#245da8'],['B','B 组','#7146a0'],['ZDT','星广','#137058'],
+    ['YP','星图','#99581e'],['AM','AnyMedia','#546375']
+  ];
+  const totals=days.map(({counts})=>sources.reduce((sum,[g])=>sum+counts[g],0));
+  const step=Math.max(1,Math.ceil(Math.max(...totals)/20)*5);
+  const max=step*4;
+  const ticks=[0,1,2,3,4];
+  const plot=document.getElementById('trend-days');
+  const detail=document.getElementById('trend-detail');
+  const breakdown=counts=>sources.map(([g,label])=>`${label} ${counts[g]}`);
+  document.getElementById('trend-range').textContent=`${md(days[0].d)}–${md(days.at(-1).d)}`;
+  document.getElementById('trend-key').innerHTML=sources.map(([,label,color])=>`<span><i style="background:${color}"></i>${label}</span>`).join('');
+  document.getElementById('trend-axis').innerHTML=ticks.map(i=>`<span style="bottom:${i*25}%">${i*step}</span>`).join('');
+  const grid=`<div class="trend-grid" aria-hidden="true">${ticks.map(i=>`<i style="bottom:${i*25}%"></i>`).join('')}</div>`;
+  plot.innerHTML=grid+days.map(({d,counts},i)=>{
+    const total=totals[i];
+    const segments=sources.filter(([g])=>counts[g]>0).map(([g,,color])=>{
+      const n=counts[g],height=n/max*100;
+      return `<span class="trend-segment" style="height:${height}%;background:${color}">${height>=11?n:''}</span>`;
+    }).join('');
+    const label=`${md(d)} 周${wd(d)}，合计 ${total} 条，${breakdown(counts).join('，')}`;
+    return `<button class="trend-day" type="button" data-index="${i}" aria-label="${esc(label)}">
+      <span class="trend-column" aria-hidden="true">${segments}<b class="trend-total" style="bottom:${total/max*100}%">${total}</b></span>
+      <time datetime="${d}" aria-hidden="true">${md(d)}<small>周${wd(d)}</small></time>
+    </button>`;
+  }).join('');
+  let selected;
+  const select=button=>{
+    if(button===selected)return;
+    selected?.removeAttribute('aria-current');
+    selected=button;
+    button.setAttribute('aria-current','true');
+    const index=Number(button.dataset.index);
+    const {d,counts}=days[index];
+    detail.innerHTML=`<b>${md(d)} 周${wd(d)} · ${totals[index]} 条</b>`+
+      breakdown(counts).map(text=>`<span>${text}</span>`).join('');
+  };
+  const interact=event=>{
+    const button=event.target.closest('.trend-day');
+    if(button)select(button);
+  };
+  for(const event of ['mouseover','focusin','click'])plot.addEventListener(event,interact);
+  select(plot.lastElementChild);
+  document.getElementById('trend').hidden=false;
+}
+renderTrend(D.trend);
 // KPI
 const YD=(()=>{const t=new Date(D.T+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-1);return t.toISOString().slice(0,10)})();
 const TG=D.target||{A:150,B:150};

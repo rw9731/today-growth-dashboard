@@ -10,6 +10,7 @@
 - 链接：飞书成片那一格（?sheet=…&range=列行的 base64），已经投出去的再带巨量视频（tools/links.json，按素材名在分日表找素材 ID）。
 """
 import argparse, base64, datetime as dt, glob, json, os, re
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = {'A': 'https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc', 'B': 'https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb'}
@@ -425,6 +426,8 @@ def main():
     for x in store.values():
         x['typ'] = 'AI' if x.get('t') == 'A' else '二创'
     ag, ag_asof = agency(a.agency, a.kv, T)
+    daily_counts = Counter((x['d'], x['g']) for x in store.values() if x['ok'] and x['k'] != 'X')
+    daily_counts.update((x['d'], x['g']) for x in ag)
     for x in ag:
         u = ucs.get(x.get('uc') or '', {})
         x['l1'], x['ucn'] = u.get('l1', ''), u.get('short', '')
@@ -447,7 +450,11 @@ def main():
             if past:
                 tg[src] = dict(t=agt[past[-1]][key]['t'], stale=past[-1] != wk)
         pend = [dict(g=x['g'], d=x['d'], k=x['k'], t=x['t'], typ=x.get('typ', ''), uc=x.get('uc', ''), ucn=x.get('ucn', ''), name=x['name'], st=x.get('st') or '还没审') for x in wk_all if not x.get('ok')]
-        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks,
+        # Use complete days, ending within the displayed week when viewing an archive.
+        trend_end = min(T - dt.timedelta(days=1), w0 + dt.timedelta(days=6))
+        trend_dates = [(trend_end - dt.timedelta(days=i)).isoformat() for i in range(13, -1, -1)]
+        trend = [dict(d=d, counts={g: daily_counts[d, g] for g in SRC_NAME}) for d in trend_dates]
+        data = dict(week=wk, T=T.isoformat(), days=[(w0 + dt.timedelta(days=i)).isoformat() for i in range(7)], items=items, pend=pend, kinds=KIND_NAME, weeks=weeks, trend=trend,
                     batches=batches(plan, [x for x in items if x['g'] in ('A', 'B')], w0, T), ucn={k: v.get('short', '') for k, v in ucs.items()}, target=plan.get('week_total', {'A': 150, 'B': 150}),
                     stage=stg if w0 == mon else None, src=SRC_NAME, agt=tg, ag_asof=ag_asof)
         html = tpl.replace('{{DATA}}', json.dumps(data, ensure_ascii=False).replace('</', '<\\/'))
