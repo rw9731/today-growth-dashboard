@@ -1184,6 +1184,7 @@ def main():
     # 没测够的分三类：没进已跑量项目（投放侧）→ 已跑量项目都被老头部占着（换项目）→ 进了没头部的已跑量项目也没拿到量（素材本身）。
     # 依据 11/8–11/15 上传的 374 条、1.8 万个素材×项目：不花钱的项目里新素材花到 ¥20 的 0.2%；老头部占 ≥90% 的 1.6%、70–90% 3.9%；没头部的项目按 10 天花费 ¥100–500 2.4%、¥2,000–1 万 7.7%、1 万以上 12.1%。
     CS_RUN, CS_HEAD = 2000, 0.7
+    CS_GOOD = 5  # 进了 ≥ 5 个没老头部的已跑量项目算机会给够了（Reina 11/18 问 3 个是不是太少：过冷启的素材中位进了 6 个，P25 3 个；3–4 个过冷启 3%，5–7 个 20%）
     CS_PJ, CS_PJ_C = 3, 20
     CS_PJ_OK = 5
     AUD_SKIP = {'疑似AIGC'}
@@ -1259,12 +1260,12 @@ def main():
         if not m['got']:
             if not pjd:
                 tst = '窗口里一分钱没花' if m.get('nospend') else '没拿到测试量'
-            elif m['pj_good'] >= CS_PJ:
-                tst = '进了已跑量项目也没拿到量'  # 进了 ≥ 3 个没老头部的已跑量项目还没测够：素材本身抢不到
+            elif m['pj_good'] >= CS_GOOD:
+                tst = '进了已跑量项目也没拿到量'  # 进了 ≥ 5 个没老头部的已跑量项目还没测够：素材本身抢不到
             elif m['pj_head']:
-                tst = '已跑量项目被老头部占着'  # 没老头部的已跑量项目不到 3 个，而且有的已跑量项目被老头部占着
+                tst = '已跑量项目被老头部占着'  # 没老头部的已跑量项目不到 5 个，而且有的已跑量项目被老头部占着
             else:
-                tst = '没进已跑量项目'  # 没老头部的已跑量项目不到 3 个，也没碰到老头部：投放没放进花钱的项目
+                tst = '没进已跑量项目'  # 没老头部的已跑量项目不到 5 个，也没碰到老头部：投放没放进花钱的项目
         m['tst'] = tst
     dec_ = [m for m in cs_mats if m['st'] != 'wait']
     fair = [m for m in dec_ if not m['hard'] and m['got']]
@@ -1308,6 +1309,7 @@ def main():
     newd_meta['cs_pj_c'] = CS_PJ_C if pjd else None
     newd_meta['cs_run'] = CS_RUN if pjd else None
     newd_meta['cs_head'] = CS_HEAD if pjd else None
+    newd_meta['cs_good'] = CS_GOOD if pjd else None
     # 每个上传日：新素材放进的项目里已跑量的占几成、已跑量的里被老头部占着的占几成、没头部的已跑量项目里拿到量（花到 ¥20）的占几成
     for b in batches:
         ms = [m for m in cs_mats if m['up'][:10] == b['up'] and 'pj_run' in m]
