@@ -300,7 +300,7 @@ def batch_line(B, groups, D, total, days):
 # 分档的线（Reina 11/5 问，见 claude/usecase-tiers-1104.md）
 UP_SH, UP_D5, UP_TOP, UP_NB, UP_GAP = 5, 5, 33, 2, 1.5
 COST_OK = 3  # 成本差 ¥3 以内算和全盘差不多，和页面标色一致。第一档占全盘一半以上，卡死 ≤全盘就是 ¥1 定档
-IN_ACT, IN_GAP = 100, -1.5  # Reina 11/18：探索升跑量少，次留不比全盘低 1.5 个点以上就行（原来要高 3 个点），和第二档的退出线对齐
+IN_ACT, IN_GAP = 500, -1.5  # Reina 11/18：探索升跑量少，次留不比全盘低 1.5 个点以上就行（原来要高 3 个点）；样本小的不升：近 7 天激活 ≥500，而且 7 天、14 天两个窗口都要够
 RISK_SH = 3  # 第一档近 7 天占比掉到 3% 以下标危险（进来的线是 5%）
 
 
@@ -333,9 +333,10 @@ def tier_view(R, groups, total, plan, T):
                 x['can'] = gi == 1 and t['sh'] >= UP_SH and t['d5'] >= UP_D5 and t['top'] <= UP_TOP and t['nb'] >= UP_NB and w7['rate'] is not None and w7['rate'] >= total['rate'] - UP_GAP and (w7['cpr'] or 999) <= total['cpr'] + COST_OK
             else:
                 ok = lambda w, k: w['a'] >= IN_ACT and w['gap'] is not None and w['gap'] >= IN_GAP and (w['cpr'] or 999) <= gl.get(k, {}).get('cpr', 0) + COST_OK
-                k = 'w14' if ok(w14, 'w14') and not ok(w7, 'w7') else 'w7'
+                k = 'w7'
                 w = t[k]
-                x.update(win=7 if k == 'w7' else 14, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr', 0) + COST_OK, can=ok(w, k))
+                x.update(win=7, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr', 0) + COST_OK, can=ok(w7, 'w7') and ok(w14, 'w14'),
+                         r14=w14['rate'], c14=w14['cpr'], g14=w14['gap'], ok14=ok(w14, 'w14'))
             if u in moved:
                 d = date(moved[u]['d'])
                 x['from'] = moved[u]['from']
