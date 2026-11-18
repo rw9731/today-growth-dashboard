@@ -1298,6 +1298,26 @@ def main():
     for m in cs_mats:
         u0 = dt.date.fromisoformat(m['up'][:10])
         m['crowd'] = sum(1 for x in _rd[m['root']] if abs((x - u0).days) <= 1)
+    # 还在测的方向（Reina 11/18 晚，替代原「方向偏弱」）：上传那天这个 use case 不在排期验证过的两档（能放量 + 留存好、跑量少 + 留存好）里，
+    # 也就是二八里那两三成的测试名额：探索新方向、难放量或留存差但还想继续测的、还没分档的。按 schedule_plan.json 的 GROUPS + MOVED 回推上传那天的档。排第三。
+    _plan = json.load(open(os.path.join(os.path.dirname(HERE), 'tools', 'schedule_plan.json')))
+    _tier = {uc: g[0] for g in _plan['GROUPS'] for uc in g[1]}
+    _mv = _plan.get('MOVED', {})
+    VALID = {'能放量 + 留存好', '跑量少 + 留存好'}
+
+    def tier_at(uc, u):
+        t = _tier.get(uc, '没分档')
+        mv = _mv.get(uc)
+        if mv and mv.get('d') and u < mv['d']:
+            return mv.get('from', t)
+        return t
+    for m in cs_mats:
+        m['tier'] = tier_at(m['uc'], m['up'][:10])
+        m['tdir'] = m['tier'] not in VALID
+    for b in batches:
+        ms = [m for m in cs_mats if m['up'][:10] == b['up']]
+        b['tdir_up'] = sum(1 for m in ms if m['tdir'])
+        b['tdir_pass'] = sum(1 for m in ms if m['tdir'] and m['st'] == 'pass')
     for m in cs_mats:
         if m['st'] != 'fail':
             m['cause'] = ''
@@ -1305,10 +1325,10 @@ def main():
             m['cause'] = '硬伤'
         elif m['crowd'] >= CS_CROWD:
             m['cause'] = '扎堆'
+        elif m['tdir']:
+            m['cause'] = '方向'
         elif not m['got']:
             m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
-        elif ('uc', m['uc']) in weak:
-            m['cause'] = '方向'
         else:
             m['cause'] = '其他'
     # 「进了也没拿到量」拆三类（Reina 11/18：原来那列只是结果）：
@@ -1349,6 +1369,8 @@ def main():
                 m['cause_now'] = '硬伤'
             elif m['crowd'] >= CS_CROWD:
                 m['cause_now'] = '扎堆'
+            elif m['tdir']:
+                m['cause_now'] = '方向'
             elif not m['got']:
                 m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
                 m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
