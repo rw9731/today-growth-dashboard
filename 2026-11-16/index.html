@@ -150,6 +150,10 @@
   .lx-cstable th.cs-why-t { border-top: 2px solid color-mix(in srgb, #c0504d 55%, var(--color-panel)); text-align: center; color: var(--color-fg); font-weight: var(--fw-medium); }
   .lx-cstable tbody tr:last-child td.cs-why { border-bottom: 2px solid color-mix(in srgb, #c0504d 55%, var(--color-panel)); }
   .lx-cstable thead tr.cs-grp th { top: 0; padding: 4px 5px; border-bottom: none; }
+  /* 原因列表头换行，别把表撑太宽（Reina 11/18） */
+  .lx-cstable thead tr:not(.cs-grp) th.cs-why { white-space: normal; min-width: 5.5rem; max-width: 7.5rem; line-height: 1.3; }
+  .lx-cstable thead tr:not(.cs-grp) th.cs-why .lx-tip { display: inline; }
+  .lx-cstable thead tr:not(.cs-grp) th.cs-why .th-sub { white-space: normal; }
   .lx-cstable thead tr:not(.cs-grp) th { top: 25px; }
   .lx-cstable tbody tr.lx-csday:hover td { background: var(--color-bg-subtle, rgba(127,127,127,.08)); }
   .lx-cstable tbody tr.lx-csday td:first-child::before { content: '▸ '; color: var(--color-fg-muted); }
@@ -528,9 +532,9 @@
               <th class="num cs-why"><span class="lx-tip" data-tipk="tdir">还在测的方向</span><span class="th-sub">不在验证过的两档（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="plrun">没进已跑量项目</span><span class="th-sub">投放侧（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="plhead">被一条老素材霸着</span><span class="th-sub">要换项目（占上传）</span></th>
-              <th class="num cs-why"><span class="lx-tip" data-tipk="c2occ">进了已跑量项目没花出钱 · 被最近几批新素材占着</span><span class="th-sub">投放侧（占上传）</span></th>
-              <th class="num cs-why"><span class="lx-tip" data-tipk="c2bad">进了已跑量项目没花出钱 · 测过了数据差</span><span class="th-sub">素材本身（占上传）</span></th>
-              <th class="num cs-why"><span class="lx-tip" data-tipk="c2try">进了已跑量项目没花出钱 · 只给了试探量</span><span class="th-sub">待查（占上传）</span></th>
+              <th class="num cs-why"><span class="lx-tip" data-tipk="c2occ">进了已跑量项目没花出钱 ·<br>被最近几批新素材占着</span><span class="th-sub">投放侧（占上传）</span></th>
+              <th class="num cs-why"><span class="lx-tip" data-tipk="c2bad">进了已跑量项目没花出钱 ·<br>测过了数据差</span><span class="th-sub">素材本身（占上传）</span></th>
+              <th class="num cs-why"><span class="lx-tip" data-tipk="c2try">进了已跑量项目没花出钱 ·<br>只给了试探量</span><span class="th-sub">待查（占上传）</span></th>
               <th class="num cs-why cs-why-r">单条没跑出来<span class="th-sub">测够了、方向正常（占上传）</span></th>
               <th class="num">花过钱的条数</th>
               <th class="num"><span class="lx-tip" data-tipk="acc">平均投放账户数</span></th>
