@@ -1259,12 +1259,12 @@ def main():
         if not m['got']:
             if not pjd:
                 tst = '窗口里一分钱没花' if m.get('nospend') else '没拿到测试量'
-            elif not m['pj_run']:
-                tst = '没进已跑量项目'
-            elif not m['pj_good']:
-                tst = '已跑量项目都被老头部占着'
+            elif m['pj_good'] >= CS_PJ:
+                tst = '进了已跑量项目也没拿到量'  # 进了 ≥ 3 个没老头部的已跑量项目还没测够：素材本身抢不到
+            elif m['pj_head']:
+                tst = '已跑量项目被老头部占着'  # 没老头部的已跑量项目不到 3 个，而且有的已跑量项目被老头部占着
             else:
-                tst = '进了已跑量项目也没拿到量'
+                tst = '没进已跑量项目'  # 没老头部的已跑量项目不到 3 个，也没碰到老头部：投放没放进花钱的项目
         m['tst'] = tst
     dec_ = [m for m in cs_mats if m['st'] != 'wait']
     fair = [m for m in dec_ if not m['hard'] and m['got']]
@@ -1295,7 +1295,7 @@ def main():
         elif m['hard']:
             m['cause'] = '硬伤'
         elif not m['got']:
-            m['cause'] = {'没进已跑量项目': '基建', '已跑量项目都被老头部占着': '头部'}.get(m['tst'], '测试')
+            m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
         elif ('uc', m['uc']) in weak:
             m['cause'] = '方向'
         else:

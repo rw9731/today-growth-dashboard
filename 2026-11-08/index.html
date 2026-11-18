@@ -515,9 +515,9 @@
               <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">第二天的数还没出</span></th>
               <th class="num">没过<span class="th-sub">条数（占上传）</span></th>
               <th class="num">内容硬伤<span class="th-sub">条数（占上传）</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="plrun">进了已跑量项目</span><span class="th-sub">占进的所有项目，越高越好</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="plhead">被老头部占着</span><span class="th-sub">占已跑量项目，越低越好</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="plhit">进了也拿到量</span><span class="th-sub">没头部的已跑量项目里，越高越好</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="plrun">没进已跑量项目</span><span class="th-sub">投放侧（占上传）</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="plhead">被老头部压住</span><span class="th-sub">要换项目（占上传）</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="plhit">进了也没拿到量</span><span class="th-sub">素材本身（占上传）</span></th>
               <th class="num">方向偏弱<span class="th-sub">条数（占上传）</span></th>
               <th class="num">单条没跑出来<span class="th-sub">测够了、方向正常（占上传）</span></th>
               <th class="num">花过钱的条数</th>
@@ -1149,9 +1149,9 @@
       th: '冷启门槛：这批素材要在「' + WT + '」花到多少才算过冷启。\n' + how,
       csc: '去掉预算影响的冷启率：门槛跟着全盘的量走，= ¥400 × 这批窗口里全盘每天平均花费 ÷ 10/27–11/11 全盘每天平均花费（括号里）。全盘量大门槛就高，预算掉了门槛跟着降。\n和左边冷启率对着看：两个都低，是素材本身的问题；这个明显高于左边，说明低主要是预算没给。颜色规则同冷启率。',
       pjsp: '实测项目：这条素材自己在里面花到 ¥20 以上的项目（巨量智擎户，项目数据是近 10 天的花费），≥ 3 个算测够了。',
-      plrun: '进了已跑量项目：这批新素材被放进的所有项目里，已跑量项目（近 10 天花到 ¥2,000 以上）占几成。越高越好，偏低说明新素材多数放进了不花钱的项目，是投放侧的问题。',
-      plhead: '被老头部占着：这批新素材进的已跑量项目里，有老头部（比它早上传、占项目花费 70% 以上的素材）的占几成。越低越好，偏高说明新素材被老素材压住，要换没有老头部的项目放。',
-      plhit: '进了也拿到量：放进没有老头部的已跑量项目以后，新素材在里面花到 ¥20 的比例。越高越好，偏低说明机会给到了还抢不到，是素材本身的问题。',
+      plrun: '没进已跑量项目：没测够（实测项目不到 3 个），而且进的没老头部的已跑量项目（近 10 天花到 ¥2,000 以上）不到 3 个、也没碰到老头部。投放侧没把它放进花钱的项目。鼠标放到格子上能看到这批新素材进的项目里已跑量的占几成。',
+      plhead: '被老头部压住：没测够，进的没老头部的已跑量项目不到 3 个，而且有的已跑量项目被老头部（比它早上传、占项目花费 70% 以上的素材）占着。要换没有老头部的项目放。',
+      plhit: '进了也没拿到量：已经进了 3 个以上没老头部的已跑量项目，还是没测够（实测项目不到 3 个）。机会给到了还抢不到，是素材本身的问题。',
       win: '冷启窗口：' + WT + '。激活、消耗、次留都只算这 ' + WN + ' 天。'
     };
     fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '花费 ≥ ¥400 的条数 ÷ 当天上传条数，第二天就能看。门槛固定 ¥400（Reina 11/17 从 80 分位激活改过来），每批都一样。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
@@ -1294,15 +1294,15 @@
       const all = CS.filter((m) => m.st !== 'wait' && dd.some((b) => b.up === m.up.slice(0, 10))), F = all.filter((m) => m.st === 'fail');
       const P = all.filter((m) => m.st === 'pass'), minShow = d3.min(P, (m) => m.w_show);
       const tot = triCell(all);
-      let h = '<div style="margin-top:8px"><b>没过冷启的 ' + F.length + ' 条</b>：' + CAUSE.map(([, t], j) => [j, (j === 3 && !nm.cs_run ? '测试不充分' : t) + ' ' + tot[j]]).filter(([j]) => nm.cs_run || (j !== 1 && j !== 2)).map((x) => x[1]).join('、') + '。' + (nm.cs_run ? '冷启率标红时，看表里「进了已跑量项目 / 被老头部占着 / 进了也拿到量」哪列标红：第一列红是没放进花钱的项目，第二列红是被老素材压住，第三列红是素材本身抢不到。' : '');
+      let h = '<div style="margin-top:8px"><b>没过冷启的 ' + F.length + ' 条</b>：' + CAUSE.map(([, t], j) => [j, (j === 3 && !nm.cs_run ? '测试不充分' : t) + ' ' + tot[j]]).filter(([j]) => nm.cs_run || (j !== 1 && j !== 2)).map((x) => x[1]).join('、') + '。' + (nm.cs_run ? '表里「没过」后面六列加起来就是没过的条数，哪列占比明显高就标红。' : '');
       const hard = F.filter((m) => m.cause === '硬伤'), unrev = all.filter((m) => m.unrev && m.st === 'fail');
       h += '<ol>';
       h += '<li><b>内容硬伤 ' + hard.length + ' 条</b>：' + (hard.length ? (() => { const fl = hard.flatMap(hardOf), jl = fl.filter((x) => /^巨量审核/.test(x)).map((x) => x.replace('巨量审核：', '')), ot = cnt(fl.filter((x) => !/^巨量审核/.test(x))), jc = cnt(jl); const jn = hard.filter((m) => hardOf(m).some((x) => /^巨量审核/.test(x))).length; return ot.map(([k, n]) => esc(k) + ' ' + n).concat(jn ? ['巨量审核判违规或限投 ' + jn + '（' + jc.slice(0, 4).map(([k, n]) => esc(k) + ' ' + n).join('、') + (jc.length > 4 ? ' 等 ' + jc.length + ' 种' : '') + '）'] : []).join('、'); })() : '没查到') + '。来源：巨量自己的审核结果（前置拒审-极端相似、禁投、限投、各类违规，' + (nm.cs_aud ? '' : '今天没读到，') + '疑似AIGC 只是标注不算）、人工看片记的（口型、横版无台词、加速）、我们审核表里要求修改还在投的。和对比版本画面重合不算硬伤：重合 60% 以上的巨量没有一条判成极端相似，多数照样拿到量。人工那部分只覆盖看过的素材，是下限。' + (unrev.length ? '另有 ' + unrev.length + ' 条没过审核就投了，没确认有问题，没算进硬伤。' : '') + '</li>';
       const n3 = (k) => F.filter((m) => m.cause === k).length;
       if (nm.cs_run) {
-        h += '<li><b>没进已跑量项目 ' + n3('基建') + ' 条</b>：进的项目近 10 天都花不到 ¥' + d3.format(',')(nm.cs_run) + '，投放侧要往已跑量项目里放。</li>';
-        h += '<li><b>被老头部压住 ' + n3('头部') + ' 条</b>：进的已跑量项目都有老头部（老素材占 ' + fmtP0(nm.cs_head) + ' 以上花费），要换没有老头部的项目。</li>';
-        h += '<li><b>进了已跑量项目也没拿到量 ' + n3('测试') + ' 条</b>：机会给到了还抢不到，主要是素材本身的问题。' + cm.filter((x) => x[0] === 'test').map((x) => '<br>' + x[1]).join('') + '</li>';
+        h += '<li><b>没进已跑量项目 ' + n3('基建') + ' 条</b>：没老头部的已跑量项目（近 10 天花到 ¥' + d3.format(',')(nm.cs_run) + ' 以上）不到 ' + nm.cs_pj + ' 个，投放侧要往已跑量项目里放。</li>';
+        h += '<li><b>被老头部压住 ' + n3('头部') + ' 条</b>：没老头部的已跑量项目不到 ' + nm.cs_pj + ' 个，进的已跑量项目被老素材（占 ' + fmtP0(nm.cs_head) + ' 以上花费）占着，要换项目。</li>';
+        h += '<li><b>进了已跑量项目也没拿到量 ' + n3('测试') + ' 条</b>：进了 ' + nm.cs_pj + ' 个以上没老头部的已跑量项目还没测够，是素材本身的问题。' + cm.filter((x) => x[0] === 'test').map((x) => '<br>' + x[1]).join('') + '</li>';
       } else {
         const tst = F.filter((m) => m.cause === '测试');
         h += '<li><b>测试不充分 ' + tst.length + ' 条</b>：' + WT + '展示不到 ' + d3.format(',')(SHOWN) + ' 次，算没拿到测试量（过了的素材窗口展示最少 ' + d3.format(',')(minShow || 0) + '）。' + cm.filter((x) => x[0] === 'test').map((x) => '<br>' + x[1]).join('') + '</li>';
@@ -1438,7 +1438,7 @@
       }
       return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = ' + WT + '；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
     };
-    const CAUSE_AVG = (() => { const dd = B.filter((b) => b.cs != null && b.n_up), n = d3.sum(dd, (b) => b.n_up); return ['硬伤', '方向', '其他'].map((k) => n ? CS.filter((m) => m.cause === k && dd.some((b) => b.up === m.up.slice(0, 10))).length / n : null); })();
+    const CAUSE_AVG = (() => { const dd = B.filter((b) => b.cs != null && b.n_up), n = d3.sum(dd, (b) => b.n_up); return ['硬伤', '基建', '头部', '测试', '方向', '其他'].map((k) => n ? CS.filter((m) => m.cause === k && dd.some((b) => b.up === m.up.slice(0, 10))).length / n : null); })();
     const PL_AVG = (() => { const o = {}; ['pl_run', 'pl_head', 'pl_hit'].forEach((k) => { const v = B.map((b) => b[k]).filter((x) => x != null); o[k] = v.length >= 3 ? d3.mean(v) : null; }); return o; })();
     fill('rampbatch', (tb) => {
       for (const b of B.slice().reverse()) {
@@ -1454,10 +1454,9 @@
         const np = (c, n, base) => { c.innerHTML = n + ' <span class="muted">（' + fmtP0(b.n_up ? n / b.n_up : 0) + '）</span>'; c.style.whiteSpace = 'nowrap'; if (base != null && b.n_up && n / b.n_up >= base + 0.1) c.classList.add('lx-badv'); else if (base != null && b.n_up && b.n_up >= 10 && n / b.n_up <= base - 0.1) c.classList.add('lx-good'); };
         np(td('num'), b.cs_fail, null);
         { const F = ofDay(b).filter((m) => m.st === 'fail'), has = F.some((m) => m.cause), cc = (k, j) => { const c = td('num'); if (!has) { c.textContent = '—'; c.className = 'num muted'; return; } np(c, F.filter((m) => m.cause === k).length, CAUSE_AVG[j]); };
-          cc('硬伤', 0);
-          // 放进什么项目（Reina 11/18）：三列各有方向，比这几批的平均好出一截标绿、差出一截标红
-          [['pl_run', 1], ['pl_head', -1], ['pl_hit', 1]].forEach(([k, dir]) => { const c = td('num'), v = b[k], avg = PL_AVG[k]; if (v == null) { c.textContent = '—'; c.className = 'num muted'; return; } c.textContent = fmtP0(v); if (avg != null) { const d = (v - avg) * dir, gap = Math.max(0.03, 0.2 * avg); if (d >= gap) c.classList.add('lx-good'); else if (d <= -gap) c.classList.add('lx-badv'); } });
-          cc('方向', 1); cc('其他', 2); }
+          // 没过的按原因拆成条数，几列加起来 = 没过（Reina 11/18）；没项目数据的日子，测试不充分算在「进了也没拿到量」那列，前两列写 —
+          const PLT = {基建: b.pl_run != null ? '这批新素材进的项目里，已跑量的占 ' + fmtP0(b.pl_run) : '', 头部: b.pl_head != null ? '进的已跑量项目里，有老头部的占 ' + fmtP0(b.pl_head) : '', 测试: b.pl_hit != null ? '没老头部的已跑量项目里，新素材拿到量（花到 ¥20）的占 ' + fmtP0(b.pl_hit) : (nm.cs_run ? '' : '这天没有项目数据，这列是测试不充分（窗口展示不到 5,000）')};
+          ['硬伤', '基建', '头部', '测试', '方向', '其他'].forEach((k, j) => { if ((k === '基建' || k === '头部') && !F.some((m) => 'pj_run' in m) && has) { const c = td('num muted'); c.textContent = '—'; return; } cc(k, j); const c = tr.lastChild; if (PLT[k]) c.title = PLT[k]; }); }
 
         td('num').textContent = b.n;
         td('num').textContent = b.acc_mean == null ? '—' : b.acc_mean;
