@@ -1290,11 +1290,21 @@ def main():
         cs_dir.append({'dim': 'uc', 'key': k, 'short': ucs[k].get('short', ''), 'n30': n30, 'max30': round(mx), 'share30': sh, 'cost30': round(uc_c.get(k, 0)),
                        'n': len(ms), 'pass': sum(m['st'] == 'pass' for m in ms), 'verdict': '弱' if n30 >= 10 and mx < 5000 and sh < 0.01 else ''})
     weak = {(d['dim'], d['key']) for d in cs_dir if d['verdict'] == '弱'}
+    # 同原片上太多版本（Reina 11/18 晚：放进没过原因，排第二，在内容硬伤后面）：同一条原片前后 1 天内上了 CS_CROWD 条以上（含自己）
+    CS_CROWD = 7
+    _rd = defaultdict(list)
+    for m in cs_mats:
+        _rd[m['root']].append(dt.date.fromisoformat(m['up'][:10]))
+    for m in cs_mats:
+        u0 = dt.date.fromisoformat(m['up'][:10])
+        m['crowd'] = sum(1 for x in _rd[m['root']] if abs((x - u0).days) <= 1)
     for m in cs_mats:
         if m['st'] != 'fail':
             m['cause'] = ''
         elif m['hard']:
             m['cause'] = '硬伤'
+        elif m['crowd'] >= CS_CROWD:
+            m['cause'] = '扎堆'
         elif not m['got']:
             m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
         elif ('uc', m['uc']) in weak:
@@ -1337,6 +1347,8 @@ def main():
         if m['st'] == 'wait':
             if m['hard']:
                 m['cause_now'] = '硬伤'
+            elif m['crowd'] >= CS_CROWD:
+                m['cause_now'] = '扎堆'
             elif not m['got']:
                 m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
                 m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
@@ -1359,13 +1371,6 @@ def main():
         b['pl_hit'] = gh / gd if gd else None
     # 同原片扎堆（Reina 11/18 定）：同一条原片（root）在上传日前后 1 天内上了 CS_CROWD 条以上（含自己），算「上太多版本」。
     # 11/9–11/16 上传的：扎堆的 0/44 过冷启（头 2 天），其他 43/349；11/13 当天扎堆 0/22、不扎堆 21/79（p=0.006）。只做维度看相关性，不算进没过的原因。
-    CS_CROWD = 7
-    _rd = defaultdict(list)
-    for m in cs_mats:
-        _rd[m['root']].append(dt.date.fromisoformat(m['up'][:10]))
-    for m in cs_mats:
-        u0 = dt.date.fromisoformat(m['up'][:10])
-        m['crowd'] = sum(1 for x in _rd[m['root']] if abs((x - u0).days) <= 1)
     for b in batches:
         ms = [m for m in cs_mats if m['up'][:10] == b['up'] and m['crowd'] >= CS_CROWD]
         b['crowd'] = len(ms)
