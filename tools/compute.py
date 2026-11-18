@@ -1178,11 +1178,12 @@ def main():
     # 测试量：上传当天 + 第二天展示 ≥ CS_SHOW 算拿到了；没拿到的按项目数据找原因（没进智擎项目、只进 iOS、项目都没起量、项目的钱给了别的素材）。
     # 方向：最近 10 个上传日里「没硬伤、拿到测试量」的素材，按 use case 和素材类型算过冷启比例，比整体低一半算方向弱。
     CS_SHOW = 5000
-    # 测试充分度拆成两个维度（Reina 11/18，回应 Xuhan「进了项目但拿不到量」）：
-    # 基建 = 进了几个跑量项目（项目自己到今天花到 ¥100 以上），≥ CS_ACT 算基建够——投放侧给没给机会；
-    # 实测 = 自己在几个项目里各花到 ¥20 以上，≥ CS_PJ 算测够了——系统有没有真的给量。
-    # 依据 11/8–11/15 上传的 374 条：实测 0 个过冷启 1%、1 个 10%、2 个 16%、3–4 个 36%、5 个以上 90%；基建够、实测不够的占 64%，过冷启 5%。
-    CS_ACT, CS_ACT_C = 10, 100
+    # 测试充分度（Reina 11/18 定）：看新素材被放进什么样的项目、在里面拿没拿到量。项目数据里的花费是 D-9 到 D（10 天）。
+    # 已跑量项目 = 10 天花到 CS_RUN 以上的项目；老头部 = 比这条素材早上传、占项目花费 CS_HEAD 以上的素材；
+    # 实测项目 = 素材自己花到 CS_PJ_C 以上的项目，≥ CS_PJ 个算测够了。
+    # 没测够的分三类：没进已跑量项目（投放侧）→ 已跑量项目都被老头部占着（换项目）→ 进了没头部的已跑量项目也没拿到量（素材本身）。
+    # 依据 11/8–11/15 上传的 374 条、1.8 万个素材×项目：不花钱的项目里新素材花到 ¥20 的 0.2%；老头部占 ≥90% 的 1.6%、70–90% 3.9%；没头部的项目按 10 天花费 ¥100–500 2.4%、¥2,000–1 万 7.7%、1 万以上 12.1%。
+    CS_RUN, CS_HEAD = 2000, 0.7
     CS_PJ, CS_PJ_C = 3, 20
     CS_PJ_OK = 5
     AUD_SKIP = {'疑似AIGC'}
@@ -1246,36 +1247,24 @@ def main():
             m['pj_sp'] = PJ_SP.get(m['id'], 0)
             m['got'] = m['pj_sp'] >= CS_PJ
             ps = [PJx[k] for k in MPx.get(m['id'], [])]
-            live = [pj for pj in ps if sum(c for _, c in pj[2]) >= CS_ACT_C]
-            m['pj_act'] = len(live)
-            m['base_ok'] = len(live) >= CS_ACT
+            ptot = lambda pj: sum(c for _, c in pj[2])
+            run = [pj for pj in ps if ptot(pj) >= CS_RUN]
+            head = [pj for pj in run if max((c for mid, c in pj[2] if mid != m['id'] and up_day(mid) < u), default=0) >= CS_HEAD * ptot(pj)]
+            good = [pj for pj in run if pj not in head]
+            m['pj_n'], m['pj_run'], m['pj_head'], m['pj_good'] = len(ps), len(run), len(head), len(good)
+            m['pj_goodhit'] = sum(1 for pj in good if any(mid == m['id'] and c >= CS_PJ_C for mid, c in pj[2]))
         else:
             m['got'] = m['w_show'] >= CS_SHOW
         tst = ''
         if not m['got']:
             if not pjd:
                 tst = '窗口里一分钱没花' if m.get('nospend') else '没拿到测试量'
+            elif not m['pj_run']:
+                tst = '没进已跑量项目'
+            elif not m['pj_good']:
+                tst = '已跑量项目都被老头部占着'
             else:
-                if not ps:
-                    tst = '没进智擎项目'
-                elif all(is_ios(pj) for pj in ps):
-                    tst = '只进了 iOS 项目'
-                elif not live:
-                    tst = '所在项目都没起量'
-                elif not m['base_ok']:
-                    tst = f'跑量项目只有 {len(live)} 个'
-                else:
-                    old_, new_ = 0.0, 0.0
-                    for pj in live:
-                        for mid, c in pj[2]:
-                            if mid == m['id']:
-                                continue
-                            if up_day(mid) < u:
-                                old_ += c
-                            else:
-                                new_ += c
-                    tst = '项目的钱给了更早的素材' if old_ >= new_ else '项目的钱给了同批或更新的素材'
-                    m['live_pj'] = len(live)
+                tst = '进了已跑量项目也没拿到量'
         m['tst'] = tst
     dec_ = [m for m in cs_mats if m['st'] != 'wait']
     fair = [m for m in dec_ if not m['hard'] and m['got']]
@@ -1306,7 +1295,7 @@ def main():
         elif m['hard']:
             m['cause'] = '硬伤'
         elif not m['got']:
-            m['cause'] = '测试' if m.get('base_ok') else '基建'
+            m['cause'] = {'没进已跑量项目': '基建', '已跑量项目都被老头部占着': '头部'}.get(m['tst'], '测试')
         elif ('uc', m['uc']) in weak:
             m['cause'] = '方向'
         else:
@@ -1317,8 +1306,15 @@ def main():
     newd_meta['cs_pj'] = CS_PJ if pjd else None
     newd_meta['cs_pj_ok'] = CS_PJ_OK if pjd else None
     newd_meta['cs_pj_c'] = CS_PJ_C if pjd else None
-    newd_meta['cs_act'] = CS_ACT if pjd else None
-    newd_meta['cs_act_c'] = CS_ACT_C if pjd else None
+    newd_meta['cs_run'] = CS_RUN if pjd else None
+    newd_meta['cs_head'] = CS_HEAD if pjd else None
+    # 每个上传日：新素材放进的项目里已跑量的占几成、已跑量的里被老头部占着的占几成、没头部的已跑量项目里拿到量（花到 ¥20）的占几成
+    for b in batches:
+        ms = [m for m in cs_mats if m['up'][:10] == b['up'] and 'pj_run' in m]
+        sl, rn, hd, gd, gh = (sum(m[k] for m in ms) for k in ('pj_n', 'pj_run', 'pj_head', 'pj_good', 'pj_goodhit'))
+        b['pl_run'] = rn / sl if sl else None
+        b['pl_head'] = hd / rn if rn else None
+        b['pl_hit'] = gh / gd if gd else None
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
