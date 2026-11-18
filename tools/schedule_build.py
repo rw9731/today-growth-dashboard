@@ -471,13 +471,16 @@ def cap_html(plan, T):
         if mon <= d <= week[-1]:
             got[(e['g'], e['t'], d)] += int(e.get('n') or 0)
     cap = lambda g, t, d: cd[g]['we' if d.weekday() >= 5 else 'wd'].get(t, 0)
+    # 某一周临时加的产能（Reina 11/18：11/16 这周 A、B 组各加 20 条做「美好生活」新方向），记在 plan 的 cap_extra {周一: {组: {AI/二创: 条数}}}
+    ext = plan.get('cap_extra', {}).get(mon.isoformat(), {})
+    xc = lambda g, t: int(ext.get(g, {}).get(t, 0))
     wd_names = '一二三四五六日'
     cards = ''
     for g in ('A', 'B'):
         if g not in cd:
             continue
         sg = {t: sum(got[(g, t, d)] for d in week) for t in ('AI', '二创')}
-        sc = {t: sum(cap(g, t, d) for d in week) for t in ('AI', '二创')}
+        sc = {t: sum(cap(g, t, d) for d in week) + xc(g, t) for t in ('AI', '二创')}
         tg, tc = sum(sg.values()), sum(sc.values())
         left = tc - tg
         parts = '，'.join(f'{t} 还能排 {sc[t] - sg[t]}' if sc[t] >= sg[t] else f'{t} 超了 {sg[t] - sc[t]}' for t in ('AI', '二创'))
@@ -494,7 +497,7 @@ def cap_html(plan, T):
             ts = ('AI', '二创') if t == '合计' else (t,)
             cells = ''.join(f'<td class="{"c-today" if d == T else ("c-past" if d < T else "")}"><b>{sum(got[(g, x, d)] for x in ts)}</b></td>' for d in week)
             n = sum(got[(g, x, d)] for x in ts for d in week)
-            c = sum(cap(g, x, d) for x in ts for d in week)
+            c = sum(cap(g, x, d) for x in ts for d in week) + sum(xc(g, x) for x in ts)
             rows += (f'<tr class="{"c-tot" if t == "合计" else ""}"><th>{g} 组 {t}</th>{cells}'
                      f'<td class="c-sum"><b>{n}</b><small> / {c}</small></td><td class="c-left">{c - n if c >= n else "超 " + str(n - c)}</td></tr>')
     note = html.escape(plan.get('cap_note', ''))
