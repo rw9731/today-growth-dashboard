@@ -451,9 +451,9 @@ def progress_html(prog, T, wt=None):
 
 
 def cap_html(plan, T):
-    """「本周排期余量」（Reina 11/18）：A、B 组这周每天已排多少、产能多少、还能排多少，看得出还能给哪组、哪天排。
-    产能按 plan 的 cap_day：周一到周五一套、周六周日一套（Reina 11/18：周六日每组每天约 20 条，AI 和二创 1:1）。
-    已排 = schedule_plan.json 里这周的排期行（不算 cut）。还能排只算明天起（当天的排期不改）。"""
+    """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面逐天看已排 / 产能、哪天还空几条。
+    产能按 plan 的 cap_day：周一到周五一套、周六周日一套（周六日每组每天约 20 条，AI 和二创 1:1）。
+    已排 = schedule_plan.json 里这周的排期行（不算 cut）。「还空」只标明天起的天（今天的排期不改）。"""
     cd = plan.get('cap_day')
     if not cd:
         return ''
@@ -469,42 +469,48 @@ def cap_html(plan, T):
             continue
         if mon <= d <= week[-1]:
             got[(e['g'], e['t'], d)] += int(e.get('n') or 0)
+    cap = lambda g, t, d: cd[g]['we' if d.weekday() >= 5 else 'wd'].get(t, 0)
     wd_names = '一二三四五六日'
+    cards = ''
+    for g in ('A', 'B'):
+        if g not in cd:
+            continue
+        sg = {t: sum(got[(g, t, d)] for d in week) for t in ('AI', '二创')}
+        sc = {t: sum(cap(g, t, d) for d in week) for t in ('AI', '二创')}
+        tg, tc = sum(sg.values()), sum(sc.values())
+        left = tc - tg
+        parts = '，'.join(f'{t} 还能排 {sc[t] - sg[t]}' if sc[t] >= sg[t] else f'{t} 超了 {sg[t] - sc[t]}' for t in ('AI', '二创'))
+        big = f'<b>{left}</b> 条' if left >= 0 else f'<b class="over">超 {-left}</b> 条'
+        cards += (f'<div class="cap-card"><div class="cap-k">{g} 组本周还能排</div><div class="cap-big">{big}</div>'
+                  f'<div class="cap-bar"><span style="width:{min(100, tg / tc * 100):.1f}%"></span></div>'
+                  f'<div class="cap-sub">已排 {tg} / 本周产能 {tc}，{parts}</div></div>')
     head = ''.join(f'<th class="{"c-today" if d == T else ("c-past" if d < T else "")}">{md(d)}<br>周{wd_names[d.weekday()]}</th>' for d in week)
     rows = ''
     for g in ('A', 'B'):
         if g not in cd:
             continue
-        tot_got = tot_cap = tot_left = 0
-        day_tot = defaultdict(lambda: [0, 0])
-        body = ''
-        for t in ('AI', '二创'):
+        for t in ('AI', '二创', '合计'):
+            ts = ('AI', '二创') if t == '合计' else (t,)
             cells = ''
-            sg = sc = sl = 0
             for d in week:
-                c = cd[g]['we' if d.weekday() >= 5 else 'wd'].get(t, 0)
-                n = got[(g, t, d)]
-                sg += n; sc += c
-                day_tot[d][0] += n; day_tot[d][1] += c
-                left = max(0, c - n) if d > T else 0
-                sl += left
-                cls = 'c-today' if d == T else ('c-past' if d < T else '')
-                if n > c:
-                    cls += ' c-over'
-                tip = f'{g} 组 {t} {md(d)}：已排 {n}，产能 {c}' + (f'，还能排 {left}' if left else '')
-                cells += f'<td class="{cls}" title="{html.escape(tip)}"><b>{n}</b><small>/{c}</small>' + (f'<em>+{left}</em>' if left else '') + '</td>'
-            tot_got += sg; tot_cap += sc; tot_left += sl
-            body += f'<tr><th>{g} 组 {t}</th>{cells}<td class="c-sum"><b>{sg}</b><small>/{sc}</small></td><td class="c-gap">{max(0, sc - sg) or "—"}</td><td class="c-left">{sl or "—"}</td></tr>'
-        cells = ''
-        for d in week:
-            n, c = day_tot[d]
-            left = max(0, c - n) if d > T else 0
-            cls = ('c-today' if d == T else ('c-past' if d < T else '')) + (' c-over' if n > c else '')
-            cells += f'<td class="{cls}"><b>{n}</b><small>/{c}</small>' + (f'<em>+{left}</em>' if left else '') + '</td>'
-        rows += body + f'<tr class="c-tot"><th>{g} 组合计</th>{cells}<td class="c-sum"><b>{tot_got}</b><small>/{tot_cap}</small></td><td class="c-gap">{max(0, tot_cap - tot_got) or "—"}</td><td class="c-left">{tot_left or "—"}</td></tr>'
+                n = sum(got[(g, x, d)] for x in ts)
+                c = sum(cap(g, x, d) for x in ts)
+                cls = ('c-today' if d == T else ('c-past' if d < T else '')) + (' c-over' if n > c else '')
+                if d > T and c > n:
+                    extra = f'<em>还空 {c - n}</em>'
+                elif n > c:
+                    extra = f'<em class="o">超 {n - c}</em>'
+                else:
+                    extra = ''
+                cells += f'<td class="{cls}"><b>{n}</b><small> / {c}</small>{extra}</td>'
+            n = sum(got[(g, x, d)] for x in ts for d in week)
+            c = sum(cap(g, x, d) for x in ts for d in week)
+            rows += (f'<tr class="{"c-tot" if t == "合计" else ""}"><th>{g} 组 {t}</th>{cells}'
+                     f'<td class="c-sum"><b>{n}</b><small> / {c}</small></td><td class="c-left">{c - n if c >= n else "超 " + str(n - c)}</td></tr>')
     note = html.escape(plan.get('cap_note', ''))
-    return (f'<section class="cap"><h2>本周排期余量</h2><p class="rev-note">每格是这天已排 / 产能，<em class="cap-e">+n</em> 是这天还能排几条（只算明天起，今天的排期不动），红色是排超了。右边三列：本周已排 / 本周产能；离周产能还差几条；明天起按每天产能还能排几条（按每天产能算，前几天少排的补不回来、多排的也不抵后面，所以和「离周产能」不一样）。{note}</p>'
-            f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排</th><th>离周产能</th><th>明天起还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
+    return (f'<section class="cap"><h2>本周排期余量</h2><div class="cap-cards">{cards}</div>'
+            f'<p class="rev-note">下表每格是这天「已排 / 这天产能」。「还空 n」是这天还能再排 n 条（只标明天起的天，今天和以前的不再排）；「超 n」是这天排多了 n 条。{note}</p>'
+            f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排 / 产能</th><th>本周还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
 
 
 def agency_html(ag, T):
