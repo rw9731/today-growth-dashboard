@@ -62,7 +62,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "PS03",
-  "sc": "",
+  "sc": "接送和工作提前排好",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-开会接娃两不误-PS03-01-小月-20261109",
@@ -90,7 +90,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "LG04",
-  "sc": "",
+  "sc": "边上班考证",
   "k": "N",
   "t": "A",
   "name": "学习与成长-碎片时间学习-LG02-01-小月-20261109",
@@ -108,7 +108,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7706486106891845659",
-  "cost": 362,
+  "cost": 369,
   "first": "2026-11-10"
  },
  "B|学习与成长职场妈妈备考lg0202小李261109": {
@@ -118,7 +118,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "LG04",
-  "sc": "",
+  "sc": "边上班考证",
   "k": "N",
   "t": "A",
   "name": "学习与成长-职场妈妈备考-LG02-02-小李-261109",
@@ -136,7 +136,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7706481569847279659",
-  "cost": 7,
+  "cost": 46668,
   "first": "2026-11-12"
  },
  "B|学习与成长在职备考lg0205包子20261110": {
@@ -197,7 +197,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "V",
   "t": "E",
   "name": "ai个人助手_today koc_在微信里直接跟Today对话_01_二创_精简2cw_扩量02_二创新剪_yyz_20261027_扩量01_二创新剪_wq_A组_20261109",
@@ -225,7 +225,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "V",
   "t": "E",
   "name": "ai个人助手_today koc_在微信里直接跟Today对话_01_二创_精简2cw_扩量02_二创新剪_yyz_20261027_扩量02_二创新剪_wq_A组_20261109",
@@ -253,7 +253,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "V",
   "t": "E",
   "name": "ai个人助手_today koc_在微信里直接跟Today对话_01_二创_精简2cw_扩量02_二创新剪_yyz_20261027_扩量03_二创新剪_wq_A组_20261109",
@@ -281,7 +281,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "V",
   "t": "E",
   "name": "ai个人助手_today koc_在微信里直接跟Today对话_01_二创_精简2cw_扩量02_二创新剪_yyz_20261027_扩量04_二创新剪_wq_A组_20261109",
@@ -399,7 +399,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707101029234196489",
-  "cost": 52,
+  "cost": 54,
   "first": "2026-11-12"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量13ai素材ai重拍zxca组20261109": {
@@ -427,7 +427,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707472405593178162",
-  "cost": 436,
+  "cost": 442,
   "first": "2026-11-13"
  },
  "A|a组ai个人助理定位盯着你关心的公司产品和话题a1806cw20261023扩量in0189lol比赛ai素材ai重拍lsta组20261109": {
@@ -465,7 +465,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "LG03",
-  "sc": "",
+  "sc": "学语言，按他的情况每天练一点",
   "k": "V",
   "t": "E",
   "name": "learning_英语口语陪练与个性化带学_01_扩量03_二创新剪_sjl_A组_20261109",
@@ -481,7 +481,10 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzkw",
   "lk": "f",
   "st": "通过",
-  "ok": true
+  "ok": true,
+  "mid": "7708606328235819050",
+  "cost": 16,
+  "first": "2026-11-16"
  },
  "A|learning英语口语陪练与个性化带学01扩量01二创新剪sjla组20261109": {
   "g": "A",
@@ -508,7 +511,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707162881252802587",
-  "cost": 14815,
+  "cost": 15861,
   "first": "2026-11-12"
  },
  "A|learning英语口语陪练与个性化带学01扩量02二创新剪sjla组20261109": {
@@ -536,7 +539,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707101238797533210",
-  "cost": 194,
+  "cost": 223,
   "first": "2026-11-12"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw2026102301扩量01二创新剪sjla组20261109": {
@@ -546,7 +549,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "行业政策和动态（即时推或早报）",
   "k": "V",
   "t": "E",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-20261023_01_扩量01_二创新剪_sjl_A组_20261109",
@@ -564,7 +567,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707482099654475839",
-  "cost": 217,
+  "cost": 222,
   "first": "2026-11-13"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw2026102301扩量02二创新剪sjla组20261109": {
@@ -574,7 +577,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "行业政策和动态（即时推或早报）",
   "k": "V",
   "t": "E",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-20261023_01_扩量02_二创新剪_sjl_A组_20261109",
@@ -602,7 +605,7 @@
   "col": "O",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "E",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-扩量01_二创新剪_zl_A组_20261109",
@@ -618,7 +621,10 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzk1",
   "lk": "f",
   "st": "通过",
-  "ok": true
+  "ok": true,
+  "mid": "7707876355766353947",
+  "cost": 23,
+  "first": "2026-11-14"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw扩量02二创新剪zla组20261109": {
   "g": "A",
@@ -670,7 +676,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707101104781148210",
-  "cost": 657,
+  "cost": 693,
   "first": "2026-11-12"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量15ai素材ai重拍zxca组20261109": {
@@ -698,7 +704,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707101075308642367",
-  "cost": 25,
+  "cost": 34,
   "first": "2026-11-12"
  },
  "A|信息检索与追踪todaykolin01章妙妙二创精剪lst01a组20261109": {
@@ -873,7 +879,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7706856741501829183",
-  "cost": 320,
+  "cost": 328,
   "first": "2026-11-12"
  },
  "A|信息检索与追踪todaykolin01章妙妙kol非原生只剪辑lst01a组20261110": {
@@ -923,7 +929,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7707102087591362579",
-  "cost": 299,
+  "cost": 344,
   "first": "2026-11-12"
  },
  "B|个人日程与事务助理todaykocps01猪猪elaine03二创精剪小月20201109": {
@@ -949,7 +955,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI4"
-  ]
+  ],
+  "mid": "7707975556571234331",
+  "cost": 44,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理todaykocps01猪猪elaine04二创精剪小月20201109": {
   "g": "B",
@@ -974,7 +983,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI4"
-  ]
+  ],
+  "mid": "7707975526443384870",
+  "cost": 171,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理todaykoca19猪猪elaine01二创精剪耶耶20261109": {
   "g": "B",
@@ -999,7 +1011,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI4"
-  ]
+  ],
+  "mid": "7707975514041237514",
+  "cost": 69,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理todaykoca19猪猪elaine02二创精剪耶耶20261109": {
   "g": "B",
@@ -1024,7 +1039,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI4"
-  ]
+  ],
+  "mid": "7707975596220825642",
+  "cost": 191,
+  "first": "2026-11-14"
  },
  "B|工作沟通与协作todaykolwk00清华妈妈01二创精剪小李20261110": {
   "g": "B",
@@ -1051,7 +1069,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI5"
   ],
   "mid": "7707585721603604531",
-  "cost": 51,
+  "cost": 57,
   "first": "2026-11-13"
  },
  "B|工作沟通与协作todaykolwk00清华妈妈02二创精剪小李20261110": {
@@ -1079,7 +1097,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI5"
   ],
   "mid": "7707587157306081290",
-  "cost": 562,
+  "cost": 585,
   "first": "2026-11-13"
  },
  "B|工作沟通与协作todaykolwk00清华妈妈03二创精剪小李20261110": {
@@ -1107,7 +1125,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI5"
   ],
   "mid": "7707584608556957750",
-  "cost": 362,
+  "cost": 378,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理todaykocps05是茵宝呀01二创精剪叮叮261110": {
@@ -1230,7 +1248,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM1"
-  ]
+  ],
+  "mid": "7707974339879108662",
+  "cost": 23,
+  "first": "2026-11-14"
  },
  "B|出行与旅行懂你的出行节奏动态调整行程tr01叮叮苏野lyn扩量02二创新剪小月20261110": {
   "g": "B",
@@ -1255,7 +1276,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM1"
-  ]
+  ],
+  "mid": "7707974341732237350",
+  "cost": 13,
+  "first": "2026-11-14"
  },
  "B|出行与旅行懂你的出行节奏动态调整行程tr01叮叮苏野lyn扩量03二创新剪小月20261110": {
   "g": "B",
@@ -1280,7 +1304,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM1"
-  ]
+  ],
+  "mid": "7707974207503073289",
+  "cost": 34,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理todaykolps04辣妈晶晶营养师妈妈01二创精剪小月261110": {
   "g": "B",
@@ -1305,7 +1332,10 @@
   "ok": true,
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM3"
-  ]
+  ],
+  "mid": "7707975518818680841",
+  "cost": 248,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理todaykolps04辣妈晶晶营养师妈妈02二创精剪小月261110": {
   "g": "B",
@@ -1386,7 +1416,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "AI 新模型和岗位上的 AI 变化",
   "k": "N",
   "t": "A",
   "name": "信息检索与追踪-盯AI更新-IN01-016-小月-20261109-b组",
@@ -1464,7 +1494,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "PS06",
-  "sc": "",
+  "sc": "带爸妈或孩子出去转转",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-爸妈去哪儿-PS06-叮叮-20261109-b组",
@@ -1492,7 +1522,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "PS06",
-  "sc": "",
+  "sc": "每周推这周末值得去的",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-出过福田没-PS06-小月-20261109-b组",
@@ -1510,7 +1540,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjQx"
   ],
   "mid": "7707102840519278643",
-  "cost": 3723,
+  "cost": 4254,
   "first": "2026-11-12"
  },
  "B|个人日程与事务助理连轴六周ps06小李261109": {
@@ -1520,7 +1550,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "PS06",
-  "sc": "",
+  "sc": "每周推这周末值得去的",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-连轴六周-PS06-小李-261109-b组",
@@ -1548,7 +1578,7 @@
   "col": "J",
   "d": "2026-11-09",
   "uc": "PS06",
-  "sc": "",
+  "sc": "每周推这周末值得去的",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-你定还是我定-PS06-04-耶耶-20261109-b组",
@@ -1563,7 +1593,7 @@
   "st": "通过",
   "ok": true,
   "mid": "7706845404974071835",
-  "cost": 147,
+  "cost": 168,
   "first": "2026-11-12"
  },
  "B|个人日程与事务助理周末开展ps06叮叮20261109": {
@@ -1598,7 +1628,7 @@
   "col": "H",
   "d": "2026-11-09",
   "uc": "PS07",
-  "sc": "",
+  "sc": "这个阶段要准备的提前列好",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-新手爸妈-PS07-01-zl-A组-原片-20261109",
@@ -1623,7 +1653,7 @@
   "col": "H",
   "d": "2026-11-09",
   "uc": "PS07",
-  "sc": "",
+  "sc": "辅食随口记，按月龄排下周",
   "k": "N",
   "t": "A",
   "name": "个人日程与事务助理-新手爸妈-PS07-02-zl-A组-原片-20261109",
@@ -1714,7 +1744,7 @@
   "col": "H",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "行业政策和动态（即时推或早报）",
   "k": "N",
   "t": "A",
   "name": "信息检索与追踪-盯着你关心的公司、产品和话题-IN01-19-wq-A组-原片-20261109",
@@ -1739,7 +1769,7 @@
   "col": "H",
   "d": "2026-11-09",
   "uc": "SH02",
-  "sc": "",
+  "sc": "买大件前比好价、盯低价",
   "k": "N",
   "t": "A",
   "name": "购物与生活服务-买大件前按预算和要求比好各平台价格-SH02-14-zl-A组-原片-20261109",
@@ -1764,7 +1794,7 @@
   "col": "H",
   "d": "2026-11-09",
   "uc": "SH02",
-  "sc": "",
+  "sc": "买大件前比好价、盯低价",
   "k": "N",
   "t": "A",
   "name": "购物与生活服务-买大件前按预算和要求比好各平台价格-SH02-15-zl-A组-原片-20261109",
@@ -1832,7 +1862,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzMg",
   "lk": "f",
   "mid": "7706891513820643369",
-  "cost": 738,
+  "cost": 758,
   "first": "2026-11-12"
  },
  "A|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量02二创新剪koc非原生全文重配wqa组20261110": {
@@ -1860,7 +1890,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzMg",
   "lk": "f",
   "mid": "7706891444519354394",
-  "cost": 358,
+  "cost": 362,
   "first": "2026-11-12"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪ltq01扩量06二创新剪yyz扩量01二创新剪koc非原生全文重配wqa组20261110": {
@@ -1916,7 +1946,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzMw",
   "lk": "f",
   "mid": "7706891589867864090",
-  "cost": 1049,
+  "cost": 1058,
   "first": "2026-11-12"
  },
  "A|worktodaykol整理电子发票和差旅报销01扩量02二创精剪wzy扩量01二创新剪ltq扩量01kol非原生全文重配yyza组20261110": {
@@ -1944,7 +1974,7 @@
   "link": "",
   "lk": "f",
   "mid": "7706891512437751862",
-  "cost": 795,
+  "cost": 816,
   "first": "2026-11-12"
  },
  "A|worktodaykol整理电子发票和差旅报销01扩量02二创精剪wzy扩量01二创新剪ltq扩量02kol非原生全文重配yyza组20261110": {
@@ -1972,7 +2002,7 @@
   "link": "",
   "lk": "f",
   "mid": "7706891533848838163",
-  "cost": 229,
+  "cost": 246,
   "first": "2026-11-12"
  },
  "A|worktodaykol整理电子发票和差旅报销01扩量02二创精剪wzy扩量01二创新剪ltq扩量03kol非原生全文重配yyza组20261110": {
@@ -2000,7 +2030,7 @@
   "link": "",
   "lk": "f",
   "mid": "7706891416984322074",
-  "cost": 192,
+  "cost": 205,
   "first": "2026-11-12"
  },
  "A|随身记事与个人资料管理nt02点子别跑了153新角度扩量ai素材ai重拍lsta组20261110": {
@@ -2119,7 +2149,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzMx"
   ],
   "mid": "7707471682756624426",
-  "cost": 46328,
+  "cost": 57346,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理todaykolps01柯煊02二创精剪耶耶20261110": {
@@ -2147,7 +2177,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzMx"
   ],
   "mid": "7707471730100535305",
-  "cost": 3359,
+  "cost": 3501,
   "first": "2026-11-13"
  },
  "B|ai个人助理综述todaykolai00干饭小鹅01二创精剪耶耶20261110": {
@@ -2200,7 +2230,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzMy"
   ],
   "mid": "7707474536907866154",
-  "cost": 278,
+  "cost": 281,
   "first": "2026-11-13"
  },
  "B|理财投资todaykolm14发发金二创精剪小李20261110": {
@@ -2332,7 +2362,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQx"
-  ]
+  ],
+  "mid": "7708639495617232923",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "B|信息检索与追踪吃瓜在一线in0107包子20261110": {
   "g": "B",
@@ -2406,7 +2439,7 @@
   "l1": "购物与生活服务",
   "ucn": "盯赛事演出开票",
   "mid": "7704997208492015625",
-  "cost": 3575,
+  "cost": 3860,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=TDE0",
@@ -2462,7 +2495,7 @@
   "l1": "购物与生活服务",
   "ucn": "盯赛事演出开票",
   "mid": "7704997254659178506",
-  "cost": 1132,
+  "cost": 1162,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=TDE2",
@@ -2775,7 +2808,7 @@
   "col": "N",
   "d": "2026-11-05",
   "uc": "LG02",
-  "sc": "",
+  "sc": "错题复盘",
   "k": "N",
   "t": "E",
   "name": "学习自我提升-备考时错题推同类题，计划跟着加班自动调整-L03-zxc-01_扩量01_二创新剪_小李_20261105",
@@ -2791,7 +2824,10 @@
   "ucn": "学生课表作业和备考",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE3",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7705006082619883547",
+  "cost": 0,
+  "first": "2026-11-12"
  },
  "B|学习自我提升备考时错题推同类题计划跟着加班自动调整l03zxc01扩量02二创新剪小李20261105": {
   "g": "B",
@@ -2800,7 +2836,7 @@
   "col": "N",
   "d": "2026-11-05",
   "uc": "LG02",
-  "sc": "",
+  "sc": "错题复盘",
   "k": "N",
   "t": "E",
   "name": "学习自我提升-备考时错题推同类题，计划跟着加班自动调整-L03-zxc-01_扩量02_二创新剪_小李_20261105",
@@ -2818,7 +2854,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE3",
   "lk": "f",
   "mid": "7705006210516369459",
-  "cost": 1961,
+  "cost": 3309,
   "first": "2026-11-12"
  },
  "B|学习自我提升备考时错题推同类题计划跟着加班自动调整l03zxc01扩量03二创新剪小李20261105": {
@@ -2828,7 +2864,7 @@
   "col": "N",
   "d": "2026-11-05",
   "uc": "LG02",
-  "sc": "",
+  "sc": "错题复盘",
   "k": "N",
   "t": "E",
   "name": "学习自我提升-备考时错题推同类题，计划跟着加班自动调整-L03-zxc-01_扩量03_二创新剪_小李_20261105",
@@ -2846,7 +2882,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE3",
   "lk": "f",
   "mid": "7705006122865033243",
-  "cost": 2878,
+  "cost": 3626,
   "first": "2026-11-12"
  },
  "B|ai个人助理定位每天早报把今天工作和生活里要紧的事一起推给你a2201cw扩量01二创新剪包子20261105": {
@@ -2984,7 +3020,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
   "mid": "7705276357081595913",
-  "cost": 1603,
+  "cost": 1621,
   "first": "2026-11-07",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE4",
@@ -2997,7 +3033,7 @@
   "col": "N",
   "d": "2026-11-06",
   "uc": "LG02",
-  "sc": "",
+  "sc": "边上班考证",
   "k": "N",
   "t": "E",
   "name": "学习与成长_today koc_LG02_解忧代码_扩量01_二创新剪_包子_20261106",
@@ -3013,7 +3049,10 @@
   "ucn": "学生课表作业和备考",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE5",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883489570242587",
+  "cost": 15,
+  "first": "2026-11-14"
  },
  "B|学习与成长todaykoclg02解忧代码扩量02二创新剪包子20261106": {
   "g": "B",
@@ -3022,7 +3061,7 @@
   "col": "N",
   "d": "2026-11-06",
   "uc": "LG02",
-  "sc": "",
+  "sc": "边上班考证",
   "k": "N",
   "t": "E",
   "name": "学习与成长_today koc_LG02_解忧代码_扩量02_二创新剪_包子_20261106",
@@ -3038,7 +3077,10 @@
   "ucn": "学生课表作业和备考",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE5",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883807618121771",
+  "cost": 154,
+  "first": "2026-11-14"
  },
  "B|随身记事与个人资料管理nt01说来惭愧扩量02二创包子20261105": {
   "g": "B",
@@ -3103,7 +3145,7 @@
   "col": "N",
   "d": "2026-11-05",
   "uc": "NT01",
-  "sc": "",
+  "sc": "生日提前备好礼物",
   "k": "V",
   "t": "E",
   "name": "随身记事与个人资料管理-NT01-说来惭愧-扩量01_二创_小李_20261105",
@@ -3124,7 +3166,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzEz",
   "lk": "f",
   "mid": "7704998610521882643",
-  "cost": 156,
+  "cost": 327,
   "first": "2026-11-10"
  },
  "B|个人日程与事务助理todaykocps01艾小艾01二创精剪耶耶20261106": {
@@ -3438,7 +3480,10 @@
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzIz",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708649649922900018",
+  "cost": 632,
+  "first": "2026-11-16"
  },
  "B|个人日程与事务助理todaykocps01甜野02二创精剪小李20261106": {
   "g": "B",
@@ -3556,7 +3601,7 @@
   "col": "N",
   "d": "2026-11-06",
   "uc": "NT01",
-  "sc": "",
+  "sc": "生日提前备好礼物",
   "k": "N",
   "t": "E",
   "name": "随身记事与个人资料管理_today kol_NT01_是滢滢吖_01_二创_精剪_小李_20261106",
@@ -3571,7 +3616,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
   "mid": "7706116413912170523",
-  "cost": 9351,
+  "cost": 9366,
   "first": "2026-11-10",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzI2",
@@ -3621,7 +3666,7 @@
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
   "mid": "7705732993591869467",
-  "cost": 83,
+  "cost": 86,
   "first": "2026-11-08",
   "ok": false,
   "link": "",
@@ -3856,7 +3901,7 @@
   "col": "N",
   "d": "2026-11-09",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追球队和球员（篮球、足球）",
   "k": "N",
   "t": "A",
   "name": "信息检索与追踪-库里比分-IN01-03-耶耶-261109-b组",
@@ -3874,7 +3919,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjM3",
   "lk": "f",
   "mid": "7707579443816103962",
-  "cost": 114,
+  "cost": 4538,
   "first": "2026-11-13"
  },
  "B|信息检索与追踪三金等个价in0105包子20261111": {
@@ -3968,7 +4013,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7703775977222881323",
-  "cost": 7,
+  "cost": 26,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123386/02cbf72369b1dfb001017236db1f50fa.mp4",
   "ok": false,
@@ -4026,7 +4071,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7703775967320391734",
-  "cost": 9,
+  "cost": 16,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123386/3248f5f1aed6910af04397970e80061f.mp4",
   "ok": false,
@@ -4171,7 +4216,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703776078427684890",
-  "cost": 940,
+  "cost": 961,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123391/3e07b4d03b85835fdde64ab174f91185.mp4",
   "ok": false,
@@ -4200,7 +4245,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703776174829862955",
-  "cost": 969,
+  "cost": 975,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123391/bc50ed7854e63af37484cf67cf3f3c49.mp4",
   "ok": false,
@@ -4316,7 +4361,7 @@
   "l1": "学习与成长",
   "ucn": "学语言和新技能",
   "mid": "7703894542990262281",
-  "cost": 1152,
+  "cost": 1167,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/b0966d278c609d5ead8becfae894fbb2.mp4",
   "ok": false,
@@ -4374,7 +4419,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703515326885888009",
-  "cost": 4278,
+  "cost": 4335,
   "first": "2026-11-02",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261102/12400091809/12400151476/fc0d0a175083ed7d0bfb2bcce26438e1.mp4",
   "ok": false,
@@ -4403,7 +4448,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703515356433956902",
-  "cost": 1067,
+  "cost": 1088,
   "first": "2026-11-02",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261102/12400091809/12400151476/232cee82040bc6bcb7ad709f5662e2be.mp4",
   "ok": false,
@@ -4461,7 +4506,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7703938650355023898",
-  "cost": 7006,
+  "cost": 7055,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400151475/0651f5227a35b1eac67ebbc7fcf5ddab.mp4",
   "ok": false,
@@ -4516,7 +4561,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7703848729925124106",
-  "cost": 123,
+  "cost": 145,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400151476/02ebdab44fbfe46361f5a009c1b7648c.mp4",
   "ok": false,
@@ -4542,7 +4587,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7703848820165050404",
-  "cost": 1400,
+  "cost": 1472,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400151476/d1252681762452b2c8ec206fefdca494.mp4",
   "ok": false,
@@ -4600,7 +4645,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7703888063902367786",
-  "cost": 301,
+  "cost": 312,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123386/c298e3538db432a8318693058e8435eb.mp4",
   "ok": false,
@@ -4652,7 +4697,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703877401151242281",
-  "cost": 2007,
+  "cost": 2008,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400163284/5edcd0d815cbd75481881570b52edf47.mp4",
   "ok": false,
@@ -4736,7 +4781,7 @@
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
   "mid": "7703899685631262770",
-  "cost": 581,
+  "cost": 589,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400151476/de0047151a81a9bf6cc99bdcfe2e4b10.mp4",
   "ok": false,
@@ -4762,7 +4807,7 @@
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
   "mid": "7703899689036627978",
-  "cost": 703,
+  "cost": 706,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400151476/12172de463f555430f5055c2faa1da91.mp4",
   "ok": false,
@@ -4860,7 +4905,7 @@
   "col": "O",
   "d": "2026-11-03",
   "uc": "LG01",
-  "sc": "",
+  "sc": "读了一半的书接着读",
   "k": "V",
   "t": "E",
   "name": "learning_today koc_个性化读书与自我提升计划_02_二创_精剪1zxc_扩量01_二创新剪_wq_20261103",
@@ -4878,7 +4923,7 @@
   "link": "",
   "lk": "f",
   "mid": "7703887890351620123",
-  "cost": 1810,
+  "cost": 1854,
   "first": "2026-11-12"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量02二创新剪wq20261103": {
@@ -4903,7 +4948,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7703887906306621491",
-  "cost": 635,
+  "cost": 636,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400151475/25d7d0b76b4b94e843ff6bb3913fe761.mp4",
   "ok": false,
@@ -4961,7 +5006,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7703887783039975434",
-  "cost": 485,
+  "cost": 504,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400151475/d5d102f32c081bec6f3a1077a9c61695.mp4",
   "ok": false,
@@ -4990,7 +5035,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7703888000085819443",
-  "cost": 2337,
+  "cost": 3749,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400151475/f0689b7ac82b9fe9a92a0443631f34b9.mp4",
   "ok": false,
@@ -5135,7 +5180,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703847159665360932",
-  "cost": 1952,
+  "cost": 1970,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/7a736507e135b0a03ea65fde8f04835c.mp4",
   "ok": false,
@@ -5164,7 +5209,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703847130615808054",
-  "cost": 613,
+  "cost": 616,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/df94cf1b8c0d0bb138a54d8896dda35d.mp4",
   "ok": false,
@@ -5279,7 +5324,7 @@
   "l1": "学习与成长",
   "ucn": "学语言和新技能",
   "mid": "7704306519495622682",
-  "cost": 874,
+  "cost": 1075,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5335,7 +5380,7 @@
   "l1": "学习与成长",
   "ucn": "学语言和新技能",
   "mid": "7704306510196817958",
-  "cost": 332,
+  "cost": 964,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5363,7 +5408,7 @@
   "l1": "学习与成长",
   "ucn": "学语言和新技能",
   "mid": "7704306489305661490",
-  "cost": 1549,
+  "cost": 2151,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5419,7 +5464,7 @@
   "l1": "工作沟通与协作",
   "ucn": "会议前后全管",
   "mid": "7704305998744207370",
-  "cost": 1478,
+  "cost": 1484,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5531,7 +5576,7 @@
   "l1": "工作沟通与协作",
   "ucn": "会议前后全管",
   "mid": "7704306257574494258",
-  "cost": 7357,
+  "cost": 7374,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5587,7 +5632,7 @@
   "l1": "工作沟通与协作",
   "ucn": "会议前后全管",
   "mid": "7704306245880758322",
-  "cost": 204,
+  "cost": 259,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -5720,7 +5765,7 @@
   "l1": "工作沟通与协作",
   "ucn": "发票报销",
   "mid": "7703880549181636662",
-  "cost": 427,
+  "cost": 430,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_3/20261103/12400091809/12400152957/1c4fdda77f094f3dacb452669644557d.mp4",
   "ok": false,
@@ -5894,7 +5939,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703846871014473754",
-  "cost": 2350,
+  "cost": 2371,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/c86ce505c1699c5b32aca72dab8c4436.mp4",
   "ok": false,
@@ -5923,7 +5968,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7703847153999298579",
-  "cost": 759,
+  "cost": 760,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/125d73ae15a7e79d796d4463660c9f21.mp4",
   "ok": false,
@@ -5980,7 +6025,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7703876773390204982",
-  "cost": 2149,
+  "cost": 2158,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_3/20261103/12400091809/12400152957/38c8a8286cfb65d07b25c98e6e916748.mp4",
   "ok": false,
@@ -6208,7 +6253,7 @@
   "col": "O",
   "d": "2026-11-05",
   "uc": "PS01",
-  "sc": "",
+  "sc": "每周总结",
   "k": "N",
   "t": "E",
   "name": "PS01_新角度_三个App来回翻的周日晚上_扩量01_二创新剪_zl_【A组】20261105",
@@ -6220,7 +6265,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7706139909942280228",
-  "cost": 3025,
+  "cost": 3060,
   "first": "2026-11-09",
   "ok": false,
   "link": "",
@@ -6233,7 +6278,7 @@
   "col": "O",
   "d": "2026-11-05",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "N",
   "t": "E",
   "name": "PS01_新角度_材料没带_扩量02_二创新剪_zl_【A组】_20261105",
@@ -6258,7 +6303,7 @@
   "col": "O",
   "d": "2026-11-05",
   "uc": "PS01",
-  "sc": "",
+  "sc": "日程安排和提醒",
   "k": "N",
   "t": "E",
   "name": "PS01_新角度_别再临时找_扩量03_二创新剪_zl_【A组】20261105",
@@ -6283,7 +6328,7 @@
   "col": "O",
   "d": "2026-11-05",
   "uc": "PS01",
-  "sc": "",
+  "sc": "每周总结",
   "k": "N",
   "t": "E",
   "name": "PS01_新角度_周日晚复盘_扩量04_二创新剪_zl_【A组】_20261105",
@@ -6295,7 +6340,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7706139884483199012",
-  "cost": 1241,
+  "cost": 1281,
   "first": "2026-11-09",
   "ok": false,
   "link": "",
@@ -6398,7 +6443,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704212010988535859",
-  "cost": 5450,
+  "cost": 5468,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -6426,7 +6471,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704212123577008147",
-  "cost": 112,
+  "cost": 122,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -6479,7 +6524,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7704154152033665034",
-  "cost": 5956,
+  "cost": 5960,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -6504,7 +6549,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7704154173222420506",
-  "cost": 4838,
+  "cost": 4858,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -6529,7 +6574,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7704154303615205417",
-  "cost": 3387,
+  "cost": 3393,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -7029,7 +7074,7 @@
   "col": "O",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "孩子学习习惯计划",
   "k": "N",
   "t": "E",
   "name": "上班族家庭育儿_today koc_F04_奔跑的张萌儿_二创_精剪_yyz01_扩量01_二创新剪_sjl_【A组】20261106",
@@ -7054,7 +7099,7 @@
   "col": "O",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "孩子学习习惯计划",
   "k": "N",
   "t": "E",
   "name": "上班族家庭育儿_today koc_F04_奔跑的张萌儿_二创_精剪_yyz01_扩量02_二创新剪_sjl_【A组】20261106",
@@ -7079,7 +7124,7 @@
   "col": "O",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "孩子学习习惯计划",
   "k": "N",
   "t": "E",
   "name": "上班族家庭育儿_today koc_F04_奔跑的张萌儿_二创_精剪_yyz01_扩量03_二创新剪_sjl_【A组】20261106",
@@ -7091,7 +7136,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7706098988181651507",
-  "cost": 1721,
+  "cost": 1760,
   "first": "2026-11-09",
   "ok": false,
   "link": "",
@@ -7104,7 +7149,7 @@
   "col": "O",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "孩子学习习惯计划",
   "k": "N",
   "t": "E",
   "name": "上班族家庭育儿_today koc_F04_奔跑的张萌儿_二创_精剪_yyz01_扩量04_二创新剪_sjl_【A组】20261106",
@@ -7116,7 +7161,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7706099180783517722",
-  "cost": 1531,
+  "cost": 1574,
   "first": "2026-11-09",
   "ok": false,
   "link": "",
@@ -7141,7 +7186,7 @@
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
   "mid": "7705732980707688458",
-  "cost": 113,
+  "cost": 115,
   "first": "2026-11-08",
   "ok": false,
   "link": "",
@@ -7166,7 +7211,7 @@
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
   "mid": "7705733030602637339",
-  "cost": 281,
+  "cost": 297,
   "first": "2026-11-08",
   "ok": false,
   "link": "",
@@ -7219,7 +7264,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704206707064733759",
-  "cost": 95,
+  "cost": 97,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -7247,7 +7292,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704614765309870116",
-  "cost": 8392,
+  "cost": 8408,
   "first": "2026-11-05",
   "ok": false,
   "link": "",
@@ -7275,7 +7320,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704614738932826148",
-  "cost": 2525,
+  "cost": 2555,
   "first": "2026-11-05",
   "ok": false,
   "link": "",
@@ -7303,7 +7348,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7704212118769844251",
-  "cost": 86,
+  "cost": 89,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -7331,7 +7376,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7704212107314692134",
-  "cost": 75,
+  "cost": 93,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -7468,7 +7513,7 @@
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
   "mid": "7705741698940387379",
-  "cost": 153,
+  "cost": 177,
   "first": "2026-11-08",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzg2",
@@ -7521,7 +7566,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
   "mid": "7705431731503628324",
-  "cost": 39651,
+  "cost": 44937,
   "first": "2026-11-08",
   "ok": false,
   "link": "",
@@ -7549,7 +7594,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
   "mid": "7705431640915427337",
-  "cost": 36319,
+  "cost": 40863,
   "first": "2026-11-08",
   "ok": false,
   "link": "",
@@ -7562,7 +7607,7 @@
   "col": "O",
   "d": "2026-11-11",
   "uc": "LG03",
-  "sc": "",
+  "sc": "学语言，按他的情况每天练一点",
   "k": "V",
   "t": "E",
   "name": "learning_英语口语陪练与个性化带学_01_扩量04_二创新剪_sjl_A组_20261111",
@@ -7583,7 +7628,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzkw",
   "lk": "f",
   "mid": "7707101164453920787",
-  "cost": 539,
+  "cost": 560,
   "first": "2026-11-12"
  },
  "A|learning英语口语陪练与个性化带学01扩量05二创新剪sjla组20261111": {
@@ -7593,7 +7638,7 @@
   "col": "O",
   "d": "2026-11-11",
   "uc": "LG03",
-  "sc": "",
+  "sc": "学语言，按他的情况每天练一点",
   "k": "V",
   "t": "E",
   "name": "learning_英语口语陪练与个性化带学_01_扩量05_二创新剪_sjl_A组_20261111",
@@ -7614,7 +7659,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzkw",
   "lk": "f",
   "mid": "7707101075078643762",
-  "cost": 605,
+  "cost": 815,
   "first": "2026-11-12"
  },
  "A|ai个人助手todaykoc每天一张卡看清日程和待办01二创混剪1xyn扩量01二创新剪lst20261105": {
@@ -7708,7 +7753,7 @@
   "col": "O",
   "d": "2026-11-10",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "A",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-20261023-扩量01-AI素材-AI重拍-zl-A组-20261110",
@@ -7729,7 +7774,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzk5",
   "lk": "f",
   "mid": "7707561662761795634",
-  "cost": 45,
+  "cost": 50,
   "first": "2026-11-13"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw20261023扩量02ai素材ai重拍zla组20261110": {
@@ -7739,7 +7784,7 @@
   "col": "O",
   "d": "2026-11-10",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "A",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-20261023-扩量02-AI素材-AI重拍-zl-A组-20261110",
@@ -8018,7 +8063,7 @@
   "col": "O",
   "d": "2026-11-07",
   "uc": "PS02",
-  "sc": "",
+  "sc": "孩子在上学的双职工爸妈",
   "k": "N",
   "t": "E",
   "name": "个人日程与事务助理_today kol_PS02_大静小吴的北漂日常_二创_精剪_lst01_A组_20261107",
@@ -8215,7 +8260,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzMg",
   "lk": "f",
   "mid": "7706891411061309478",
-  "cost": 791,
+  "cost": 796,
   "first": "2026-11-12"
  },
  "A|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量02二创新剪koc非原生全文重配wqa组20261111": {
@@ -8243,7 +8288,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzMg",
   "lk": "f",
   "mid": "7706891428573478921",
-  "cost": 518,
+  "cost": 522,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykolwk04小薛hughkol非原生只剪辑yyz02a组20261111": {
@@ -8268,7 +8313,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzNg",
   "lk": "f",
   "mid": "7707129748656603155",
-  "cost": 2192,
+  "cost": 2221,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykolwk04小薛hughkol非原生只剪辑yyz01a组20261111": {
@@ -8293,7 +8338,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzNg",
   "lk": "f",
   "mid": "7707131233817722890",
-  "cost": 1554,
+  "cost": 1555,
   "first": "2026-11-12"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑wq01a组20261111": {
@@ -8318,7 +8363,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzNw",
   "lk": "f",
   "mid": "7706892109487964211",
-  "cost": 15244,
+  "cost": 21088,
   "first": "2026-11-12"
  },
  "A|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量01ai素材ai重拍sjla组20261110": {
@@ -8349,7 +8394,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzOA",
   "lk": "f",
   "mid": "7706891346624299046",
-  "cost": 420,
+  "cost": 421,
   "first": "2026-11-12"
  },
  "A|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量02ai素材ai重拍sjla组20261110": {
@@ -8380,7 +8425,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzOA",
   "lk": "f",
   "mid": "7706891359480135690",
-  "cost": 543,
+  "cost": 555,
   "first": "2026-11-12"
  },
  "A|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量03ai素材ai重拍sjla组20261110": {
@@ -8411,7 +8456,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzOA",
   "lk": "f",
   "mid": "7706891385295765542",
-  "cost": 403,
+  "cost": 413,
   "first": "2026-11-12"
  },
  "A|购物与生活服务钱被多扣了sh0307yyz扩量01ai素材ai重拍zla组20261110": {
@@ -8442,7 +8487,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzOQ",
   "lk": "f",
   "mid": "7706892185833586715",
-  "cost": 1015,
+  "cost": 1495,
   "first": "2026-11-12"
  },
  "A|购物与生活服务钱被多扣了sh0307yyz扩量02ai素材ai重拍zla组20261110": {
@@ -8473,7 +8518,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEzOQ",
   "lk": "f",
   "mid": "7706892115774734374",
-  "cost": 1102,
+  "cost": 1535,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作定期盯竞品政策行业动态和社媒上对你产品的评论wk0607zx扩量01ai素材ai重拍zla组20261110": {
@@ -8501,7 +8546,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0MA",
   "lk": "f",
   "mid": "7707102045475979302",
-  "cost": 1815,
+  "cost": 2067,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作定期盯竞品政策行业动态和社媒上对你产品的评论wk0607zx扩量02ai素材ai重拍zla组20261110": {
@@ -8529,7 +8574,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0MA",
   "lk": "f",
   "mid": "7707102014626644006",
-  "cost": 605,
+  "cost": 617,
   "first": "2026-11-12"
  },
  "A|worktodaykol整理电子发票和差旅报销01扩量02二创精剪wzy扩量01二创新剪ltq扩量01kol非原生全文重配yyza组20261111": {
@@ -8582,7 +8627,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0Mw",
   "lk": "f",
   "mid": "7706857857719828521",
-  "cost": 689,
+  "cost": 796,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykolwk00多米小肖事业版kol非原生只剪辑lst02a组20261111": {
@@ -8607,7 +8652,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0Mw",
   "lk": "f",
   "mid": "7706856520616935474",
-  "cost": 54,
+  "cost": 57,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykocwk02张璋kittokoc非原生只剪辑yyz02a组20261111": {
@@ -8676,7 +8721,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0NQ",
   "lk": "f",
   "mid": "7706883768841895972",
-  "cost": 3218,
+  "cost": 3247,
   "first": "2026-11-12"
  },
  "A|个人日程与事务助理todaykolps01亚哲joshkol非原生只剪辑wq02a组20261111": {
@@ -8726,7 +8771,7 @@
   "link": "",
   "lk": "f",
   "mid": "7707102278487048243",
-  "cost": 156,
+  "cost": 166,
   "first": "2026-11-12"
  },
  "A|出行与旅行todaykoltr00王小胖遛达记kol非原生只剪辑lst02a组20261111": {
@@ -8751,7 +8796,7 @@
   "link": "",
   "lk": "f",
   "mid": "7707102278487031859",
-  "cost": 388,
+  "cost": 390,
   "first": "2026-11-12"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw20261023扩量01ai素材ai重拍sjla组20261110": {
@@ -8783,7 +8828,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE0Nw",
   "lk": "f",
   "mid": "7707476877348536330",
-  "cost": 4,
+  "cost": 5,
   "first": "2026-11-13"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw20261023扩量02ai素材ai重拍sjla组20261110": {
@@ -8861,7 +8906,7 @@
   "link": "",
   "lk": "f",
   "mid": "7706859855126249498",
-  "cost": 477,
+  "cost": 479,
   "first": "2026-11-12"
  },
  "A|随身记事与个人资料管理nt02这碗面记着150新角度扩量扩量01ai素材ai重拍lsta组20261111": {
@@ -8911,7 +8956,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1MQ",
   "lk": "f",
   "mid": "7706892563487178795",
-  "cost": 992,
+  "cost": 1024,
   "first": "2026-11-11"
  },
  "A|财务与投资fn01开会没漏掉154新角度扩量更正扩量01ai素材ai重拍wqa组20261111": {
@@ -8958,7 +9003,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1Mg",
   "lk": "f",
   "mid": "7706860647627456553",
-  "cost": 7126,
+  "cost": 9785,
   "first": "2026-11-12"
  },
  "A|购物与生活服务sh03这口空气贵155新角度扩量更正扩量01ai素材ai重拍yyza组20261110": {
@@ -8983,7 +9028,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1Mg",
   "lk": "f",
   "mid": "7706860555982929962",
-  "cost": 199,
+  "cost": 421,
   "first": "2026-11-12"
  },
  "A|健康与运动hl04出差别撞期156新角度扩量扩量01ai素材ai重拍yyza组20261110": {
@@ -9162,7 +9207,7 @@
   "col": "O",
   "d": "2026-11-11",
   "uc": "WK05",
-  "sc": "",
+  "sc": "抬头、税号不对提前标出",
   "k": "N",
   "t": "E",
   "name": "工作沟通与协作_today kol_WK05_李多肉打怪升级_KOL非原生_只剪辑_zxc02_A组_20261111",
@@ -9177,7 +9222,7 @@
   "link": "",
   "lk": "f",
   "mid": "7707118056757051428",
-  "cost": 3211,
+  "cost": 3212,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykolwk05李多肉打怪升级kol非原生全文重配zxc01a组20261111": {
@@ -9187,7 +9232,7 @@
   "col": "O",
   "d": "2026-11-11",
   "uc": "WK05",
-  "sc": "",
+  "sc": "抬头、税号不对提前标出",
   "k": "N",
   "t": "E",
   "name": "工作沟通与协作_today kol_WK05_李多肉打怪升级_KOL非原生_全文重配_zxc01_A组_20261111",
@@ -9202,7 +9247,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyMA",
   "lk": "f",
   "mid": "7707118033899454506",
-  "cost": 3354,
+  "cost": 3356,
   "first": "2026-11-12"
  },
  "A|工作沟通与协作todaykolwk05李多肉打怪升级kol非原生全文重配zxc02a组20261111": {
@@ -9212,7 +9257,7 @@
   "col": "O",
   "d": "2026-11-11",
   "uc": "WK05",
-  "sc": "",
+  "sc": "抬头、税号不对提前标出",
   "k": "N",
   "t": "E",
   "name": "工作沟通与协作_today kol_WK05_李多肉打怪升级_KOL非原生_全文重配_zxc02_A组_20261111",
@@ -9227,7 +9272,7 @@
   "link": "",
   "lk": "f",
   "mid": "7707118033471012874",
-  "cost": 2472,
+  "cost": 2486,
   "first": "2026-11-12"
  },
  "A|个人日程与事务助理todaykolps01林予lynnkol非原生只剪辑wzy01a组20261111": {
@@ -9252,7 +9297,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyMg",
   "lk": "f",
   "mid": "7707102314175496218",
-  "cost": 296,
+  "cost": 297,
   "first": "2026-11-12"
  },
  "A|个人日程与事务助理todaykolps01林予lynnkol非原生只剪辑wzy02a组20261111": {
@@ -9503,7 +9548,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=Szk",
   "lk": "f",
   "mid": "7704993576094679083",
-  "cost": 421,
+  "cost": 422,
   "first": "2026-11-12"
  },
  "B|个人日程与事务助理你的家庭个人助理ps02包子曹颖儿chovin二创新剪20261104": {
@@ -9550,7 +9595,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7704619178817601555",
-  "cost": 5687,
+  "cost": 5688,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzEx",
@@ -9650,7 +9695,7 @@
   "l1": "工作沟通与协作",
   "ucn": "工作综述",
   "mid": "7705269138529271851",
-  "cost": 9249,
+  "cost": 9328,
   "first": "2026-11-07",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE2",
@@ -9807,7 +9852,7 @@
   "col": "K",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "学校通知变清单和提醒",
   "k": "N",
   "t": "E",
   "name": "个人日程与事务助理_today koc_PS03_奶油琪妹儿_01_二创_精剪_耶耶_20261106",
@@ -9832,7 +9877,7 @@
   "col": "K",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "学校通知变清单和提醒",
   "k": "N",
   "t": "E",
   "name": "个人日程与事务助理_today koc_PS03_奶油琪妹儿_02_二创_精剪_耶耶_20261106",
@@ -9857,7 +9902,7 @@
   "col": "K",
   "d": "2026-11-06",
   "uc": "PS03",
-  "sc": "",
+  "sc": "孩子学习习惯计划",
   "k": "N",
   "t": "E",
   "name": "个人日程与事务助理_today kol_PS03_甜欣（育婴师版）01_二创_精剪_耶耶_20261106",
@@ -9900,7 +9945,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQy"
   ],
   "mid": "7707118002479317002",
-  "cost": 3870,
+  "cost": 3969,
   "first": "2026-11-12"
  },
  "B|随身记事与个人资料管理todaykocnt01暮枕妤01二创精剪小月261111": {
@@ -9926,7 +9971,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQz"
-  ]
+  ],
+  "mid": "7707975093113896970",
+  "cost": 367,
+  "first": "2026-11-14"
  },
  "B|随身记事与个人资料管理todaykocnt01暮枕妤02二创精剪小月261111": {
   "g": "B",
@@ -9951,7 +9999,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQz"
-  ]
+  ],
+  "mid": "7707974939927986202",
+  "cost": 669,
+  "first": "2026-11-14"
  },
  "B|worktodaykoc找出工作邮箱里遗漏的重要邮件01二创精简1zl扩量01换开头小李261111": {
   "g": "B",
@@ -10032,7 +10083,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ2"
-  ]
+  ],
+  "mid": "7708640404238123058",
+  "cost": 7,
+  "first": "2026-11-16"
  },
  "B|购物与生活服务todaykocsh01发发科技说02二创精剪耶耶202611111": {
   "g": "B",
@@ -10057,7 +10111,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ2"
-  ]
+  ],
+  "mid": "7708640463423799338",
+  "cost": 8,
+  "first": "2026-11-16"
  },
  "B|工作沟通与协作邮件先走一步wk0201小月261104": {
   "g": "B",
@@ -10153,7 +10210,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7704619149862912038",
-  "cost": 7245,
+  "cost": 7276,
   "first": "2026-11-05",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261105/12400091809/12400125109/5d8089519f5b9dda6107040b38694844.mp4",
   "ok": true,
@@ -10201,7 +10258,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7705086069397520394",
-  "cost": 4504,
+  "cost": 4606,
   "first": "2026-11-07",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=TDEx",
@@ -10226,7 +10283,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7705005598383996991",
-  "cost": 48350,
+  "cost": 56903,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=TDEy",
@@ -10314,7 +10371,7 @@
   "col": "N",
   "d": "2026-11-06",
   "uc": "HL02",
-  "sc": "",
+  "sc": "按训练和空闲排一周菜谱",
   "k": "N",
   "t": "A",
   "name": "健康与运动-独居生活-HL02-04-小李-261106",
@@ -10580,7 +10637,7 @@
   "l1": "财务与投资",
   "ucn": "持仓公告和研究",
   "mid": "7704144852183760905",
-  "cost": 5148,
+  "cost": 5187,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQwOQ",
@@ -10605,7 +10662,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7703777951162925094",
-  "cost": 659,
+  "cost": 664,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400163284/26865e07d42ca40285b4fc64d60e8eaa.mp4",
   "ok": true,
@@ -10634,7 +10691,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7703777845839118377",
-  "cost": 174,
+  "cost": 195,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400163284/a7ae3776748938d2e601ef6dd9be4dd4.mp4",
   "ok": true,
@@ -10660,7 +10717,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7703777824349487114",
-  "cost": 3781,
+  "cost": 3819,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400163284/dfdf318ff577426a956e4adfb5287fac.mp4",
   "ok": true,
@@ -10712,7 +10769,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7703777889649410058",
-  "cost": 4859,
+  "cost": 5013,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400163285/8b11bb7ebbfe44df1386f28a7ea1309d.mp4",
   "ok": true,
@@ -10738,7 +10795,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7703777898386325513",
-  "cost": 93,
+  "cost": 94,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400163285/ace58757d6092567bb4a4b7cd0ca2ebe.mp4",
   "ok": true,
@@ -10764,7 +10821,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7703777857147453491",
-  "cost": 135,
+  "cost": 158,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400163285/58875e6014cb2c62c52adbe345da88b1.mp4",
   "ok": true,
@@ -10790,7 +10847,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7703777767324155955",
-  "cost": 1383,
+  "cost": 1451,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123391/0f03c48f762beb9cad4cc41312cf1db5.mp4",
   "ok": true,
@@ -10816,7 +10873,7 @@
   "l1": "购物与生活服务",
   "ucn": "盯赛事演出开票",
   "mid": "7703778710013165606",
-  "cost": 3767,
+  "cost": 4086,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123391/f0fe8a35c5af13081694ca785e4a55df.mp4",
   "ok": true,
@@ -10842,7 +10899,7 @@
   "l1": "购物与生活服务",
   "ucn": "查扣费和关会员",
   "mid": "7704156010757455914",
-  "cost": 113,
+  "cost": 176,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQxOQ",
@@ -10893,7 +10950,7 @@
   "l1": "健康与运动",
   "ucn": "看病和体检",
   "mid": "7703774647238524979",
-  "cost": 45,
+  "cost": 46,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123391/75a3ae3a2f27bf9260f72323d7bc8d67.mp4",
   "ok": true,
@@ -10970,7 +11027,7 @@
   "l1": "健康与运动",
   "ucn": "看病和体检",
   "mid": "7703774588720005139",
-  "cost": 251,
+  "cost": 270,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400123386/08a4d11dd4eee8bc043ecb7ee092e006.mp4",
   "ok": true,
@@ -11150,7 +11207,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7703779586211528713",
-  "cost": 2816,
+  "cost": 2832,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_3/20261103/12400091809/12400152957/00b96d636eba7f57e9511a8b1aaa4915.mp4",
   "ok": true,
@@ -11176,7 +11233,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7704213393121755145",
-  "cost": 9360,
+  "cost": 9758,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQzMg",
@@ -11253,7 +11310,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7704206587946663987",
-  "cost": 4511,
+  "cost": 4724,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -11278,7 +11335,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7703774725395267634",
-  "cost": 34674,
+  "cost": 46884,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_2/20261103/12400091809/12400151476/a56e1c1fe94b0674dcde62da6f6e737e.mp4",
   "ok": true,
@@ -11304,7 +11361,7 @@
   "l1": "学习与成长",
   "ucn": "读书接着读和推书",
   "mid": "7704206584083841062",
-  "cost": 986,
+  "cost": 1011,
   "first": "2026-11-04",
   "ok": false,
   "link": "",
@@ -11355,7 +11412,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7704208998724501513",
-  "cost": 26,
+  "cost": 33,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQzOQ",
@@ -11432,7 +11489,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7704209054857019411",
-  "cost": 144,
+  "cost": 153,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ0Mg",
@@ -11482,7 +11539,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7703777862876774436",
-  "cost": 896,
+  "cost": 898,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_5/20261103/12400091809/12400151479/8eb7dbdcd29bee49aae39f009292ade0.mp4",
   "ok": true,
@@ -11611,7 +11668,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7703774602896441394",
-  "cost": 432,
+  "cost": 433,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400163285/f8fae80fd63e230019c2bd96d0f2973a.mp4",
   "ok": true,
@@ -11637,7 +11694,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "随口记生活",
   "mid": "7704158119367442459",
-  "cost": 883,
+  "cost": 1632,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://tos.mobgi.com/tos_beijing/material_2/20261104/12400091809/12400123386/e9bd25e7a32befbf98fc84311e10c481.mp4",
@@ -11685,7 +11742,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7704154815802228778",
-  "cost": 23,
+  "cost": 24,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ1Mg",
@@ -11710,7 +11767,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7704154770126405683",
-  "cost": 25,
+  "cost": 27,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ1Mw",
@@ -11735,7 +11792,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "mid": "7704150967071637542",
-  "cost": 6,
+  "cost": 10,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ1NA",
@@ -11785,7 +11842,7 @@
   "l1": "购物与生活服务",
   "ucn": "挑吃什么去哪家",
   "mid": "7703778626197929993",
-  "cost": 1213,
+  "cost": 1401,
   "first": "2026-11-03",
   "video": "https://tos.mobgi.com/tos_beijing/material_1/20261103/12400091809/12400163285/5523e0a2b545308b58782f5d46dfed44.mp4",
   "ok": true,
@@ -11861,7 +11918,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7704156479876481078",
-  "cost": 1713,
+  "cost": 1751,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ1OQ",
@@ -11886,7 +11943,7 @@
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
   "mid": "7704149651548536882",
-  "cost": 199,
+  "cost": 219,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ2MA",
@@ -11911,7 +11968,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704149574533988379",
-  "cost": 58,
+  "cost": 75,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ2MQ",
@@ -11936,7 +11993,7 @@
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
   "mid": "7704149641747005482",
-  "cost": 1460,
+  "cost": 4246,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ2Mg",
@@ -11961,7 +12018,7 @@
   "l1": "学习与成长",
   "ucn": "学语言和新技能",
   "mid": "7704149534238212134",
-  "cost": 43,
+  "cost": 48,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ2Mw",
@@ -12111,7 +12168,7 @@
   "l1": "出行与旅行",
   "ucn": "出行综述",
   "mid": "7704307326744166426",
-  "cost": 67,
+  "cost": 68,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ2OQ",
@@ -12136,7 +12193,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
   "mid": "7704616726055469092",
-  "cost": 383,
+  "cost": 386,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3MA",
@@ -12161,7 +12218,7 @@
   "l1": "工作沟通与协作",
   "ucn": "工作综述",
   "mid": "7704615687351894043",
-  "cost": 1033,
+  "cost": 1034,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3MQ",
@@ -12211,7 +12268,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7704617033832677426",
-  "cost": 542,
+  "cost": 4074,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3Mw",
@@ -12262,7 +12319,7 @@
   "l1": "购物与生活服务",
   "ucn": "退款售后申诉",
   "mid": "7704617871577563190",
-  "cost": 1270,
+  "cost": 1274,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3NQ",
@@ -12287,7 +12344,7 @@
   "l1": "购物与生活服务",
   "ucn": "退款售后申诉",
   "mid": "7704617673041444874",
-  "cost": 1234,
+  "cost": 1237,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3Ng",
@@ -12312,7 +12369,7 @@
   "l1": "购物与生活服务",
   "ucn": "退款售后申诉",
   "mid": "7704306782572019738",
-  "cost": 199,
+  "cost": 219,
   "first": "2026-11-04",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ3Nw",
@@ -12459,7 +12516,7 @@
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
   "mid": "7704614617846972454",
-  "cost": 1750,
+  "cost": 1766,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ4Mw",
@@ -12484,7 +12541,7 @@
   "l1": "出行与旅行",
   "ucn": "攻略变行程",
   "mid": "7704619350809034794",
-  "cost": 4970,
+  "cost": 5001,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ4NA",
@@ -12534,7 +12591,7 @@
   "l1": "购物与生活服务",
   "ucn": "大件比价和盯机酒价",
   "mid": "7704894851947495450",
-  "cost": 916,
+  "cost": 928,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ4Nw",
@@ -12559,7 +12616,7 @@
   "l1": "随身记事与个人资料管理",
   "ucn": "随口记生活",
   "mid": "7704896554700537910",
-  "cost": 1152,
+  "cost": 1411,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ4OA",
@@ -12584,7 +12641,7 @@
   "l1": "财务与投资",
   "ucn": "持仓公告和研究",
   "mid": "7704612088995790898",
-  "cost": 89978,
+  "cost": 92019,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ4OQ",
@@ -12634,7 +12691,7 @@
   "l1": "信息检索与追踪",
   "ucn": "追踪自己关注的事",
   "mid": "7704617153903853609",
-  "cost": 1663,
+  "cost": 1666,
   "first": "2026-11-05",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ5MQ",
@@ -12659,7 +12716,7 @@
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
   "mid": "7704880222697537586",
-  "cost": 419,
+  "cost": 428,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDQ5Mg",
@@ -12916,7 +12973,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7704880241219502090",
-  "cost": 919,
+  "cost": 920,
   "first": "2026-11-06",
   "ok": false,
   "link": "",
@@ -12966,7 +13023,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7704978054821068851",
-  "cost": 1123,
+  "cost": 1124,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDUyMw",
@@ -12991,7 +13048,7 @@
   "l1": "健康与运动",
   "ucn": "宠物健康",
   "mid": "7704898320473686059",
-  "cost": 404,
+  "cost": 405,
   "first": "2026-11-06",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDUyNA",
@@ -13029,7 +13086,7 @@
   "col": "H",
   "d": "2026-11-10",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "A",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-20261023-扩量03-AI素材-AI重拍-sjl-A组-20261110",
@@ -13076,7 +13133,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDU5MQ"
-  ]
+  ],
+  "mid": "7708985659499659290",
+  "cost": 4,
+  "first": "2026-11-17"
  },
  "B|工作沟通与协作todaykolwk00清华妈妈02二创精剪耶耶202611111": {
   "g": "B",
@@ -13103,7 +13163,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQy",
   "lk": "f",
   "mid": "7707118051955621951",
-  "cost": 7900,
+  "cost": 8140,
   "first": "2026-11-12"
  },
  "B|健康与运动工作调作息hl0001小李20261111照真人": {
@@ -13131,7 +13191,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjQ5",
   "lk": "f",
   "mid": "7707528952117870643",
-  "cost": 274,
+  "cost": 299,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理避开出差和会议ps0702照真人": {
@@ -13198,14 +13258,17 @@
   "name": "个人日程与事务助理_PS01_扩量94-2_爸妈来住_扩量02_KOC非原生_全文重配_lst_A组_20261112",
   "how": "新人群：爸妈在外地的子女",
   "tok": "TQQablKE1oUD4HxSLAlcot4Inzr",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzk0",
   "where": "A 组扩量排期第 94 行",
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707598829815201802",
+  "cost": 7,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps01扩量942爸妈生日扩量01koc非原生全文重配lsta组20261112": {
   "g": "A",
@@ -13220,7 +13283,7 @@
   "name": "个人日程与事务助理_PS01_扩量94-2_爸妈生日_扩量01_KOC非原生_全文重配_lst_A组_20261112",
   "how": "新人群：爸妈在外地的子女",
   "tok": "UJKpbA7m3oPc0Gx6U8xcsfNonhf",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzk0",
   "where": "A 组扩量排期第 94 行",
   "l1": "个人日程与事务助理",
@@ -13229,7 +13292,7 @@
   "link": "",
   "lk": "f",
   "mid": "7707483871981453355",
-  "cost": 2331,
+  "cost": 2332,
   "first": "2026-11-13"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw扩量01ai素材ai重拍zla组20261112": {
@@ -13239,7 +13302,7 @@
   "col": "O",
   "d": "2026-11-12",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "A",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-扩量01-AI素材-AI重拍-zl-A组-20261112",
@@ -13255,7 +13318,10 @@
   "ucn": "追踪自己关注的事",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEwMQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707876802367176758",
+  "cost": 9,
+  "first": "2026-11-14"
  },
  "A|ai个人助理定位盯着你关心的公司产品和话题a1806cw扩量02ai素材ai重拍zla组20261112": {
   "g": "A",
@@ -13264,7 +13330,7 @@
   "col": "O",
   "d": "2026-11-12",
   "uc": "IN01",
-  "sc": "",
+  "sc": "追战队（电竞）",
   "k": "V",
   "t": "A",
   "name": "AI个人助理定位-盯着你关心的公司、产品和话题-A18-06-cw-扩量02-AI素材-AI重拍-zl-A组-20261112",
@@ -13280,7 +13346,10 @@
   "ucn": "追踪自己关注的事",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzEwMg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707974328579522610",
+  "cost": 216,
+  "first": "2026-11-14"
  },
  "A|learning英语口语陪练与个性化带学01扩量01ai素材ai重拍zla组20261112": {
   "g": "A",
@@ -13307,7 +13376,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1NA",
   "lk": "f",
   "mid": "7707499786634805274",
-  "cost": 240,
+  "cost": 258,
   "first": "2026-11-13"
  },
  "A|learning英语口语陪练与个性化带学01扩量04ai素材ai重拍zla组20261112": {
@@ -13335,7 +13404,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1NA",
   "lk": "f",
   "mid": "7707499824903356442",
-  "cost": 436,
+  "cost": 455,
   "first": "2026-11-13"
  },
  "A|learning英语口语陪练与个性化带学01扩量02ai素材ai重拍zla组20261112": {
@@ -13363,7 +13432,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1NQ",
   "lk": "f",
   "mid": "7707499843854925850",
-  "cost": 251,
+  "cost": 254,
   "first": "2026-11-13"
  },
  "A|learning英语口语陪练与个性化带学01扩量03ai素材ai重拍zla组20261112": {
@@ -13442,7 +13511,10 @@
   "ucn": "人情往来",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659256763138086",
+  "cost": 609,
+  "first": "2026-11-14"
  },
  "A|随身记事与个人资料管理nt01说来惭愧158扩量02ai素材ai重拍zxca组20261111": {
   "g": "A",
@@ -13467,7 +13539,10 @@
   "ucn": "人情往来",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659416514297906",
+  "cost": 592,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量01ai素材ai重拍sjla组20261112": {
   "g": "A",
@@ -13497,7 +13572,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2Mw",
   "lk": "f",
   "mid": "7707478145481621546",
-  "cost": 40,
+  "cost": 41,
   "first": "2026-11-13"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量02ai素材ai重拍zla组20261112": {
@@ -13551,7 +13626,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2NA",
   "lk": "f",
   "mid": "7707472665933938739",
-  "cost": 518,
+  "cost": 657,
   "first": "2026-11-13"
  },
  "A|随身记事与个人资料管理nt01扩量1642换细分场景新婚媳妇给公婆送年礼扩量01ai素材ai重拍wqa组20261112": {
@@ -13577,7 +13652,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2NA",
   "lk": "f",
   "mid": "7707478882811363354",
-  "cost": 1857,
+  "cost": 4285,
   "first": "2026-11-13"
  },
  "A|工作场景约多人会议查空档发邀请有冲突再协调w11ljq01扩量01ai素材ai重拍sjla组20261112": {
@@ -13608,7 +13683,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2NQ",
   "lk": "f",
   "mid": "7707481928774729754",
-  "cost": 126,
+  "cost": 131,
   "first": "2026-11-13"
  },
  "A|工作场景约多人会议查空档发邀请有冲突再协调w11ljq01扩量02ai素材ai重拍sjla组20261112": {
@@ -13670,7 +13745,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2Ng",
   "lk": "f",
   "mid": "7707482012094087209",
-  "cost": 51,
+  "cost": 53,
   "first": "2026-11-13"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量03ai素材ai重拍sjla组20261112": {
@@ -13727,7 +13802,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2Nw",
   "lk": "f",
   "mid": "7707478803580207154",
-  "cost": 2025,
+  "cost": 3332,
   "first": "2026-11-13"
  },
  "A|随身记事与个人资料管理nt01扩量1672换人设异地儿子送妈妈生日礼物扩量02ai素材ai重拍wqa组20261112": {
@@ -13753,7 +13828,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2Nw",
   "lk": "f",
   "mid": "7707478903438393380",
-  "cost": 683,
+  "cost": 1393,
   "first": "2026-11-13"
  },
  "A|工作沟通与协作wk01扩量1681换细分场景会多组长录音纪要待办扩量01ai素材ai重拍yyza组20261112": {
@@ -13828,7 +13903,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3MA",
   "lk": "f",
   "mid": "7707476935362641947",
-  "cost": 6,
+  "cost": 8098,
   "first": "2026-11-13"
  },
  "A|信息检索与追踪in01扩量1711换对象人设演唱会现场三人欢呼扩量01ai素材ai重拍lsta组20261112": {
@@ -13854,7 +13929,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3MQ",
   "lk": "f",
   "mid": "7707595162999455807",
-  "cost": 64,
+  "cost": 65,
   "first": "2026-11-13"
  },
  "A|信息检索与追踪in01扩量1712换对象人设演唱会现场三人欢呼扩量02ai素材ai重拍lsta组20261112": {
@@ -13880,7 +13955,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3MQ",
   "lk": "f",
   "mid": "7707590970682884150",
-  "cost": 182,
+  "cost": 305,
   "first": "2026-11-13"
  },
  "A|homefamilytodaykoc提前协调工作与接娃安排01二创精简2zxc扩量01换开头wq扩量03二创新剪wq20261027扩量01ai素材ai重拍sjla组20261112": {
@@ -13911,7 +13986,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Mg",
   "lk": "f",
   "mid": "7707483749413371955",
-  "cost": 2204,
+  "cost": 3099,
   "first": "2026-11-13"
  },
  "A|homefamilytodaykoc提前协调工作与接娃安排01二创精简2zxc扩量01换开头wq扩量03二创新剪wq20261027扩量02ai素材ai重拍sjla组20261112": {
@@ -13942,7 +14017,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Mg",
   "lk": "f",
   "mid": "7707483948007358507",
-  "cost": 2107,
+  "cost": 2752,
   "first": "2026-11-13"
  },
  "A|homefamilytodaykoc提前协调工作与接娃安排01二创精简2zxc扩量01换开头wq扩量03二创新剪wq20261027扩量03ai素材ai重拍sjla组20261112": {
@@ -13999,7 +14074,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3NQ",
   "lk": "f",
   "mid": "7707471609720389682",
-  "cost": 833,
+  "cost": 993,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps03扩量1752睡前一张晚报扩量02koc非原生全文重配yyza组20261112": {
@@ -14025,7 +14100,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3NQ",
   "lk": "f",
   "mid": "7707471526819577865",
-  "cost": 74,
+  "cost": 77,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps03扩量1754报名最怕最后一步扩量03koc非原生全文重配yyza组20261112": {
@@ -14072,7 +14147,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3NQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659568083714058",
+  "cost": 10,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps02扩量1762暑假安排扩量01koc非原生全文重配wqa组20261112": {
   "g": "A",
@@ -14097,7 +14175,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Ng",
   "lk": "f",
   "mid": "7707477900224577563",
-  "cost": 17,
+  "cost": 19,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps02扩量1761新手爸妈疫苗接种扩量02koc非原生全文重配wqa组20261112": {
@@ -14123,7 +14201,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Ng",
   "lk": "f",
   "mid": "7707478067417006106",
-  "cost": 1386,
+  "cost": 1493,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps02扩量1762兴趣班日程管理扩量03koc非原生全文重配wqa组20261112": {
@@ -14149,7 +14227,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Ng",
   "lk": "f",
   "mid": "7707478090897063946",
-  "cost": 5593,
+  "cost": 6072,
   "first": "2026-11-13"
  },
  "A|学习与成长lg03扩量1762成人兴趣班扩量01koc非原生全文重配wqa组20261112": {
@@ -14175,7 +14253,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Ng",
   "lk": "f",
   "mid": "7707481261224427529",
-  "cost": 3,
+  "cost": 4,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps01扩量1771组会与补课时间冲突扩量02koc非原生全文重配lsta组20261112": {
@@ -14227,7 +14305,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Nw",
   "lk": "f",
   "mid": "7707483777468465188",
-  "cost": 1818,
+  "cost": 2210,
   "first": "2026-11-13"
  },
  "A|个人日程与事务助理ps01扩量1771作业截止时间扩量03koc非原生全文重配lsta组20261112": {
@@ -14279,7 +14357,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3Nw",
   "lk": "f",
   "mid": "7707488828437872650",
-  "cost": 88,
+  "cost": 96,
   "first": "2026-11-13"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑yyz01a组20261112": {
@@ -14304,7 +14382,7 @@
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OA",
   "lk": "f",
   "mid": "7707471765622112282",
-  "cost": 663,
+  "cost": 1072,
   "first": "2026-11-13"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量03二创新剪wq扩量01koc非原生全文重配ltqa组20261112": {
@@ -14330,7 +14408,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883593833480242",
+  "cost": 80,
+  "first": "2026-11-14"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量03二创新剪wq扩量02koc非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14355,7 +14436,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883797912043562",
+  "cost": 12,
+  "first": "2026-11-14"
  },
  "A|learningtodaykoc个性化读书与自我提升计划02二创精剪1zxc扩量03二创新剪wq扩量03koc非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14380,7 +14464,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883791599976489",
+  "cost": 2403,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理todaykolps01亚哲josh扩量01kol非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14402,7 +14489,10 @@
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707884145465475113",
+  "cost": 86,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理todaykolps01亚哲josh扩量02kol非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14424,7 +14514,10 @@
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707884131275423795",
+  "cost": 80,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理todaykolps01亚哲josh扩量03kol非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14446,7 +14539,10 @@
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707884245721546788",
+  "cost": 20,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理todaykolps01亚哲josh扩量04kol非原生全文重配ltqa组20261112": {
   "g": "A",
@@ -14468,7 +14564,10 @@
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707884180369063946",
+  "cost": 131,
+  "first": "2026-11-14"
  },
  "B|信息检索与追踪产品经理盯反馈in0102小月20261111照真人": {
   "g": "B",
@@ -14495,7 +14594,7 @@
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjQ4"
   ],
   "mid": "7707584981073559615",
-  "cost": 58,
+  "cost": 2481,
   "first": "2026-11-13"
  },
  "B|命名后面加照真人": {
@@ -14587,7 +14686,7 @@
   "name": "个人日程与事务助理_PS01_扩量94-1_爸妈复查_扩量01_KOC非原生_全文重配_wq_A组_20261113",
   "how": "新人群：爸妈在外地的子女",
   "tok": "VNYJbGnsioHKW3xdw25cp5kBnth",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=Tzk0",
   "where": "A 组扩量排期第 94 行",
   "l1": "个人日程与事务助理",
@@ -14799,7 +14898,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1Nw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659527126106162",
+  "cost": 50,
+  "first": "2026-11-14"
  },
  "A|工作场景约多人会议查空档发邀请有冲突再协调w11ljq01157扩量01ai素材ai重拍zxca组20261112": {
   "g": "A",
@@ -14824,7 +14926,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1Nw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659506357403691",
+  "cost": 48,
+  "first": "2026-11-14"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07159扩量01ai素材ai重拍zxca组20261112": {
   "g": "A",
@@ -14849,7 +14954,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659516301279282",
+  "cost": 83,
+  "first": "2026-11-14"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07159扩量02ai素材ai重拍zxca组20261112": {
   "g": "A",
@@ -14874,7 +14982,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE1OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659691783241782",
+  "cost": 15,
+  "first": "2026-11-14"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07160扩量03ai素材ai重拍zxca组20261112": {
   "g": "A",
@@ -14899,7 +15010,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708037758221549619",
+  "cost": 89,
+  "first": "2026-11-15"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07161扩量04ai素材ai重拍zxca组20261112": {
   "g": "A",
@@ -14924,7 +15038,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2MQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707659643338375211",
+  "cost": 21,
+  "first": "2026-11-14"
  },
  "A|信息检索与追踪in01扩量1692换对象人设三人追番扩量01ai素材ai重拍ltqa组20261112": {
   "g": "A",
@@ -14970,7 +15087,10 @@
   "ucn": "追踪自己关注的事",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE2OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707876746897899562",
+  "cost": 4,
+  "first": "2026-11-14"
  },
  "A|信息检索与追踪in01扩量1701换对象三人国乒追赛扩量01ai素材ai重拍ltqa组20261112": {
   "g": "A",
@@ -14993,7 +15113,10 @@
   "ucn": "追踪自己关注的事",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707876792821317695",
+  "cost": 7,
+  "first": "2026-11-14"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑yyz01a组20261113": {
   "g": "A",
@@ -15015,7 +15138,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594157849149490",
+  "cost": 3,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑yyz02a组20261113": {
   "g": "A",
@@ -15037,7 +15163,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594197527592987",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑yyz03a组20261113": {
   "g": "A",
@@ -15059,7 +15188,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594145668988979",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务todaykocsh01发发科技说koc非原生只剪辑yyz04a组20261113": {
   "g": "A",
@@ -15081,7 +15213,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594340872060991",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|学习与成长lg03日语速记179新角度扩量扩量01ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15104,7 +15239,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883759089647658",
+  "cost": 15,
+  "first": "2026-11-14"
  },
  "A|学习与成长lg03下月泰国179新角度扩量扩量02ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15127,7 +15265,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE3OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883791314632740",
+  "cost": 43,
+  "first": "2026-11-14"
  },
  "A|学习与成长lg03就说这个180新角度扩量扩量02ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15150,7 +15291,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883773396238377",
+  "cost": 9,
+  "first": "2026-11-14"
  },
  "A|learning英语口语陪练与个性化带学01扩量01ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15178,7 +15322,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4MA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707856981725429787",
+  "cost": 8,
+  "first": "2026-11-14"
  },
  "A|学习与成长lg03剪得怎么样181新角度扩量扩量01ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15201,7 +15348,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4MQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883725887766538",
+  "cost": 24,
+  "first": "2026-11-14"
  },
  "A|学习与成长lg03作品最少181新角度扩量扩量02ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15224,7 +15374,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4MQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883720716550198",
+  "cost": 442,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量04ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15252,7 +15405,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857103818522633",
+  "cost": 94,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量05ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15280,7 +15436,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857300526530596",
+  "cost": 1635,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量02ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15289,7 +15448,7 @@
   "col": "H",
   "d": "2026-11-13",
   "uc": "PS02",
-  "sc": "",
+  "sc": "孩子在上学的双职工爸妈",
   "k": "V",
   "t": "E",
   "name": "学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027-扩量02-AI素材-AI重拍-sjl-A组-20261113",
@@ -15308,7 +15467,10 @@
   "ucn": "家庭综述",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708603297620869156",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量03ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15442,7 +15604,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Ng"
-  ]
+  ],
+  "mid": "7707858089436774443",
+  "cost": 326,
+  "first": "2026-11-14"
  },
  "A|工作场景约多人会议查空档发邀请有冲突再协调w11ljq01扩量02ai素材ai重拍zla组20261113": {
   "g": "A",
@@ -15470,7 +15635,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Ng"
-  ]
+  ],
+  "mid": "7707985411411099674",
+  "cost": 22,
+  "first": "2026-11-14"
  },
  "A|随身记事与个人资料管理nt01说来惭愧扩量01ai素材ai重拍sjla组20261113": {
   "g": "A",
@@ -15485,7 +15653,7 @@
   "name": "随身记事与个人资料管理-NT01-说来惭愧-扩量01-AI素材-AI重拍-sjl-A组-20261113",
   "how": "换细分场景：结婚三年的老公",
   "tok": "HZ8YbYosjosrxTxsIiScn65Vnwb",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Nw",
   "where": "A 组扩量排期第 187 行",
   "alt": [
@@ -15496,9 +15664,12 @@
   "var": "换细分场景：结婚三年的老公",
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Nw",
+  "lk": "f",
+  "mid": "7708610023261945907",
+  "cost": 92,
+  "first": "2026-11-16"
  },
  "A|随身记事与个人资料管理nt01说来惭愧扩量02ai素材ai重拍zla组20261113": {
   "g": "A",
@@ -15513,7 +15684,7 @@
   "name": "随身记事与个人资料管理-NT01-说来惭愧-扩量02-AI素材-AI重拍-zl-A组-20261113",
   "how": "换细分场景：结婚三年的老公",
   "tok": "Rgj7bJGQloLXzZxevDvcg0fknse",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Nw",
   "where": "A 组扩量排期第 187 行",
   "tn": "NT01 说来惭愧",
@@ -15521,9 +15692,12 @@
   "var": "换细分场景：结婚三年的老公",
   "l1": "随身记事与个人资料管理",
   "ucn": "人情往来",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Nw",
+  "lk": "f",
+  "mid": "7709060164385439763",
+  "cost": 3,
+  "first": "2026-11-17"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07扩量01ai素材ai重拍zla组20261113": {
   "g": "A",
@@ -15548,7 +15722,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857911524081674",
+  "cost": 62,
+  "first": "2026-11-14"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07扩量02ai素材ai重拍zla组20261113": {
   "g": "A",
@@ -15573,7 +15750,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857976339218475",
+  "cost": 83,
+  "first": "2026-11-14"
  },
  "A|工作沟通与协作todaykolwk00清华妈妈01二创精剪小月扩量01kol非原生全文重配wqa组20261113": {
   "g": "A",
@@ -15596,7 +15776,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5MQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593737224847411",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|工作沟通与协作todaykolwk00清华妈妈01二创精剪小月扩量02kol非原生全文重配wqa组20261113": {
   "g": "A",
@@ -15619,7 +15802,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5MQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593521582899251",
+  "cost": 125,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务sh03航变还扣钱1923改素材扩量扩量03ai素材ai重拍yyza组20261113": {
   "g": "A",
@@ -15642,7 +15828,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594326762160182",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务sh03少菜还少退1922改素材扩量扩量01ai素材ai重拍wqa组20261113": {
   "g": "A",
@@ -15665,7 +15854,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594282281762843",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务sh03退款又延期1924改素材扩量扩量02ai素材ai重拍wqa组20261113": {
   "g": "A",
@@ -15688,7 +15880,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594023594573850",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务sh03押金凭啥扣1921改素材扩量扩量03ai素材ai重拍wqa组20261113": {
   "g": "A",
@@ -15711,7 +15906,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594290293571647",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|财务与投资持仓有公告和异动时推给你fn0102zxc20261104热点196到价格先提醒扩量01ai素材ai重拍zxca组20261113": {
   "g": "A",
@@ -15757,7 +15955,10 @@
   "ucn": "持仓公告和研究",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Ng",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708038482765561907",
+  "cost": 24,
+  "first": "2026-11-15"
  },
  "A|财务与投资持仓有公告和异动时推给你fn0102zxc20261104热点196公告先到了扩量01ai素材ai重拍yyza组20261113": {
   "g": "A",
@@ -15780,7 +15981,10 @@
   "ucn": "持仓公告和研究",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Ng",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857666367242291",
+  "cost": 1616,
+  "first": "2026-11-14"
  },
  "A|财务与投资持仓有公告和异动时推给你fn0102zxc20261104热点196五百还记着扩量02ai素材ai重拍yyza组20261113": {
   "g": "A",
@@ -15803,7 +16007,10 @@
   "ucn": "持仓公告和研究",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Ng",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707858051115024420",
+  "cost": 611,
+  "first": "2026-11-14"
  },
  "A|购物与生活服务sh01年底续费总表198扩量01ai素材ai重拍lsta组20261113": {
   "g": "A",
@@ -15847,7 +16054,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857365279014939",
+  "cost": 166,
+  "first": "2026-11-14"
  },
  "A|购物与生活服务sh01邮箱里的续费单198扩量03ai素材ai重拍lsta组20261113": {
   "g": "A",
@@ -15869,7 +16079,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857378926968874",
+  "cost": 4,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps03谁再说手工课同脚本换画面200扩量01ai素材ai重拍ltqa组20261113": {
   "g": "A",
@@ -15892,7 +16105,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwMA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707884228382654518",
+  "cost": 2,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps03周报体检表撞一起200扩量02ai素材ai重拍ltqa组20261113": {
   "g": "A",
@@ -15938,7 +16154,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwMQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707874005269069834",
+  "cost": 17,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps03扩量2011a组同脚本换画面脚本不变换形象照真人扩量01ai素材ai重拍wqa组20261113": {
   "g": "A",
@@ -15984,7 +16203,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708255385674104841",
+  "cost": 196,
+  "first": "2026-11-15"
  },
  "A|个人日程与事务助理ps02扩量2072妈妈加班到深夜扩量02koc非原生全文重配lsta组20261113": {
   "g": "A",
@@ -16007,7 +16229,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857187809050662",
+  "cost": 183,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps02扩量2073周末两个兴趣班扩量03koc非原生全文重配lsta组20261113": {
   "g": "A",
@@ -16030,7 +16255,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857116732555314",
+  "cost": 186,
+  "first": "2026-11-14"
  },
  "A|个人日程与事务助理ps02扩量2074爸爸接手带娃的一天扩量04koc非原生全文重配lsta组20261113": {
   "g": "A",
@@ -16076,7 +16304,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883555774316580",
+  "cost": 1,
+  "first": "2026-11-14"
  },
  "A|健康与运动hl00扩量2082临时加班扩量02koc非原生全文重配ltq仅iosa组20261113": {
   "g": "A",
@@ -16099,7 +16330,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883458143911963",
+  "cost": 1,
+  "first": "2026-11-14"
  },
  "A|健康与运动hl00扩量2083训练漏了一次扩量03koc非原生全文重配ltq仅iosa组20261113": {
   "g": "A",
@@ -16122,7 +16356,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883417455443994",
+  "cost": 0,
+  "first": "2026-11-14"
  },
  "A|健康与运动hl00扩量2084运动总拖到深夜扩量04koc非原生全文重配ltq仅iosa组20261113": {
   "g": "A",
@@ -16145,7 +16382,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707883379610550310",
+  "cost": 2,
+  "first": "2026-11-14"
  },
  "A|工作沟通与协作wk03预算别白问211新角度扩量扩量01ai素材ai重拍zxc20261111": {
   "g": "A",
@@ -16167,7 +16407,10 @@
   "ucn": "客户跟进和找客户",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxMA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971429362139190",
+  "cost": 0,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk03报价别漏发211新角度扩量扩量02ai素材ai重拍zxc20261111": {
   "g": "A",
@@ -16211,7 +16454,10 @@
   "ucn": "全家晚饭和买菜",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxMQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971823199453222",
+  "cost": 3,
+  "first": "2026-11-17"
  },
  "A|个人日程与事务助理ps04晚饭不用硬抗212新角度扩量扩量02ai素材ai重拍zxc20261110": {
   "g": "A",
@@ -16233,7 +16479,10 @@
   "ucn": "全家晚饭和买菜",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxMQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971960566562870",
+  "cost": 5,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk02休假不用守邮箱213新角度扩量扩量01ai素材ai重拍zxc20261110": {
   "g": "A",
@@ -16277,7 +16526,10 @@
   "ucn": "待办提醒和回邮件",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxMg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971390757584906",
+  "cost": 0,
+  "first": "2026-11-17"
  },
  "A|随身记事与个人资料管理nt01买贵不如买对214新角度扩量4扩量01ai素材ai重拍lsta组20261110": {
   "g": "A",
@@ -16325,7 +16577,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971530882400306",
+  "cost": 19,
+  "first": "2026-11-17"
  },
  "A|homefamilytodaykoc提前协调工作与接娃安排01扩量02ai素材ai重拍zxc20261110": {
   "g": "A",
@@ -16350,7 +16605,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971908871749668",
+  "cost": 9,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk05报销别加班219新角度扩量9扩量01ai素材ai重拍wqa组20261110": {
   "g": "A",
@@ -16364,15 +16622,15 @@
   "t": "A",
   "name": "工作沟通与协作-WK05-报销别加班-219-新角度扩量!9!_扩量01_AI素材_AI重拍_wq_A组_20261110",
   "how": "集中做「work_today kol_整理电子发票和差旅报销_01__扩量02_",
-  "tok": "RTJxbC8IloeTdixN6MpcDKyXn6d",
-  "st": "待审核",
+  "tok": "R4y9b56qCovujTx5A5ncDcm2nzh",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNQ",
   "where": "A 组扩量排期第 215 行",
   "var": "出差发票对上行程",
   "l1": "工作沟通与协作",
   "ucn": "发票报销",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNQ",
   "lk": "f"
  },
  "A|工作沟通与协作wk05垫款别卡着219新角度扩量9扩量01ai素材ai重拍wqa组20261110": {
@@ -16387,15 +16645,15 @@
   "t": "A",
   "name": "工作沟通与协作-WK05-垫款别卡着-219-新角度扩量!9!_扩量01_AI素材_AI重拍_wq_A组_20261110",
   "how": "集中做「work_today kol_整理电子发票和差旅报销_01__扩量02_",
-  "tok": "CCiQb22fqocyN5x8tN0cPcAFnAb",
-  "st": "待审核",
+  "tok": "UdgfbjshgoNqLoxX5cWcTMnRnpg",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNQ",
   "where": "A 组扩量排期第 215 行",
   "var": "出差发票对上行程",
   "l1": "工作沟通与协作",
   "ucn": "发票报销",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIxNQ",
   "lk": "f"
  },
  "A|随身记事与个人资料管理nt01八十大寿送啥228新角度扩量18扩量01ai素材ai重拍lsta组20261110": {
@@ -16519,7 +16777,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjUx"
-  ]
+  ],
+  "mid": "7707973628100804662",
+  "cost": 269,
+  "first": "2026-11-14"
  },
  "B|出行与旅行出差前一晚tr0001耶耶20261113": {
   "g": "B",
@@ -16528,7 +16789,7 @@
   "col": "J",
   "d": "2026-11-13",
   "uc": "TR00",
-  "sc": "",
+  "sc": "出差比好车次、航班和酒店，提前提醒",
   "k": "V",
   "t": "A",
   "name": "出行与旅行-出差前一晚-TR00-01-耶耶-20261113-b组",
@@ -16544,7 +16805,10 @@
   "ucn": "出行综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjUy",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707875317378433074",
+  "cost": 288,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理躺下才想起群没回ps0101耶耶20261111b组照真人": {
   "g": "B",
@@ -16572,7 +16836,7 @@
   ],
   "var": "晚报",
   "mid": "7707588717183909929",
-  "cost": 435,
+  "cost": 445,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理群里一堆事没回ps0102小月20261111照真人": {
@@ -16601,7 +16865,7 @@
   ],
   "var": "晚报",
   "mid": "7707478096456482835",
-  "cost": 28869,
+  "cost": 31281,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理双职工家庭晨间清单ps0302耶耶20261112b组照真人": {
@@ -16656,7 +16920,7 @@
   ],
   "var": "学校通知变清单和提醒",
   "mid": "7707589124363173931",
-  "cost": 561,
+  "cost": 570,
   "first": "2026-11-13"
  },
  "B|个人日程与事务助理选兴趣班不折腾ps0201耶耶20261112b组照真人": {
@@ -16792,7 +17056,7 @@
   ],
   "var": "申诉写好、证据列好",
   "mid": "7707471768345313318",
-  "cost": 271,
+  "cost": 284,
   "first": "2026-11-13"
  },
  "B|购物与生活服务外卖显示送达却没收sh0303小李20261113照真人": {
@@ -16821,7 +17085,7 @@
   ],
   "var": "申诉写好、证据列好",
   "mid": "7707588472396349490",
-  "cost": 79,
+  "cost": 80,
   "first": "2026-11-13"
  },
  "B|购物与生活服务邮件比对帮我追回退款sh0306耶耶20261112": {
@@ -16874,7 +17138,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk4"
-  ]
+  ],
+  "mid": "7707596953202688009",
+  "cost": 37,
+  "first": "2026-11-14"
  },
  "B|购物与生活服务这押金不认了sh0302小月20261113": {
   "g": "B",
@@ -16900,7 +17167,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk5"
   ],
-  "var": "退款、退押金被乱扣"
+  "var": "退款、退押金被乱扣",
+  "mid": "7707577683349553161",
+  "cost": 22,
+  "first": "2026-11-14"
  },
  "B|购物与生活服务课时费不认了sh0304小月20261113": {
   "g": "B",
@@ -16926,7 +17196,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMQ"
   ],
-  "var": "退款、退押金被乱扣"
+  "var": "退款、退押金被乱扣",
+  "mid": "7707857332931919922",
+  "cost": 5,
+  "first": "2026-11-14"
  },
  "A|健康与运动hl02扩量2101koc非原生全文重配学生生活vlogzxca组20261113": {
   "g": "A",
@@ -16941,18 +17214,21 @@
   "name": "健康与运动_HL02_扩量210-1_KOC非原生_全文重配_学生生活 Vlog_zxc_A组_20261113",
   "how": "从「health_today koc_按训练和做饭时间安排一日三餐_02」原片全",
   "tok": "BtdxbDfnlo1YX1xkRmzcXLlxnvh",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "where": "A 组扩量排期第 209 行",
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDcwMw"
   ],
-  "var": "按训练和空闲排一周菜谱"
+  "var": "按训练和空闲排一周菜谱",
+  "mid": "7708971033612861503",
+  "cost": 49,
+  "first": "2026-11-17"
  },
  "A|健康与运动hl02扩量2102koc非原生全文重配下周日程表zxca组20261113": {
   "g": "A",
@@ -16967,18 +17243,21 @@
   "name": "健康与运动_HL02_扩量210-2_KOC非原生_全文重配_下周日程表_zxc_A组_20261113",
   "how": "从「health_today koc_按训练和做饭时间安排一日三餐_02」原片全",
   "tok": "S7S3bMQ0noBc3ZxFM7TcfvSbnoc",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "where": "A 组扩量排期第 209 行",
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDcwNA"
   ],
-  "var": "按训练和空闲排一周菜谱"
+  "var": "按训练和空闲排一周菜谱",
+  "mid": "7708971100177661988",
+  "cost": 2,
+  "first": "2026-11-17"
  },
  "A|健康与运动hl02扩量2103koc非原生全文重配冰箱准备餐采购表zxca组20261113": {
   "g": "A",
@@ -16993,18 +17272,21 @@
   "name": "健康与运动_HL02_扩量210-3_KOC非原生_全文重配_冰箱准备餐采购表_zxc_A组_20261113",
   "how": "从「health_today koc_按训练和做饭时间安排一日三餐_02」原片全",
   "tok": "AmewbrY0boy8Yuxx66rc23ZInZe",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "where": "A 组扩量排期第 209 行",
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDcwNQ"
   ],
-  "var": "按训练和空闲排一周菜谱"
+  "var": "按训练和空闲排一周菜谱",
+  "mid": "7708971103427543090",
+  "cost": 5,
+  "first": "2026-11-17"
  },
  "A|健康与运动hl02扩量2104koc非原生全文重配训练结束之后zxca组20261113": {
   "g": "A",
@@ -17019,18 +17301,21 @@
   "name": "健康与运动_HL02_扩量210-4_KOC非原生_全文重配_训练结束之后_zxc_A组_20261113",
   "how": "从「health_today koc_按训练和做饭时间安排一日三餐_02」原片全",
   "tok": "V1VibRtSkogicbx6kk8cgTzankc",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "where": "A 组扩量排期第 209 行",
   "l1": "健康与运动",
   "ucn": "个性化训练和饮食",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwOQ",
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=SDcwNg"
   ],
-  "var": "按训练和空闲排一周菜谱"
+  "var": "按训练和空闲排一周菜谱",
+  "mid": "7708971106010611721",
+  "cost": 4,
+  "first": "2026-11-17"
  },
  "B|理财投资todaykolm14发发金01二创精剪小李20261110": {
   "g": "B",
@@ -17045,7 +17330,7 @@
   "name": "理财投资_today kol_M14_发发金_01_二创_精剪_小李_20261110_b组",
   "how": "从发发金原片全篇重配，保留「像不像你的100块钱」小额扣费数字的开头写法",
   "tok": "BGP3bivFQoTAoJxBltbcermendh",
-  "st": "需修改",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "where": "B 组扩量排期第 49 行",
   "alt": [
@@ -17053,8 +17338,8 @@
   ],
   "l1": "财务与投资",
   "ucn": "理财综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "lk": "f"
  },
  "B|理财投资todaykolm14发发金02二创精剪小李20261110": {
@@ -17069,8 +17354,8 @@
   "t": "E",
   "name": "理财投资_today kol_M14_发发金_02_二创_精剪_小李_20261110_b组",
   "how": "从发发金原片全篇重配，保留「像不像你的100块钱」小额扣费数字的开头写法",
-  "tok": "MjkHbc10ToezRFxdRQhcCkyxnnb",
-  "st": "需修改",
+  "tok": "Dl10bM22jobtNyx5HVicZSBHn4e",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "where": "B 组扩量排期第 49 行",
   "alt": [
@@ -17078,8 +17363,8 @@
   ],
   "l1": "财务与投资",
   "ucn": "理财综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "lk": "f"
  },
  "B|理财投资todaykolm14发发金03二创精剪小李20261110": {
@@ -17094,8 +17379,8 @@
   "t": "E",
   "name": "理财投资_today kol_M14_发发金_03_二创_精剪_小李_20261110_b组",
   "how": "从发发金原片全篇重配，保留「像不像你的100块钱」小额扣费数字的开头写法",
-  "tok": "HYVTbkqD5ofLAXxLaF3cra6YnU1",
-  "st": "需修改",
+  "tok": "UtMwb15d1o94u5xqymtcGRxLnmc",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "where": "B 组扩量排期第 49 行",
   "alt": [
@@ -17103,8 +17388,8 @@
   ],
   "l1": "财务与投资",
   "ucn": "理财综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM2",
   "lk": "f"
  },
  "B|出行与旅行出差前一晚tr0001耶耶20261113b组52": {
@@ -17155,7 +17440,10 @@
   "ucn": "新手爸妈",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjU2",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707874066417467430",
+  "cost": 9,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理群消息乱炖家长会撞车ps0301小李20261112照真人": {
   "g": "B",
@@ -17180,7 +17468,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7707596353673691178",
-  "cost": 1326,
+  "cost": 2142,
   "first": "2026-11-13",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjY4",
@@ -17209,7 +17497,7 @@
   "l1": "个人日程与事务助理",
   "ucn": "工作和孩子",
   "mid": "7707588641601994803",
-  "cost": 354,
+  "cost": 357,
   "first": "2026-11-13",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjcx",
@@ -17238,7 +17526,7 @@
   "l1": "健康与运动",
   "ucn": "健康综述",
   "mid": "7707586430722179098",
-  "cost": 153,
+  "cost": 155,
   "first": "2026-11-13",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg4",
@@ -17268,7 +17556,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg5",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857748222754842",
+  "cost": 87,
+  "first": "2026-11-14"
  },
  "B|健康与运动报了半马一加班训练就断hl0201小李20261113照真人": {
   "g": "B",
@@ -17294,7 +17585,10 @@
   "ucn": "个性化训练和饮食",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjkw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857779038142502",
+  "cost": 35,
+  "first": "2026-11-14"
  },
  "B|财务与投资金价又动了fn0101小月20261113同脚本换画面b组92": {
   "g": "B",
@@ -17390,7 +17684,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4Mw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7707857261616300058",
+  "cost": 59,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量01ai素材ai重拍sjl照真人a组20261113": {
   "g": "A",
@@ -17405,7 +17702,7 @@
   "name": "学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027-扩量01-AI素材-AI重拍-sjl-照真人-A组-20261113",
   "how": "换场景：暑假前的妈妈",
   "tok": "In6MbnKdiotSbex1A4fcncM3nme",
-  "st": "修改后待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4NA",
   "where": "A 组扩量排期第 184 行",
   "tn": "PS02 恩泽贝拉选课",
@@ -17415,7 +17712,10 @@
   "ucn": "家庭综述",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708603262124130313",
+  "cost": 6,
+  "first": "2026-11-17"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027扩量06ai素材ai重拍sjl照真人a组20261114": {
   "g": "A",
@@ -17430,7 +17730,7 @@
   "name": "学习自我提升_today koc_L08_恩泽哥哥和贝拉妹妹_二创_精剪_hyq01_20261027-扩量06-AI素材-AI重拍-sjl-照真人-A组-20261114",
   "how": "换场景：暑假前的妈妈",
   "tok": "WDATbMfXzoRtsKxPGTccigvYn8c",
-  "st": "修改后待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE4NA",
   "where": "A 组扩量排期第 184 行",
   "tn": "PS02 恩泽贝拉选课",
@@ -17440,7 +17740,10 @@
   "ucn": "家庭综述",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708603144879702043",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务钱被多扣了sh0307yyz20261105197扩量二手耳机扩量01ai素材ai重拍yyza组20261114": {
   "g": "A",
@@ -17465,7 +17768,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Nw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594266129776676",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|购物与生活服务钱被多扣了sh0307yyz20261105197扩量刚工作的上班族扩量01ai素材ai重拍yyza组20261114": {
   "g": "A",
@@ -17515,7 +17821,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Nw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708036397194199090",
+  "cost": 4,
+  "first": "2026-11-15"
  },
  "A|购物与生活服务钱被多扣了sh0307yyz20261105197扩量外套寄丢扩量02ai素材ai重拍ltqa组20261114": {
   "g": "A",
@@ -17540,7 +17849,10 @@
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Nw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708036962502230035",
+  "cost": 7,
+  "first": "2026-11-15"
  },
  "A|购物与生活服务sh01账单翻不明白同脚本换画面198扩量04ai素材ai重拍yyza组20261114": {
   "g": "A",
@@ -17563,7 +17875,10 @@
   "ucn": "查扣费和关会员",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594271188713526",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027199带娃一周扩量01ai素材ai重拍ltqa组20261114": {
   "g": "A",
@@ -17588,7 +17903,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708036872019804214",
+  "cost": 96,
+  "first": "2026-11-14"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027199老人不在扩量01ai素材ai重拍lsta组20261114": {
   "g": "A",
@@ -17613,7 +17931,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593638796869675",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027199两个孩子扩量02ai素材ai重拍lsta组20261114": {
   "g": "A",
@@ -17638,7 +17959,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593501394862107",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027199一周安排扩量03ai素材ai重拍lsta组20261114": {
   "g": "A",
@@ -17663,7 +17987,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5OQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593529786187827",
+  "cost": 3,
+  "first": "2026-11-16"
  },
  "A|工作场景约多人会议查空档发邀请有冲突再协调w11ljq01扩量01ai素材ai重拍sjl照头部模板拍a组20261114": {
   "g": "A",
@@ -17688,7 +18015,10 @@
   "ucn": "会议前后全管",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwMg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708604275043188746",
+  "cost": 13,
+  "first": "2026-11-16"
  },
  "A|工作场景开完会整理行动项替你发跟进到期催办w01zl07扩量01ai素材ai重拍sjl照头部模板拍a组20261114": {
   "g": "A",
@@ -17703,7 +18033,7 @@
   "name": "工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07-扩量01-AI素材-AI重拍-sjl-照头部模板拍-A组-20261114",
   "how": "这天集中做「工作场景-开完会整理行动项，替你发跟进，到期催办-W01-zl-07",
   "tok": "HKJZbrvY2onHxXxIO8ecXZuTntg",
-  "st": "修改后待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwMw",
   "where": "A 组扩量排期第 203 行",
   "tn": "WK01 会后跟进",
@@ -17711,9 +18041,12 @@
   "var": "照头部模板拍",
   "l1": "工作沟通与协作",
   "ucn": "会议前后全管",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwMw",
+  "lk": "f",
+  "mid": "7708604234669604915",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|健康场景todaykoch08neko二创精剪fjh01扩量01ai素材ai重拍zl照真人ios20261114": {
   "g": "A",
@@ -17738,7 +18071,10 @@
   "ucn": "健康综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708601537400487977",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|工作沟通与协作wk02扩量2053a组自定常规口播配空镜扩量01ai素材ai重拍zla组20261114": {
   "g": "A",
@@ -17761,7 +18097,10 @@
   "ucn": "",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593821551116298",
+  "cost": 433,
+  "first": "2026-11-16"
  },
  "A|工作沟通与协作wk02扩量2051a组自定固定机位口播扩量02ai素材ai重拍sjla组20261114": {
   "g": "A",
@@ -17784,7 +18123,10 @@
   "ucn": "",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708604357310251071",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|工作沟通与协作wk02扩量2052a组自定双场景自拍vlog扩量03ai素材ai重拍sjla组20261114": {
   "g": "A",
@@ -17807,7 +18149,10 @@
   "ucn": "",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708604276524941331",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "A|learning英语口语陪练与个性化带学01扩量01ai素材ai重拍zl照头部模板拍a组20261114": {
   "g": "A",
@@ -17832,7 +18177,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593524044316682",
+  "cost": 94,
+  "first": "2026-11-16"
  },
  "A|learning英语口语陪练与个性化带学01扩量02ai素材ai重拍zl照头部模板拍a组20261114": {
   "g": "A",
@@ -17857,7 +18205,10 @@
   "ucn": "学语言和新技能",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIwNg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593863569293355",
+  "cost": 129,
+  "first": "2026-11-16"
  },
  "B|学习与成长todaykoclg01甜甜卷01二创精剪叮叮20261105搜不到": {
   "g": "B",
@@ -17997,7 +18348,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjYx"
   ],
-  "var": "邮箱里的发票找齐进表"
+  "var": "邮箱里的发票找齐进表",
+  "mid": "7708251869965353011",
+  "cost": 139,
+  "first": "2026-11-15"
  },
  "B|购物与生活服务报课退费拖俩月凭据帮我追到底sh0304耶耶20261114": {
   "g": "B",
@@ -18075,29 +18429,39 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjgx"
   ],
-  "var": "追战队（电竞）"
+  "var": "追战队（电竞）",
+  "mid": "7707974634205315115",
+  "cost": 183,
+  "first": "2026-11-14"
  },
  "B|个人日程与事务助理甲方群全撞到一起ps0102耶耶20261114b组照真人": {
   "g": "B",
-  "tab": "c665d9",
-  "row": 87,
-  "col": "J",
+  "tab": "3KtioB",
+  "row": 76,
+  "col": "N",
   "d": "2026-11-14",
   "uc": "PS01",
-  "sc": "",
-  "k": "N",
+  "sc": "早报",
+  "k": "V",
   "t": "A",
-  "name": "个人日程与事务助理-甲方群全撞到一起-PS01-02-耶耶-20261114-b组-照真人」",
-  "how": "",
+  "name": "个人日程与事务助理-甲方群全撞到一起-PS01-02-耶耶-20261114-b组-照真人",
+  "how": "换人设：刚当上小组长的职场新人：多个工作群里领导、同事、客户的安排一起压过来",
   "tok": "P4pDb8uWKozanuxXtUccsGQGnzd",
   "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg3",
-  "where": "B 组脚本&成片第 87 行",
+  "where": "B 组扩量排期第 76 行",
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg3",
-  "lk": "f"
+  "lk": "f",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg3"
+  ],
+  "var": "早报",
+  "mid": "7708603378314428457",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "B|健康与运动在职坚持训练hl0202耶耶20261114b组照真人": {
   "g": "B",
@@ -18123,7 +18487,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjkx"
   ],
-  "var": "每天记进度，落后了调计划"
+  "var": "每天记进度，落后了调计划",
+  "mid": "7708601497592889394",
+  "cost": 30,
+  "first": "2026-11-16"
  },
  "B|学习与成长碎片时间把管理书读完lg0101小李20261113照真人": {
   "g": "B",
@@ -18149,7 +18516,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMg"
   ],
-  "var": "忙到时间全是碎片，为一件具体的事读书"
+  "var": "忙到时间全是碎片，为一件具体的事读书",
+  "mid": "7707874498063056937",
+  "cost": 11,
+  "first": "2026-11-14"
  },
  "B|学习与成长新手爸爸哄睡后读育儿书lg0103小月20261114照真人": {
   "g": "B",
@@ -18175,7 +18545,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwNA"
   ],
-  "var": "忙到时间全是碎片，为一件具体的事读书"
+  "var": "忙到时间全是碎片，为一件具体的事读书",
+  "mid": "7708593754383302665",
+  "cost": 98,
+  "first": "2026-11-16"
  },
  "B|学习与成长值班间隙读行业新规lg0104小月20261114照真人": {
   "g": "B",
@@ -18201,7 +18574,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwNQ"
   ],
-  "var": "忙到时间全是碎片，为一件具体的事读书"
+  "var": "忙到时间全是碎片，为一件具体的事读书",
+  "mid": "7708593877409841188",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "B|学习与成长重排年底书单计划lg0105小月20261114照真人": {
   "g": "B",
@@ -18227,7 +18603,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwNg"
   ],
-  "var": "忙到时间全是碎片，为一件具体的事读书"
+  "var": "忙到时间全是碎片，为一件具体的事读书",
+  "mid": "7708593703343128614",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "B|健康与运动周末骑行不硬撑hl0201小月20261115": {
   "g": "B",
@@ -18253,7 +18632,10 @@
   "ucn": "个性化训练和饮食",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjYy",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594990503575571",
+  "cost": 6,
+  "first": "2026-11-16"
  },
  "B|健康与运动徒步按状态排计划hl0202小月20261115": {
   "g": "B",
@@ -18279,7 +18661,10 @@
   "ucn": "个性化训练和饮食",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjYz",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708594865601413139",
+  "cost": 3,
+  "first": "2026-11-16"
  },
  "B|健康与运动夜班护士坚持运动hl0002小月20261115": {
   "g": "B",
@@ -18331,7 +18716,10 @@
   "ucn": "发票报销",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjgy",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708401502776721446",
+  "cost": 51,
+  "first": "2026-11-15"
  },
  "B|工作沟通与协作公司号封账提前整理wk0501小月20261115照真人": {
   "g": "B",
@@ -18357,7 +18745,10 @@
   "ucn": "发票报销",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg0",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708401544001863730",
+  "cost": 320,
+  "first": "2026-11-15"
  },
  "B|个人日程与事务助理三代同堂的家庭大管家ps0201小月20261114": {
   "g": "B",
@@ -18383,7 +18774,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNA",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593442566291466",
+  "cost": 3,
+  "first": "2026-11-16"
  },
  "B|个人日程与事务助理周末全家出游ps0202小月20261114": {
   "g": "B",
@@ -18409,7 +18803,10 @@
   "ucn": "家庭综述",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNQ",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593501517185034",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "B|信息检索与追踪老球迷追比赛in0109包子20261111照真人": {
   "g": "B",
@@ -18550,7 +18947,10 @@
   "ucn": "工作和孩子",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjY2",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593617451401279",
+  "cost": 0,
+  "first": "2026-11-16"
  },
  "B|个人日程与事务助理三个群同时你ps0101包子20261116照真人": {
   "g": "B",
@@ -18602,7 +19002,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708593877188739114",
+  "cost": 1,
+  "first": "2026-11-16"
  },
  "A|homefamilytodaykoc给孩子的具体问题定下一步02二创精简1zlkoc非原生只剪辑lst01a组20261116": {
   "g": "A",
@@ -18705,14 +19108,17 @@
   "name": "出行与旅行_today kol_TR00_王小胖遛达记_KOL非原生_只剪辑_yyz01_A组_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
   "tok": "J2jGbcQiboVfvGxf57ncn88Qn3d",
-  "st": "需修改",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "where": "A 组扩量排期第 193 行",
   "l1": "出行与旅行",
   "ucn": "出行综述",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
+  "lk": "f",
+  "mid": "7708971654499663914",
+  "cost": 5,
+  "first": "2026-11-17"
  },
  "A|出行与旅行todaykoltr00王小胖遛达记kol非原生只剪辑yyz02a组20261116": {
   "g": "A",
@@ -18727,14 +19133,17 @@
   "name": "出行与旅行_today kol_TR00_王小胖遛达记_KOL非原生_只剪辑_yyz02_A组_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
   "tok": "GRZPbao4OoW81zxeeLycum2Qnze",
-  "st": "需修改",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "where": "A 组扩量排期第 193 行",
   "l1": "出行与旅行",
   "ucn": "出行综述",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
+  "lk": "f",
+  "mid": "7708971667514916907",
+  "cost": 7,
+  "first": "2026-11-17"
  },
  "A|出行与旅行todaykoltr00王小胖遛达记kol非原生只剪辑yyz03a组20261116": {
   "g": "A",
@@ -18748,14 +19157,14 @@
   "t": "E",
   "name": "出行与旅行_today kol_TR00_王小胖遛达记_KOL非原生_只剪辑_yyz03_A组_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "RtrHbLHPdoZCT1xt8vIca7P9nCd",
-  "st": "需修改",
+  "tok": "K5WfbVtwxoWRGZxiqV5cchGqnRc",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "where": "A 组扩量排期第 193 行",
   "l1": "出行与旅行",
   "ucn": "出行综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "lk": "f"
  },
  "A|出行与旅行todaykoltr00王小胖遛达记kol非原生只剪辑yyz04a组20261116": {
@@ -18770,14 +19179,14 @@
   "t": "E",
   "name": "出行与旅行_today kol_TR00_王小胖遛达记_KOL非原生_只剪辑_yyz04_A组_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "OKALb23Imom8fyxZ9SwcWpqTnXd",
-  "st": "需修改",
+  "tok": "VIMpbOtErouxhoxdZAvcp2LdnCc",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "where": "A 组扩量排期第 193 行",
   "l1": "出行与旅行",
   "ucn": "出行综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5Mw",
   "lk": "f"
  },
  "A|工作沟通与协作todaykolwk04小薛hugh重写项目做到一半a19501lst20261116": {
@@ -18792,14 +19201,14 @@
   "t": "E",
   "name": "工作沟通与协作_today kol_WK04_小薛Hugh_重写_项目做到一半_A195-01_lst_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "IaDDbcQbUoW8ffx0S0HclQPtn6e",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "where": "A 组扩量排期第 195 行",
   "l1": "工作沟通与协作",
   "ucn": "用自己资料写汇报",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "lk": "f"
  },
  "A|工作沟通与协作todaykolwk04小薛hugh重写同时跟几个项目a19502lst20261116": {
@@ -18814,14 +19223,14 @@
   "t": "E",
   "name": "工作沟通与协作_today kol_WK04_小薛Hugh_重写_同时跟几个项目_A195-02_lst_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "NgQbbicfwo7GzWxLBQxcAWJ4n7g",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "where": "A 组扩量排期第 195 行",
   "l1": "工作沟通与协作",
   "ucn": "用自己资料写汇报",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "lk": "f"
  },
  "A|工作沟通与协作todaykolwk04小薛hugh重写客户说过什么a19503lst20261116": {
@@ -18836,14 +19245,14 @@
   "t": "E",
   "name": "工作沟通与协作_today kol_WK04_小薛Hugh_重写_客户说过什么_A195-03_lst_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "PlMFbhqgOoXEhCxK5OLcLRvfnNf",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "where": "A 组扩量排期第 195 行",
   "l1": "工作沟通与协作",
   "ucn": "用自己资料写汇报",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "lk": "f"
  },
  "A|工作沟通与协作todaykolwk04小薛hugh重写方案改了好几版a19504lst20261116": {
@@ -18858,14 +19267,14 @@
   "t": "E",
   "name": "工作沟通与协作_today kol_WK04_小薛Hugh_重写_方案改了好几版_A195-04_lst_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "KW7GbT8YUobVmrxwi9icvTDInaf",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "where": "A 组扩量排期第 195 行",
   "l1": "工作沟通与协作",
   "ucn": "用自己资料写汇报",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "lk": "f"
  },
  "A|工作沟通与协作todaykolwk04小薛hugh重写项目中途换负责人a19505lst20261116": {
@@ -18880,14 +19289,14 @@
   "t": "E",
   "name": "工作沟通与协作_today kol_WK04_小薛Hugh_重写_项目中途换负责人_A195-05_lst_20261116",
   "how": "用还没剪过的博主原视频剪新素材",
-  "tok": "LBo4b69kIobxLwxEXdycXoEAnKf",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "where": "A 组扩量排期第 195 行",
   "l1": "工作沟通与协作",
   "ucn": "用自己资料写汇报",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzE5NQ",
   "lk": "f"
  },
  "A|个人日程与事务助理todaykolps01鹿十八kol非原生只剪辑fjh01a组20261116": {
@@ -18902,14 +19311,14 @@
   "t": "E",
   "name": "个人日程与事务助理_today kol_PS01_鹿十八_KOL非原生_只剪辑_fjh01_A组_20261116",
   "how": "",
-  "tok": "SETdbr2BFoxdsex2VKFc49tNn9b",
-  "st": "待审核",
+  "tok": "CWRcb2I69od4osxQjV4cSYqrnye",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyNg",
   "where": "A 组扩量排期第 226 行",
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyNg",
   "lk": "f"
  },
  "A|个人日程与事务助理todaykolps01鹿十八kol非原生全文重配fjh02a组20261116": {
@@ -18925,13 +19334,13 @@
   "name": "个人日程与事务助理_today kol_PS01_鹿十八_KOL非原生_全文重配_fjh02_A组_20261116",
   "how": "",
   "tok": "Pvc4byXCso1WGIxCVxDcmxRUnWe",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyNw",
   "where": "A 组扩量排期第 227 行",
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyNw",
   "lk": "f"
  },
  "A|个人日程与事务助理todaykolps01鹿十八kol非原生全文重配fjh01a组20261116": {
@@ -18947,13 +19356,13 @@
   "name": "个人日程与事务助理_today kol_PS01_鹿十八_KOL非原生_全文重配_fjh01_A组_20261116",
   "how": "",
   "tok": "MPBlbOFpdokiIUxXgJQcOVrGnfg",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyOA",
   "where": "A 组扩量排期第 228 行",
   "l1": "个人日程与事务助理",
   "ucn": "早晚报和日程安排",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyOA",
   "lk": "f"
  },
  "A|出行与旅行todaykoctr00蜡笔小兮koc非原生全文重配fjh01a组20261116": {
@@ -18969,7 +19378,7 @@
   "name": "出行与旅行_today koc_TR00_蜡笔小兮_KOC非原生_全文重配_fjh01_A组_20261116",
   "how": "",
   "tok": "Hl2DbiuGfoZA9Yxe5hCc62QWn9c",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIyOQ",
   "where": "A 组扩量排期第 229 行",
   "l1": "出行与旅行",
@@ -18991,7 +19400,7 @@
   "name": "出行与旅行_today koc_TR00_蜡笔小兮_KOC非原生_全文重配_fjh02_A组_20261116",
   "how": "",
   "tok": "ZsL2bqenFojbKQxN039cHwZFnrg",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMA",
   "where": "A 组扩量排期第 230 行",
   "l1": "出行与旅行",
@@ -19013,13 +19422,13 @@
   "name": "出行与旅行_today koc_TR00_蜡笔小兮_KOC非原生_只剪辑_fjh01_A组_20261116",
   "how": "",
   "tok": "UM5abPAQroqdTUxn9vWcx4OwnDc",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMQ",
   "where": "A 组扩量排期第 231 行",
   "l1": "出行与旅行",
   "ucn": "出行综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMQ",
   "lk": "f"
  },
  "A|学习与成长todaykollg02鹤一同学kol非原生只剪辑fjh01a组20261116": {
@@ -19035,13 +19444,13 @@
   "name": "学习与成长_today kol_LG02_鹤一同学_KOL非原生_只剪辑_fjh01_A组_20261116",
   "how": "",
   "tok": "DBDcbj3i7opMrBxtxeGcFG1bnXb",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMg",
   "where": "A 组扩量排期第 232 行",
   "l1": "学习与成长",
   "ucn": "学生课表作业和备考",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMg",
   "lk": "f"
  },
  "A|学习与成长todaykollg02鹤一同学kol非原生只剪辑fjh02a组20261116": {
@@ -19057,7 +19466,7 @@
   "name": "学习与成长_today kol_LG02_鹤一同学_KOL非原生_只剪辑_fjh02_A组_20261116",
   "how": "",
   "tok": "U5YJbwCzboVLHJxKIwoccplRnBc",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzMw",
   "where": "A 组扩量排期第 233 行",
   "l1": "学习与成长",
@@ -19079,7 +19488,7 @@
   "name": "健康与运动_today kol_HL00_小小昭君_KOL非原生_只剪辑_fjh01_A组_20261116",
   "how": "",
   "tok": "AXZGbNtv4owBtGxeHG9cVfyEnce",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzIzNA",
   "where": "A 组扩量排期第 234 行",
   "l1": "健康与运动",
@@ -19101,14 +19510,17 @@
   "name": "出行与旅行-TR02-几班比一遍-排期241-1-扩量01-AI素材-AI重拍-zl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "J4PHbw1snonTlixgAEkcr9OMnBd",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
   "where": "A 组扩量排期第 241 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
+  "lk": "f",
+  "mid": "7708976088520884287",
+  "cost": 1,
+  "first": "2026-11-17"
  },
  "A|出行与旅行tr02航班延误替代车次查清楚757扩量2412扩量02ai素材ai重拍zla组20261116": {
   "g": "A",
@@ -19123,14 +19535,17 @@
   "name": "出行与旅行-TR02-航班延误，替代车次查清楚-757-扩量241-2-扩量02-AI素材-AI重拍-zl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "YI5GbRo2Yoox15xOFaMcvm37n9c",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
   "where": "A 组扩量排期第 241 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
+  "lk": "f",
+  "mid": "7708976092203188251",
+  "cost": 2,
+  "first": "2026-11-17"
  },
  "A|出行与旅行tr02出差往返一次查清楚758扩量2413扩量03ai素材ai重拍zla组20261116": {
   "g": "A",
@@ -19145,14 +19560,17 @@
   "name": "出行与旅行-TR02-出差往返，一次查清楚-758-扩量241-3-扩量03-AI素材-AI重拍-zl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "ViYmbtnsUos1DpxO2szcbehEnAe",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
   "where": "A 组扩量排期第 241 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0MQ",
+  "lk": "f",
+  "mid": "7708976121903562815",
+  "cost": 3,
+  "first": "2026-11-17"
  },
  "A|购物与生活服务sh01追完剧忘了关排期2421扩量01ai素材ai重拍zla组20261116": {
   "g": "A",
@@ -19166,15 +19584,18 @@
   "t": "A",
   "name": "购物与生活服务-SH01-追完剧忘了关-排期242-1-扩量01-AI素材-AI重拍-zl-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "T8Hxbp5oXoiLGcxuds3c6OYKngs",
-  "st": "待审核",
+  "tok": "W5CIbMFaNoEJMWx64GecQnIsnGj",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Mg",
   "where": "A 组扩量排期第 242 行",
   "l1": "购物与生活服务",
   "ucn": "查扣费和关会员",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708987906451734571",
+  "cost": 8,
+  "first": "2026-11-17"
  },
  "A|购物与生活服务sh01邮箱一查原来一直在扣排期2422扩量02au素材ai重拍zla组20261116": {
   "g": "A",
@@ -19188,8 +19609,8 @@
   "t": "A",
   "name": "购物与生活服务-SH01-邮箱一查原来一直在扣-排期242-2-扩量02-AU素材-AI重拍-zl-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "XosGb1Idoo1K59x0osEcPYXvnEf",
-  "st": "待审核",
+  "tok": "",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Mg",
   "where": "A 组扩量排期第 242 行",
   "l1": "购物与生活服务",
@@ -19210,15 +19631,18 @@
   "t": "A",
   "name": "购物与生活服务-SH01-WPS不续了，入口找出来-761-扩量242-扩量03-AI素材-AI重拍-zl-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "GdEsby90Soq0rZxm8o1cnoybnFc",
-  "st": "待审核",
+  "tok": "Au0ZbOltPopRsNxU2YocHsOVnuc",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Mg",
   "where": "A 组扩量排期第 242 行",
   "l1": "购物与生活服务",
   "ucn": "查扣费和关会员",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708986759260356649",
+  "cost": 7,
+  "first": "2026-11-17"
  },
  "A|出行与旅行tr02明早9点到杭州排期2431扩量01ai素材ai重拍sjla组20261116": {
   "g": "A",
@@ -19233,7 +19657,7 @@
   "name": "出行与旅行-TR02-明早9点到杭州-排期243-1-扩量01-AI素材-AI重拍-sjl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "BhK5bDlzmonngAxo5gCcZ0ianac",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Ng",
   "where": "A 组扩量排期第 246 行",
   "l1": "出行与旅行",
@@ -19255,7 +19679,7 @@
   "name": "出行与旅行-TR02-会开超时，后面的车怎么选-763-扩量243-2-扩量02-AI素材-AI重拍-sjl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "BCVVbcUQKo6j9gxehqPcl0NqnPc",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Ng",
   "where": "A 组扩量排期第 246 行",
   "l1": "出行与旅行",
@@ -19277,7 +19701,7 @@
   "name": "出行与旅行-TR02-周五下班路上查回家高铁-排期243-3-扩量03-AI素材-AI重拍-sjl-A组-20261116",
   "how": "浏览器查询过程一定要拍出来",
   "tok": "PtTNbqasXobR9AxtzTZc5znknec",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Ng",
   "where": "A 组扩量排期第 246 行",
   "l1": "出行与旅行",
@@ -19298,14 +19722,14 @@
   "t": "A",
   "name": "出行与旅行-TR02-展会延期，今晚再住一晚-747-扩量245-2_扩量01_AI素材_AI重拍_lst_A组_20261116",
   "how": "浏览器查询过程一定要拍出来",
-  "tok": "IbvjbvB5NoeUjZxeMRocR3NJnTe",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "where": "A 组扩量排期第 266 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "lk": "f"
  },
  "A|出行与旅行tr02两晚酒店一次排顺排期2453扩量02ai素材ai重拍lsta组20261116": {
@@ -19320,14 +19744,14 @@
   "t": "A",
   "name": "出行与旅行-TR02-两晚酒店一次排顺-排期245-3_扩量02_AI素材_AI重拍_lst_A组_20261116",
   "how": "浏览器查询过程一定要拍出来",
-  "tok": "HMtWbuV3ooZpS3xZBoocHj7Inog",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "where": "A 组扩量排期第 266 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "lk": "f"
  },
  "A|出行与旅行tr02住客户附近三件事一起比748扩量2451扩量03ai素材ai重拍lsta组20261116": {
@@ -19342,14 +19766,14 @@
   "t": "A",
   "name": "出行与旅行-TR02-住客户附近，三件事一起比-748-扩量245-1_扩量03_AI素材_AI重拍_lst_A组_20261116",
   "how": "浏览器查询过程一定要拍出来",
-  "tok": "H5IRbLGeBodyOWxIy1gclsvInKu",
-  "st": "待审核",
+  "tok": "",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "where": "A 组扩量排期第 266 行",
   "l1": "出行与旅行",
   "ucn": "订票和改签",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Ng",
   "lk": "f"
  },
  "A|购物与生活服务sh09合同今天寄排期246扩量01ai素材ai重拍zxca组20261116": {
@@ -19364,15 +19788,18 @@
   "t": "A",
   "name": "购物与生活服务-SH09-合同今天寄-排期246-扩量01-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "VKWCbKGj5oyXmdxWY3sckZpJnT0",
-  "st": "待审核",
+  "tok": "DVqebr5YAoLKiZxD4jccXpnGnWc",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
   "where": "A 组扩量排期第 267 行",
   "l1": "购物与生活服务",
   "ucn": "寄快递",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
+  "lk": "f",
+  "mid": "7708975928991776778",
+  "cost": 7,
+  "first": "2026-11-17"
  },
  "A|购物与生活服务sh09样品寄客户先留收样时间755扩量246扩量02ai素材ai重拍zxca组20261116": {
   "g": "A",
@@ -19386,15 +19813,18 @@
   "t": "A",
   "name": "购物与生活服务-SH09-样品寄客户，先留收样时间-755-扩量246-扩量02-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "NtwObO7Guo1P5QxOnTCciMhEnmh",
-  "st": "待审核",
+  "tok": "PhvtbEAO5oTR6YxzieIccsA4nNf",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
   "where": "A 组扩量排期第 267 行",
   "l1": "购物与生活服务",
   "ucn": "寄快递",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
+  "lk": "f",
+  "mid": "7708976005529468938",
+  "cost": 5,
+  "first": "2026-11-17"
  },
  "A|购物与生活服务sh09会开晚了取件改到明早754扩量246扩量03ai素材ai重拍zxca组20261116": {
   "g": "A",
@@ -19408,15 +19838,18 @@
   "t": "A",
   "name": "购物与生活服务-SH09-会开晚了，取件改到明早-754-扩量246-扩量03-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "DnD7bSXSooFbzFxAokxc9BWUnhe",
-  "st": "待审核",
+  "tok": "VYNXbkqVho8vSwxoQDscEluEnCc",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
   "where": "A 组扩量排期第 267 行",
   "l1": "购物与生活服务",
   "ucn": "寄快递",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Nw",
+  "lk": "f",
+  "mid": "7709059895233560639",
+  "cost": 324,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk07秋招网申填写排期247扩量01ai素材ai重拍zxca组20261116": {
   "g": "A",
@@ -19431,14 +19864,17 @@
   "name": "工作沟通与协作-WK07-秋招网申填写-排期247-扩量01-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
   "tok": "JBWhbwtIGoUmgZxZt2Gc0B58nvb",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mg",
   "where": "A 组扩量排期第 292 行",
   "l1": "工作沟通与协作",
   "ucn": "求职投递和面试",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971297284816905",
+  "cost": 0,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk07官网解析排期247扩量02ai素材ai重拍zxca组20261116": {
   "g": "A",
@@ -19453,14 +19889,17 @@
   "name": "工作沟通与协作-WK07-官网解析-排期247-扩量02-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
   "tok": "TSs5b4IajoLvmHx4If1cezZrnmg",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mg",
   "where": "A 组扩量排期第 292 行",
   "l1": "工作沟通与协作",
   "ucn": "求职投递和面试",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971372685246500",
+  "cost": 3,
+  "first": "2026-11-17"
  },
  "A|工作沟通与协作wk07注册完继续把表填好752扩量247扩量03ai素材ai重拍zxca组20261116": {
   "g": "A",
@@ -19475,14 +19914,17 @@
   "name": "工作沟通与协作-WK07-注册完，继续把表填好-752-扩量247-扩量03-AI素材-AI重拍-zxc-A组-20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
   "tok": "GmrjbhOglodHjcxIc0ocsZjInrg",
-  "st": "待审核",
+  "st": "需修改",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mg",
   "where": "A 组扩量排期第 292 行",
   "l1": "工作沟通与协作",
   "ucn": "求职投递和面试",
   "ok": false,
   "link": "",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7708971373788119094",
+  "cost": 1,
+  "first": "2026-11-17"
  },
  "A|ai个人助理综述ai01常出差的上班族排期2481扩量01ai素材ai重拍yyza组20261116": {
   "g": "A",
@@ -19497,14 +19939,17 @@
   "name": "AI个人助理综述-AI01-常出差的上班族-排期248-1_扩量01_AI素材_AI重拍_yyz_A组_20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
   "tok": "XaJgbqOcmoBzg7xQmdtcoRQ2nng",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
   "where": "A 组扩量排期第 293 行",
   "l1": "AI 个人助理综述",
   "ucn": "App 和网站上的事交给它办",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
+  "lk": "f",
+  "mid": "7708975876554407962",
+  "cost": 1,
+  "first": "2026-11-17"
  },
  "A|ai个人助理综述ai01自由职业者排期2483扩量03ai素材ai重拍yyza组20261116": {
   "g": "A",
@@ -19518,14 +19963,14 @@
   "t": "A",
   "name": "AI个人助理综述-AI01-自由职业者-排期248-3_扩量03_AI素材_AI重拍_yyz_A组_20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
-  "tok": "AMIJbFgTqoXUe6xMsrPcZrLDnyg",
-  "st": "待审核",
+  "tok": "Ea0ub3sqDog0zixbpS1cRRUUnab",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
   "where": "A 组扩量排期第 293 行",
   "l1": "AI 个人助理综述",
   "ucn": "App 和网站上的事交给它办",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
   "lk": "f"
  },
  "A|ai个人助理综述ai01填表查车关会员的一天745扩量2482扩量02ai素材ai重拍yyza组20261116": {
@@ -19541,14 +19986,17 @@
   "name": "AI个人助理综述-AI01-填表、查车、关会员的一天-745-扩量248-2_扩量02_AI素材_AI重拍_yyz_A组_20261116",
   "how": "浏览器操作过程一定要拍出来，停在付款或提交前，由人自己点",
   "tok": "Fmf7bgVJJoM5Erxoo8IcBScVn4b",
-  "st": "待审核",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
   "where": "A 组扩量排期第 293 行",
   "l1": "AI 个人助理综述",
   "ucn": "App 和网站上的事交给它办",
-  "ok": false,
-  "link": "",
-  "lk": "f"
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5Mw",
+  "lk": "f",
+  "mid": "7709010927048310835",
+  "cost": 1,
+  "first": "2026-11-17"
  },
  "B|工作沟通与协作todaykocwk04机智的七七01二创精剪包子20261116": {
   "g": "B",
@@ -19684,47 +20132,61 @@
  },
  "B|工作沟通与协作提前整理报销wk0502小月20261116照真人": {
   "g": "B",
-  "tab": "c665d9",
-  "row": 85,
-  "col": "J",
+  "tab": "3KtioB",
+  "row": 67,
+  "col": "N",
   "d": "2026-11-16",
   "uc": "WK05",
-  "sc": "",
-  "k": "N",
+  "sc": "报销截止前提醒",
+  "k": "V",
   "t": "A",
   "name": "工作沟通与协作-提前整理报销-WK05-02-小月-20261116_照真人-b组",
-  "how": "",
+  "how": "换细分场景：开口：「公司说 25 号封账",
   "tok": "WBRXbgZyMoXj9HxPN92cOiHjnPE",
   "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg1",
-  "where": "B 组脚本&成片第 85 行",
+  "where": "B 组扩量排期第 67 行",
   "l1": "工作沟通与协作",
   "ucn": "发票报销",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg1",
-  "lk": "f"
+  "lk": "f",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjg1"
+  ],
+  "var": "报销截止前提醒",
+  "mid": "7709039191312695350",
+  "cost": 18,
+  "first": "2026-11-17"
  },
  "B|财务与投资基金大跌先提醒fn0103小月20261116": {
   "g": "B",
-  "tab": "c665d9",
-  "row": 94,
-  "col": "J",
+  "tab": "3KtioB",
+  "row": 79,
+  "col": "N",
   "d": "2026-11-16",
   "uc": "FN01",
-  "sc": "",
-  "k": "N",
+  "sc": "持仓有公告、价格异动",
+  "k": "V",
   "t": "A",
   "name": "财务与投资-基金大跌先提醒-FN01-03-小月-20261116-b组",
-  "how": "",
+  "how": "这天集中做「持仓有公告和异动时推给你 FN01-02」这一个模板，6 条，同一套",
   "tok": "HfcYbsgw9oxpvOxAEticWpVAnah",
   "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk0",
-  "where": "B 组脚本&成片第 94 行",
+  "where": "B 组扩量排期第 79 行",
   "l1": "财务与投资",
   "ucn": "持仓公告和研究",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk0",
-  "lk": "f"
+  "lk": "f",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk0"
+  ],
+  "var": "持仓有公告、价格异动",
+  "mid": "7709040610117402643",
+  "cost": 10,
+  "first": "2026-11-17"
  },
  "B|财务与投资理好港美股财报季fn0104小李20261116照真人": {
   "g": "B",
@@ -19772,25 +20234,32 @@
  },
  "B|购物与生活服务运费和安装费不认了sh0303小月20261116": {
   "g": "B",
-  "tab": "c665d9",
-  "row": 100,
-  "col": "J",
+  "tab": "3KtioB",
+  "row": 80,
+  "col": "N",
   "d": "2026-11-16",
   "uc": "SH03",
-  "sc": "",
-  "k": "N",
+  "sc": "退款、退押金被乱扣",
+  "k": "V",
   "t": "A",
   "name": "购物与生活服务-运费和安装费不认了-SH03-03-小月-20261116-b组",
-  "how": "",
+  "how": "这天集中做「钱被多扣了 SH03-07」这一个模板，4 条，同一套结构和录屏流程",
   "tok": "Gi3QbkzUjo2YL9x27FKc6TlMnCk",
   "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMA",
-  "where": "B 组脚本&成片第 100 行",
+  "where": "B 组扩量排期第 80 行",
   "l1": "购物与生活服务",
   "ucn": "退款售后申诉",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMA",
-  "lk": "f"
+  "lk": "f",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwMA"
+  ],
+  "var": "退款、退押金被乱扣",
+  "mid": "7708985466469629993",
+  "cost": 6,
+  "first": "2026-11-17"
  },
  "B|个人日程与事务助理选兴趣班ps0201小李20261116照真人": {
   "g": "B",
@@ -19805,13 +20274,13 @@
   "name": "个人日程与事务助理-选兴趣班-PS02-01-小李-20261116_照真人-b组",
   "how": "",
   "tok": "CaNIbORdroVzdWxzL0fct4yonhb",
-  "st": "需修改",
+  "st": "通过",
   "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwNw",
   "where": "B 组脚本&成片第 107 行",
   "l1": "个人日程与事务助理",
   "ucn": "家庭综述",
-  "ok": false,
-  "link": "",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwNw",
   "lk": "f"
  },
  "B|个人日程与事务助理新手爸妈疫苗体检与晚餐ps0202小李20261116照真人": {
@@ -19942,6 +20411,1534 @@
   "where": "B 组脚本&成片第 117 行",
   "l1": "购物与生活服务",
   "ucn": "查扣费和关会员",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|工作沟通与协作todaykocwk04机智的七七全片重配b5201包子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 52,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "WK04",
+  "sc": "用自己的资料写汇报初稿",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today koc_WK04_机智的七七_全片重配_B52_01_包子_20261117",
+  "how": "从这条原片全篇重配",
+  "tok": "",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjUy",
+  "where": "B 组扩量排期第 52 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM5"
+  ],
+  "l1": "工作沟通与协作",
+  "ucn": "用自己资料写汇报",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjUy",
+  "lk": "f"
+ },
+ "B|工作沟通与协作todaykocwk04机智的七七全片重配b5202包子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 52,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "WK04",
+  "sc": "用自己的资料写汇报初稿",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today koc_WK04_机智的七七_全片重配_B52_02_包子_20261117",
+  "how": "从这条原片全篇重配",
+  "tok": "",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjUy",
+  "where": "B 组扩量排期第 52 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzM5"
+  ],
+  "l1": "工作沟通与协作",
+  "ucn": "用自己资料写汇报",
+  "mid": "7709064425077538858",
+  "cost": 2,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjUy",
+  "lk": "f"
+ },
+ "B|wk07aib组7901耶耶20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 56,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "WK07",
+  "sc": "每一轮面试前推个性化准备",
+  "k": "N",
+  "t": "A",
+  "name": "WK07_AI_B组79_01_耶耶_20261117",
+  "how": "新写脚本，面试邀请问过再排进日历，感谢信确认后从邮箱发出",
+  "tok": "",
+  "st": "",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjU2",
+  "where": "B 组扩量排期第 56 行",
+  "l1": "工作沟通与协作",
+  "ucn": "求职投递和面试",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|wk05ai照真人替团队垫钱报销难b6302栗子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 63,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "WK05",
+  "sc": "抬头、税号不对提前标出",
+  "k": "V",
+  "t": "A",
+  "name": "WK05_AI_照真人_替团队垫钱报销难_B63_02_栗子_20261117",
+  "how": "换细分场景：常被财务退单的上班族",
+  "tok": "",
+  "st": "",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=TjYz",
+  "where": "B 组扩量排期第 63 行",
+  "var": "抬头、税号不对提前标出",
+  "l1": "工作沟通与协作",
+  "ucn": "发票报销",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|fn01ai换场景同事问公告答早看了b组7902耶耶20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 79,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "持仓有公告、价格异动",
+  "k": "V",
+  "t": "A",
+  "name": "FN01_AI_换场景_同事问公告，答早看了_B组79_02_耶耶_20261117",
+  "how": "这天集中做「持仓有公告和异动时推给你 FN01-02」这一个模板，6 条，同一套",
+  "tok": "HrgMbPX8loRe9Rx0mvncZhYenae",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjkz",
+  "where": "B 组扩量排期第 79 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjkz"
+  ],
+  "var": "持仓有公告、价格异动",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjkz",
+  "lk": "f"
+ },
+ "B|fn01ai同脚本换画面理好港美股财报季b7904小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 79,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "持仓有公告、价格异动",
+  "k": "S",
+  "t": "A",
+  "name": "FN01_AI_同脚本换画面_理好港美股财报季_B79_04_小李_20261117",
+  "how": "这天集中做「持仓有公告和异动时推给你 FN01-02」这一个模板，6 条，同一套",
+  "tok": "C31lbs7IpoxvV2x8aSScjSlMnvf",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk1",
+  "where": "B 组扩量排期第 79 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk1"
+  ],
+  "var": "持仓有公告、价格异动",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "mid": "7709057558376235017",
+  "cost": 468,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk1",
+  "lk": "f"
+ },
+ "B|fn01ai换场景退休爸妈盯国债b7905包子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 79,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "持仓有公告、价格异动",
+  "k": "V",
+  "t": "A",
+  "name": "FN01_AI_换场景_退休爸妈盯国债_B79_05-包子_20261117",
+  "how": "这天集中做「持仓有公告和异动时推给你 FN01-02」这一个模板，6 条，同一套",
+  "tok": "Mvrebi6MrovfHLxwkNac59Rqn1f",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk2",
+  "where": "B 组扩量排期第 79 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk2"
+  ],
+  "var": "持仓有公告、价格异动",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "mid": "7709057610533060671",
+  "cost": 473,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk2",
+  "lk": "f"
+ },
+ "B|fn01ai换场景准备留学换汇b7906包子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 79,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "持仓有公告、价格异动",
+  "k": "V",
+  "t": "A",
+  "name": "FN01_AI_换场景_准备留学换汇_B79_06_包子_20261117",
+  "how": "这天集中做「持仓有公告和异动时推给你 FN01-02」这一个模板，6 条，同一套",
+  "tok": "TDx5bW2aGohreDxzjE7cSelBnSg",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk3",
+  "where": "B 组扩量排期第 79 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk3"
+  ],
+  "var": "持仓有公告、价格异动",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "mid": "7709057473177321499",
+  "cost": 32,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=Sjk3",
+  "lk": "f"
+ },
+ "B|ps02ai同脚本换画面新手爸妈疫苗体检与晚餐b8202小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 82,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "PS02",
+  "sc": "孩子在上学的双职工爸妈",
+  "k": "S",
+  "t": "A",
+  "name": "PS02_AI_同脚本换画面_新手爸妈疫苗、体检与晚餐_B82_02_小李_20261117",
+  "how": "这天集中做「恩泽哥哥和贝拉妹妹」这一个模板，5 条，同一套结构和录屏流程，换人设",
+  "tok": "X9robJNiro8mwgxTR9UcTXrLnCb",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOA",
+  "where": "B 组扩量排期第 82 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOA"
+  ],
+  "var": "孩子在上学的双职工爸妈",
+  "l1": "个人日程与事务助理",
+  "ucn": "家庭综述",
+  "mid": "7709070531110387775",
+  "cost": 4,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOA",
+  "lk": "f"
+ },
+ "B|ps02ai同脚本换画面跨城带俩娃的职场妈妈b8203小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 82,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "PS02",
+  "sc": "孩子在上学的双职工爸妈",
+  "k": "S",
+  "t": "A",
+  "name": "PS02_AI_同脚本换画面_跨城带俩娃的职场妈妈_B82_03_小李_20261117",
+  "how": "这天集中做「恩泽哥哥和贝拉妹妹」这一个模板，5 条，同一套结构和录屏流程，换人设",
+  "tok": "HGFSb1Jw1oXtaexJHhmcoGeAnhg",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOQ",
+  "where": "B 组扩量排期第 82 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOQ"
+  ],
+  "var": "孩子在上学的双职工爸妈",
+  "l1": "个人日程与事务助理",
+  "ucn": "家庭综述",
+  "mid": "7709070254228652042",
+  "cost": 1,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEwOQ",
+  "lk": "f"
+ },
+ "B|ps02ai同脚本换画面二胎家庭的接送与通知管理b8204小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 82,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "PS02",
+  "sc": "孩子在上学的双职工爸妈",
+  "k": "S",
+  "t": "A",
+  "name": "PS02_AI_同脚本换画面_二胎家庭的接送与通知管理_B82_04_小李_20261117",
+  "how": "这天集中做「恩泽哥哥和贝拉妹妹」这一个模板，5 条，同一套结构和录屏流程，换人设",
+  "tok": "QQxpb86bxoliMdxkVe0cho0ln5g",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMA",
+  "where": "B 组扩量排期第 82 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMA"
+  ],
+  "var": "孩子在上学的双职工爸妈",
+  "l1": "个人日程与事务助理",
+  "ucn": "家庭综述",
+  "mid": "7709070459576926244",
+  "cost": 10,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMA",
+  "lk": "f"
+ },
+ "B|ps02ai同脚本换画面爸爸第一次独立带娃b8205小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 82,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "PS02",
+  "sc": "孩子在上学的双职工爸妈",
+  "k": "S",
+  "t": "A",
+  "name": "PS02_AI_同脚本换画面_爸爸第一次独立带娃_B82_05_小李_20261117",
+  "how": "这天集中做「恩泽哥哥和贝拉妹妹」这一个模板，5 条，同一套结构和录屏流程，换人设",
+  "tok": "IDvEbWCt0oWPn0xIwRGcdnjXnLe",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMQ",
+  "where": "B 组扩量排期第 82 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMQ"
+  ],
+  "var": "孩子在上学的双职工爸妈",
+  "l1": "个人日程与事务助理",
+  "ucn": "家庭综述",
+  "mid": "7709070503843414042",
+  "cost": 5,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMQ",
+  "lk": "f"
+ },
+ "B|lg03ai同脚本换画面别光说好b8301包子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 83,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "LG03",
+  "sc": "学语言，按他的情况每天练一点",
+  "k": "S",
+  "t": "A",
+  "name": "LG03_AI_同脚本换画面_别光说好_B83_01_包子_20261117",
+  "how": "这天集中做「learning_英语口语陪练与个性化带学_01」这一个模板，一共",
+  "tok": "KWGCb1OOmoVnOkxcIMocZ9O4nng",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMg",
+  "where": "B 组扩量排期第 83 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMg"
+  ],
+  "var": "学语言，按他的情况每天练一点",
+  "l1": "学习与成长",
+  "ucn": "学语言和新技能",
+  "mid": "7709057815260233782",
+  "cost": 0,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMg",
+  "lk": "f"
+ },
+ "B|lg03ai换场景出国旅游点菜翻车b8302栗子20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 83,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "LG03",
+  "sc": "学语言，按他的情况每天练一点",
+  "k": "V",
+  "t": "A",
+  "name": "LG03_AI_换场景_出国旅游点菜翻车_B83_02_栗子_20261117",
+  "how": "这天集中做「learning_英语口语陪练与个性化带学_01」这一个模板，一共",
+  "tok": "",
+  "st": "",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=3KtioB&range=Tjgz",
+  "where": "B 组扩量排期第 83 行",
+  "var": "学语言，按他的情况每天练一点",
+  "l1": "学习与成长",
+  "ucn": "学语言和新技能",
+  "mid": "7709057854996824100",
+  "cost": 1,
+  "first": "2026-11-17",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|tr02aib9401小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 94,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "查机票（含航班延误查替代）",
+  "k": "N",
+  "t": "A",
+  "name": "TR02_AI_B94-01_小月_20261117",
+  "how": "浏览器查询过程一定要拍出来",
+  "tok": "XAQcbJbP6omqJnx29WxcHzOvnzc",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNg",
+  "where": "B 组扩量排期第 94 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNg"
+  ],
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNg",
+  "lk": "f"
+ },
+ "B|tr02aib9402小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 94,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "查机票（含航班延误查替代）",
+  "k": "N",
+  "t": "A",
+  "name": "TR02_AI_B94-02_小月_20261117",
+  "how": "浏览器查询过程一定要拍出来",
+  "tok": "YgZObhkIWo0pkvxM9MscISvDnTd",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNw",
+  "where": "B 组扩量排期第 94 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNw"
+  ],
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
+  "mid": "7709058462009049131",
+  "cost": 2,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExNw",
+  "lk": "f"
+ },
+ "B|tr02aib9403小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 94,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "查机票（含航班延误查替代）",
+  "k": "N",
+  "t": "A",
+  "name": "TR02_AI_B94-03_小月_20261117",
+  "how": "浏览器查询过程一定要拍出来",
+  "tok": "LqWJbXZMgorSYxxjNuNcngPynYe",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExOA",
+  "where": "B 组扩量排期第 94 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExOA"
+  ],
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExOA",
+  "lk": "f"
+ },
+ "B|学习与成长把转行考证这类大目标拆成每周能做的事lg02ai换场景错题三回定向攻坚b9801小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 98,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "LG02",
+  "sc": "错题和自测",
+  "k": "V",
+  "t": "A",
+  "name": "学习与成长-把转行、考证这类大目标拆成每周能做的事-LG02_AI_换场景_错题三回，定向攻坚_B98-01_小月_20261117",
+  "how": "学生线",
+  "tok": "IepabW76joobwjx2r1Uc4x1Dnih",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyOA",
+  "where": "B 组扩量排期第 98 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyOA"
+  ],
+  "var": "错题和自测",
+  "l1": "学习与成长",
+  "ucn": "学生课表作业和备考",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|学习与成长把转行考证这类大目标拆成每周能做的事lg02ai换场景屡错同点碎片攻克b9901小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 99,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "LG04",
+  "sc": "在职考研、上班族考公",
+  "k": "V",
+  "t": "A",
+  "name": "学习与成长-把转行、考证这类大目标拆成每周能做的事-LG02_AI_换场景_屡错同点，碎片攻克_B99-01_小月_20261117",
+  "how": "在职线",
+  "tok": "OqIzbKfWfohuPcxQ9WscDHnOnQd",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyOQ",
+  "where": "B 组扩量排期第 99 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyOQ"
+  ],
+  "var": "在职考研、上班族考公",
+  "l1": "学习与成长",
+  "ucn": "在职考证和转行",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|购物与生活服务todaykocsh02yo宝闲不住换开头b12701小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 127,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "SH02",
+  "sc": "只换开头",
+  "k": "V",
+  "t": "E",
+  "name": "购物与生活服务_today koc_SH02_Yo🍭宝闲不住_换开头_B127-01_小月_20261117",
+  "how": "原片要点（KOC Yo宝闲不住，49 秒）：孩子一个 12 岁一个 8 岁，酒店",
+  "tok": "Dt0MbQiVBoC5phxgZjQc8Bl1ngh",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5",
+  "where": "B 组扩量排期第 127 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5"
+  ],
+  "var": "只换开头",
+  "l1": "购物与生活服务",
+  "ucn": "大件比价和盯机酒价",
+  "mid": "7709059938508914697",
+  "cost": 52,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5",
+  "lk": "f"
+ },
+ "B|购物与生活服务todaykocsh02yo宝闲不住换开头b12702小月20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 127,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "SH02",
+  "sc": "只换开头",
+  "k": "V",
+  "t": "E",
+  "name": "购物与生活服务_today koc_SH02_Yo🍭宝闲不住_换开头_B127-02_小月_20261117",
+  "how": "原片要点（KOC Yo宝闲不住，49 秒）：孩子一个 12 岁一个 8 岁，酒店",
+  "tok": "CADVbgLt3ojrsXx3RiAcb0qVn6b",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5",
+  "where": "B 组扩量排期第 127 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5"
+  ],
+  "var": "只换开头",
+  "l1": "购物与生活服务",
+  "ucn": "大件比价和盯机酒价",
+  "mid": "7709059789917339675",
+  "cost": 6,
+  "first": "2026-11-17",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzQ5",
+  "lk": "f"
+ },
+ "B|工作沟通与协作todaykolwk01雪莉shirley只剪辑原片a14501小李20261117": {
+  "g": "B",
+  "tab": "3KtioB",
+  "row": 145,
+  "col": "N",
+  "d": "2026-11-17",
+  "uc": "WK01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK01_雪莉Shirley_只剪辑原片_A145-01_小李_20261117",
+  "how": "原片在原素材表第 84 行",
+  "tok": "QAvtbCZ0RoqZA5xQJKWcDp2Rnme",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUz",
+  "where": "B 组扩量排期第 145 行",
+  "alt": [
+   "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUz"
+  ],
+  "l1": "工作沟通与协作",
+  "ucn": "会议前后全管",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUz",
+  "lk": "f"
+ },
+ "A|lg02ai换场景同一类题错三回排期243扩量01ai素材ai重拍zla组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 243,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG02",
+  "sc": "错题和自测",
+  "k": "V",
+  "t": "A",
+  "name": "LG02-AI-换场景-同一类题错三回-排期243-扩量01-AI素材-AI重拍-zl-A组-20261117",
+  "how": "学生线",
+  "tok": "E7rIb697XoOsvXxbTkRcydkjnlg",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Mw",
+  "where": "A 组扩量排期第 243 行",
+  "var": "错题和自测",
+  "l1": "学习与成长",
+  "ucn": "学生课表作业和备考",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0Mw",
+  "lk": "f"
+ },
+ "A|lg02ai换场景别再栽同一道题排期244扩量01ai素材ai重拍a组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 244,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG02",
+  "sc": "期末周几门考试挨着",
+  "k": "V",
+  "t": "A",
+  "name": "LG02-AI-换场景-别再栽同一道题-排期244-扩量01-AI素材-AI重拍-A组-20261117",
+  "how": "学生线",
+  "tok": "NtCNbDfJ0o9Xu3x5yL7cAjYjnFb",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0NA",
+  "where": "A 组扩量排期第 244 行",
+  "var": "期末周几门考试挨着",
+  "l1": "学习与成长",
+  "ucn": "学生课表作业和备考",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0NA",
+  "lk": "f"
+ },
+ "A|lg04ai换场景坑今晚填上排期245扩量01ai素材ai重拍zla组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 245,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG04",
+  "sc": "错题复盘",
+  "k": "V",
+  "t": "A",
+  "name": "LG04-AI-换场景-坑今晚填上-排期245-扩量01-AI素材-AI重拍-zl-A组-20261117",
+  "how": "在职线",
+  "tok": "Ty3PbUSeuokfY9xrE7FcsVNDnsb",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0NQ",
+  "where": "A 组扩量排期第 245 行",
+  "var": "错题复盘",
+  "l1": "学习与成长",
+  "ucn": "在职考证和转行",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0NQ",
+  "lk": "f"
+ },
+ "A|ps01ai换场景约了俩月的体检排期248扩量01ai素材ai重拍zla组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 248,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "日程安排和提醒",
+  "k": "V",
+  "t": "A",
+  "name": "PS01-AI-换场景-约了俩月的体检-排期248-扩量01-AI素材-AI重拍-zl-A组-20261117",
+  "how": "上班族线",
+  "tok": "Rk1Gbu3tkoc5nkxLhF4cjRsJn1V",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0OA",
+  "where": "A 组扩量排期第 248 行",
+  "var": "日程安排和提醒",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|ps01ai换场景周五撞车排期249扩量01ai素材ai重拍zla组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 249,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "日程安排和提醒",
+  "k": "V",
+  "t": "A",
+  "name": "PS01-AI-换场景-周五撞车-排期249-扩量01-AI素材-AI重拍-zl-A组-20261117",
+  "how": "大学生线",
+  "tok": "BseobmtAHoNMZgxcE6WcaCsYnle",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI0OQ",
+  "where": "A 组扩量排期第 249 行",
+  "var": "日程安排和提醒",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|ps01ai换场景手滑回了个好排期250扩量01ai素材ai重拍zxca组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 250,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "日程安排和提醒",
+  "k": "V",
+  "t": "A",
+  "name": "PS01-AI-换场景-手滑回了个好-排期250-扩量01-AI素材-AI重拍-zxc-A组-20261117",
+  "how": "倒班的上班族线",
+  "tok": "VDRZbJ482oTExCx8BvkcJ1NxnYd",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1MA",
+  "where": "A 组扩量排期第 250 行",
+  "var": "日程安排和提醒",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|个人日程与事务助理todaykolps01斐斐不会飞原片a25101lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 251,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_斐斐不会飞_原片_A251-01_lst_20261117",
+  "how": "原片在原素材表第 19 行",
+  "tok": "HwRPbZFLzowRsNxoPrTchC9jnTe",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1MQ",
+  "where": "A 组扩量排期第 251 行",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|个人日程与事务助理todaykolps01黎罗拉打工版原片a25201lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 252,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_黎罗拉（打工版）_原片_A252-01_lst_20261117",
+  "how": "原片在原素材表第 25 行",
+  "tok": "BnNWb6wtLoQbn3x0gChc0sHMnQh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1Mg",
+  "where": "A 组扩量排期第 252 行",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|个人日程与事务助理todaykolps01潘启言rita原片a25301lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 253,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_潘启言Rita_原片_A253-01_lst_20261117",
+  "how": "原片在原素材表第 31 行",
+  "tok": "K6jZbTFBloubq4x6WoKcpvKpn1g",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1Mw",
+  "where": "A 组扩量排期第 253 行",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|个人日程与事务助理todaykolps01放肆野马读研版原片a25401lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 254,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "PS01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_放肆野马（读研版）_原片_A254-01_lst_20261117",
+  "how": "原片在原素材表第 47 行",
+  "tok": "Ylhrbj2lhoAKwgxtfEvcg0FFnhd",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1NA",
+  "where": "A 组扩量排期第 254 行",
+  "l1": "个人日程与事务助理",
+  "ucn": "早晚报和日程安排",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk02你好san原片a25501lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 255,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK02",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK02_你好San_原片_A255-01_lst_20261117",
+  "how": "原片在原素材表第 48 行",
+  "tok": "L46obI2GmoDvsPxgxXmcPVxhn2d",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1NQ",
+  "where": "A 组扩量排期第 255 行",
+  "l1": "工作沟通与协作",
+  "ucn": "待办提醒和回邮件",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk02elsaww原片a25601lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 256,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK02",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK02_Elsaww_原片_A256-01_lst_20261117",
+  "how": "原片在原素材表第 46 行",
+  "tok": "BhQlbs0Cbo2QVTx4o7FcE9NanXf",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1Ng",
+  "where": "A 组扩量排期第 256 行",
+  "l1": "工作沟通与协作",
+  "ucn": "待办提醒和回邮件",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk02阿倩quinn原片a25701yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 257,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK02",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK02_阿倩Quinn_原片_A257-01_yyz_20261117",
+  "how": "原片在原素材表第 62 行",
+  "tok": "It03bNdSUoi49NxpIpFcp15Cnid",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1Nw",
+  "where": "A 组扩量排期第 257 行",
+  "l1": "工作沟通与协作",
+  "ucn": "待办提醒和回邮件",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk01文一茜原片a25801yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 258,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK01_文一茜_原片_A258-01_yyz_20261117",
+  "how": "原片在原素材表第 17 行",
+  "tok": "YRQHbhrf5o5Fc2xFSvlct9LPnyg",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1OA",
+  "where": "A 组扩量排期第 258 行",
+  "l1": "工作沟通与协作",
+  "ucn": "会议前后全管",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk01向东三百原片a25901yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 259,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK01_向东三百_原片_A259-01_yyz_20261117",
+  "how": "原片在原素材表第 20 行",
+  "tok": "Bgz2bv7zIorEqkxOpipcxdjYnPd",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI1OQ",
+  "where": "A 组扩量排期第 259 行",
+  "l1": "工作沟通与协作",
+  "ucn": "会议前后全管",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|工作沟通与协作todaykolwk01黄紫怡tina原片a26001yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 260,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "WK01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "工作沟通与协作_today kol_WK01_黄紫怡Tina_原片_A260-01_yyz_20261117",
+  "how": "原片在原素材表第 28 行",
+  "tok": "DDPibeXfooEh8ixdxkpcqsoAnnc",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2MA",
+  "where": "A 组扩量排期第 260 行",
+  "l1": "工作沟通与协作",
+  "ucn": "会议前后全管",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|学习与成长todaykollg02智慧少女派原片a26101yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 261,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG02",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "学习与成长_today kol_LG02_智慧少女派_原片_A261-01_yyz_20261117",
+  "how": "原片在原素材表第 51 行",
+  "tok": "GFV6b9JBRohVjjxsdQCcA3OFnAh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2MQ",
+  "where": "A 组扩量排期第 261 行",
+  "l1": "学习与成长",
+  "ucn": "学生课表作业和备考",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|财务与投资todaykolfn01彤儿学姐原片a26201yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 262,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "财务与投资_today kol_FN01_彤儿学姐_原片_A262-01_yyz_20261117",
+  "how": "原片在原素材表第 10 行",
+  "tok": "Frlibi4LMoDTF3xbkUQcKPNmnbd",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2Mg",
+  "where": "A 组扩量排期第 262 行",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|tr01ai换场景路线排到中午排期268扩量01ai素材ai重拍zxca组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 268,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "TR01",
+  "sc": "攻略变成能走的行程",
+  "k": "V",
+  "t": "A",
+  "name": "TR01-AI-换场景-路线排到中午-排期268-扩量01-AI素材-AI重拍-zxc-A组-20261117",
+  "how": "原片要点（脚本「路线排到中午我还没出门」，60 秒）：周末早上躺床上翻攻略，收藏",
+  "tok": "Q6ymbKpuaomI03xMUZNcXb86nzh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2OA",
+  "where": "A 组扩量排期第 268 行",
+  "var": "攻略变成能走的行程",
+  "l1": "出行与旅行",
+  "ucn": "攻略变行程",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|tr01ai换场景年假还没开始a26901lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 269,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "TR01",
+  "sc": "出境游倒排成待办",
+  "k": "V",
+  "t": "A",
+  "name": "TR01_AI_换场景_年假还没开始_A269-01_lst_20261117",
+  "how": "2.【AI｜照头部模板拍，先看第 268 行说明】换细分场景：年假想出境玩，收藏",
+  "tok": "ZronbplFao2MSvxAgJhc2Pm9nXg",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI2OQ",
+  "where": "A 组扩量排期第 269 行",
+  "var": "出境游倒排成待办",
+  "l1": "出行与旅行",
+  "ucn": "攻略变行程",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|tr01ai换场景刚到第二天下雨a27001lst20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 270,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "TR01",
+  "sc": "每天推当天的安排",
+  "k": "V",
+  "t": "A",
+  "name": "TR01_AI_换场景_刚到第二天下雨_A270-01_lst_20261117",
+  "how": "3.【AI｜照头部模板拍，先看第 268 行说明】换细分场景：到了当地第二天，早",
+  "tok": "Pjv7b1h81oseSjxCibrce0LXnHh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI3MA",
+  "where": "A 组扩量排期第 270 行",
+  "var": "每天推当天的安排",
+  "l1": "出行与旅行",
+  "ucn": "攻略变行程",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|lg01ai换场景借来的书a29501yyz20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 295,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG01",
+  "sc": "读完推下一本",
+  "k": "N",
+  "t": "A",
+  "name": "LG01-AI-换场景-借来的书-A295-01_yyz_20261117",
+  "how": "大学生线",
+  "tok": "LPM7bFvpioYW99x6GtzclCucnrd",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzI5NQ",
+  "where": "A 组扩量排期第 295 行",
+  "l1": "学习与成长",
+  "ucn": "读书接着读和推书",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|lg04ai换场景报名费都交了309扩量01ai素材ai重拍zxca组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 309,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG04",
+  "sc": "边上班考证",
+  "k": "N",
+  "t": "A",
+  "name": "LG04-AI-换场景-报名费都交了-309-扩量01-AI素材-AI重拍-zxc-A组-20261117",
+  "how": "上班族线，考证",
+  "tok": "SsZ0bDrWhoC7uNxClnmck2mDn4c",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMwOQ",
+  "where": "A 组扩量排期第 309 行",
+  "l1": "学习与成长",
+  "ucn": "在职考证和转行",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|lg04ai换场景考研书落灰310扩量01ai素材ai重拍zxca组20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 310,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "LG04",
+  "sc": "在职考研",
+  "k": "N",
+  "t": "A",
+  "name": "LG04-AI-换场景-考研书落灰-310-扩量01-AI素材-AI重拍-zxc-A组-20261117",
+  "how": "上班族线，在职考研",
+  "tok": "ZHuebnYu5otTswxZWK9ckY0Lnif",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMxMA",
+  "where": "A 组扩量排期第 310 行",
+  "l1": "学习与成长",
+  "ucn": "在职考证和转行",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06徐一曼只剪辑a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 325,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_徐一曼_只剪辑_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "QP0hbfwoVoL05MxFdsocvnVensd",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNQ",
+  "where": "A 组扩量排期第 325 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06徐一曼全文重配a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 325,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_徐一曼_全文重配_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "LT5mbnNWcoKHg5xVmx3cy1bWnkh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNQ",
+  "where": "A 组扩量排期第 325 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06多琳doreen只剪辑a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 326,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_多琳Doreen_只剪辑_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "S8WkblskdocNmLxXjSRcUMeBnnb",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNg",
+  "where": "A 组扩量排期第 326 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06多琳doreen全文重配a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 326,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_多琳Doreen_全文重配_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "DxKAbg8D7oDbBQxed14cvIzpnCb",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNg",
+  "where": "A 组扩量排期第 326 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06一珂coko只剪辑a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 327,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_一珂Coko_只剪辑_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "FDPubv7mLouAzhxKmQScwPsen1d",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNw",
+  "where": "A 组扩量排期第 327 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "A|购物与生活服务todaykolsh06一珂coko全文重配a自选01fjh20261117": {
+  "g": "A",
+  "tab": "kMJdAv",
+  "row": 327,
+  "col": "O",
+  "d": "2026-11-17",
+  "uc": "SH06",
+  "sc": "",
+  "k": "N",
+  "t": "E",
+  "name": "购物与生活服务_today kol_SH06_一珂Coko_全文重配_A自选-01_fjh_20261117",
+  "how": "",
+  "tok": "AaZDbkpW2onGVCxmDl7cEDAmnrh",
+  "st": "待审核",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=kMJdAv&range=TzMyNw",
+  "where": "A 组扩量排期第 327 行",
+  "l1": "购物与生活服务",
+  "ucn": "衣橱管理和穿搭",
+  "ok": false,
+  "link": "",
+  "lk": "f"
+ },
+ "B|个人日程与事务助理todaykolps01柯煊换开头b14001栗子20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 51,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "LG01",
+  "sc": "只换开头",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_柯煊_换开头_B140_01_栗子_20261117",
+  "how": "",
+  "tok": "NxmRbQ6YQo10AUxY3lXcC2bHned",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUx",
+  "where": "B 组二剪第 51 行",
+  "l1": "学习与成长",
+  "ucn": "读书接着读和推书",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUx",
+  "lk": "f"
+ },
+ "B|个人日程与事务助理todaykolps01柯煊换开头b14002栗子20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 51,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "LG01",
+  "sc": "只换开头",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today kol_PS01_柯煊_换开头_B140_02_栗子_20261117",
+  "how": "",
+  "tok": "RXkMbRdbPoRGoMxOz6zc4qC4noh",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUx",
+  "where": "B 组二剪第 51 行",
+  "l1": "学习与成长",
+  "ucn": "读书接着读和推书",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzUx",
+  "lk": "f"
+ },
+ "B|个人日程与事务助理todaykocps03猫先生原片b15001耶耶20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 58,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "PS03",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "个人日程与事务助理_today koc_PS03_猫先生🐱_原片_B150_01_耶耶_20261117_b组",
+  "how": "",
+  "tok": "VZwobxlyeoiuP1xlN7Tc378xngd",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzU4",
+  "where": "B 组二剪第 58 行",
+  "l1": "个人日程与事务助理",
+  "ucn": "工作和孩子",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzU4",
+  "lk": "f"
+ },
+ "B|出行与旅行todaykoctr01aigc刘刀仔原片b15101耶耶20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 59,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "TR01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "出行与旅行_today koc_TR01_AIgc刘刀仔_原片_B151_01_耶耶_20261117_b组",
+  "how": "",
+  "tok": "IZiWbkyRUoOtCNxFt2icBtBrnGg",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzU5",
+  "where": "B 组二剪第 59 行",
+  "l1": "出行与旅行",
+  "ucn": "攻略变行程",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzU5",
+  "lk": "f"
+ },
+ "B|出行与旅行todaykoctr01一粒嘉梨原片b15201耶耶20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 60,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "TR01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "出行与旅行_today koc_TR01_一粒嘉梨_原片_B152_01_耶耶_20261117_b组",
+  "how": "",
+  "tok": "TLRzbRWcfoLHluxxSYYcyFTunUL",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYw",
+  "where": "B 组二剪第 60 行",
+  "l1": "出行与旅行",
+  "ucn": "攻略变行程",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYw",
+  "lk": "f"
+ },
+ "B|财务与投资todaykolfn01迪迪酱michi原片b15301耶耶20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 61,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "FN01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "财务与投资_today kol_FN01_迪迪酱Michi_原片_B153_01_耶耶_20261117_b组",
+  "how": "",
+  "tok": "HJF0bEfeRoGTE0xgsHycdTeqnTd",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYx",
+  "where": "B 组二剪第 61 行",
+  "l1": "财务与投资",
+  "ucn": "持仓公告和研究",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYx",
+  "lk": "f"
+ },
+ "B|学习与成长todaykollg01ai前沿社原片b15401耶耶20261117": {
+  "g": "B",
+  "tab": "EnYgPG",
+  "row": 62,
+  "col": "K",
+  "d": "2026-11-17",
+  "uc": "LG01",
+  "sc": "头部结构剪新原片",
+  "k": "N",
+  "t": "E",
+  "name": "学习与成长_today kol_LG01_AI前沿社_原片_B154_01_耶耶_20261117_b组",
+  "how": "",
+  "tok": "VG6JbylSOot0KExNvxQcJHq5nHb",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYy",
+  "where": "B 组二剪第 62 行",
+  "l1": "学习与成长",
+  "ucn": "读书接着读和推书",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzYy",
+  "lk": "f"
+ },
+ "B|wk07aib7901耶耶20261117": {
+  "g": "B",
+  "tab": "c665d9",
+  "row": 58,
+  "col": "J",
+  "d": "2026-11-17",
+  "uc": "WK07",
+  "sc": "",
+  "k": "N",
+  "t": "A",
+  "name": "WK07_AI_B79_01_耶耶_20261117",
+  "how": "",
+  "tok": "WtvwbLOiVovHu9xAuKtcqnPWnyc",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjU4",
+  "where": "B 组脚本&成片第 58 行",
+  "l1": "工作沟通与协作",
+  "ucn": "求职投递和面试",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjU4",
+  "lk": "f"
+ },
+ "B|学习与成长出国旅游点菜翻车lg0302栗子20261117照真人": {
+  "g": "B",
+  "tab": "c665d9",
+  "row": 113,
+  "col": "J",
+  "d": "2026-11-17",
+  "uc": "LG03",
+  "sc": "",
+  "k": "N",
+  "t": "A",
+  "name": "学习与成长-出国旅游点菜翻车-LG03-02-栗子-20261117-照真人-b组",
+  "how": "",
+  "tok": "KRnob2RoboQx8Sxs1hYcXUPonxe",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMw",
+  "where": "B 组脚本&成片第 113 行",
+  "l1": "学习与成长",
+  "ucn": "学语言和新技能",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjExMw",
+  "lk": "f"
+ },
+ "B|tr02ai照真人帮妈妈查高铁票b9601栗子20261117": {
+  "g": "B",
+  "tab": "c665d9",
+  "row": 122,
+  "col": "J",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "",
+  "k": "N",
+  "t": "A",
+  "name": "TR02_AI__照真人_帮妈妈查高铁票_B96_01_栗子_20261117",
+  "how": "",
+  "tok": "NCLib06IgotOqJxouCgcO5Ipnnd",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyMg",
+  "where": "B 组脚本&成片第 122 行",
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyMg",
+  "lk": "f"
+ },
+ "B|tr02ai节假日查火车票b9602栗子20261117": {
+  "g": "B",
+  "tab": "c665d9",
+  "row": 123,
+  "col": "J",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "",
+  "k": "N",
+  "t": "A",
+  "name": "TR02_AI_节假日查火车票_B96_02_栗子_20261117",
+  "how": "",
+  "tok": "KyCtbRLW5ogoIKxc8KJc2cd1npd",
+  "st": "通过",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyMw",
+  "where": "B 组脚本&成片第 123 行",
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
+  "ok": true,
+  "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyMw",
+  "lk": "f"
+ },
+ "B|tr02ai变行程查火车票b9602栗子20261117": {
+  "g": "B",
+  "tab": "c665d9",
+  "row": 124,
+  "col": "J",
+  "d": "2026-11-17",
+  "uc": "TR02",
+  "sc": "",
+  "k": "N",
+  "t": "A",
+  "name": "TR02-AI_变行程查火车票_B96_02_栗子_20261117",
+  "how": "",
+  "tok": "N4j6bNBtNo9vnHxFjdbc1boanRg",
+  "st": "需修改",
+  "cell": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyNA",
+  "where": "B 组脚本&成片第 124 行",
+  "l1": "出行与旅行",
+  "ucn": "订票和改签",
   "ok": false,
   "link": "",
   "lk": "f"
