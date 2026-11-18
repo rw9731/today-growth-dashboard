@@ -508,11 +508,11 @@
             <tr>
               <th>上传日</th>
               <th class="num"><span class="lx-tip" data-tipk="up">上传条数</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">上传当天 + 第二天花费 ≥ 这个数算过（固定 ¥400）</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span><span class="th-sub">上传当天 + 第二天花费 ≥ 冷启门槛</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="th">冷启门槛</span><span class="th-sub">上传当天 + 后 2 天花费 ≥ 这个数算过（固定 ¥400）</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pass">过冷启</span><span class="th-sub">上传当天 + 后 2 天花费 ≥ 冷启门槛</span></th>
               <th class="num"><span class="lx-tip" data-tipk="cs">冷启率</span><span class="th-sub">过冷启 ÷ 上传</span></th>
               <th class="num"><span class="lx-tip" data-tipk="csc">去掉预算影响</span><span class="th-sub">冷启率（门槛）</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">第二天的数还没出</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="wait">还在看</span><span class="th-sub">窗口最后一天的数还没出</span></th>
               <th class="num">没过<span class="th-sub">条数（占上传）</span></th>
               <th class="num">内容硬伤<span class="th-sub">条数（占上传）</span></th>
               <th class="num"><span class="lx-tip" data-tipk="plrun">没进已跑量项目</span><span class="th-sub">投放侧（占上传）</span></th>
@@ -1131,12 +1131,12 @@
     const avgCs = d3.sum(done, (b) => b.n_up) ? d3.sum(done, (b) => b.cs_pass) / d3.sum(done, (b) => b.n_up) : null;
     const doneC = B.filter((b) => b.cs_c != null);
     const avgCsC = d3.sum(doneC, (b) => b.n_up) ? d3.sum(doneC, (b) => b.cs_pass_c) / d3.sum(doneC, (b) => b.n_up) : null;
-    const WN = nm.cs_win || 2, WT = WN === 2 ? '上传当天 + 第二天' : '上传当天 + 后 ' + (WN - 1) + ' 天';
+    const WN = nm.cs_win || 2, WT = WN === 2 ? '上传当天 + 第二天' : WN === 3 ? '上传当天 + 第二天 + 第三天' : '上传当天 + 后 ' + (WN - 1) + ' 天';
     const wan = (v) => v == null ? '—' : '¥' + d3.format('.1f')(v / 10000) + ' 万';
     const ex = B.filter((b) => b.cs != null && b.th).slice(-1)[0] || B.filter((b) => b.th)[0] || {};
     const TH0 = ex.th;
     // 表格列顺序（Reina 11/12）：上传 → 门槛 → 过冷启 → 冷启率 → 去掉预算影响 → 还在看 → 没过 → 四类原因 → 测够了 → 投放
-    const how = '门槛固定为「' + WT + '」花到 ¥400（Reina 11/17 定），每批都一样。\n依据：10/27–11/11 上传的 773 条素材，两天激活 20 个以上（约花 ¥400，窗口激活成本约 ¥20）的，后来累计花到 ¥2,000 的有 43%；激活 6–9 个的只有 17%，和 1–5 个差不多。\n原来按前 7 个上传日的 80 分位定，上传一多、没跑起来的一多，门槛就掉到个位数激活（约 ¥150），区分不出会跑起来的素材。';
+    const how = '门槛固定为「' + WT + '」花到 ¥400（Reina 11/17 定 ¥400，11/18 窗口从 2 天改成 3 天），每批都一样。\n依据：10/27–11/9 上传的 680 条素材，3 天花到 ¥400 的有 56% 后来累计花到 ¥2,000，没到的只有 10%；后来花到 ¥2,000 的 169 条里抓到 123 条（2 天窗口只抓到 105 条）。\n原来按前 7 个上传日的 80 分位定，上传一多、没跑起来的一多，门槛就掉到个位数激活（约 ¥150），区分不出会跑起来的素材。';
     const TIPS = {
       pass: '过冷启：从上传当天起 ' + WN + ' 天（' + WT + '，按日历天算，不是到今天为止的最近几天），这条素材花费加起来 ≥ ¥400。\n' + how,
       wait: '还在看：' + WT + '还没过完（最近 ' + (WN - 1) + ' 个上传日），花费还没到 ¥400 的先不判。所以这几天的冷启率显示「目前 x%」，窗口过完就定下来。',
@@ -1154,7 +1154,7 @@
       plhit: '进了也没拿到量：已经进了 5 个以上没老头部的已跑量项目，还是没测够（实测项目不到 3 个）。机会给到了还抢不到，是素材本身的问题。',
       win: '冷启窗口：' + WT + '。激活、消耗、次留都只算这 ' + WN + ' 天。'
     };
-    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '花费 ≥ ¥400 的条数 ÷ 当天上传条数，第二天就能看。门槛固定 ¥400（Reina 11/17 从 80 分位激活改过来），每批都一样。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
+    fill('cs-short', (el) => { el.innerHTML = '（<b>冷启率</b> = ' + WT + '花费 ≥ ¥400 的条数 ÷ 当天上传条数，第三天就能看完。门槛固定 ¥400（Reina 11/17 从 80 分位激活改过来），每批都一样。<b>去掉预算影响</b>那列的门槛跟着当时全盘的量走。鼠标放到带虚线的表头上看详细口径；点上传日那一行，看那天哪些过了、哪些没过。）'; });
     {
       let tip = null;
       const show = (e) => { const t = e.target.closest('.lx-tip'); if (!t || !TIPS[t.dataset.tipk]) return; if (!tip) { tip = document.createElement('div'); tip.className = 'lx-tipbox'; document.body.appendChild(tip); } tip.innerHTML = TIPS[t.dataset.tipk].replace(/\n/g, '<br>'); tip.hidden = false; const r = t.getBoundingClientRect(); const w = Math.min(380, innerWidth - 16); tip.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px'; tip.style.top = (r.bottom + 6) + 'px'; };

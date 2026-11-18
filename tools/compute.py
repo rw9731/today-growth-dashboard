@@ -942,7 +942,7 @@ def main():
     # 冷启（Reina 11/11，朱艺涛提的牵引指标）：看上传当天 + 第二天（CSW = 2 天，Reina 11/11 从 4 天改成 2 天，第二天就能看）的激活，过「前 7 个上传日的素材同一窗口激活」的 80 分位，算过冷启。
     # 窗口按上传日算，不按首次消耗日：窗口里还没花起来本身就是没过冷启。窗口最后一天的数出来以后这批就定了。
     # 分母 = 这天上传的全部素材：巨量素材库清单 notes/uploads-日期.json ∪ 投放表里有消耗的 ∪ 工作台有展示的。
-    CSW = 2
+    CSW = 3  # Reina 11/18：冷启窗口改成上传当天 + 第二天 + 第三天
     act_by, ret_by = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
     show_by = defaultdict(lambda: defaultdict(float))
     day_tot = defaultdict(float)
@@ -1251,9 +1251,9 @@ def main():
             ptot = lambda pj: sum(c for _, c in pj[2])
             run = [pj for pj in ps if ptot(pj) >= CS_RUN]
             head = [pj for pj in run if max((c for mid, c in pj[2] if mid != m['id'] and up_day(mid) < u), default=0) >= CS_HEAD * ptot(pj)]
-            good = [pj for pj in run if pj not in head]
-            m['pj_n'], m['pj_run'], m['pj_head'], m['pj_good'] = len(ps), len(run), len(head), len(good)
-            m['pj_goodhit'] = sum(1 for pj in good if any(mid == m['id'] and c >= CS_PJ_C for mid, c in pj[2]))
+            goodpj = [pj for pj in run if pj not in head]  # 不能叫 good：会盖掉前面好素材列表 good（11/18 出过错）
+            m['pj_n'], m['pj_run'], m['pj_head'], m['pj_good'] = len(ps), len(run), len(head), len(goodpj)
+            m['pj_goodhit'] = sum(1 for pj in goodpj if any(mid == m['id'] and c >= CS_PJ_C for mid, c in pj[2]))
         else:
             m['got'] = m['w_show'] >= CS_SHOW
         tst = ''

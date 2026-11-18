@@ -5,7 +5,7 @@
 
 口径（和日报冷启那节一致）：
 - 测过 = 花过钱的素材（投放数据_分日 里有消耗）。
-- 过冷启 = 上传当天 + 第二天花费 ≥ ¥400（日报 CS_COST）。只算上传日在数据开始之后、窗口已过完的素材。
+- 过冷启 = 上传当天 + 后 2 天花费 ≥ ¥400（日报 CS_COST）。只算上传日在数据开始之后、窗口已过完的素材。
 - use case 状态按近 30 天（到表里最新一天）：
   已点亮 = 这个 use case 里有一条素材累计花到 ¥5,000（只有约 10% 的素材能到，10/11–11/16 是 1,464 条里 143 条）；
   判弱 = 30 天花过钱的素材 ≥ 10 条、没点亮（和日报「方向偏弱」结果一致：日报多一条「30 天占大盘 < 1%」，但占大盘 ≥ 1% 的 use case 都有 ¥5,000 的素材，这条从没起过作用）；
@@ -96,9 +96,9 @@ def main():
         m['type'] = type_of(m['kind'])
         up = compute.up_day(m['id'])
         m['up'] = up
-        w = [up, (dt.date.fromisoformat(up) + dt.timedelta(days=1)).isoformat()] if up else []
+        w = [(dt.date.fromisoformat(up) + dt.timedelta(days=k)).isoformat() for k in range(3)] if up else []  # Reina 11/18：冷启窗口 3 天
         m['cs'] = None
-        if up and up >= first_day and w[1] <= D:
+        if up and up >= first_day and w[-1] <= D:
             m['cs'] = sum(m['days'].get(x, 0) for x in w) >= CS_COST
 
     # 本周排期
@@ -573,7 +573,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   <section class="card" id="map">
     <h2>use case × 素材类型</h2>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>点亮：有一条素材累计花到 ¥5,000</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 ¥5,000</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
-    <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 第二天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周排期来自素材排期看板，小字是 AI / 二创各几条，分档沿用排期看板的三档。</p>
+    <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 后 2 天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周排期来自素材排期看板，小字是 AI / 二创各几条，分档沿用排期看板的三档。</p>
     <div class="rmwrap"><table class="rm">
       <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周排期</th></tr></thead>
       <tbody>{''.join(body)}</tbody>
