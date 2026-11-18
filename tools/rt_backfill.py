@@ -7,7 +7,7 @@ X 天出的日报里，次留率只能看 X-3..X-1 激活的人；X 当天激活
   - 分日表要有 X+1 的数（和 compute.py 一样用 load_rows，次留已挪到第二天，X 的 cohort 看 X+1 的 ret）。
   - 写 notes/rtday-X.json（compute.py 重跑 X 时会读），并改 X/index.html 里嵌的结果、按当前模板重画；X 是最新一天时也改 index.html。
 口径：X 当天激活、X 当天消耗、X 当天激活的人第二天的次留（深度转化数）。次留率 = 次留 ÷ 激活，次留成本 = X 消耗 ÷ 次留。
-激活不到 TH['act']（30）的照样显示，但灰字带激活数、不上色（样本小）；够 30 的和全盘同一天比上色。
+激活不到 TH['act']（30）的用灰字带激活数展示。够 30 人的按该期日报的次留口径上色，比较时使用同一天的全盘数据。
 """
 import argparse, datetime as dt, json, os, re, sys
 from collections import defaultdict

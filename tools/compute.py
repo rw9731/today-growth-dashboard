@@ -265,8 +265,7 @@ def rate_series(st, uc, days, avail):
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
-GOOD_RATE = 0  # 旧口径的最低线，已不用（见 GOOD_ABS）
-# 次留好（Reina 11/18 改）：次留率 ≥ 30% 就算好，不再和大盘比、不看次留成本；低于 30% 时才和大盘比（次留率不低于全盘、次留成本不高于全盘也算好，否则按全盘判差、贵、一般）。
+# 次留率达到 30% 直接判好。低于 30% 时按同期全盘判断。
 GOOD_ABS = 0.30
 
 
@@ -275,7 +274,8 @@ def ret_good(rate, cpr, rate_w, cpr_w):
         return False
     if rate >= GOOD_ABS:
         return True
-    return cpr is not None and rate >= max(rate_w, GOOD_RATE) and cpr <= cpr_w
+    return (cpr is not None and rate_w is not None and cpr_w is not None
+            and rate >= rate_w and cpr <= cpr_w)
 
 PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.00, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
@@ -286,7 +286,7 @@ def bad_streak(allrows, Dd, th):
     """每条素材连续判差几天（Reina 11/4 定）。
 
     D 激活的人 D+1 才有次留，表 D+2 上午才看得到，所以 x 这天上午能看的是 x-4 到 x-2 激活的人。
-    判差：这 3 天激活合计 >= judge_act，且次留率 < 同期全盘的 low 倍，或次留成本 > 同期全盘的 high 倍。
+    激活合计至少 judge_act 且次留率低于 GOOD_ABS 时，按同期全盘的 low 和 high 判断是否判差。
     报告日 D 的页面在 D+1 上午看，从 D+1 上午往回数。返回 {素材ID: {bad_n, bad_first, bad_after, bad_up}}。
     """
     one = dt.timedelta(days=1)
@@ -303,7 +303,8 @@ def bad_streak(allrows, Dd, th):
         C = sum(tc[d] for d in ds); A = sum(ta[d] for d in ds); R = sum(tr[d + one] for d in ds)
         if a < th['judge_act'] or not A or not R:
             return False
-        return rt / a < th['low'] * R / A or not rt or c / rt > th['high'] * C / R
+        rate = rt / a
+        return rate < GOOD_ABS and (rate < th['low'] * R / A or not rt or c / rt > th['high'] * C / R)
 
     out = {}
     for i in {r['id'] for r in allrows}:
@@ -371,7 +372,7 @@ def tiers_for(allrows, ucs, Dd, th):
         mid = s['share4'] >= PLAN_TH['mid'] and s['act_w'] >= PLAN_TH['act']
         s['tier'] = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
         flag = ''
-        bar = min(GOOD_ABS, max(rate_w, GOOD_RATE))  # 次留率到这条线就能进次留好（Reina 11/18）
+        bar = min(GOOD_ABS, rate_w)
         if s['tier'] == 'T3' and rate is not None:
             if rate >= 0.95 * bar and cpr is not None and cpr <= 1.05 * cpr_w:
                 flag = '差一点进 T1'
@@ -557,7 +558,7 @@ def main():
     days3 = [Dd - dt.timedelta(days=k) for k in (5, 4, 3)]
     W3 = [d.isoformat() for d in days3]
     monday = (Dd - dt.timedelta(days=Dd.weekday())).isoformat()
-    th = dict(TH, week=monday)
+    th = dict(TH, week=monday, good_abs=GOOD_ABS)
 
     ucs = json.load(open(os.path.join(HERE, 'ucs.json')))
     links = json.load(open(os.path.join(HERE, 'links.json')))
