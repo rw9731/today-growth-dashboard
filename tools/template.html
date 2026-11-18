@@ -288,7 +288,7 @@
     </div>
     <p class="lx-take" data-draw="take"></p>
     <a class="lx-jump" href="#plan" data-draw="jump" hidden>↓ 直接看核心 insight 和下一步</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率不低于三天全盘，次留成本不高于三天全盘。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{D}}；次留率、次留成本看 {{W}} 激活的人（{{D}} 激活的次留 {{T}} 才全）。<b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>；<b>次留好</b> = 次留率 ≥ 30%（Reina 11/18 定，不看次留成本）；低于 30% 时才和三天全盘比，次留率不低于全盘、次留成本不高于全盘也算好。次留和 Daily Insight 日报定义相同，这里是巨量回传，会漏一部分，通常低几个百分点。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），看 {{W3}} 激活的人；和日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比。只用来比素材之间的相对高低，不进标签和分层。</p>
   </header>
 
   <section class="lx-kpis" aria-label="昨天总览">
@@ -382,7 +382,7 @@
 
   <section class="lx-sec" id="uc">
     <h2 class="lx-h2">二、按 use case：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。<b>点一行能展开这个 use case 昨天按消耗排的素材</b>，看是哪几条把它带起来的。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率和次留成本都比大盘均值好（有分歧先看次留率）：次留率不低于全盘，次留成本不高于全盘；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。<b>鼠标放在次留率上</b>看这个 use case 最近 7 天每天激活的人的次留率（虚线是全盘），最新一天没回传完会偏低；<b>当天次留率</b>、<b>当天次留成本</b>是 {{D}} 当天激活的人的次留，后天出日报时回补，口径同四。<b>标签后面的箭头</b>是和前一天日报比：↑ 变好、↓ 变差、→ 没变，鼠标放上去看前一天的标签和次留率。</p>
+    <p class="lx-note">按昨天消耗排。<b>点一行能展开这个 use case 昨天按消耗排的素材</b>，看是哪几条把它带起来的。标签 = 量 + 次留。<b>能放量</b> = 四天消耗占全盘 3% 以上，其余是<b>量小</b>。<b>次留好</b> = 次留率 ≥ 30%（Reina 11/18 定，不看次留成本）；低于 30% 时才和全盘比：次留率不低于全盘、次留成本不高于全盘也算好；<b>次留差</b> = 次留率低于全盘的 <b data-draw="th-low">—</b>；<b>次留贵</b> = 次留率没问题，但次留成本超过全盘 <b data-draw="th-high">—</b>；<b>次留一般</b> = 介于两者之间。<b>样本不够</b> = 三天激活不到 <b data-draw="th-act">—</b> 个。“好素材”是这个 use case 下次留好的素材条数（见四）。<b>鼠标放在次留率上</b>看这个 use case 最近 7 天每天激活的人的次留率（虚线是全盘），最新一天没回传完会偏低；<b>当天次留率</b>、<b>当天次留成本</b>是 {{D}} 当天激活的人的次留，后天出日报时回补，口径同四。<b>标签后面的箭头</b>是和前一天日报比：↑ 变好、↓ 变差、→ 没变，鼠标放上去看前一天的标签和次留率。</p>
     <div data-draw="tag-legend" data-tags="能放量 + 次留好,能放量 + 次留一般,能放量 + 次留贵,能放量 + 次留差,量小 + 次留好,量小 + 次留一般,量小 + 次留贵,量小 + 次留差,样本不够,新上线"></div>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
@@ -744,7 +744,7 @@
   const fmtN = (v) => (v === null || v === undefined || isNaN(v) ? '—' : d3.format(',')(Math.round(v)));
   const fmtX = (v) => d3.format('.2~f')(v) + ' 倍';
   const fmtD = (s) => (s ? Number(s.slice(5, 7)) + '/' + Number(s.slice(8, 10)) : '—');
-  const rateCls = (v, o, t) => (v === null ? 'num muted' : v >= o.rate_w ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
+  const rateCls = (v, o, t) => (v === null ? 'num muted' : (v >= 0.30 || v >= o.rate_w) ? 'num lx-good' : v < t.low * o.rate_w ? 'num lx-badv' : 'num');
   const r3Cls = (v, o) => (v === null || v === undefined || o.rate3_w == null ? 'num muted' : v >= o.rate3_w ? 'num lx-good' : v < 0.8 * o.rate3_w ? 'num lx-badv' : 'num');
   const c3Cls = (v, o) => (v === null || v === undefined || o.cpr3_w == null ? 'num muted' : v <= o.cpr3_w ? 'num lx-good' : v > 1.25 * o.cpr3_w ? 'num lx-badv' : 'num');
   const ret3 = (td, r, o) => { td(r3Cls(r.rate3, o)).textContent = fmtP(r.rate3); td(c3Cls(r.cpr3, o)).textContent = fmtY(r.cpr3); };
@@ -1032,7 +1032,7 @@
       const t = document.createElement('table');
       for (const g of dm.groups) {
         const tr = document.createElement('tr'); if (g.n < 5) tr.className = 'small';
-        const good = g.rate != null && g.cpr != null && g.rate >= rw && g.cpr <= cw;
+        const good = g.rate != null && (g.rate >= 0.30 || (g.cpr != null && g.rate >= rw && g.cpr <= cw));
         tr.innerHTML = '<td>' + g.v + '</td><td class="num">' + g.n + ' 条</td><td class="num">' + (g.cost >= 10000 ? '¥' + d3.format('.1f')(g.cost / 10000) + ' 万' : '¥' + d3.format(',.0f')(g.cost)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.rate == null ? '—' : d3.format('.1%')(g.rate)) + '</td><td class="num' + (good && g.n >= 5 ? ' lx-good' : '') + '">' + (g.cpr == null ? '—' : '¥' + d3.format(',.0f')(g.cpr)) + '</td>';
         t.appendChild(tr);
       }
@@ -1049,7 +1049,7 @@
       const td = cellMaker(tr);
       { const gc = td(); pill(gc, r.group, tagCls(r.group));
         const rm0 = days === true ? one('rtday_meta') : null; // 当天次留好（Reina 11/11）：回补后当天激活够数、次留率和次留成本都好于全盘同一天
-        if (rm0 && !/次留好/.test(r.group || '') && !r.rtd_small && r.rtd_rate != null && r.rtd_cpr != null && r.rtd_rate >= rm0.rate && r.rtd_cpr <= rm0.cpr) {
+        if (rm0 && !/次留好/.test(r.group || '') && !r.rtd_small && r.rtd_rate != null && (r.rtd_rate >= 0.30 || (r.rtd_cpr != null && r.rtd_rate >= rm0.rate && r.rtd_cpr <= rm0.cpr))) {
           const h = document.createElement('div'); h.className = 'lx-rtdhint'; h.textContent = (+rm0.date.slice(8, 10)) + ' 号次留变好'; h.title = '{{D}} 当天激活 ' + r.rtd_act + ' 个，次留 ' + fmtP0(r.rtd_rate) + '、¥' + d3.format(',.0f')(r.rtd_cpr) + '（全盘 ' + fmtP0(rm0.rate) + '、¥' + d3.format(',.0f')(rm0.cpr) + '）'; gc.appendChild(h); } }
       if (days === true) judgeCell(td(), r);
       const vid = r.video || (r.link_type === '预览' ? r.link : '');

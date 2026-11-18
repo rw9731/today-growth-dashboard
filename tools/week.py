@@ -149,9 +149,8 @@ def main():
             continue
         sp = stats(rs, P)
         share = s['spend'] / tot
-        bar = max(rw, C.GOOD_RATE)
-        good = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= bar and s['cpr'] <= cw
-        nice = s['rate'] is not None and s['cpr'] is not None and s['rate'] >= bar and s['cpr'] <= WTH['nice'] * cw
+        good = C.ret_good(s['rate'], s['cpr'], rw, cw)  # Reina 11/18：次留率 ≥ 30% 就算好
+        nice = C.ret_good(s['rate'], s['cpr'], rw, WTH['nice'] * cw)
         big = share >= WTH['uc_big_share'] and s['spend'] >= WTH['uc_big_min']
         mid = share >= WTH['uc_mid_share'] and s['act_r'] >= WTH['uc_act']
         tier = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
@@ -223,7 +222,7 @@ def main():
         lk = links.get(i, {})
         ltype = lk.get('type', '')
         link = '' if ltype == '预览' else lk.get('link', '')
-        good = max(s['days']) >= WTH['top_day'] and s['act_r'] >= WTH['top_act'] and s['rate'] is not None and s['cpr'] is not None and s['rate'] >= max(rw, C.GOOD_RATE) and s['cpr'] <= cw
+        good = max(s['days']) >= WTH['top_day'] and s['act_r'] >= WTH['top_act'] and C.ret_good(s['rate'], s['cpr'], rw, cw)
         bad = s['spend'] >= top_bar and s['rate'] is not None and (s['rate'] < WTH['bad_rate'] * rw or (s['cpr'] or 1e9) > WTH['bad_cpr'] * cw)
         # 比全盘多花的钱：这条的次留如果按全盘次留成本买，要花多少；多出来的就是浪费
         excess = s['cost_r'] - s['cost_r'] / s['cpr'] * cw if s['cpr'] else None
@@ -249,8 +248,7 @@ def main():
         r, c = m['rate'], m['cpr'] or 1e9
         if m['act_r'] < WTH['tag_act'] or r is None:
             return '样本不够'
-        bar = max(rw, C.GOOD_RATE)
-        if r >= bar and c <= cw:
+        if C.ret_good(r, m['cpr'], rw, cw):
             return '能放量 + 次留好' if m['act_r'] >= WTH['top_act'] else '样本不够'
         if r < WTH['bad_rate'] * rw:
             return '能放量 + 次留差'

@@ -265,7 +265,18 @@ def rate_series(st, uc, days, avail):
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
-GOOD_RATE = 0  # 次留好 = 次留率和次留成本都比大盘均值好（Yitao、Reina 11/4 定）。之后要提高要求就把最低线写在这里
+GOOD_RATE = 0  # 旧口径的最低线，已不用（见 GOOD_ABS）
+# 次留好（Reina 11/18 改）：次留率 ≥ 30% 就算好，不再和大盘比、不看次留成本；低于 30% 时才和大盘比（次留率不低于全盘、次留成本不高于全盘也算好，否则按全盘判差、贵、一般）。
+GOOD_ABS = 0.30
+
+
+def ret_good(rate, cpr, rate_w, cpr_w):
+    if rate is None:
+        return False
+    if rate >= GOOD_ABS:
+        return True
+    return cpr is not None and rate >= max(rate_w, GOOD_RATE) and cpr <= cpr_w
+
 PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.00, 'days': 5}
 NO_PLAN = ('待对应', '客供', '库外', '')
 CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
@@ -354,13 +365,13 @@ def tiers_for(allrows, ucs, Dd, th):
                   'cost27': S(rs, D[3], 'cost'), 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0})})
         s['ch'] = {c: stats([r for r in rs if chan_of(r['src'], r['track'], r['name']) == c]) for c in CH_NAME}
         rate, cpr = s['rate'], s['cpr']
-        bar = max(rate_w, GOOD_RATE)
-        good = rate is not None and cpr is not None and rate >= bar and cpr <= cpr_w
-        nice = rate is not None and cpr is not None and rate >= bar and cpr <= PLAN_TH['nice'] * cpr_w
+        good = ret_good(rate, cpr, rate_w, cpr_w)
+        nice = ret_good(rate, cpr, rate_w, PLAN_TH['nice'] * cpr_w)
         big = s['share4'] >= PLAN_TH['big']
         mid = s['share4'] >= PLAN_TH['mid'] and s['act_w'] >= PLAN_TH['act']
         s['tier'] = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
         flag = ''
+        bar = min(GOOD_ABS, max(rate_w, GOOD_RATE))  # 次留率到这条线就能进次留好（Reina 11/18）
         if s['tier'] == 'T3' and rate is not None:
             if rate >= 0.95 * bar and cpr is not None and cpr <= 1.05 * cpr_w:
                 flag = '差一点进 T1'
@@ -615,11 +626,10 @@ def main():
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def ret_word(rate, cpr):
-        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好 = 次留率和次留成本都比大盘均值好。
+        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好见 ret_good（Reina 11/18：次留率 ≥ 30% 就算好，低于 30% 才和大盘比）。
         if rate is None:
             return None
-        bar = max(o['rate_w'], GOOD_RATE)
-        if rate >= bar and cpr is not None and cpr <= o['cpr_w']:
+        if ret_good(rate, cpr, o['rate_w'], o['cpr_w']):
             return '次留好'
         if rate < th['low'] * o['rate_w'] or cpr is None:
             return '次留差'
