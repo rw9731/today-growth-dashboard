@@ -451,7 +451,7 @@ def progress_html(prog, T, wt=None):
 
 
 def cap_html(plan, T):
-    """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面逐天看已排 / 产能、哪天还空几条。
+    """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面每天只列已排条数看匀不匀（Reina 11/18：只管每周总量，哪天早做晚做都行，不标每天超、空）。
     产能按 plan 的 cap_day：周一到周五一套、周六周日一套（周六日每组每天约 20 条，AI 和二创 1:1）。
     已排 = schedule_plan.json 里这周的排期行（不算 cut）。「还空」只标明天起的天（今天的排期不改）。"""
     cd = plan.get('cap_day')
@@ -491,25 +491,14 @@ def cap_html(plan, T):
             continue
         for t in ('AI', '二创', '合计'):
             ts = ('AI', '二创') if t == '合计' else (t,)
-            cells = ''
-            for d in week:
-                n = sum(got[(g, x, d)] for x in ts)
-                c = sum(cap(g, x, d) for x in ts)
-                cls = ('c-today' if d == T else ('c-past' if d < T else '')) + (' c-over' if n > c else '')
-                if d > T and c > n:
-                    extra = f'<em>还空 {c - n}</em>'
-                elif n > c:
-                    extra = f'<em class="o">超 {n - c}</em>'
-                else:
-                    extra = ''
-                cells += f'<td class="{cls}"><b>{n}</b><small> / {c}</small>{extra}</td>'
+            cells = ''.join(f'<td class="{"c-today" if d == T else ("c-past" if d < T else "")}"><b>{sum(got[(g, x, d)] for x in ts)}</b></td>' for d in week)
             n = sum(got[(g, x, d)] for x in ts for d in week)
             c = sum(cap(g, x, d) for x in ts for d in week)
             rows += (f'<tr class="{"c-tot" if t == "合计" else ""}"><th>{g} 组 {t}</th>{cells}'
                      f'<td class="c-sum"><b>{n}</b><small> / {c}</small></td><td class="c-left">{c - n if c >= n else "超 " + str(n - c)}</td></tr>')
     note = html.escape(plan.get('cap_note', ''))
     return (f'<section class="cap"><h2>本周排期余量</h2><div class="cap-cards">{cards}</div>'
-            f'<p class="rev-note">下表每格是这天「已排 / 这天产能」。「还空 n」是这天还能再排 n 条（只标明天起的天，今天和以前的不再排）；「超 n」是这天排多了 n 条。{note}</p>'
+            f'<p class="rev-note">只看每周总量：哪天做早做晚都行，下表的每天条数只用来看排得匀不匀。{note}</p>'
             f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排 / 产能</th><th>本周还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
 
 
