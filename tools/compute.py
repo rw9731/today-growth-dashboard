@@ -1317,6 +1317,22 @@ def main():
         b['pl_run'] = rn / sl if sl else None
         b['pl_head'] = hd / rn if rn else None
         b['pl_hit'] = gh / gd if gd else None
+    # 同原片扎堆（Reina 11/18 定）：同一条原片（root）在上传日前后 1 天内上了 CS_CROWD 条以上（含自己），算「上太多版本」。
+    # 11/9–11/16 上传的：扎堆的 0/44 过冷启（头 2 天），其他 43/349；11/13 当天扎堆 0/22、不扎堆 21/79（p=0.006）。只做维度看相关性，不算进没过的原因。
+    CS_CROWD = 7
+    _rd = defaultdict(list)
+    for m in cs_mats:
+        _rd[m['root']].append(dt.date.fromisoformat(m['up'][:10]))
+    for m in cs_mats:
+        u0 = dt.date.fromisoformat(m['up'][:10])
+        m['crowd'] = sum(1 for x in _rd[m['root']] if abs((x - u0).days) <= 1)
+    for b in batches:
+        ms = [m for m in cs_mats if m['up'][:10] == b['up'] and m['crowd'] >= CS_CROWD]
+        b['crowd'] = len(ms)
+        b['crowd_pass'] = sum(1 for m in ms if m['st'] == 'pass')
+        b['crowd_dec'] = sum(1 for m in ms if m['st'] != 'wait')
+        b['crowd_roots'] = sorted({m['root'] for m in ms})[:6]
+    newd_meta['cs_crowd'] = CS_CROWD
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
