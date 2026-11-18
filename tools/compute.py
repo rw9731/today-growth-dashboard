@@ -1131,6 +1131,31 @@ def main():
             b['why_low'] = {**pj_stat, 'n': len(lo), 'npj_lo': med([m['npj'] for m in lo]), 'npj_hi': med([m['npj'] for m in hi]), 'zero': sum(1 for m in lo if not m['npj']),
                             'n_proj': len(ks), 'mats_med': med([PJ[k][1] for k in ks]), 'old_share': round(old_ / tot_, 3) if tot_ else None, 'self_share': round(self_ / tot_, 3) if tot_ else None, 'win_tot': round(tot_),
                             'top_old': [[nm_of(i_), round(c), up_day(i_)] for c, i_ in top_old], 'days': [wd[0], wd[-1]]}
+    # 新素材的钱从新项目还是老项目来（Reina 11/18，回应「新素材要同时往新老项目建」）：项目 ID 高 32 位是创建时间。
+    # 看 D-3 到 D-1 上传、在 proj-D.json 里的新素材：进的项目里老项目（素材上传前建的）占几成、花到的钱几成来自老项目、各自几成项目花到钱。
+    if pjd:
+        pj_day = lambda i: dt.datetime.fromtimestamp(int(i) >> 32, dt.timezone(dt.timedelta(hours=8))).date().isoformat()
+        f0, f1 = (Dd - dt.timedelta(days=3)).isoformat(), (Dd - dt.timedelta(days=1)).isoformat()  # 只看最近 3 个上传日：冷启窗口里的钱；放长了会混进跑起来以后新建项目扩量的钱
+        sl = {'old': [0, 0, 0.0], 'new': [0, 0, 0.0]}  # [进了, 花到钱, 花费]
+        nmat = 0
+        for mid, ks in (pjd.get('mat_proj') or {}).items():
+            u = up_day(mid)
+            if not (f0 <= u <= f1):
+                continue
+            nmat += 1
+            for k in ks:
+                pj = pjd['projects'][k]
+                c = next((c for x, c in pj[2] if x == mid), 0)
+                g = sl['old' if pj_day(pj[0]) < u else 'new']
+                g[0] += 1
+                g[1] += c > 0
+                g[2] += c
+        ct = sl['old'][2] + sl['new'][2]
+        tot_sl = sl['old'][0] + sl['new'][0]
+        pjd = {**pjd, 'newold': {'from': f0, 'to': f1, 'n': nmat, 'slot_old': round(sl['old'][0] / tot_sl, 3) if tot_sl else None,
+                                 'cost_old': round(sl['old'][2] / ct, 3) if ct else None, 'cost': round(ct),
+                                 'hit_old': round(sl['old'][1] / sl['old'][0], 3) if sl['old'][0] else None,
+                                 'hit_new': round(sl['new'][1] / sl['new'][0], 3) if sl['new'][0] else None}}
     newd_meta['proj'] = pjd
     # 二剪和对比版本像到什么程度（Reina 11/11）：画面重合比例、台词相似度，notes/vsim-D.json
     # 合并 D 及以前的 vsim 文件（Reina 11/12：冷启硬伤要用，比过一次就一直算），同一条以最近一次为准
@@ -1153,8 +1178,13 @@ def main():
     # 测试量：上传当天 + 第二天展示 ≥ CS_SHOW 算拿到了；没拿到的按项目数据找原因（没进智擎项目、只进 iOS、项目都没起量、项目的钱给了别的素材）。
     # 方向：最近 10 个上传日里「没硬伤、拿到测试量」的素材，按 use case 和素材类型算过冷启比例，比整体低一半算方向弱。
     CS_SHOW = 5000
-    CS_PJ = 6  # 实测项目数 ≥ 6 算测过；0–5 个不充分，12 个以上充分（Reina 11/17 从 3 / 10 改）
-    CS_PJ_OK = 12
+    # 测试充分度拆成两个维度（Reina 11/18，回应 Xuhan「进了项目但拿不到量」）：
+    # 基建 = 进了几个跑量项目（项目自己到今天花到 ¥100 以上），≥ CS_ACT 算基建够——投放侧给没给机会；
+    # 实测 = 自己在几个项目里各花到 ¥20 以上，≥ CS_PJ 算测够了——系统有没有真的给量。
+    # 依据 11/8–11/15 上传的 374 条：实测 0 个过冷启 1%、1 个 10%、2 个 16%、3–4 个 36%、5 个以上 90%；基建够、实测不够的占 64%，过冷启 5%。
+    CS_ACT, CS_ACT_C = 10, 100
+    CS_PJ, CS_PJ_C = 3, 20
+    CS_PJ_OK = 5
     AUD_SKIP = {'疑似AIGC'}
     fl_path = os.path.join(os.path.dirname(HERE), 'notes', 'content-flags.json')
     FLAGS = json.load(open(fl_path)).get('items', {}) if os.path.exists(fl_path) else {}
@@ -1175,12 +1205,12 @@ def main():
         if os.path.basename(fn)[9:19] <= D[3]:
             AUD = {i: [t for t in dict.fromkeys(v.split(';')) if t and t not in AUD_SKIP] for i, v in json.load(open(fn)).get('items', {}).items()}
     AUD = {i: v for i, v in AUD.items() if v}
-    # 实测项目数（Reina 11/12：测试充分度看素材在几个项目里测过；11/17 改成不到 6 个不充分，12 个以上充分）。进了项目不等于测了，这里数它自己真花到钱的项目
+    # 实测项目数（Reina 11/12 定，11/18 改）：数它自己花到 ¥20 以上的项目，进了项目不等于测了，几分钱也不算
     PJ_SP = defaultdict(int)
     if pjd:
         for pj in PJ:
             for mid, c in pj[2]:
-                if c > 0:
+                if c >= CS_PJ_C:
                     PJ_SP[mid] += 1
 
     def kgrp(kind):
@@ -1215,6 +1245,10 @@ def main():
         if pjd:
             m['pj_sp'] = PJ_SP.get(m['id'], 0)
             m['got'] = m['pj_sp'] >= CS_PJ
+            ps = [PJx[k] for k in MPx.get(m['id'], [])]
+            live = [pj for pj in ps if sum(c for _, c in pj[2]) >= CS_ACT_C]
+            m['pj_act'] = len(live)
+            m['base_ok'] = len(live) >= CS_ACT
         else:
             m['got'] = m['w_show'] >= CS_SHOW
         tst = ''
@@ -1222,14 +1256,14 @@ def main():
             if not pjd:
                 tst = '窗口里一分钱没花' if m.get('nospend') else '没拿到测试量'
             else:
-                ps = [PJx[k] for k in MPx.get(m['id'], [])]
-                live = [pj for pj in ps if sum(c for _, c in pj[2]) >= 100]
                 if not ps:
                     tst = '没进智擎项目'
                 elif all(is_ios(pj) for pj in ps):
                     tst = '只进了 iOS 项目'
                 elif not live:
                     tst = '所在项目都没起量'
+                elif not m['base_ok']:
+                    tst = f'跑量项目只有 {len(live)} 个'
                 else:
                     old_, new_ = 0.0, 0.0
                     for pj in live:
@@ -1272,7 +1306,7 @@ def main():
         elif m['hard']:
             m['cause'] = '硬伤'
         elif not m['got']:
-            m['cause'] = '测试'
+            m['cause'] = '测试' if m.get('base_ok') else '基建'
         elif ('uc', m['uc']) in weak:
             m['cause'] = '方向'
         else:
@@ -1282,6 +1316,9 @@ def main():
     newd_meta['cs_show'] = CS_SHOW
     newd_meta['cs_pj'] = CS_PJ if pjd else None
     newd_meta['cs_pj_ok'] = CS_PJ_OK if pjd else None
+    newd_meta['cs_pj_c'] = CS_PJ_C if pjd else None
+    newd_meta['cs_act'] = CS_ACT if pjd else None
+    newd_meta['cs_act_c'] = CS_ACT_C if pjd else None
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
