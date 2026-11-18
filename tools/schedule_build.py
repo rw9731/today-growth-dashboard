@@ -418,8 +418,8 @@ def progress_html(prog, T, wt=None):
         return ''
     g = prog.get('groups', {})
     wt = wt or {}
-    fri = T + dt.timedelta(days=max(0, 4 - T.weekday()))
-    left = sum(1 for i in range((fri - T).days + 1) if (T + dt.timedelta(days=i)).weekday() < 5)
+    sun = T + dt.timedelta(days=6 - T.weekday())
+    left = (sun - T).days + 1  # Reina 11/18：周六日也排，剩下的天数算到周日
     rows = ''
     for k in ('A', 'B'):
         x = g.get(k)
@@ -437,7 +437,7 @@ def progress_html(prog, T, wt=None):
             tl = t['due'] - t['got']
             bits.append(f'今天还差 {tl}' if tl > 0 else '今天的交齐了')
         if left and cap > wg:
-            bits.append(f'按 {cap} 算，剩下 {left} 个工作日每天约 {-(-(cap - wg) // left)} 条')
+            bits.append(f'按 {cap} 算，剩下 {left} 天（含周末）每天约 {-(-(cap - wg) // left)} 条')
         tip = f'本周产能 {cap} 条，已交 {wg} 条（含提前交的）；竖线是按飞书排期到昨天该交的 {x["due"]} 条'
         rows += (f'<span class="k">{k} 组</span><div class="pg"><div class="o-cell">'
                  f'<span class="o-track" title="{html.escape(tip)}"><span class="o-fill" style="width:{min(100, wg / cap * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, x["due"] / cap * 100):.1f}%"></i></span>'
@@ -448,6 +448,63 @@ def progress_html(prog, T, wt=None):
         return rows
     items = ''.join('<li>' + html.escape(x) + '</li>' for x in lags)
     return rows + f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b></summary><ul>{items}</ul></details>'
+
+
+def cap_html(plan, T):
+    """「本周排期余量」（Reina 11/18）：A、B 组这周每天已排多少、产能多少、还能排多少，看得出还能给哪组、哪天排。
+    产能按 plan 的 cap_day：周一到周五一套、周六周日一套（Reina 11/18：周六日每组每天约 20 条，AI 和二创 1:1）。
+    已排 = schedule_plan.json 里这周的排期行（不算 cut）。还能排只算明天起（当天的排期不改）。"""
+    cd = plan.get('cap_day')
+    if not cd:
+        return ''
+    mon = T - dt.timedelta(days=T.weekday())
+    week = [mon + dt.timedelta(days=i) for i in range(7)]
+    got = defaultdict(int)
+    for e in plan.get('E', []):
+        if e.get('s') == 'cut' or e.get('g') not in cd or e.get('t') not in ('AI', '二创'):
+            continue
+        try:
+            d = date(e['d'])
+        except Exception:
+            continue
+        if mon <= d <= week[-1]:
+            got[(e['g'], e['t'], d)] += int(e.get('n') or 0)
+    wd_names = '一二三四五六日'
+    head = ''.join(f'<th class="{"c-today" if d == T else ("c-past" if d < T else "")}">{md(d)}<br>周{wd_names[d.weekday()]}</th>' for d in week)
+    rows = ''
+    for g in ('A', 'B'):
+        if g not in cd:
+            continue
+        tot_got = tot_cap = tot_left = 0
+        day_tot = defaultdict(lambda: [0, 0])
+        body = ''
+        for t in ('AI', '二创'):
+            cells = ''
+            sg = sc = sl = 0
+            for d in week:
+                c = cd[g]['we' if d.weekday() >= 5 else 'wd'].get(t, 0)
+                n = got[(g, t, d)]
+                sg += n; sc += c
+                day_tot[d][0] += n; day_tot[d][1] += c
+                left = max(0, c - n) if d > T else 0
+                sl += left
+                cls = 'c-today' if d == T else ('c-past' if d < T else '')
+                if n > c:
+                    cls += ' c-over'
+                tip = f'{g} 组 {t} {md(d)}：已排 {n}，产能 {c}' + (f'，还能排 {left}' if left else '')
+                cells += f'<td class="{cls}" title="{html.escape(tip)}"><b>{n}</b><small>/{c}</small>' + (f'<em>+{left}</em>' if left else '') + '</td>'
+            tot_got += sg; tot_cap += sc; tot_left += sl
+            body += f'<tr><th>{g} 组 {t}</th>{cells}<td class="c-sum"><b>{sg}</b><small>/{sc}</small></td><td class="c-gap">{max(0, sc - sg) or "—"}</td><td class="c-left">{sl or "—"}</td></tr>'
+        cells = ''
+        for d in week:
+            n, c = day_tot[d]
+            left = max(0, c - n) if d > T else 0
+            cls = ('c-today' if d == T else ('c-past' if d < T else '')) + (' c-over' if n > c else '')
+            cells += f'<td class="{cls}"><b>{n}</b><small>/{c}</small>' + (f'<em>+{left}</em>' if left else '') + '</td>'
+        rows += body + f'<tr class="c-tot"><th>{g} 组合计</th>{cells}<td class="c-sum"><b>{tot_got}</b><small>/{tot_cap}</small></td><td class="c-gap">{max(0, tot_cap - tot_got) or "—"}</td><td class="c-left">{tot_left or "—"}</td></tr>'
+    note = html.escape(plan.get('cap_note', ''))
+    return (f'<section class="cap"><h2>本周排期余量</h2><p class="rev-note">每格是这天已排 / 产能，<em class="cap-e">+n</em> 是这天还能排几条（只算明天起，今天的排期不动），红色是排超了。右边三列：本周已排 / 本周产能；离周产能还差几条；明天起按每天产能还能排几条（按每天产能算，前几天少排的补不回来、多排的也不抵后面，所以和「离周产能」不一样）。{note}</p>'
+            f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排</th><th>离周产能</th><th>明天起还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
 
 
 def agency_html(ag, T):
@@ -589,6 +646,7 @@ def main():
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
         PROG=progress_html(prog, T, plan.get('week_total') if in_week else None) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
+        CAP=cap_html(plan, T) if in_week else '',
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
