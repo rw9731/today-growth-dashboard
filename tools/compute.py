@@ -1301,6 +1301,46 @@ def main():
             m['cause'] = '方向'
         else:
             m['cause'] = '其他'
+    # 「进了也没拿到量」拆三类（Reina 11/18：原来那列只是结果）：
+    #   占着 = 这条素材进的项目，在上传前一天的快照里已有 ≥ CS_OCC 的花费给了前 3 个上传日的素材（上传前就定了，是原因）；
+    #   数据差 = 没被占着、窗口展示 ≥ CS_SHOW，测过了还是没过（素材本身）；试探 = 没被占着、展示不到 CS_SHOW，系统只给了几百次试探展示就停了。
+    # 还在看的素材（窗口没走完）也按同一套先归一下，写在 cause_now，页面上灰字「+n 在看」，窗口走完以后以 cause 为准。
+    CS_OCC = 0.10
+    _snap = {}
+
+    def _pocc(m):
+        u0 = dt.date.fromisoformat(m['up'][:10])
+        k = (u0 - dt.timedelta(days=1)).isoformat()
+        if k not in _snap:
+            pp = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{k}.json')
+            _snap[k] = {x[0]: x for x in json.load(open(pp))['projects']} if os.path.exists(pp) else None
+        PP = _snap[k]
+        if PP is None:
+            return None
+        num = den = 0.0
+        for kk in MPx.get(m['id'], []):
+            x = PP.get(PJx[kk][0])
+            if not x:
+                continue
+            den += sum(c for _, c in x[2])
+            num += sum(c for mid, c in x[2] if up_day(mid) and u0 - dt.timedelta(days=3) <= dt.date.fromisoformat(up_day(mid)) < u0)
+        return num / den if den else 0.0
+
+    def _sub(m):
+        if m.get('pocc') is not None and m['pocc'] >= CS_OCC:
+            return '占着'
+        return '数据差' if m.get('w_show', 0) >= CS_SHOW else '试探'
+    for m in cs_mats:
+        m['pocc'] = _pocc(m) if pjd else None
+        m['cause2'] = _sub(m) if m['cause'] == '测试' else ''
+        m['cause_now'] = m['cause2_now'] = ''
+        if m['st'] == 'wait':
+            if m['hard']:
+                m['cause_now'] = '硬伤'
+            elif not m['got']:
+                m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
+                m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
+    newd_meta['cs_occ'] = CS_OCC
     newd_meta['cs_fair_rate'] = fr
     newd_meta['cs_fair_n'] = len(fair)
     newd_meta['cs_show'] = CS_SHOW
