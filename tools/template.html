@@ -520,8 +520,7 @@
               <th class="num"><span class="lx-tip" data-tipk="plhit">进了也没拿到量</span><span class="th-sub">素材本身（占上传）</span></th>
               <th class="num">方向偏弱<span class="th-sub">条数（占上传）</span></th>
               <th class="num">单条没跑出来<span class="th-sub">测够了、方向正常（占上传）</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="room">新素材能分到的钱</span><span class="th-sub">窗口里上传 3 天内素材花的 ÷ 大盘</span></th>
-              <th class="num"><span class="lx-tip" data-tipk="ptake">被前几批拿走</span><span class="th-sub">新素材的钱里前 3 天上传的占</span></th>
+              <th class="num"><span class="lx-tip" data-tipk="pocc">被前几批新素材占着</span><span class="th-sub">进的项目里，上传前已被前 3 天新素材占的花费</span></th>
               <th class="num"><span class="lx-tip" data-tipk="crowd">同原片上太多版本</span><span class="th-sub">前后 3 天同原片 ≥ 7 条（占上传）</span></th>
               <th class="num">花过钱的条数</th>
               <th class="num"><span class="lx-tip" data-tipk="acc">平均投放账户数</span></th>
@@ -1154,8 +1153,7 @@
       pjsp: '实测项目：这条素材自己在里面花到 ¥20 以上的项目（巨量智擎户，项目数据是近 10 天的花费），≥ 3 个算测够了。',
       plrun: '没进已跑量项目：没测够（实测项目不到 3 个），而且进的没老头部的已跑量项目（近 10 天花到 ¥2,000 以上）不到 5 个、也没碰到老头部。投放侧没把它放进花钱的项目。鼠标放到格子上能看到这批新素材进的项目里已跑量的占几成。',
       plhead: '被老头部压住：没测够，进的没老头部的已跑量项目不到 5 个，而且有的已跑量项目被老头部（比它早上传、占项目花费 70% 以上的素材）占着。要换没有老头部的项目放。',
-      room: '新素材能分到的钱（Reina 11/18）：这批冷启窗口那几天，大盘里上传 3 天内的素材（不管哪天上传的）一共花的钱占大盘多少，反映新素材整体拿到了多少测试量。注意它大部分也是结果：投手建了项目、给了预算，巨量自己判断新素材不如老素材就不花（11/16 新建了 81 个项目，新素材在新项目里只花了 ¥1,449）。它只说明「新素材整体没拿到钱」，分不出是投放设置（预算、出价、iOS/安卓分配）还是系统觉得素材不行。11/3–11/15 上传的 13 批，它和冷启率 Spearman 0.68（p=0.01）；比这几批平均低 3 个点或平均的 20% 以上标红。',
-      ptake: '被前几批拿走（Reina 11/18）：新素材花的钱里，前 3 个上传日的素材占多少。前一批跑起来了，后一批就分不到测试量（11/14 那批 95% 被 11/11–11/13 的素材拿走）。注意一半是结果：这批自己跑不起来，这个比例也会高，只当参考。比平均高 3 个点（或剩下那部分的 20%）以上标红。',
+      pocc: '被前几批新素材占着（Reina 11/18）：这批素材进的老项目，在上传前一天的项目快照里（近 10 天花费），已经有多少给了前 3 个上传日的素材。前一批跑起来了，后一批进同样的项目就要和它们抢。上传前就定了，不受这批自己好坏影响，是原因不是结果。「被老头部压住」只看一条老素材占 70% 以上，抓不到这种一群新素材合起来占的情况。11/10 起有项目快照，之前写 —。比这几批的中位数高 3 个点（或中位数的 20%）以上标红，鼠标放上去看 iOS、安卓分开的数。',
       crowd: '同原片上太多版本（Reina 11/18）：同一条原片在上传日前后 1 天内上了 7 条以上（含自己），不管是 AI 重拍、全片重配还是只剪辑都算。11/9–11/16 上传的，这类 44 条头 2 天一条没过，其他 349 条过了 43 条（12%）；11/13 当天扎堆 0/22、不扎堆 21/79，差别显著。不算进没过的原因，单独一列看和冷启率的关系；占上传比这几批合起来高 10 个点以上标红，鼠标放到数字上看是哪几条原片。',
       plhit: '进了也没拿到量：已经进了 5 个以上没老头部的已跑量项目，还是没测够（实测项目不到 3 个）。机会给到了还抢不到，是素材本身的问题。',
       win: '冷启窗口：' + WT + '。激活、消耗、次留都只算这 ' + WN + ' 天。'
@@ -1445,7 +1443,7 @@
       return h + '<p class="lx-note">同场景：AI 素材按细分场景和 use case 编号归（同一场景的不同编号算一个），KOC、KOL 按原片归，扩量算进它的原片。窗口 = ' + WT + '；窗口次留灰字是激活不到 20 个、括号里是激活数。</p></div>';
     };
     const CAUSE_AVG = (() => { const dd = B.filter((b) => b.cs != null && b.n_up), n = d3.sum(dd, (b) => b.n_up); return ['硬伤', '基建', '头部', '测试', '方向', '其他'].map((k) => n ? CS.filter((m) => m.cause === k && dd.some((b) => b.up === m.up.slice(0, 10))).length / n : null); })();
-    const ROOM_AVG = (() => { const o = {}; ['room', 'prior_take'].forEach((k) => { const v = B.filter((b) => b.cs != null).map((b) => b[k]).filter((x) => x != null); o[k] = v.length >= 3 ? d3.mean(v) : null; }); return o; })();
+    const POCC_AVG = (() => { const v = B.map((b) => b.pocc).filter((x) => x != null); return v.length >= 3 ? d3.median(v) : null; })();  // 用中位数：偏态，几批高的会把平均拉上去
     const CROWD_AVG = (() => { const dd = B.filter((b) => b.crowd != null && b.n_up), n = d3.sum(dd, (b) => b.n_up); return n ? d3.sum(dd, (b) => b.crowd) / n : null; })();
     const PL_AVG = (() => { const o = {}; ['pl_run', 'pl_head', 'pl_hit'].forEach((k) => { const v = B.map((b) => b[k]).filter((x) => x != null); o[k] = v.length >= 3 ? d3.mean(v) : null; }); return o; })();
     fill('rampbatch', (tb) => {
@@ -1465,9 +1463,8 @@
           // 没过的按原因拆成条数，几列加起来 = 没过（Reina 11/18）；没项目数据的日子，测试不充分算在「进了也没拿到量」那列，前两列写 —
           const PLT = {基建: b.pl_run != null ? '这批新素材进的项目里，已跑量的占 ' + fmtP0(b.pl_run) : '', 头部: b.pl_head != null ? '进的已跑量项目里，有老头部的占 ' + fmtP0(b.pl_head) : '', 测试: b.pl_hit != null ? '没老头部的已跑量项目里，新素材拿到量（花到 ¥20）的占 ' + fmtP0(b.pl_hit) : (nm.cs_run ? '' : '这天没有项目数据，这列是测试不充分（窗口展示不到 5,000）')};
           ['硬伤', '基建', '头部', '测试', '方向', '其他'].forEach((k, j) => { if ((k === '基建' || k === '头部') && !F.some((m) => 'pj_run' in m) && has) { const c = td('num muted'); c.textContent = '—'; return; } cc(k, j); const c = tr.lastChild; if (PLT[k]) c.title = PLT[k]; }); }
-        // 新素材能分到的钱、被前几批拿走（Reina 11/18）：和平均差 max(3 个点, 平均的 20%) 以上标色，分到的少、被拿走的多标红
-        { const c = td('num'); if (b.room == null) { c.textContent = '—'; c.className = 'num muted'; } else { c.textContent = fmtP0(b.room); const a = ROOM_AVG.room, g = a == null ? null : Math.max(0.03, a * 0.2); if (g != null && b.room <= a - g) c.classList.add('lx-badv'); else if (g != null && b.room >= a + g) c.classList.add('lx-good'); c.title = '窗口 ' + b.room_days + ' 天大盘里，上传 3 天内的新素材一共花了 ' + fmtY(b.room_c) + (b.room_days < (nm.cs_win || 3) ? '（窗口还没走完）' : ''); } }
-        { const c = td('num'); if (b.prior_take == null) { c.textContent = '—'; c.className = 'num muted'; } else { c.textContent = fmtP0(b.prior_take); const a = ROOM_AVG.prior_take, g = a == null ? null : Math.max(0.03, (1 - a) * 0.2); if (g != null && b.prior_take >= a + g) c.classList.add('lx-badv'); else if (g != null && b.prior_take <= a - g) c.classList.add('lx-good'); c.title = '窗口里前 3 个上传日的素材花了 ' + fmtY(b.prior_c) + '，这批自己花了 ' + fmtY(b.me_c) + '。一半是结果：这批自己跑不起来，这个比例自然就高。'; } }
+        // 被前几批新素材占着（Reina 11/18）：上传前就定了的原因维度；和平均差 max(3 个点, 平均的 20%) 以上标色，占得多标红
+        { const c = td('num'); if (b.pocc == null) { c.textContent = '—'; c.className = 'num muted'; c.title = '这天没有上传前一天的项目快照（11/10 起才有）'; } else { c.textContent = fmtP0(b.pocc); const a = POCC_AVG, g = a == null ? null : Math.max(0.03, a * 0.2); if (g != null && b.pocc >= a + g) c.classList.add('lx-badv'); else if (g != null && b.pocc <= a - g) c.classList.add('lx-good'); const o = b.pocc_os || {}; c.title = '这批进的 ' + b.pocc_np + ' 个老项目里，上传前一天的近 10 天花费有 ' + fmtP0(b.pocc) + ' 已经给了前 3 个上传日的素材' + (o.iOS != null ? '\niOS 项目 ' + fmtP0(o.iOS) : '') + (o['安卓'] != null ? '，安卓项目 ' + fmtP0(o['安卓']) : ''); } }
         // 同原片上太多版本（Reina 11/18）：不是没过的原因，单独一列看相关性；占上传比这几批合起来高 10 个点以上标红
         { const c = td('num'); if (b.crowd == null) { c.textContent = '—'; c.className = 'num muted'; } else { c.innerHTML = b.crowd + ' <span class="muted">（' + fmtP0(b.n_up ? b.crowd / b.n_up : 0) + '）</span>'; c.style.whiteSpace = 'nowrap'; if (CROWD_AVG != null && b.n_up && b.crowd && b.crowd / b.n_up >= CROWD_AVG + 0.1) c.classList.add('lx-badv'); if (b.crowd) c.title = '这 ' + b.crowd + ' 条里过冷启 ' + b.crowd_pass + ' 条' + (b.crowd_dec < b.crowd ? '（还有 ' + (b.crowd - b.crowd_dec) + ' 条在看）' : '') + '\n原片：' + (b.crowd_roots || []).join('；'); } }
 

@@ -1333,32 +1333,34 @@ def main():
         b['crowd_dec'] = sum(1 for m in ms if m['st'] != 'wait')
         b['crowd_roots'] = sorted({m['root'] for m in ms})[:6]
     newd_meta['cs_crowd'] = CS_CROWD
-    # 新素材能分到的钱（Reina 11/18 要一个跟「没拿到测试量」原因有关的维度）：
-    # room = 冷启窗口那几天，上传 3 天内的素材（不管哪天上传的）花的钱 ÷ 大盘，反映大盘给新素材留了多少；
-    # prior_take = 这些钱里被前 3 个上传日的素材拿走的比例（前几批跑起来就会吃掉后面这批的测试量）。
-    # 11/3–11/15 上传的 13 批：room 和冷启率 Spearman 0.68（p=0.01）。prior_take 一半是结果（这批自己不行，前几批的占比自然高），只当参考。
-    _ud = {i: dt.date.fromisoformat(up_day(i)) for i in cost_by if up_day(i)}
+    # 被前几批新素材占着（Reina 11/18：要原因不要结果）：这批素材进的项目（按 D 的项目快照），在上传前一天的快照里
+    # （notes/proj-<上传日前一天>.json，近 10 天花费），前 3 个上传日的素材已经占了这些项目多少花费。上传前就定了，不受这批自己好坏影响。
+    # 11/14 那批：iOS 项目里 14%、安卓 9%（11/11–11/13 都在 4% 以下）；11/15 22%，11/16 13%（iOS 23%）。
     for b in batches:
+        b['pocc'] = None
+        if not pjd:
+            continue
         u0 = dt.date.fromisoformat(b['up'])
-        Wr = {(u0 + dt.timedelta(days=k)).isoformat() for k in range(CSW) if u0 + dt.timedelta(days=k) <= Dd}  # 不能叫 W：会盖掉前面的 W
-        tot = sum(day_tot.get(d, 0) for d in Wr)
-        new_ = me_ = pr_ = 0.0
-        for i, dd in cost_by.items():
-            ui = _ud.get(i)
-            if ui is None:
+        pp = os.path.join(os.path.dirname(HERE), 'notes', f"proj-{(u0 - dt.timedelta(days=1)).isoformat()}.json")
+        if not os.path.exists(pp):
+            continue
+        PP = {x[0]: x for x in json.load(open(pp))['projects']}
+        pids = {PJx[k][0] for m in cs_mats if m['up'][:10] == b['up'] for k in MPx.get(m['id'], [])}
+        num, den = defaultdict(float), defaultdict(float)
+        for pid in pids:
+            x = PP.get(pid)
+            if not x:
                 continue
-            for d, c in dd.items():
-                if d not in Wr or not c:
-                    continue
-                if 0 <= (dt.date.fromisoformat(d) - ui).days <= 2:
-                    new_ += c
-                if ui == u0:
-                    me_ += c
-                elif u0 - dt.timedelta(days=3) <= ui < u0:
-                    pr_ += c
-        b['room'] = new_ / tot if tot else None
-        b['prior_take'] = pr_ / (pr_ + me_) if pr_ + me_ else None
-        b['room_c'], b['prior_c'], b['me_c'], b['room_days'] = round(new_), round(pr_), round(me_), len(Wr)
+            os_ = x[3] if len(x) > 3 else ''
+            t = sum(c for _, c in x[2])
+            n = sum(c for mid, c in x[2] if up_day(mid) and u0 - dt.timedelta(days=3) <= dt.date.fromisoformat(up_day(mid)) < u0)
+            for k in ('all', os_):
+                num[k] += n
+                den[k] += t
+        if den['all']:
+            b['pocc'] = num['all'] / den['all']
+            b['pocc_os'] = {k: round(num[k] / den[k], 3) for k in ('iOS', '安卓') if den[k]}
+            b['pocc_np'] = sum(1 for pid in pids if pid in PP)
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
