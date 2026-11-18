@@ -532,7 +532,7 @@
               <th class="num cs-why"><span class="lx-tip" data-tipk="tdir">还在测的方向</span><span class="th-sub">不在验证过的两档（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="plrun">没进已跑量项目</span><span class="th-sub">投放侧（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="plhead">被一条老素材霸着</span><span class="th-sub">要换项目（占上传）</span></th>
-              <th class="num cs-why"><span class="lx-tip" data-tipk="c2occ">进了已跑量项目没花出钱 ·<br>被最近几批新素材占着</span><span class="th-sub">投放侧（占上传）</span></th>
+              <th class="num cs-why"><span class="lx-tip" data-tipk="c2occ">进了已跑量项目没花出钱 ·<br>被前 3 天上传的新素材占着</span><span class="th-sub">投放侧（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="c2bad">进了已跑量项目没花出钱 ·<br>测过了数据差</span><span class="th-sub">素材本身（占上传）</span></th>
               <th class="num cs-why"><span class="lx-tip" data-tipk="c2try">进了已跑量项目没花出钱 ·<br>只给了试探量</span><span class="th-sub">待查（占上传）</span></th>
               <th class="num cs-why cs-why-r">单条没跑出来<span class="th-sub">测够了、方向正常（占上传）</span></th>
@@ -1169,7 +1169,7 @@
       tdir: '还在测的方向（Reina 11/18 晚，替代原「方向偏弱」）：素材上传那天，它的 use case 不在排期里验证过的两档（能放量 + 留存好、跑量少 + 留存好），也就是二八里那两三成测试名额：探索新方向、难放量或留存差但还想继续测的、还没分档的。这些没过算预期之内，排第三先归掉，后面投放侧几列就只看验证过的方向。档位按排期表回推到上传那天。没过的占上传超过 20% 标红（测试名额放多了）。',
       plhead: '被一条老素材霸着（原名「被老头部压住」）：没测够，进的没老头部的已跑量项目不到 5 个，而且有的已跑量项目被老头部（比它早上传、占项目花费 70% 以上的素材）占着。要换没有老头部的项目放。',
       crowd: '同原片上太多版本（Reina 11/18 晚放进没过原因，排第二）：同一条原片在上传日前后 1 天内上了 7 条以上（含自己），不管 AI 重拍、全片重配还是只剪辑都算。排在内容硬伤后面、投放侧原因前面：这是排产和交付造成的，我们自己能改。11/8–11/15 扎堆的 52 条只过了 2 条，其他 22%（p=0.001）。',
-      c2occ: '进了已跑量项目没花出钱 · 被最近几批新素材占着（Reina 11/18）：和「被一条老素材霸着」的区别：那个是一条更早的素材独占项目 70% 以上，这个是最近 3 天上传的一群新素材合起来占 10% 以上。进了 5 个以上没老头部的已跑量项目还是没测够，而且这些项目在它上传前一天，已经有 10% 以上的花费给了前 3 个上传日的新素材。上传前就定了，是投放侧原因：前一批跑起来了，这批进同样的项目抢不过。',
+      c2occ: '进了已跑量项目没花出钱 · 被前 3 天上传的新素材占着（Reina 11/18）：和「被一条老素材霸着」的区别：那个是一条更早的素材独占项目 70% 以上，这个是它上传前 3 天内上传的一群新素材合起来占 10% 以上。进了 5 个以上没老头部的已跑量项目还是没测够，而且这些项目在它上传前一天，已经有 10% 以上的花费给了前 3 个上传日的新素材。上传前就定了，是投放侧原因：前一批跑起来了，这批进同样的项目抢不过。',
       c2bad: '进了已跑量项目没花出钱 · 测过了数据差（Reina 11/18）：项目没被占着，窗口里展示过了 5,000，系统测过了，数据不好不放量。是素材本身的问题。',
       c2try: '进了已跑量项目没花出钱 · 只给了试探量（Reina 11/18）：项目没被占着，展示不到 5,000（多数几百次，花 ¥0–150），系统试了一下就停了。可能是系统预估这条效果差，也可能是项目出价、预算偏低，现在的数据分不开，待查。',
       plhit: '进了也没拿到量：已经进了 5 个以上没老头部的已跑量项目，还是没测够（实测项目不到 3 个）。机会给到了还抢不到，是素材本身的问题。',
@@ -1453,7 +1453,7 @@
             + '<td class="num">' + (m.acc_show == null ? '—' : m.acc_show) + '</td><td class="num">' + (m.acc_100 == null ? '—' : m.acc_100) + '</td>'
             + '<td class="num' + (m.pj_sp != null && m.pj_sp < (nm.cs_pj || 3) ? ' lx-badv' : m.pj_sp >= (nm.cs_pj_ok || 5) ? ' lx-good' : '') + '">' + (m.pj_sp == null ? '—' : m.pj_sp + ' / ' + (m.pj_good == null ? '—' : m.pj_good) + ' / ' + (m.pj_n == null ? (m.npj == null ? '—' : m.npj) : m.pj_n)) + '</td>'
             + '<td class="num">' + (m.w_show == null ? '—' : fmtN(m.w_show)) + '</td>'
-            + '<td style="min-width:9rem">' + (st !== 'fail' || !m.cause ? '' : '<b>' + ({硬伤: '内容硬伤', 扎堆: '同原片上太多版本', 基建: '没进已跑量项目', 头部: '被一条老素材霸着', 测试: nm.cs_run ? '进了已跑量项目没花出钱' + ({占着: ' · 被最近几批新素材占着', 数据差: ' · 测过了数据差', 试探: ' · 只给了试探量'}[m.cause2] || '') : '测试不充分', 方向: '还在测的方向', 其他: '单条没跑出来'})[m.cause] + '</b><br><span class="muted">' + esc(m.cause === '硬伤' ? hardOf(m).join('、') : (m.cause === '测试' && !nm.cs_run) ? m.tst : ['基建', '头部', '测试'].includes(m.cause) ? '进了 ' + (m.pj_run || 0) + ' 个已跑量项目，' + (m.pj_head || 0) + ' 个有老头部' : m.cause === '方向' ? m.uc + ' ' + (m.short || '') + '（上传时' + (m.tier || '没分档') + '）' : '测够了') + '</span>') + '</td>'
+            + '<td style="min-width:9rem">' + (st !== 'fail' || !m.cause ? '' : '<b>' + ({硬伤: '内容硬伤', 扎堆: '同原片上太多版本', 基建: '没进已跑量项目', 头部: '被一条老素材霸着', 测试: nm.cs_run ? '进了已跑量项目没花出钱' + ({占着: ' · 被前 3 天上传的新素材占着', 数据差: ' · 测过了数据差', 试探: ' · 只给了试探量'}[m.cause2] || '') : '测试不充分', 方向: '还在测的方向', 其他: '单条没跑出来'})[m.cause] + '</b><br><span class="muted">' + esc(m.cause === '硬伤' ? hardOf(m).join('、') : (m.cause === '测试' && !nm.cs_run) ? m.tst : ['基建', '头部', '测试'].includes(m.cause) ? '进了 ' + (m.pj_run || 0) + ' 个已跑量项目，' + (m.pj_head || 0) + ' 个有老头部' : m.cause === '方向' ? m.uc + ' ' + (m.short || '') + '（上传时' + (m.tier || '没分档') + '）' : '测够了') + '</span>') + '</td>'
             + '<td style="min-width:14rem">' + (st === 'pass' ? '' : tagsOf(m, medPj).map(([x, c, v]) => '<span class="lx-cstag' + (c ? ' ' + c : '') + '">' + esc(x) + (v ? ' <a href="' + esc(v) + '" target="_blank" rel="noopener">看对比的那条</a>' : '') + '</span>').join('')) + '</td></tr>').join('')
           + '</tbody></table></div>';
       }
