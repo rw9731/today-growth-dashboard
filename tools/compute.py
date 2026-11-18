@@ -1263,7 +1263,7 @@ def main():
                 elif not live:
                     tst = '所在项目都没起量'
                 elif not m['base_ok']:
-                    tst = f'跑量项目只有 {len(live)} 个'
+                    tst = f'在花钱的项目只有 {len(live)} 个'
                 else:
                     old_, new_ = 0.0, 0.0
                     for pj in live:
