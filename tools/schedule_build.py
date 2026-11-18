@@ -300,7 +300,7 @@ def batch_line(B, groups, D, total, days):
 # 分档的线（Reina 11/5 问，见 claude/usecase-tiers-1104.md）
 UP_SH, UP_D5, UP_TOP, UP_NB, UP_GAP = 5, 5, 33, 2, 1.5
 COST_OK = 3  # 成本差 ¥3 以内算和全盘差不多，和页面标色一致。第一档占全盘一半以上，卡死 ≤全盘就是 ¥1 定档
-IN_ACT, IN_GAP = 100, 3
+IN_ACT, IN_GAP = 100, -1.5  # Reina 11/18：探索升跑量少，次留不比全盘低 1.5 个点以上就行（原来要高 3 个点），和第二档的退出线对齐
 RISK_SH = 3  # 第一档近 7 天占比掉到 3% 以下标危险（进来的线是 5%）
 
 
