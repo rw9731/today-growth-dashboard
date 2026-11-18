@@ -1333,6 +1333,32 @@ def main():
         b['crowd_dec'] = sum(1 for m in ms if m['st'] != 'wait')
         b['crowd_roots'] = sorted({m['root'] for m in ms})[:6]
     newd_meta['cs_crowd'] = CS_CROWD
+    # 新素材能分到的钱（Reina 11/18 要一个跟「没拿到测试量」原因有关的维度）：
+    # room = 冷启窗口那几天，上传 3 天内的素材（不管哪天上传的）花的钱 ÷ 大盘，反映大盘给新素材留了多少；
+    # prior_take = 这些钱里被前 3 个上传日的素材拿走的比例（前几批跑起来就会吃掉后面这批的测试量）。
+    # 11/3–11/15 上传的 13 批：room 和冷启率 Spearman 0.68（p=0.01）。prior_take 一半是结果（这批自己不行，前几批的占比自然高），只当参考。
+    _ud = {i: dt.date.fromisoformat(up_day(i)) for i in cost_by if up_day(i)}
+    for b in batches:
+        u0 = dt.date.fromisoformat(b['up'])
+        Wr = {(u0 + dt.timedelta(days=k)).isoformat() for k in range(CSW) if u0 + dt.timedelta(days=k) <= Dd}  # 不能叫 W：会盖掉前面的 W
+        tot = sum(day_tot.get(d, 0) for d in Wr)
+        new_ = me_ = pr_ = 0.0
+        for i, dd in cost_by.items():
+            ui = _ud.get(i)
+            if ui is None:
+                continue
+            for d, c in dd.items():
+                if d not in Wr or not c:
+                    continue
+                if 0 <= (dt.date.fromisoformat(d) - ui).days <= 2:
+                    new_ += c
+                if ui == u0:
+                    me_ += c
+                elif u0 - dt.timedelta(days=3) <= ui < u0:
+                    pr_ += c
+        b['room'] = new_ / tot if tot else None
+        b['prior_take'] = pr_ / (pr_ + me_) if pr_ + me_ else None
+        b['room_c'], b['prior_c'], b['me_c'], b['room_days'] = round(new_), round(pr_), round(me_), len(Wr)
     newd_meta['cs_aud'] = bool(AUD)
     newd_meta['acct'] = bool(acct)
     newd_meta['acct_err'] = (acct or {}).get('err', [])
