@@ -1329,6 +1329,29 @@ def main():
         ms = [m for m in cs_mats if m['up'][:10] == b['up']]
         b['tdir_up'] = sum(1 for m in ms if m['tdir'])
         b['tdir_pass'] = sum(1 for m in ms if m['tdir'] and m['st'] == 'pass')
+    # 冷启难的方向（Reina 11/19）：验证过的两档里，这个 use case 在这条素材上传前的两周（上传日前 16 天到前 3 天，窗口都已走完）
+    # 新素材 ≥ CS_HD_N 条，过冷启的条数不到按各自上传日整体冷启率算的期望的一半。只看上传前的，不受这批自己好坏影响。排第四，在还在测的方向后面。
+    CS_HD_N, CS_HD_OE = 10, 0.5
+    _dr = defaultdict(lambda: [0, 0])
+    for x in dec_:
+        _dr[x['up'][:10]][0] += x['st'] == 'pass'
+        _dr[x['up'][:10]][1] += 1
+    _hd_cache = {}
+
+    def _hd(uc, u):
+        if (uc, u) not in _hd_cache:
+            u0 = dt.date.fromisoformat(u)
+            lo, hi = (u0 - dt.timedelta(days=16)).isoformat(), (u0 - dt.timedelta(days=3)).isoformat()
+            ps = [x for x in dec_ if x['uc'] == uc and lo <= x['up'][:10] <= hi]
+            exp = sum(_dr[x['up'][:10]][0] / _dr[x['up'][:10]][1] for x in ps)
+            o = sum(x['st'] == 'pass' for x in ps)
+            _hd_cache[(uc, u)] = (len(ps), o, o / exp if exp else None)
+        return _hd_cache[(uc, u)]
+    for m in cs_mats:
+        n_, o_, oe_ = _hd(m['uc'], m['up'][:10])
+        m['hd_n'], m['hd_pass'], m['hd_oe'] = n_, o_, oe_
+        m['hdir'] = (not m['tdir']) and n_ >= CS_HD_N and oe_ is not None and oe_ < CS_HD_OE
+    newd_meta['cs_hd'] = [CS_HD_N, CS_HD_OE]
     for m in cs_mats:
         if m['st'] != 'fail':
             m['cause'] = ''
@@ -1338,6 +1361,8 @@ def main():
             m['cause'] = '扎堆'
         elif m['tdir']:
             m['cause'] = '方向'
+        elif m['hdir']:
+            m['cause'] = '难起'
         elif not m['got']:
             m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
         else:
@@ -1382,6 +1407,8 @@ def main():
                 m['cause_now'] = '扎堆'
             elif m['tdir']:
                 m['cause_now'] = '方向'
+            elif m['hdir']:
+                m['cause_now'] = '难起'
             elif not m['got']:
                 m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
                 m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
