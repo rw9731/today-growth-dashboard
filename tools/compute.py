@@ -1367,7 +1367,8 @@ def main():
     newd_meta['cs_hd'] = [CS_HD_N, CS_HD_OE]
     # 新老项目基建（Reina 11/19 定）：每条素材要同时推新项目和老项目。新项目 = 建的当天和次日，项目建在上传日前一天或之后算新、更早算老。
     # 数据：notes/jjlog.json（tools/oplog_js.py 从巨量操作日志还原，窗口 = 上传日到 +2 天里放进去的项目，分 iOS、安卓）；只看放没放进去，不看花钱。
-    # 门槛按端（11/19 回测，topic/2026-11-19-jijian-backtest/）：iOS 老项目 < 10 个或安卓老项目 < 30 个算不够。新项目个数影响弱，不设门槛。
+    # 门槛按端（11/19 回测，topic/2026-11-19-jijian-backtest/）：iOS 老项目 < 10 个或安卓老项目 < 30 个，或者某一端一个新项目都没进，算不够。
+    # 新项目只要求进了（≥ 1 个）：11/09 起一端没进新项目的 12 条一条没过；进了以后个数多少和冷启没关系（安卓新项目分四档没规律）。
     # 只判 11/09 起上传的：之前的做法是只建新项目、几乎不进老项目，不适用这个门槛。星广、星图素材走专门项目，不看。
     # 11/09–11/16 的 380 条：不够的 194 条过冷启是期望的 0.59 倍，够的 1.50 倍（9.8% vs 21.5%，p≈0.002）。
     CS_JJ_IOS_OLD, CS_JJ_AND_OLD, CS_JJ_FROM = 10, 30, '2026-11-09'
@@ -1388,7 +1389,7 @@ def main():
         m['jj_i'] = c[:2]
         m['jj_a'] = c[2:4]
         m['jj_new'], m['jj_old'] = c[0] + c[2], c[1] + c[3]
-        m['jj_bad'] = c[1] < CS_JJ_IOS_OLD or c[3] < CS_JJ_AND_OLD
+        m['jj_bad'] = c[1] < CS_JJ_IOS_OLD or c[3] < CS_JJ_AND_OLD or c[0] == 0 or c[2] == 0  # 11/19 Reina 问新项目：每端至少进 1 个新项目（个数多少回测里不影响冷启）
     newd_meta['cs_jj'] = [CS_JJ_IOS_OLD, CS_JJ_AND_OLD, CS_JJ_FROM]
     CS_OCC = 0.10
     _snap = {}
@@ -1445,7 +1446,7 @@ def main():
     # 没进已跑量项目、被老素材霸着、被前 3 天新素材占着只看这一端的项目；内容和方向的原因两端共用。
     def _czp(m, p_):
         jj = m.get('jj_' + p_)
-        if jj and jj[1] < (CS_JJ_IOS_OLD if p_ == 'i' else CS_JJ_AND_OLD):
+        if jj and (jj[1] < (CS_JJ_IOS_OLD if p_ == 'i' else CS_JJ_AND_OLD) or jj[0] == 0):
             return '基建'
         if m['hard']:
             return '硬伤'
