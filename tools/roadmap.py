@@ -7,6 +7,7 @@
 - 测过 = 花过钱的素材（投放数据_分日 里有消耗）。
 - 过冷启 = 上传当天 + 后 2 天花费 ≥ ¥400（日报 CS_COST）。只算上传日在数据开始之后、窗口已过完的素材。
 - use case 首次点亮取累计消耗 ≥ ¥100,000 且周消耗占同期全盘 > 2% 的第一周。
+  细分场景用同一时间口径，累计消耗 ≥ ¥50,000 且周消耗占同期全盘 > 1% 的第一周标 ☆。
   周一到周日为一周，尚未结束的周算到数据截止日。
 - 其余 use case 状态：
   判弱 = 近 30 天 ≥ 10 条素材有消耗，且最佳单条累计消耗低于 ¥5,000。
@@ -32,6 +33,8 @@ CS_COST = 400
 MATERIAL_LIT = 5000
 UC_LIT_COST = 100_000
 UC_LIT_SHARE_PCT = 2
+SCENE_LIT_COST = 50_000
+SCENE_LIT_SHARE_PCT = 1
 NOT_NOW = {'TR02': '订高铁票 11/2 定先不做'}
 TYPES = ['AI 原片', 'AI 二剪和重拍', '达人原片', '达人二剪', '星广和自建号']
 
@@ -47,9 +50,9 @@ def type_of(kind):
     return ''
 
 
-def uc_can_light(cumulative_cents, week_cents, market_cents):
+def can_light(cumulative_cents, week_cents, market_cents, cost_floor, share_pct):
     """按金额的分比较，保留累计门槛的等号和周占比的严格大于。"""
-    return cumulative_cents >= UC_LIT_COST * 100 and market_cents > 0 and week_cents * 100 > market_cents * UC_LIT_SHARE_PCT
+    return cumulative_cents >= cost_floor * 100 and market_cents > 0 and week_cents * 100 > market_cents * share_pct
 
 
 def main():
@@ -115,10 +118,8 @@ def main():
     wk0 = plan.get('week')
     wk1 = (dt.date.fromisoformat(wk0) + dt.timedelta(days=6)).isoformat() if wk0 else None
     sched = defaultdict(lambda: defaultdict(int))
-    sched_e = defaultdict(list)
     for e in planned_entries(plan, wk0) if wk0 else []:
         sched[e['uc']][e.get('t', '')] += int(e.get('n') or 0)
-        sched_e[e['uc']].append(e)
     all_planned = planned_entries(plan)
     SCN = json.load(open(os.path.join(ROOT, 'tools', 'scenes.json')))
     SM = json.load(open(os.path.join(ROOT, 'notes', 'scene-map.json')))
@@ -170,28 +171,6 @@ def main():
             bm = max(cm, key=lambda m: m['cost'])
             cst = '点亮' if bm['cost'] >= MATERIAL_LIT else ('偏弱' if len(cm) >= 10 else '测过')
             cells[t] = {'n': len(cm), 'best': round(bm['cost']), 'best_name': bm['name'], 'st': cst}
-        # 细分场景（Reina 11/17）：每个场景测了几条、最好一条、有没有点亮、这周排了几条
-        scs = []
-        sc_lib = SCN.get(u, {}).get('scenes', [])
-        if sc_lib:
-            tag = lambda m: SM.get(m['id']) if SM.get(m['id'], {}).get('uc') == u else None
-            for sdef in sc_lib:
-                sm_ = [m for m in sp if (tag(m) or {}).get('s') == sdef['n']]
-                b_ = max(sm_, key=lambda m: m['cost'], default=None)
-                cd_ = [m for m in sm_ if m['cs'] is not None]
-                scs.append({'n': sdef['n'], 't': sdef['t'], 'g': sdef.get('g', ''), 'full': sdef.get('full', ''), 'cnt': len(sm_),
-                            'cs_n': len(cd_), 'cs_pass': sum(1 for m in cd_ if m['cs']),
-                            'best': round(b_['cost']) if b_ else 0, 'best_name': b_['name'] if b_ else '',
-                            'c30': round(sum(m['c30'] for m in sm_)), 'first': min((m['first'] for m in sm_), default=''),
-                            'last': max((m['first'] for m in sm_), default=''), 'sched': 0})
-            for e in sched_e.get(u, []):
-                h = hits(u, e.get('sc', ''))
-                for k, v in (split(int(e.get('n') or 0), h) if h else {}).items():
-                    scs[k - 1]['sched'] += v
-            none_ = [m for m in sp if (tag(m) or {}).get('st') == 'none']
-            unk_ = [m for m in sp if not (tag(m) or {}).get('s') and (tag(m) or {}).get('st') != 'none']
-        else:
-            none_, unk_ = [], []
         csd = [m for m in sp if m['cs'] is not None]
         new7 = [m for m in sp if m['first'] >= d7]
         a_, r_ = act30.get(u, 0), ret30.get(u, 0)
@@ -203,7 +182,7 @@ def main():
                     'ret': (r_ / a_) if a_ >= 100 else None, 'act30': round(a_),
                     'first': min((m['first'] for m in sp), default=''), 'last': max((m['first'] for m in sp), default=''),
                     'cells': cells, 'sched': sum(sc.values()), 'sched_t': dict(sc),
-                    'note': NOT_NOW.get(u, ''), 'scs': scs, 'sc_none': len(none_), 'sc_unk': len(unk_)})
+                    'note': NOT_NOW.get(u, '')})
 
     # 时间线（Reina 11/17：要有 roadmap 的时间感）：按周看每个 use case 新测了几条、花了多少、哪周点亮、排了几条
     mon = lambda d: (dt.date.fromisoformat(d) - dt.timedelta(days=dt.date.fromisoformat(d).weekday())).isoformat()
@@ -219,14 +198,25 @@ def main():
     for r in rows:
         wk_tot[mon(r['date'])] += r['cost']
     market_cents = {wk: round(cost * 100) for wk, cost in wk_tot.items()}
-    # 每条素材累计花到 ¥5,000 的那天
-    for m in M.values():
-        acc, m['lit_day'] = 0.0, None
-        for d_ in sorted(m['days']):
-            acc += m['days'][d_]
-            if acc >= MATERIAL_LIT:
-                m['lit_day'] = d_
-                break
+
+    def weekly_timeline(materials, planned, light_rule):
+        timeline = {}
+        cumulative = 0
+        first_lit = ''
+        for wk in weeks:
+            new = sum(1 for m in materials if m['cost'] > 0 and mon(m['first']) == wk)
+            cost = sum(c for m in materials for day, c in m['days'].items() if mon(day) == wk)
+            cents = round(cost * 100)
+            cumulative += cents
+            qualifies = light_rule is not None and can_light(cumulative, cents, market_cents.get(wk, 0), *light_rule)
+            timeline[wk] = {
+                'new': new, 'cost': round(cost), 'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0,
+                'plan': planned.get(wk, 0), 'cumulative': cumulative / 100, 'can_light': qualifies,
+            }
+            if qualifies and not first_lit:
+                first_lit = wk
+        return timeline, first_lit
+
     plan_wk = defaultdict(lambda: defaultdict(int))
     all_by_uc = defaultdict(list)
     for e in all_planned:
@@ -235,23 +225,10 @@ def main():
     for x in out:
         case_materials = by.get(x['uc'], [])
         ms = [m for m in case_materials if m['cost'] > 0]
-        tl = {}
-        cumulative = 0
-        x['lit_wk'] = ''
-        for wk in weeks:
-            new = sum(1 for m in ms if mon(m['first']) == wk)
-            cost = sum(c for m in case_materials for d_, c in m['days'].items() if mon(d_) == wk)
-            cents = round(cost * 100)
-            cumulative += cents
-            can_light = uc_can_light(cumulative, cents, market_cents.get(wk, 0))
-            tl[wk] = {'new': new, 'cost': round(cost), 'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0,
-                      'plan': plan_wk[x['uc']].get(wk, 0), 'cumulative': cumulative / 100, 'can_light': can_light}
-            if can_light and not x['lit_wk']:
-                x['lit_wk'] = wk
+        x['tl'], x['lit_wk'] = weekly_timeline(case_materials, plan_wk[x['uc']], (UC_LIT_COST, UC_LIT_SHARE_PCT))
         if x['lit_wk']:
             x['st'] = '已点亮'
         x['first_wk'] = mon(x['first']) if x['first'] else ''
-        x['tl'] = tl
         # 细分场景按周（Reina 11/17：在路线图里点 use case 展开，下面同样按周分格）
         scl = SCN.get(x['uc'], {}).get('scenes', [])
         x['tl_sc'] = []
@@ -267,17 +244,12 @@ def main():
             if other or any(pw[0].values()):
                 grp.append((0, '没对上场景', '', '名字和字幕看不出场景、库里没有对应场景的素材，以及排期里对不上场景的行', other))
             for n_, t_, g_, f_, mm in grp:
-                ltd = sorted(m['lit_day'] for m in mm if m['lit_day'])
-                tls = {}
-                for wk in weeks:
-                    cost = sum(c for m in mm for d_, c in m['days'].items() if mon(d_) == wk)
-                    tls[wk] = {'new': sum(1 for m in mm if mon(m['first']) == wk), 'cost': round(cost),
-                               'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0, 'plan': pw[n_].get(wk, 0)}
+                rule = (SCENE_LIT_COST, SCENE_LIT_SHARE_PCT) if n_ else None
+                tls, first_lit = weekly_timeline(mm, pw[n_], rule)
                 fst = min((m['first'] for m in mm), default='')
                 x['tl_sc'].append({'n': n_, 't': t_, 'g': g_, 'full': f_, 'cnt': len(mm), 'tl': tls,
                                    'cost': sum(m['cost'] for m in mm),
-                                   'lit_day': ltd[0] if ltd else '', 'lit_wk': mon(ltd[0]) if ltd else '', 'first_wk': mon(fst) if fst else '',
-                                   'lit_mat': next((m['name'] for m in mm if ltd and m['lit_day'] == ltd[0]), '')})
+                                   'lit_wk': first_lit, 'first_wk': mon(fst) if fst else ''})
             x['tl_sc'].sort(key=lambda c: -c['cost'])
     prog = []
     for wk in weeks:
@@ -315,14 +287,16 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     E = html.escape
     md = lambda s: (str(int(s[5:7])) + '/' + str(int(s[8:10]))) if s else '—'
     uc_rule = f'截至当周累计消耗达到 {fy(UC_LIT_COST)}，且当周消耗占同期全盘高于 {UC_LIT_SHARE_PCT}%'
+    scene_rule = f'截至当周累计消耗达到 {fy(SCENE_LIT_COST)}，且当周消耗占同期全盘高于 {SCENE_LIT_SHARE_PCT}%'
     STC = {'已点亮': 'st-lit', '测试中': 'st-test', '判弱': 'st-weak', '没测': 'st-none', '储备': 'st-none', '暂不做': 'st-none'}
     CC = {'点亮': 'c-lit', '测过': 'c-test', '偏弱': 'c-weak'}
     def sc_cov(x):
-        if not x['scs']:
+        scenes = [c for c in x['tl_sc'] if c['n']]
+        if not scenes:
             return ''
-        t = sum(1 for c in x['scs'] if c['cnt'])
-        l = sum(1 for c in x['scs'] if c['best'] >= MATERIAL_LIT)
-        return f'<span class="scv">场景测过 {t}/{len(x["scs"])}' + (f'，点亮 {l}' if l else '') + '</span>'
+        tested = sum(bool(c['cnt']) for c in scenes)
+        lit = sum(bool(c['lit_wk']) for c in scenes)
+        return f'<span class="scv">场景测过 {tested}/{len(scenes)}' + (f'，点亮 {lit}' if lit else '') + '</span>'
 
     body = []
     for x in out:
@@ -338,7 +312,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
         sch = (str(x['sched']) + ('<span class="sub">' + E('、'.join(f'{k} {v}' for k, v in x['sched_t'].items())) + '</span>' if x['sched_t'] else '')) if x['sched'] else ''
         ret = f"{x['ret']:.1%}" if x['ret'] is not None else '—'
         note = f'<span class="sub">{E(x["note"])}</span>' if x['note'] else ''
-        best = f'{fy(x["best"])}<span class="sub" title="{E(x["best_name"])}">{E(x["best_name"][:28])}</span>' if x['best'] else '—'
+        best = f'{fy(x["best"])}<span class="sub best-name" title="{E(x["best_name"])}">{E(x["best_name"])}</span>' if x['best'] else '—'
         body.append(
             f'<tr data-uc="{E(x["uc"])}" data-uc-name="{E(x["name"])}"><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td>'
             f'<td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}{" · " + E(x["pri"]) if x["pri"] else ""}{" · 库里是储备" if x["lib"] == "储备" else ""}</span>{note}</td>'
@@ -357,23 +331,21 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     wlab = lambda w: ('本周 ' if w == cur else '下周 ' if w == nxt else '') + md(w) + ' 起'
     lv = lambda sh: 'l4' if sh >= 0.05 else 'l3' if sh >= 0.02 else 'l2' if sh >= 0.005 else 'l1'
     trs = []
-    def tl_tds(o, label):
+    def tl_tds(o, label, *, scene=False):
         tds = ''
+        star = ('<span class="star scene-star" role="img" aria-label="细分场景首次点亮">☆</span>' if scene
+                else '<span class="star" role="img" aria-label="Use case 首次点亮">★</span>')
         for w in wks:
             c = o['tl'][w]
             tip = f"{label} {wlab(w)}，新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.2%}）"
-            if 'cumulative' in c and w <= cur:
+            if w <= cur:
                 tip += f"，截至该周累计 {fy(c['cumulative'])}"
             if c['plan']:
                 tip += f"，排期 {c['plan']} 条"
-            if w == o['lit_wk']:
-                if o.get('lit_day'):
-                    tip += f"，{md(o['lit_day'])} 点亮（{o['lit_mat']} 累计花到 {fy(MATERIAL_LIT)}）"
-                else:
-                    tip += '，首次同时达标'
             inner = ''
             if w == o['lit_wk']:
-                inner += '<span class="star">★</span>'
+                tip += '，首次同时达标'
+                inner += star
             if c['new']:
                 inner += f'<b>+{c["new"]}</b>'
             if w == o['first_wk']:
@@ -402,15 +374,16 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
                    f'<td class="num">{fy(x["cost"]) if x["cost"] else "—"}</td><td class="num">{lit_txt}</td></tr>')
         g0 = None
         for c in x.get('tl_sc', []):
-            st = '其他' if c['n'] == 0 else ('点亮' if c['lit_day'] else ('测过' if c['cnt'] else '没测'))
+            st = '其他' if c['n'] == 0 else ('点亮' if c['lit_wk'] else ('测过' if c['cnt'] else '没测'))
             cls = {'点亮': 'st-lit', '测过': 'st-test', '没测': 'st-none', '其他': 'st-none'}[st]
             gl = f'<span class="sg">{E(c["g"])}</span>' if c['g'] and c['g'] != g0 else ''
             g0 = c['g'] or g0
             num = f'<b>{c["n"]}</b> ' if c['n'] else ''
+            lit_txt = md(c['lit_wk']) + ' 起' if c['lit_wk'] else ''
             trs.append(f'<tr class="scr" data-for="{E(x["uc"])}" data-scene="{c["n"]}" hidden><td><span class="pill sm {cls}">{st}</span></td>'
                        f'<td class="uc sc">{gl}{num}<span data-scene-label title="{E(c["full"])}">{E(c["t"])}</span><span class="sub">{"花过钱 " + str(c["cnt"]) + " 条" if c["cnt"] else ""}</span></td>'
-                       f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"])}'
-                       f'<td class="num">{fy(c["cost"])}</td><td class="num">{md(c["lit_day"]) if c["lit_day"] else ""}</td></tr>')
+                       f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"], scene=True)}'
+                       f'<td class="num">{fy(c["cost"])}</td><td class="num">{lit_txt}</td></tr>')
     th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}" data-week="{w}">{E(wlab(w))}</th>' for w in wks)
     prog = TL['prog']
     n_all = len(out)
@@ -456,9 +429,9 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     <div class="prog">{pg}</div>
     <p class="note">首次同时达到两项条件的周记为点亮周。{md(cur)}–{md(D)} 有 {latest_qualified} 个 use case 同时达标，其中 {latest_new} 个首次点亮。</p>
     <h3>每个 use case 每周</h3>
-    <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
+    <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ Use case 首次点亮</span><span>☆ 细分场景首次点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
     <p class="note"><b>点一行 use case 展开它的细分场景</b>（Use case 库里的场景），每个场景一行、同样按周分格：哪周新测了几条、花了多少、哪周点亮、排了几条。<button type="button" class="tgl" id="scall">全部展开</button></p>
-    <div class="rmwrap"><table class="rm tl">
+    <div class="rmwrap" role="region" aria-label="按周点亮路线图" tabindex="0"><table class="rm tl">
       <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">累计消耗</th><th class="num">首次点亮</th></tr></thead>
       <tbody>{''.join(trs)}</tbody>
     </table></div>
@@ -474,7 +447,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     EXTRA = '''<style>
   .wk .rm { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); }
   .wk .rm th, .wk .rm td { padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; text-align: left; }
-  .wk .rmwrap { overflow: visible; }
+  .wk .rmwrap { overflow-x: auto; }
   .wk .rm thead th { position: sticky; top: 0; background: var(--color-panel); z-index: 3; font-weight: 600; white-space: nowrap; box-shadow: 0 1px 0 var(--color-border-line); }
   .wk .tl td:nth-child(1), .wk .tl th:nth-child(1) { position: sticky; left: 0; background: var(--color-panel); z-index: 2; width: 4.6rem; min-width: 4.6rem; }
   .wk .tl td:nth-child(2), .wk .tl th:nth-child(2) { position: sticky; left: 4.6rem; background: var(--color-panel); z-index: 2; box-shadow: 1px 0 0 var(--color-border-line); }
@@ -486,6 +459,11 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
   .wk .rm tr.grp td { background: var(--color-bg); font-weight: 600; font-size: var(--cds-font-size-caption); }
   .wk .rm td.cell { text-align: center; min-width: 4.2rem; font-weight: 600; font-variant-numeric: tabular-nums; border-left: 2px solid var(--color-bg, #fff); }
   .wk .rm td.cell .cb { display: block; font-size: 10px; font-weight: 400; opacity: .8; }
+  .wk #map .rm th, .wk #map .rm td { padding-inline: 6px; }
+  .wk #map .rm th { white-space: normal; }
+  .wk #map .rm td.uc { min-width: 8.5rem; white-space: normal; }
+  .wk #map .rm td.cell { min-width: 3.4rem; }
+  .wk #map .rm .best-name { max-width: 7.5rem; }
   .wk .c-lit { background: #2f8f5b; color: #fff; }
   .wk .c-test { background: #dcebe1; color: #1f5f3c; }
   .wk .c-weak { background: #f3d9d4; color: #9a3324; }
@@ -504,6 +482,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
   .wk .tl th.tc { font-size: 11px; }
   .wk .tl td.tc b { font-size: 12px; }
   .wk .tl td.tc .star { color: #c98a00; font-size: 14px; margin-right: 2px; }
+  .wk .tl td.tc .scene-star { color: #634200; font-size: 16px; font-weight: 700; }
+  .wk .tl td.tc.l4 .scene-star { color: #fff2bd; }
   .wk .tl td.tc .tg { display: block; font-size: 10px; opacity: .75; }
   .wk .tl td.tc .pl { display: block; font-size: 10px; opacity: .85; }
   .wk .tl .l4 { background: #2f8f5b; color: #fff; } .wk .tl .l3 { background: #6fb38c; color: #fff; }
@@ -571,7 +551,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
   <header>
     <h1>点亮路线图：每个 use case 什么时候测、什么时候点亮、接下来排了什么</h1>
     <p class="sub">数据 {md(first_day)}–{md(D)}（投放数据_分日，两端合计），一行一个 use case（Use case 库里在用和储备的）。</p>
-    <p class="def"><b>Use case 点亮</b>需要{uc_rule}。累计从 {md(first_day)} 起算，首次同时达标的周标 ★。每周从周一算到周日，尚未结束的周统计到数据截止日。</p>
+    <p class="def"><b>★ Use case</b>需要{uc_rule}。<br><b>☆ 细分场景</b>需要{scene_rule}。<br>累计从 {md(first_day)} 起算，首次同时达标的当周点亮。每周从周一算到周日，进行中的周统计到数据截止日。</p>
   </header>
 
   <section class="card sum" id="summary">
@@ -592,10 +572,10 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
 {tl_html}
 
   <section class="card" id="map">
-    <h2>use case × 素材类型</h2>
+    <h2 id="map-title">use case × 素材类型</h2>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>素材类型格点亮需要一条素材累计花到 {fy(MATERIAL_LIT)}</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 {fy(MATERIAL_LIT)}</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
     <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 后 2 天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。累计消耗覆盖 {md(first_day)}–{md(D)}。本周已排与素材排期看板同口径，剔除建议拿掉和顺延的条目，小字是 AI / 二创各几条。</p>
-    <div class="rmwrap"><table class="rm">
+    <div class="rmwrap" role="region" aria-labelledby="map-title" tabindex="0"><table class="rm">
       <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">累计消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周已排</th></tr></thead>
       <tbody>{''.join(body)}</tbody>
     </table></div>
@@ -608,7 +588,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
       <li>已产生消耗且待点亮的方向继续测试。判弱的条件是近 30 天至少有 10 条素材产生消耗，且最佳单条累计消耗低于 {fy(MATERIAL_LIT)}。</li>
       <li>素材类型：AI 原片；AI 二剪和重拍（AI 短剧的只剪辑、换开头、全片重配、AI 重拍）；达人原片（KOC、KOL 原片）；达人二剪（KOC、KOL 的二剪、只剪辑、换开头、全片重配）；星广和自建号（唯西星广、知定堂星广、星图、唯西自建号）。客供和还没对上 use case 的素材不进格子。</li>
       <li>use case 归属和日报一致（UC_ID 列，待对应的按 tools/uc_resolve.py 补）。</li>
-      <li>细分场景的归属来自 notes/scene-map.json，日报每天给新素材打标。场景里有一条素材累计花到 {fy(MATERIAL_LIT)} 即点亮。「排 N」按排期里写的细分场景和库里的场景文字匹配，一行写了几个场景就平分条数。未匹配到场景的素材和排期计入「没对上场景」。</li>
+      <li>细分场景首次满足「{scene_rule}」的当周标 ☆。场景归属来自 notes/scene-map.json，日报每天给新素材打标。「排 N」按排期里写的细分场景和库里的场景文字匹配，一行写了几个场景就平分条数。未匹配到场景的素材和排期计入「没对上场景」。</li>
     </ul>
   </section>
 </div>
