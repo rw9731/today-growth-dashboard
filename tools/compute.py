@@ -1356,25 +1356,43 @@ def main():
         m['hd_n'], m['hd_pass'], m['hd_oe'] = n_, o_, oe_
         m['hdir'] = n_ >= CS_HD_N and oe_ is not None and oe_ < CS_HD_OE  # 11/19 Reina：已知难起排在还在测的方向前面，探索、没分档的方向测够了也算
     newd_meta['cs_hd'] = [CS_HD_N, CS_HD_OE]
+    # 新老项目基建（Reina 11/19）：理想是每条素材同时进新项目和老项目。新项目 = 建的当天和次日，从第二天起算老项目。
+    # 按窗口最后一天（没到就用 D）的项目快照，数这条素材进了几个项目：项目建在上传日前一天或之后（放进去的时候还在新项目期）算新项目，更早的算老项目，窗口之后才建的不算。
+    # 只看放没放进去（基建是执行动作，不看花没花钱）。星广、星图素材走专门的项目，不看这条。
+    # 门槛回溯 11/8–11/17 上传、窗口走完、没硬伤的 363 条非星广素材：过了冷启的素材 90% 进了 ≥ 10 个新项目、≥ 18 个老项目；
+    # 新 ≥ 10 且老 ≥ 20 的过冷启 19%（52/268），不到的 11%（10/95）。只缺老项目的影响更大：老 < 20 的 9%，≥ 20 的 20%。
+    CS_JJ_NEW, CS_JJ_OLD = 10, 20
+    _sf = {}
+
+    def _snapf(k):
+        if k not in _sf:
+            pp = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{k}.json')
+            _sf[k] = json.load(open(pp)) if os.path.exists(pp) else None
+        return _sf[k]
+    _pct = lambda pid: (dt.datetime(1970, 1, 1) + dt.timedelta(seconds=(int(pid) >> 32) + 8 * 3600)).date()
     for m in cs_mats:
-        if m['st'] != 'fail':
-            m['cause'] = ''
-        elif m['hard']:
-            m['cause'] = '硬伤'
-        elif m['crowd'] >= CS_CROWD:
-            m['cause'] = '扎堆'
-        elif m['hdir']:
-            m['cause'] = '难起'
-        elif m['tdir']:
-            m['cause'] = '方向'
-        elif not m['got']:
-            m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
-        else:
-            m['cause'] = '其他'
-    # 「进了也没拿到量」拆三类（Reina 11/18：原来那列只是结果）：
-    #   占着 = 这条素材进的项目，在上传前一天的快照里已有 ≥ CS_OCC 的花费给了前 3 个上传日的素材（上传前就定了，是原因）；
-    #   数据差 = 没被占着、窗口展示 ≥ CS_SHOW，测过了还是没过（素材本身）；试探 = 没被占着、展示不到 CS_SHOW，系统只给了几百次试探展示就停了。
-    # 还在看的素材（窗口没走完）也按同一套先归一下，写在 cause_now，页面上灰字「+n 在看」，窗口走完以后以 cause 为准。
+        m['jj_new'] = m['jj_old'] = None
+        m['jj_bad'] = False
+        if '星广' in (m['kind'] or '') or '星图' in (m['kind'] or ''):
+            m['jj_na'] = True
+            continue
+        u0 = dt.date.fromisoformat(m['up'][:10])
+        we = min(u0 + dt.timedelta(days=CSW - 1), Dd)
+        sj = _snapf(we.isoformat())
+        if not sj:
+            continue
+        nw = od = 0
+        for kk in sj.get('mat_proj', {}).get(m['id'], []):
+            c_ = _pct(sj['projects'][kk][0])
+            if c_ > we:
+                continue
+            if c_ >= u0 - dt.timedelta(days=1):
+                nw += 1
+            else:
+                od += 1
+        m['jj_new'], m['jj_old'] = nw, od
+        m['jj_bad'] = nw < CS_JJ_NEW or od < CS_JJ_OLD
+    newd_meta['cs_jj'] = [CS_JJ_NEW, CS_JJ_OLD]
     CS_OCC = 0.10
     _snap = {}
 
@@ -1396,26 +1414,33 @@ def main():
             num += sum(c for mid, c in x[2] if up_day(mid) and u0 - dt.timedelta(days=3) <= dt.date.fromisoformat(up_day(mid)) < u0)
         return num / den if den else 0.0
 
-    def _sub(m):
-        if m.get('pocc') is not None and m['pocc'] >= CS_OCC:
-            return '占着'
-        return '数据差' if m.get('w_show', 0) >= CS_SHOW else '试探'
     for m in cs_mats:
         m['pocc'] = _pocc(m) if pjd else None
-        m['cause2'] = _sub(m) if m['cause'] == '测试' else ''
-        m['cause_now'] = m['cause2_now'] = ''
-        if m['st'] == 'wait':
-            if m['hard']:
-                m['cause_now'] = '硬伤'
-            elif m['crowd'] >= CS_CROWD:
-                m['cause_now'] = '扎堆'
-            elif m['hdir']:
-                m['cause_now'] = '难起'
-            elif m['tdir']:
-                m['cause_now'] = '方向'
-            elif not m['got']:
-                m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
-                m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
+
+    # 没过的原因（11/19 Reina 定）：每条只归一列，按顺序先归前面的。
+    # 硬伤 → 同原片扎堆 → 冷启难的方向（已知）→ 新老项目基建不够（执行，已知）→ 还在测的方向（好坏未知）
+    # → 没进已跑量项目（基建够了，但进的没老头部的已跑量项目不到 CS_GOOD 个、也没碰到老头部）→ 被一条老素材霸着 → 被前 3 天的新素材占着 → 没跑出来。
+    # 不再用「实测项目」（花到 ¥20 的项目数）当门槛：那是结果，不能指导执行。测过了数据差、只给了试探量、单条没跑出来，都没法再归因，合成「没跑出来」。
+    def _cz(m):
+        if m['hard']:
+            return '硬伤'
+        if m['crowd'] >= CS_CROWD:
+            return '扎堆'
+        if m['hdir']:
+            return '难起'
+        if m['jj_bad']:
+            return '基建'
+        if m['tdir']:
+            return '方向'
+        if pjd and m.get('pj_good', 0) < CS_GOOD:
+            return '头部' if m.get('pj_head') else '跑量'
+        if m.get('pocc') is not None and m['pocc'] >= CS_OCC:
+            return '占着'
+        return '没跑'
+    for m in cs_mats:
+        m['cause'] = _cz(m) if m['st'] == 'fail' else ''
+        m['cause_now'] = _cz(m) if m['st'] == 'wait' else ''
+        m['cause2'] = m['cause2_now'] = ''
     newd_meta['cs_occ'] = CS_OCC
     # 按 use case 看冷启率（Reina 11/19）：排得多、以为能放量的方向，新素材到底好不好起。
     # 冷启率：窗口已走完的新素材（cs_mats 里约两周的上传）；倍数 = 实际过的条数 ÷ 按各自上传日整体冷启率算的期望（扣掉每天预算环境的差别）。
