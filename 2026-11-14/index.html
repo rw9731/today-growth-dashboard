@@ -549,7 +549,7 @@
       </div>
       <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
       <h3 class="lx-h3" style="margin-top:22px">按 use case 看冷启率</h3>
-      <p class="lx-note">排得多、以为能放量的方向，新素材到底好不好起。冷启率：近两周上传、3 天窗口已走完的新素材。比同期平均：实际过的条数 ÷ 按每条上传那天的整体冷启率算的期望（扣掉每天预算环境的差别），1 倍 = 和同期一样；新素材不到 10 条的不标色。能不能放量看近 7 天这个 use case 一共花了多少、占大盘多少；单条带量看这些钱是靠几条素材花出去的。<b>能放量但新素材难起</b> = 量靠少数老素材撑着，再排新素材也接不上。</p>
+      <p class="lx-note">排得多、以为能放量的方向，新素材到底好不好起。冷启率：近两周上传、3 天窗口已走完的新素材。比同期平均：实际过的条数 ÷ 按每条上传那天的整体冷启率算的期望（扣掉每天预算环境的差别），1 倍 = 和同期一样；新素材不到 10 条的不标色。能不能放量看近 7 天这个 use case 一共花了多少、占大盘多少；单条带量看这些钱是靠几条素材花出去的。<b>能放量但新素材难起</b>（近 7 天占大盘 ≥ 2%、新素材 ≥ 10 条、比同期平均 ≤ 0.7 倍）= 量靠少数老素材撑着，再排新素材也接不上。</p>
       <div class="lx-card lx-scroll">
         <table class="lx-table lx-ucstable">
           <thead><tr>
@@ -695,10 +695,10 @@
     const L = data('cs_uc'); if (!L.length) { tb.innerHTML = '<tr><td colspan="12" class="muted">这天没有数据</td></tr>'; return; }
     const tierS = {'能放量 + 留存好': '第一档', '跑量少 + 留存好': '第二档', '探索': '探索', '没分档': '没分档'};
     const tag = (u) => {
-      if (u.n >= 10 && u.oe != null && u.oe <= 0.6 && u.share7 >= 0.03) return ['能放量但新素材难起：量靠少数老素材', 'lx-badv'];
+      if (u.n >= 10 && u.oe != null && u.oe <= 0.7 && u.share7 >= 0.02) return ['能放量但新素材难起：量靠少数老素材', 'lx-badv'];
       if (u.n >= 10 && u.oe != null && u.oe <= 0.5) return ['新素材难起，量也不大', 'lx-badv'];
-      if (u.n >= 5 && u.oe != null && u.oe >= 1.5 && u.share7 < 0.03) return ['新素材好起、量还不大，可以加', 'lx-good'];
-      if (u.n >= 10 && u.oe != null && u.oe >= 1.2 && u.share7 >= 0.03) return ['能放量，新素材也好起', 'lx-good'];
+      if (u.n >= 5 && u.oe != null && u.oe >= 1.5 && u.share7 < 0.02) return ['新素材好起、量还不大，可以加', 'lx-good'];
+      if (u.n >= 10 && u.oe != null && u.oe >= 1.2 && u.share7 >= 0.02) return ['能放量，新素材也好起', 'lx-good'];
       if (!u.n && u.share7 >= 0.01) return ['近两周没上新素材，量靠老素材', ''];
       return ['', ''];
     };
