@@ -1356,43 +1356,31 @@ def main():
         m['hd_n'], m['hd_pass'], m['hd_oe'] = n_, o_, oe_
         m['hdir'] = n_ >= CS_HD_N and oe_ is not None and oe_ < CS_HD_OE  # 11/19 Reina：已知难起排在还在测的方向前面，探索、没分档的方向测够了也算
     newd_meta['cs_hd'] = [CS_HD_N, CS_HD_OE]
-    # 新老项目基建（Reina 11/19）：理想是每条素材同时进新项目和老项目。新项目 = 建的当天和次日，从第二天起算老项目。
-    # 按窗口最后一天（没到就用 D）的项目快照，数这条素材进了几个项目：项目建在上传日前一天或之后（放进去的时候还在新项目期）算新项目，更早的算老项目，窗口之后才建的不算。
-    # 只看放没放进去（基建是执行动作，不看花没花钱）。星广、星图素材走专门的项目，不看这条。
-    # 门槛回溯 11/8–11/17 上传、窗口走完、没硬伤的 363 条非星广素材：过了冷启的素材 90% 进了 ≥ 10 个新项目、≥ 18 个老项目；
-    # 新 ≥ 10 且老 ≥ 20 的过冷启 19%（52/268），不到的 11%（10/95）。只缺老项目的影响更大：老 < 20 的 9%，≥ 20 的 20%。
-    CS_JJ_NEW, CS_JJ_OLD = 10, 20
-    _sf = {}
-
-    def _snapf(k):
-        if k not in _sf:
-            pp = os.path.join(os.path.dirname(HERE), 'notes', f'proj-{k}.json')
-            _sf[k] = json.load(open(pp)) if os.path.exists(pp) else None
-        return _sf[k]
-    _pct = lambda pid: (dt.datetime(1970, 1, 1) + dt.timedelta(seconds=(int(pid) >> 32) + 8 * 3600)).date()
+    # 新老项目基建（Reina 11/19 定）：每条素材要同时推新项目和老项目。新项目 = 建的当天和次日，项目建在上传日前一天或之后算新、更早算老。
+    # 数据：notes/jjlog.json（tools/oplog_js.py 从巨量操作日志还原，窗口 = 上传日到 +2 天里放进去的项目，分 iOS、安卓）；只看放没放进去，不看花钱。
+    # 门槛按端（11/19 回测，topic/2026-11-19-jijian-backtest/）：iOS 老项目 < 10 个或安卓老项目 < 30 个算不够。新项目个数影响弱，不设门槛。
+    # 只判 11/09 起上传的：之前的做法是只建新项目、几乎不进老项目，不适用这个门槛。星广、星图素材走专门项目，不看。
+    # 11/09–11/16 的 380 条：不够的 194 条过冷启是期望的 0.59 倍，够的 1.50 倍（9.8% vs 21.5%，p≈0.002）。
+    CS_JJ_IOS_OLD, CS_JJ_AND_OLD, CS_JJ_FROM = 10, 30, '2026-11-09'
+    _jp = os.path.join(os.path.dirname(HERE), 'notes', 'jjlog.json')
+    JJ = json.load(open(_jp)).get('mats', {}) if os.path.exists(_jp) else {}
     for m in cs_mats:
         m['jj_new'] = m['jj_old'] = None
         m['jj_bad'] = False
         if '星广' in (m['kind'] or '') or '星图' in (m['kind'] or ''):
-            m['jj_na'] = True
+            m['jj_na'] = '星广'
             continue
-        u0 = dt.date.fromisoformat(m['up'][:10])
-        we = min(u0 + dt.timedelta(days=CSW - 1), Dd)
-        sj = _snapf(we.isoformat())
-        if not sj:
+        if m['up'][:10] < CS_JJ_FROM:
+            m['jj_na'] = '只建新项目的时期'
             continue
-        nw = od = 0
-        for kk in sj.get('mat_proj', {}).get(m['id'], []):
-            c_ = _pct(sj['projects'][kk][0])
-            if c_ > we:
-                continue
-            if c_ >= u0 - dt.timedelta(days=1):
-                nw += 1
-            else:
-                od += 1
-        m['jj_new'], m['jj_old'] = nw, od
-        m['jj_bad'] = nw < CS_JJ_NEW or od < CS_JJ_OLD
-    newd_meta['cs_jj'] = [CS_JJ_NEW, CS_JJ_OLD]
+        c = JJ.get(m['id'])
+        if not c:
+            continue
+        m['jj_i'] = c[:2]
+        m['jj_a'] = c[2:4]
+        m['jj_new'], m['jj_old'] = c[0] + c[2], c[1] + c[3]
+        m['jj_bad'] = c[1] < CS_JJ_IOS_OLD or c[3] < CS_JJ_AND_OLD
+    newd_meta['cs_jj'] = [CS_JJ_IOS_OLD, CS_JJ_AND_OLD, CS_JJ_FROM]
     CS_OCC = 0.10
     _snap = {}
 

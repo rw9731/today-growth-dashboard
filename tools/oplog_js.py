@@ -9,7 +9,7 @@
      没有就先跑一遍 compute），并打印 ids_js：一段 JS，把素材 ID 列表放进页面。
 2. 在 Reina 的 Chrome 打开 https://ad.oceanengine.com/ad/web/tools/tools_console/operation-log?aadvid=1879654096082505（只看不点），
    javascript_tool 跑 oplog.js 全文（返回 started），反复跑 `await __opWait()` 到 st 是 done（416 个户、5 天约 5–10 分钟）。
-   再跑 ids_js，然后依次跑 `__opGet(0)`、`__opGet(1)`……（每段 120 条素材，返回值不到 1,000 字，javascript_tool 不会截断），
+   再跑 ids_js，然后依次跑 `__opGet(0)`、`__opGet(1)`……（每段 70 条素材，返回值不到 1,000 字，javascript_tool 不会截断），
    每段原样存成 /tmp/oplog/op_k.txt，直到返回空字符串。
 3. python3 tools/oplog_save.py --date D /tmp/oplog → 合并进 notes/jjlog.json，compute.py 读它算「新老项目基建不够」。
 只调查询接口（opt_log/dataSearch），不点任何按钮。户列表：notes/jj-accounts.json（BigQuery fact 里有数的智擎户），脚本运行时从看板站点读。
@@ -41,8 +41,8 @@ const one = async (adv) => { for (let p = 1; p <= 400; p++) { const j = await ge
     const ios = /^ios/i.test((__op.pname.get(pid) || '').trim()), nw = c >= addD(U, -1); let a = C.get(mid); if (!a) { a = [0, 0, 0, 0]; C.set(mid, a); } a[(ios ? 0 : 2) + (nw ? 0 : 1)]++; }
   __op.C = C; __op.st = 'done'; })();
 window.__opWait = async () => { for (let i = 0; i < 38 && __op.st === 'run'; i++) await new Promise((r) => setTimeout(r, 1000)); return JSON.stringify({st: __op.st, done: __op.done, of: __op.of, nlog: __op.nlog, pairs: __op.pairs.size, mats: __op.C ? __op.C.size : 0, err: __op.err.slice(0, 5)}); };
-// 每条 8 个字符：iOS 新、iOS 老、安卓新、安卓老，各 2 位 36 进制（封顶 1295）
-window.__opGet = (k) => (window.__opIds || []).slice(k * 120, k * 120 + 120).map((m) => (__op.C.get(m) || [0, 0, 0, 0]).map((n) => Math.min(n, 1295).toString(36).padStart(2, '0')).join('')).join('');
+// 每段 70 条素材，每条「iOS 新 iOS 老 安卓新 安卓老」四个数空格分开、条与条用分号分开（不到 1,000 字；36 进制会被当成 base64 拦掉）
+window.__opGet = (k) => (window.__opIds || []).slice(k * 70, k * 70 + 70).map((m) => (__op.C.get(m) || [0, 0, 0, 0]).join(' ')).join(';');
 }
 'started'"""
 
@@ -65,7 +65,7 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     open(os.path.join(a.out, 'oplog.js'), 'w').write(js)
     json.dump({'date': a.date, 'start': s, 'ids': ids}, open(os.path.join(a.out, 'ids.json'), 'w'))
-    print(json.dumps({'date': a.date, 'start': s, 'accounts': len(advs), 'mats': len(ids), 'chunks': (len(ids) + 119) // 120, 'page': PAGE}, ensure_ascii=False))
+    print(json.dumps({'date': a.date, 'start': s, 'accounts': len(advs), 'mats': len(ids), 'chunks': (len(ids) + 69) // 70, 'page': PAGE}, ensure_ascii=False))
     print('ids_js: window.__opIds = ' + json.dumps(ids) + '; __opIds.length')
 
 
