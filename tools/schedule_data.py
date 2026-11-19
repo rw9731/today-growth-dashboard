@@ -604,47 +604,58 @@ def batch_items(fams, tot, D):
     return out
 
 
-def tier_stats(fams, tot, D):
-    """分档要看的数，窗口和页面「近 7 天」「次留」一样：消耗 D-6..D，次留到 D-1（D 没回传完）。"""
+def tier_stats(rows, fams, of, tot, D):
+    """分档和看板按同一套素材分日归属统计，PS03 三个子方向合并。
+
+    近 7 天消耗统计到 D，次留和次留成本统计到 D-1。
+    """
     one = dt.timedelta(days=1)
-    norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
+    lo7, lo14 = D - 6 * one, D - 13 * one
     avg = day_avg(fams, tot)
-    up = lambda f: is_up(f, avg, D)
     A0, R0 = Counter(), Counter()
-    for f in fams:
-        for x in f.a:
-            A0[x] += f.a[x]
-            R0[x] += f.r[x]
-    t7 = sum(tot.get(D - one * k, 0) for k in range(7))
-    def st(fs, days):
-        lo = D - one * days
-        c, a, r, b = 0, 0, 0, 0
-        for f in fs:
-            for x in set(f.c) | set(f.a):
-                if lo <= x < D:
-                    c += f.c[x]
-                    a += f.a[x]
-                    r += f.r[x]
-                    if A0[x]:
-                        b += f.a[x] * R0[x] / A0[x]
-        return dict(a=round(a), rate=round(r / a * 100, 1) if a else None, cpr=round(c / r) if r else None, gap=round((r - b) / a * 100, 1) if a else None)
-    def row(fs):
-        ds = [sum(f.c[D - one * k] for f in fs) for k in range(7)]
-        c7 = sum(ds)
-        top = max((sum(f.c[D - one * k] for k in range(7)) for f in fs), default=0)
-        lines = {f.first for f in fs if f.first and D - one * 6 <= f.first and up(f)}
-        return dict(sh=round(c7 / t7 * 100, 1) if t7 else 0, d5=sum(1 for k, v in enumerate(ds) if tot.get(D - one * k) and v / tot[D - one * k] >= .03), top=round(top / c7 * 100) if c7 else 0, nb=len(lines), w7=st(fs, 6), w14=st(fs, 13))
     groups = defaultdict(list)
-    for f in fams:
-        if f.spent:
-            groups[f.sub].append(f)
-    out = {u: row(fs) for u, fs in groups.items()}
-    every = [f for f in fams if f.spent]
-    out['__gl'] = dict(w7=st(every, 6), w14=st(every, 13))
-    keys = list(SUB_KEY.values())
-    merged = [f for k in keys for f in groups.get(k, [])]
-    if merged:
-        out['PS03'] = row(merged)
+    window = [r for r in rows if lo14 <= r['d'] <= D]
+    for r in window:
+        d = r['d']
+        A0[d] += r['a']
+        R0[d] += r['r']
+        u = sub_of_row(r, of[r['id']])
+        groups[RT_ALIAS.get(u, u)].append(r)
+    t7 = sum(tot.get(D - one * k, 0) for k in range(7))
+
+    def st(rs, lo):
+        c, a, r, b = 0, 0, 0, 0
+        for row in rs:
+            d = row['d']
+            if lo <= d < D:
+                c += row['c']
+                a += row['a']
+                r += row['r']
+                if A0[d]:
+                    b += row['a'] * R0[d] / A0[d]
+        return dict(a=round(a), rate=round(r / a * 100, 1) if a else None, cpr=round(c / r) if r else None, gap=round((r - b) / a * 100, 1) if a else None)
+
+    def row(rs):
+        daily, by_family, launch_spend = Counter(), Counter(), Counter()
+        for r in rs:
+            d = r['d']
+            if d < lo7:
+                continue
+            f = of[r['id']]
+            daily[d] += r['c']
+            by_family[f] += r['c']
+            # 素材按首花批次合并。第二天只看归在这个方向的消耗。
+            if f.first and f.first >= lo7 and d == min(f.first + one, D):
+                launch_spend[f, d] += r['c']
+        c7 = sum(daily.values())
+        top = max(by_family.values(), default=0)
+        lines = {f.first for (f, d), c in launch_spend.items() if d in avg and c >= avg[d]}
+        return dict(sh=round(c7 / t7 * 100, 1) if t7 else 0,
+                    d5=sum(1 for d, c in daily.items() if tot[d] and c / tot[d] >= .03),
+                    top=round(top / c7 * 100) if c7 else 0, nb=len(lines), w7=st(rs, lo7), w14=st(rs, lo14))
+
+    out = {u: row(rs) for u, rs in groups.items()}
+    out['__gl'] = dict(w7=st(window, lo7), w14=st(window, lo14))
     return out
 
 
@@ -939,7 +950,7 @@ def make_roi(rows, fams, spend, D, T, of=None):
         if not y_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
-    out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(fams, tot, D))
+    out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
     out['rt'] = rt_diagnose(rows, of, D)
     out['hist'] = history(rows, fams, D)
     out['hist_from'] = min(r['d'] for r in rows).isoformat()

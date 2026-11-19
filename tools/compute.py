@@ -1332,8 +1332,9 @@ def main():
     def tier_at(uc, u):
         t = _tier.get(uc, '没分档')
         mv = _mv.get(uc)
-        if mv and mv.get('d') and u < mv['d']:
-            return mv.get('from', t)
+        while mv and mv.get('d') and u < mv['d']:
+            t = mv.get('from', t)
+            mv = mv.get('previous')
         return t
     for m in cs_mats:
         m['tier'] = tier_at(m['uc'], m['up'][:10])
