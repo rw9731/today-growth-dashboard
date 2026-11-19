@@ -1629,7 +1629,7 @@
       box.innerHTML = html;
       for (const p of ['i', 'a']) {
         const tb = box.querySelector('[data-draw="csplat-' + p + '"]');
-        const OD = (b) => OD(b).filter((m) => m['on_' + p] !== false), st = (m) => m['st_' + p], cz = (m, now) => now ? m['cause_now_' + p] : m['cause_' + p];
+        const OD = (b) => ofDay(b).filter((m) => m['on_' + p] !== false), st = (m) => m['st_' + p], cz = (m, now) => now ? m['cause_now_' + p] : m['cause_' + p];
         const done = B.filter((b) => OD(b).length && !OD(b).some((m) => st(m) === 'wait'));
         const N = d3.sum(done, (b) => OD(b).length);
         const avgR = N ? d3.sum(done, (b) => OD(b).filter((m) => st(m) === 'pass').length) / N : null;
