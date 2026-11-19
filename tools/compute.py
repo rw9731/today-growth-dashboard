@@ -265,28 +265,43 @@ def rate_series(st, uc, days, avail):
 # T1 能放量 + 次留好 → 主攻，多做变式；T2 中等量 + 次留好 → 次优先，小步加量；
 # T3 能放量但次留不达标 → 做变式压成本，次留率低的推产品承接；其余是观察。
 # 每天按前 5 个报告日各算一遍分层，用来看今天的变化（进出 T1）和一直成立的（连续几天在同一层）。
-# 次留率达到 30% 直接判好。低于 30% 时按同期全盘判断。
-GOOD_ABS = 0.30
+PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'days': 5}
+NO_PLAN = ('待对应', '客供', '库外', '')
+CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
+
+
+def daily_ret_good(rate, rate_w):
+    """日报按同一激活窗口的全盘次留率判好。"""
+    return rate is not None and rate_w is not None and rate > rate_w
+
+
+def daily_ret_word(rate, cpr, rate_w, cpr_w, th):
+    if rate is None or rate_w is None:
+        return None
+    if daily_ret_good(rate, rate_w):
+        return '次留好'
+    if rate < th['low'] * rate_w or cpr is None:
+        return '次留差'
+    if cpr_w is not None and cpr > th['high'] * cpr_w:
+        return '次留贵'
+    return '次留一般'
 
 
 def ret_good(rate, cpr, rate_w, cpr_w):
+    """周报沿用周报的次留判定。"""
     if rate is None:
         return False
-    if rate >= GOOD_ABS:
+    if rate >= 0.30:
         return True
     return (cpr is not None and rate_w is not None and cpr_w is not None
             and rate >= rate_w and cpr <= cpr_w)
-
-PLAN_TH = {'big': 0.03, 'mid': 0.008, 'act': 60, 'nice': 1.00, 'days': 5}
-NO_PLAN = ('待对应', '客供', '库外', '')
-CH_NAME = {'ai': 'AI', 'ec': '二创', 'yp': '原片'}
 
 
 def bad_streak(allrows, Dd, th):
     """每条素材连续判差几天（Reina 11/4 定）。
 
     D 激活的人 D+1 才有次留，表 D+2 上午才看得到，所以 x 这天上午能看的是 x-4 到 x-2 激活的人。
-    激活合计至少 judge_act 且次留率低于 GOOD_ABS 时，按同期全盘的 low 和 high 判断是否判差。
+    激活合计至少 judge_act 时，用日报的次留标签判断是否连续判差。
     报告日 D 的页面在 D+1 上午看，从 D+1 上午往回数。返回 {素材ID: {bad_n, bad_first, bad_after, bad_up}}。
     """
     one = dt.timedelta(days=1)
@@ -303,8 +318,7 @@ def bad_streak(allrows, Dd, th):
         C = sum(tc[d] for d in ds); A = sum(ta[d] for d in ds); R = sum(tr[d + one] for d in ds)
         if a < th['judge_act'] or not A or not R:
             return False
-        rate = rt / a
-        return rate < GOOD_ABS and (rate < th['low'] * R / A or not rt or c / rt > th['high'] * C / R)
+        return daily_ret_word(rt / a, c / rt if rt else None, R / A, C / R, th) in ('次留差', '次留贵')
 
     out = {}
     for i in {r['id'] for r in allrows}:
@@ -366,22 +380,18 @@ def tiers_for(allrows, ucs, Dd, th):
                   'cost27': S(rs, D[3], 'cost'), 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0})})
         s['ch'] = {c: stats([r for r in rs if chan_of(r['src'], r['track'], r['name']) == c]) for c in CH_NAME}
         rate, cpr = s['rate'], s['cpr']
-        good = ret_good(rate, cpr, rate_w, cpr_w)
-        nice = ret_good(rate, cpr, rate_w, PLAN_TH['nice'] * cpr_w)
+        good = daily_ret_good(rate, rate_w)
         big = s['share4'] >= PLAN_TH['big']
         mid = s['share4'] >= PLAN_TH['mid'] and s['act_w'] >= PLAN_TH['act']
-        s['tier'] = 'T1' if big and good else 'T3' if big else 'T2' if mid and nice else 'T0'
+        s['tier'] = 'T1' if big and good else 'T3' if big else 'T2' if mid and good else 'T0'
         flag = ''
-        bar = min(GOOD_ABS, rate_w)
         if s['tier'] == 'T3' and rate is not None:
-            if rate >= 0.95 * bar and cpr is not None and cpr <= 1.05 * cpr_w:
+            if rate >= 0.95 * rate_w and cpr is not None and cpr <= 1.05 * cpr_w:
                 flag = '差一点进 T1'
             elif rate < 0.9 * rate_w:
                 flag = '次留率低'
-            elif rate < bar:
-                flag = '次留率低于全盘'
             else:
-                flag = '次留成本偏高'
+                flag = '次留率未超过全盘'
         s['flag'] = flag
         out[uc] = s
     return {'uc': out, 'rate_w': rate_w, 'cpr_w': cpr_w, 'tot4': tot4, 'date': D[3]}
@@ -558,7 +568,7 @@ def main():
     days3 = [Dd - dt.timedelta(days=k) for k in (5, 4, 3)]
     W3 = [d.isoformat() for d in days3]
     monday = (Dd - dt.timedelta(days=Dd.weekday())).isoformat()
-    th = dict(TH, week=monday, good_abs=GOOD_ABS)
+    th = dict(TH, week=monday, retention_rule='market_rate')
 
     ucs = json.load(open(os.path.join(HERE, 'ucs.json')))
     links = json.load(open(os.path.join(HERE, 'links.json')))
@@ -626,26 +636,14 @@ def main():
     o['rate3_w'], o['cpr3_w'], o['act3'] = g3['rate3'], g3['cpr3'], g3['act3']
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
-    def ret_word(rate, cpr):
-        # 标签 = 量 + 次留，日报周报统一（Reina 11/4）。次留好见 ret_good（Reina 11/18：次留率 ≥ 30% 就算好，低于 30% 才和大盘比）。
-        if rate is None:
-            return None
-        if ret_good(rate, cpr, o['rate_w'], o['cpr_w']):
-            return '次留好'
-        if rate < th['low'] * o['rate_w'] or cpr is None:
-            return '次留差'
-        if cpr > th['high'] * o['cpr_w']:
-            return '次留贵'  # 次留率没问题，只是次留成本超线（Reina 11/12 从次留差里拆出来）
-        return '次留一般'
-
     def label(rate, cpr, cost):
         # 素材：三天消耗过 scale 算能放量
-        w = ret_word(rate, cpr)
+        w = daily_ret_word(rate, cpr, o['rate_w'], o['cpr_w'], th)
         return ('能放量' if cost > th['scale'] else '量小') + ' + ' + w if w else '样本不够'
 
     def share_label(rate, cpr, spend4):
         # use case、素材类型：四天消耗占全盘 3% 以上算能放量
-        w = ret_word(rate, cpr)
+        w = daily_ret_word(rate, cpr, o['rate_w'], o['cpr_w'], th)
         if not w:
             return '样本不够'
         return ('能放量' if spend4 / ((cw + o['cost27']) or 1) >= PLAN_TH['big'] else '量小') + ' + ' + w
@@ -831,11 +829,17 @@ def main():
     if os.path.exists(prev_page):
         mm = re.search(r'<script type="application/json" id="results">(.*?)</script>', open(prev_page).read(), re.S)
         if mm:
-            pu = {x['uc']: x for x in json.loads(mm.group(1).replace('<\\/', '</')).get('uc_tbl', [])}
+            previous = json.loads(mm.group(1).replace('<\\/', '</'))
+            pu = {x['uc']: x for x in previous.get('uc_tbl', [])}
+            market = (previous.get('overview') or [{}])[0]
             for u in uct:
                 x = pu.get(u['uc'])
                 if x:
-                    u['prev_status'] = x.get('status'); u['prev_rate'] = x.get('rate'); u['prev_cpr'] = x.get('cpr')
+                    status = x.get('status') or ''
+                    word = daily_ret_word(x.get('rate'), x.get('cpr'), market.get('rate_w'), market.get('cpr_w'), th)
+                    if word and ' + ' in status:
+                        status = status.split(' + ', 1)[0] + ' + ' + word
+                    u['prev_status'] = status; u['prev_rate'] = x.get('rate'); u['prev_cpr'] = x.get('cpr')
     # 每条素材最近 7 天消耗（Reina 11/4 定，四、昨天消耗排行的柱状图）
     cost7_m = defaultdict(float)
     for r in allrows:
