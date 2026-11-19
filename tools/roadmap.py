@@ -12,7 +12,7 @@
   测试中 = 花过钱、还不够 10 条、没点亮；没测 = 一条都没花过钱；
   储备 / 暂不做 = Use case 库状态是储备、而且没测过（暂不做的写在 NOT_NOW）。
 - 格子（use case × 素材类型）：这一格里有一条素材累计花到 ¥5,000 = 点亮；花过钱的 ≥ 10 条、都没到 ¥5,000 = 偏弱；有花过钱的 = 测过；空 = 没测。
-- 本周排期 = tools/schedule_plan.json 的 E 里这一周的条数（不算建议拿掉的），分档用 GROUPS。
+- 本周已排与排期看板共用 schedule_entries.py 的条目，分档用 GROUPS。
 """
 import argparse
 import datetime as dt
@@ -24,6 +24,7 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import compute  # noqa: E402
+from schedule_entries import planned_entries
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CS_COST = 400
@@ -106,13 +107,11 @@ def main():
     wk0 = plan.get('week')
     wk1 = (dt.date.fromisoformat(wk0) + dt.timedelta(days=6)).isoformat() if wk0 else None
     sched = defaultdict(lambda: defaultdict(int))
-    for e in plan.get('E', []):
-        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut' and '顺延' not in (e.get('to') or ''):
-            sched[e['uc']][e.get('t', '')] += int(e.get('n') or 0)
     sched_e = defaultdict(list)
-    for e in plan.get('E', []):
-        if wk0 and wk0 <= e.get('d', '') <= wk1 and e.get('s') != 'cut' and '顺延' not in (e.get('to') or ''):
-            sched_e[e['uc']].append(e)
+    for e in planned_entries(plan, wk0) if wk0 else []:
+        sched[e['uc']][e.get('t', '')] += int(e.get('n') or 0)
+        sched_e[e['uc']].append(e)
+    all_planned = planned_entries(plan)
     SCN = json.load(open(os.path.join(ROOT, 'tools', 'scenes.json')))
     SM = json.load(open(os.path.join(ROOT, 'notes', 'scene-map.json')))
 
@@ -207,7 +206,7 @@ def main():
 
     # 时间线（Reina 11/17：要有 roadmap 的时间感）：按周看每个 use case 新测了几条、花了多少、哪周点亮、排了几条
     mon = lambda d: (dt.date.fromisoformat(d) - dt.timedelta(days=dt.date.fromisoformat(d).weekday())).isoformat()
-    plan_weeks = {mon(e['d']) for e in plan.get('E', []) if e.get('d')}
+    plan_weeks = {mon(e['d']) for e in all_planned}
     W0 = mon(first_day)
     W1 = max([mon(D)] + list(plan_weeks))
     weeks = []
@@ -227,9 +226,10 @@ def main():
                 m['lit_day'] = d_
                 break
     plan_wk = defaultdict(lambda: defaultdict(int))
-    for e in plan.get('E', []):
-        if e.get('s') != 'cut' and '顺延' not in (e.get('to') or '') and e.get('d'):
-            plan_wk[e['uc']][mon(e['d'])] += int(e.get('n') or 0)
+    all_by_uc = defaultdict(list)
+    for e in all_planned:
+        plan_wk[e['uc']][mon(e['d'])] += int(e.get('n') or 0)
+        all_by_uc[e['uc']].append(e)
     for x in out:
         ms = [m for m in by.get(x['uc'], []) if m['cost'] > 0]
         tl = {}
@@ -249,11 +249,10 @@ def main():
         if scl:
             tagd = lambda m: SM.get(m['id']) if SM.get(m['id'], {}).get('uc') == x['uc'] else None
             pw = defaultdict(lambda: defaultdict(int))
-            for e in plan.get('E', []):
-                if e.get('uc') == x['uc'] and e.get('s') != 'cut' and '顺延' not in (e.get('to') or '') and e.get('d'):
-                    h = hits(x['uc'], e.get('sc', ''))
-                    for k, v in (split(int(e.get('n') or 0), h) if h else {0: int(e.get('n') or 0)}).items():
-                        pw[k][mon(e['d'])] += v
+            for e in all_by_uc[x['uc']]:
+                h = hits(x['uc'], e.get('sc', ''))
+                for k, v in (split(int(e.get('n') or 0), h) if h else {0: int(e.get('n') or 0)}).items():
+                    pw[k][mon(e['d'])] += v
             grp = [(c['n'], c['t'], c.get('g', ''), c.get('full', ''), [m for m in ms if (tagd(m) or {}).get('s') == c['n']]) for c in scl]
             other = [m for m in ms if not (tagd(m) or {}).get('s')]
             if other or any(pw[0].values()):
@@ -561,7 +560,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
       <span><b>{cnt.get('没测', 0)}</b>没测</span><span><b>{cnt.get('储备', 0) + cnt.get('暂不做', 0)}</b>储备 / 暂不做</span>
     </div>
     <ul>
-      <li><b>本周排期（{md(wk0)}–{md(wk1)}）按分档：</b>{tier_line}。</li>
+      <li><b>本周已排 {tsum} 条（{md(wk0)}–{md(wk1)}）</b>，{tier_line}。</li>
       <li><b>判弱但这周还在排的：</b>{lst(weak_sched)}。30 天花过钱的素材都 ≥ 10 条、没有一条花到 ¥5,000，量一直起不来；如果是因为留存好才留在排期里，要看值不值得继续占产能。</li>
       <li><b>测试中、已经测了 5 条以上的：</b>{lst(near)}。再测几条就能下结论。</li>
       <li><b>库里在用、还没测过的：</b>{lst(untested)}。新方向的候选。</li>
@@ -573,9 +572,9 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   <section class="card" id="map">
     <h2>use case × 素材类型</h2>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>点亮：有一条素材累计花到 ¥5,000</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 ¥5,000</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
-    <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 后 2 天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周排期来自素材排期看板，小字是 AI / 二创各几条，分档沿用排期看板的三档。</p>
+    <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 后 2 天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。本周已排与素材排期看板同口径，剔除建议拿掉和顺延的条目，小字是 AI / 二创各几条。</p>
     <div class="rmwrap"><table class="rm">
-      <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周排期</th></tr></thead>
+      <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周已排</th></tr></thead>
       <tbody>{''.join(body)}</tbody>
     </table></div>
   </section>

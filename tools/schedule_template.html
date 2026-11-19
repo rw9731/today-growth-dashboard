@@ -78,6 +78,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 #b tr.row td{border-bottom:1px solid var(--grid)}
 #b tr.row:hover td.name{background:var(--band)}
 #b tr.t1{--tier:var(--t1);--nm:var(--n1)}#b tr.t2{--tier:var(--t2);--nm:var(--n2)}#b tr.t3{--tier:var(--t3);--nm:var(--n3)}
+#b tr.unassigned{--tier:var(--band);--nm:var(--panel);--on:var(--ink)}
 #b tr.row .name{background:var(--nm,var(--panel));box-shadow:inset 5px 0 0 var(--tier,transparent),1px 0 0 var(--grid);padding-left:13px}
 #b tr.row:hover .name{background:var(--nm,var(--band))}
 #b tr.grp td{background:var(--tier);color:var(--on);font-size:11px;padding:7px 1px;text-align:center;vertical-align:middle;white-space:nowrap}
@@ -331,6 +332,9 @@ const md=s=>{const[m,d]=s.split('-');return (+m)+'/'+(+d)};
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const mk=t=>esc(t).replace(/==(.+?)==/g,'<span class="bp-r">$1</span>');
 const sum=a=>a.reduce((x,y)=>x+y,0);
+const booked=P.WEEK_PLAN;
+const bookedN=us=>sum(us.map(u=>booked[u]||0));
+const folded=P.FOLD.filter(u=>!booked[u]);
 const ent=u=>P.E.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
 const nowN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','cut'].includes(e.s)).map(e=>e.n));
 const aftN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','add'].includes(e.s)).map(e=>e.n));
@@ -371,20 +375,20 @@ function rateCell(r,id){
 const tagOf=(x,gi)=>x.tag==='减'&&gi<2?'持平':x.tag;
 const rtCls={'加':'up','减':'down','靠一条':'one','持平':'mu','不判':'mu'};
 const rtTxt={'加':'多加','减':'减少','靠一条':'小步复制','持平':'不变','不判':'条数少<br>不判'};
-function row(id,code,label,r,es,max,cls,gi){
-  const a=nowN(es),b=aftN(es),mt=P.MT[id],x=P.X[id];
+function row(id,code,label,r,es,max,planned,cls,gi){
+  const a=nowN(es),b=aftN(es),mt=P.MT[id],x=gi<P.GROUPS.length?P.X[id]:null;
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${tr&&tr.fresh?`<em>${gi===2?'调入探索':'新进'}</em>`:''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2,P.B[id],id)}
-  <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
+  <td class="st booked"><b>${planned}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
-const NC=3+all.length+4;
-document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
+const NC=3+all.length+5;
+document.querySelector('#b thead').innerHTML=`<tr><th class="name">三大块和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -394,21 +398,29 @@ function lines(id,code,label,us){
   for(const e of rows){const src=[...new Set(e.srcs)].join('；');h+=`<tr><td class="n">${e.d}</td><td class="n">${e.g} 组</td><td class="n">${e.t}</td><td class="num">${e.n}</td><td class="n">${st[e.s]}${e.to?'：'+esc(e.to):''}</td><td>${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc(src)}</a>`:esc(src)}</td></tr>`}
   return h;
 }
-P.GROUPS.forEach(([title,list,target,note],gi)=>{
-  const tc='t'+(gi+1),is3=gi===2;
+const listed=new Set(P.GROUPS.flatMap(g=>g[1]).concat(P.FOLD));
+const unassigned=Object.keys(booked).filter(u=>booked[u]>0&&!listed.has(u));
+const displayGroups=P.GROUPS.concat(unassigned.length?[['未分档',unassigned,null,'']]:[]);
+displayGroups.forEach(([title,list,target,note],gi)=>{
+  const tc=target==null?'unassigned':'t'+(gi+1),is3=gi===2;
+  const ids=is3?list.concat(P.FOLD.filter(u=>booked[u]>0)):list;
   const us=list.concat(is3?P.FOLD:[]),es=ent(us);
-  let rows=list.map(u=>({id:u,code:u,label:P.UC[u]||'',r:P.U[u]||zero(),es:ent(u),us:[u]}));
-  if(is3&&P.FOLD.length)rows.push({id:'__fold',code:'其余',label:P.FOLD.length+' 个方向',r:merged(P.FOLD),es:ent(P.FOLD),last:true,us:P.FOLD});
+  let rows=ids.map(u=>({id:u,code:u,label:P.UC[u]||'',r:P.U[u]||zero(),es:ent(u),us:[u]}));
+  if(is3&&folded.length)rows.push({id:'__fold',code:'其余',label:folded.length+' 个方向',r:merged(folded),es:ent(folded),last:true,us:folded});
   const max=Math.max(1,...rows.flatMap(x=>x.r.s.map(sum)));
   rows=rows.filter(x=>!x.last).sort((p,q)=>q.r.c7-p.r.c7).concat(rows.filter(x=>x.last));
   const c7=sum(rows.map(x=>x.r.c7)),mtS=sum(list.map(u=>P.MT[u]||0)),a=nowN(es),b=aftN(es);
   const heads=pastDays.map((d,i)=>`<td>${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></td>`).join('')+futDays.map(d=>`<td>${d===P.today?'今天':d}<i>周${wk(d)}</i></td>`).join('');
   body+=`<tr class="gap"><td colspan="${NC}"></td></tr>`;
-  body+=`<tr class="grp ${tc}"><td class="gl" colspan="3"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>${note?note+'<br>':''}消耗占 ${(c7/P.T.c7*100).toFixed(0)}%；上新占 ${Math.round(a/S0*100)===Math.round(b/S1*100)?Math.round(b/S1*100)+'%':Math.round(a/S0*100)+'% → '+Math.round(b/S1*100)+'%'}，目标 ${target}%<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="keep"><small>维持</small><b>${mtS}</b></td><td class="sumc help" data-help="y"><small>单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
-  details+=`<tr class="u th ${tc}"><td colspan="6">${title}<small>上新占 ${Math.round(a/S0*100)===Math.round(b/S1*100)?Math.round(b/S1*100)+'%':Math.round(a/S0*100)+'% → '+Math.round(b/S1*100)+'%'}，目标 ${target}%</small></td></tr>`;
-  for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,tc,gi);details+=lines(x.id,x.code,x.label,x.us)}
+  const header=target==null?`<span class="ti">${title}</span>`:`<span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>`;
+  const shareBefore=Math.round(a/S0*100),shareAfter=Math.round(b/S1*100);
+  const share=shareBefore===shareAfter?shareAfter+'%':shareBefore+'% → '+shareAfter+'%';
+  const goal=target==null?'':`上新占 ${share}，目标 ${target}%`;
+  body+=`<tr class="grp ${tc}"><td class="gl" colspan="3">${header}${note?note+'<br>':''}消耗占 ${(c7/P.T.c7*100).toFixed(0)}%${goal?'，'+goal:''}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b></td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="keep"><small>维持</small><b>${mtS}</b></td><td class="sumc help" data-help="y"><small>单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
+  details+=`<tr class="u th ${tc}"><td colspan="6">${title}${goal?`<small>${goal}</small>`:''}</td></tr>`;
+  for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,bookedN(x.us),tc,gi);details+=lines(x.id,x.code,x.label,x.us)}
 });
-document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
+document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
@@ -442,13 +454,13 @@ const HD=document.getElementById('hist'),HS={u:'',t:'all',k:'c',dir:-1,s:null};
 const ymd=s=>{const[,m,d]=s.split('-');return (+m)+'/'+(+d)};
 const hRate=x=>x[4]?x[5]/x[4]*100:null,hCpr=x=>x[5]?x[6]/x[5]:null;
 const HK={c:x=>x[3],c7:x=>x[7],first:x=>x[2],a:x=>x[4],rate:hRate,cpr:hCpr,sc:x=>x[10]==null?999:x[10]<=0?998-x[10]:x[10]};
-const hList=id=>(id==='__fold'?P.FOLD:[id]).flatMap(u=>((P.HIST||{}).U||{})[u]?.map(x=>[...x,u])||[]);
+const hList=id=>(id==='__fold'?folded:[id]).flatMap(u=>((P.HIST||{}).U||{})[u]?.map(x=>[...x,u])||[]);
 const scName=(u,n)=>{const s=((P.HIST.SC||{})[u]||[]).find(z=>z[0]===n);return s?s[1]:''};
 const scKey=x=>x[12]+'|'+x[10];
 function scCell(x){const s=x[10];if(s==null)return '<span class="q">还没打</span>';if(s===0)return '<span class="q">待看片</span>';if(s<0)return '<span class="q">库里没有</span>';return `<span class="scn">${s}</span>${esc(scName(x[12],s))}`}
 // 细分场景覆盖：用 Use case 库的场景数做分母，测过 = 至少一条素材标到这个场景
 function coverage(id,all){
-  const us=id==='__fold'?P.FOLD:[id];let tot=0,hit=0;const chips=[];
+  const us=id==='__fold'?folded:[id];let tot=0,hit=0;const chips=[];
   for(const u of us){const sc=(P.HIST.SC||{})[u]||[];tot+=sc.length;
     for(const[n,t]of sc){const ms=all.filter(x=>x[12]===u&&x[10]===n);if(ms.length)hit++;
       const c=ms.reduce((s,x)=>s+x[3],0),a=ms.reduce((s,x)=>s+x[4],0),r=ms.reduce((s,x)=>s+x[5],0);
@@ -462,7 +474,7 @@ function histDraw(){
   if(HS.s)rs=rs.filter(x=>HS.s==='tbd'?!(x[10]>0):scKey(x)===HS.s);
   const f=HK[HS.k];rs=[...rs].sort((p,q)=>{const a=f(p),b=f(q);if(a==null&&b==null)return q[3]-p[3];if(a==null)return 1;if(b==null)return -1;return a<b?-HS.dir:a>b?HS.dir:q[3]-p[3]});
   const nAI=all.filter(x=>x[1]==='AI').length,c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
-  document.getElementById('hist-h').textContent=fold?`其余 ${P.FOLD.length} 个方向：历史投过的素材`:`${id} ${P.UC[id]||''}：历史投过的素材`;
+  document.getElementById('hist-h').textContent=fold?`其余 ${folded.length} 个方向：历史投过的素材`:`${id} ${P.UC[id]||''}：历史投过的素材`;
   const pc=cv.tot?Math.round(cv.hit/cv.tot*100):0;
   const mxm=Math.max(1,...cv.chips.map(x=>x.m));
   document.getElementById('hist-cv').innerHTML=cv.tot?`<div class="cvs"><div><b>${cv.hit}<small> / ${cv.tot}</small></b><span>细分场景测过</span></div><div><b>${pc}%</b><span>覆盖率</span><i class="cvbar"><i style="width:${pc}%"></i></i></div><div><b>${all.length}</b><span>测试素材（条）</span></div><div class="cvx"><span>其中打上场景 ${cv.ok} 条 · 待看片 ${cv.tbd} 条 · 库里没有 ${cv.none} 条${cv.un?` · 还没打 ${cv.un} 条`:''}</span></div></div>`+
@@ -626,6 +638,7 @@ const upLines=t=>{const u=P.TIER.up,r=P.T.rate-u.gap;return [
  `次留 ${t.rate}%（要 ≥${r.toFixed(1)}%）${mark(t.rate!=null&&t.rate>=r)}`,
  `成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${P.T.cpr+3}）${mark(t.cpr!=null&&t.cpr<=P.T.cpr+3)}`].join('<br>')};
 const HELP={y:yHelp,
+ booked:()=> '按本周排期底表汇总，剔除建议拿掉和顺延的条目。与点亮路线图的「本周已排」同口径。',
  ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 激活不到 100 个的照样按这两条标，但颜色浅一些，下面写着「样本小」和激活数：样本太小，只当参考，不拿来定档和下结论。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
  g:i=>{const u=P.TIER.up,n=P.TIER.inn;return [
   `<b>能放量 + 留存好</b>：钱花得出去，留存不比全盘差，新素材接得上。这几条都够才进：<br>· 近 7 天占全盘 ≥${u.sh}%<br>· 7 天里至少 ${u.d5} 天占当天全盘 ≥3%<br>· 最大一条不超过这个方向 7 天消耗的 ${u.top}%<br>· 最近 7 天至少 ${u.nb} 个上线日有新素材跑起来（第二天比当天大盘平均每条花得多）<br>· 次留 ≥全盘 −${u.gap} 个点，成本不比全盘贵 ¥3 以上<br><br>档位每周周报改一次，不跟单日或一批素材变。连续两周不够才降。近 7 天次留低于全盘 ${u.gap} 个点以上、成本贵 ¥3 以上（激活 ≥${n.act}），或占比掉到 ${P.TIER.risk_sh}% 以下的，名字旁标「危险」。把鼠标放到某个 use case 名字上，看它现在够不够。`,

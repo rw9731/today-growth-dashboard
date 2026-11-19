@@ -12,6 +12,7 @@ import argparse, datetime as dt, html, json, os, re, sys
 from collections import defaultdict
 
 from schedule_data import STABLE, flow, total_warn
+from schedule_entries import is_deferred, planned_entries
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -153,6 +154,8 @@ def view_entries(plan, U, days, D, T):
             if n and mon <= d <= D:
                 out.append(dict(uc=u, d=md(d), g='', t='', n=n, s='live', src='', link='', to='', w=1))
     for e in plan['E']:
+        if is_deferred(e):
+            continue
         d = date(e['d'])
         if d < T:
             if e['s'] == 'done' and d >= mon:
@@ -411,7 +414,7 @@ def short_sub(text):
     return f'<span class="k">B 组速度</span><span>{html.escape(m.group(0))}</span>' if m else ''
 
 
-def progress_html(prog, T, wt=None):
+def progress_html(prog, T, wt=None, week_by_group=None):
     """「今天要看」最上面：A、B 组这周的进度条，下面一行落下，点开才是具体哪几行。
     Reina 11/12：分母用这周产能（plan 的 week_total，A 175、B 120），右边写「本周已交 / 产能」，和条的长度一致；
     到昨天该交多少、差多少写在下面那行。竖线是按排期到昨天该交的位置。plan 的 week 对不上（wt 为空）时退回用飞书排期的总条数。"""
@@ -432,8 +435,9 @@ def progress_html(prog, T, wt=None):
         state = f'<em class="o-late">落后 {gap}</em>' if gap > 0 else '<em class="o-over">没落下</em>'
         t = x.get('today') or {}
         bits = [f'到昨天该交 {x["due"]}，交了 {x["got"]}']
-        if wt.get(k) and wd != cap:
-            bits.append(f'飞书这周排了 {wd}' + (f'，比产能多 {wd - cap}' if wd > cap else f'，比产能少 {cap - wd}'))
+        booked = week_by_group.get(k, 0) if week_by_group is not None else wd
+        if wt.get(k) and booked != cap:
+            bits.append(f'本周已排 {booked}' + (f'，比产能多 {booked - cap}' if booked > cap else f'，比产能少 {cap - booked}'))
         if t.get('due'):
             tl = t['due'] - t['got']
             bits.append(f'今天还差 {tl}' if tl > 0 else '今天的交齐了')
@@ -451,25 +455,19 @@ def progress_html(prog, T, wt=None):
     return rows + f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b></summary><ul>{items}</ul></details>'
 
 
-def cap_html(plan, T):
+def cap_html(plan, T, weekly_plan):
     """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面每天只列已排条数看匀不匀（Reina 11/18：只管每周总量，哪天早做晚做都行，不标每天超、空）。
     产能按 plan 的 cap_day：周一到周五一套、周六周日一套（周六日每组每天约 20 条，AI 和二创 1:1）。
-    已排 = schedule_plan.json 里这周的排期行（不算 cut）。「还空」只标明天起的天（今天的排期不改）。"""
+    已排取本周有效排期，和主表及路线图用同一批条目。"""
     cd = plan.get('cap_day')
     if not cd:
         return ''
     mon = T - dt.timedelta(days=T.weekday())
     week = [mon + dt.timedelta(days=i) for i in range(7)]
     got = defaultdict(int)
-    for e in plan.get('E', []):
-        if e.get('s') == 'cut' or e.get('g') not in cd or e.get('t') not in ('AI', '二创'):
-            continue
-        try:
-            d = date(e['d'])
-        except Exception:
-            continue
-        if mon <= d <= week[-1]:
-            got[(e['g'], e['t'], d)] += int(e.get('n') or 0)
+    for e in weekly_plan:
+        if e.get('g') in cd and e.get('t') in ('AI', '二创'):
+            got[(e['g'], e['t'], date(e['d']))] += int(e.get('n') or 0)
     cap = lambda g, t, d: cd[g]['we' if d.weekday() >= 5 else 'wd'].get(t, 0)
     # 某一周临时加的产能（Reina 11/18：11/16 这周 A、B 组各加 20 条做「美好生活」新方向），记在 plan 的 cap_extra {周一: {组: {AI/二创: 条数}}}
     ext = plan.get('cap_extra', {}).get(mon.isoformat(), {})
@@ -502,7 +500,7 @@ def cap_html(plan, T):
                      f'<td class="c-sum"><b>{n}</b><small> / {c}</small></td><td class="c-left">{c - n if c >= n else "超 " + str(n - c)}</td></tr>')
     note = html.escape(plan.get('cap_note', ''))
     return (f'<section class="cap"><h2>本周排期余量</h2><div class="cap-cards">{cards}</div>'
-            f'<p class="rev-note">只看每周总量：哪天做早做晚都行，下表的每天条数只用来看排得匀不匀。{note}</p>'
+            f'<p class="rev-note">本周已排 <b>{sum(got.values())}</b> 条，剔除建议拿掉和顺延的条目。下表的每天条数用来看排得匀不匀。{note}</p>'
             f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排 / 产能</th><th>本周还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
 
 
@@ -624,6 +622,13 @@ def main():
     X = rule_rows(RU, U, E, GL, W, T)
     WT = total_warn(X, GL['t0'])
     in_week = plan.get('week') == (T - dt.timedelta(days=T.weekday())).isoformat()
+    weekly_plan = planned_entries(plan, plan['week']) if in_week else []
+    week_counts = defaultdict(int)
+    week_by_group = defaultdict(int)
+    for e in weekly_plan:
+        n = int(e.get('n') or 0)
+        week_counts[e['uc']] += n
+        week_by_group[e.get('g')] += n
     if not in_week:
         print(f"WARNING schedule_plan.json 的 week 是 {plan.get('week')}，这周的排期还没写进去：页面不显示产能条和结论，排期列是空的")
     listed = {u for g in plan['GROUPS'] for u in g[1]} | set(plan.get('FOLD', []))
@@ -632,7 +637,7 @@ def main():
         print('WARNING 有消耗但不在 GROUPS 里：' + '、'.join(unlisted))
     names = uc_names(plan)
     bars = plan.get('bars', 14)
-    P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [],
+    P = dict(E=E, U=U, T=total, UC=names, GROUPS=plan['GROUPS'], FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, plan['GROUPS'], D, total, days), TIER=tier_view(R, plan['GROUPS'], total, plan, T), WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D))
@@ -644,8 +649,8 @@ def main():
         print('WARNING 没给 --output：页面没有「本周实际产出」')
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
-        PROG=progress_html(prog, T, plan.get('week_total') if in_week else None) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
-        CAP=cap_html(plan, T) if in_week else '',
+        PROG=progress_html(prog, T, plan.get('week_total') if in_week else None, week_by_group if in_week else None) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
+        CAP=cap_html(plan, T, weekly_plan) if in_week else '',
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
