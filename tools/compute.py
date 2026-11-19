@@ -1462,6 +1462,16 @@ def main():
             return '占着'
         return '没跑'
     for m in cs_mats:
+        # 这条素材算不算这一端的上传（Reina 11/19 问分端表上传条数为什么一样）：几乎每条都同时推两端，所以基本一样；
+        # 操作日志里窗口内一个这端项目都没进、这端也没花钱的不算；星广看这端花没花钱，一端都没花的两端都算；没有日志的（11/09 前）两端都算
+        for p_ in ('i', 'a'):
+            jj_ = m.get('jj_' + p_)
+            if m.get('jj_na') == '星广':
+                m['on_' + p_] = m.get('c3_' + p_, 0) > 0 or (m.get('c3_i', 0) == 0 and m.get('c3_a', 0) == 0)
+            elif jj_ is not None:
+                m['on_' + p_] = sum(jj_) > 0 or m.get('c3_' + p_, 0) > 0
+            else:
+                m['on_' + p_] = True
         for p_ in ('i', 'a'):
             st_ = m.get('st_' + p_)
             m['cause_' + p_] = _czp(m, p_) if st_ == 'fail' else ''

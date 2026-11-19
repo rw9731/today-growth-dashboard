@@ -549,7 +549,7 @@
       </div>
       <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
       <h3 class="lx-h3" style="margin-top:22px">分端看冷启：iOS、安卓各一张</h3>
-      <p class="lx-note">这一端窗口 3 天（上传当天 + 后 2 天）花到 ¥400 算这端过。没过的原因顺序和上面一样，每条只归一列；基建按这一端的老项目判（iOS 不到 10 个、安卓不到 30 个），没进已跑量项目、被老素材霸着、被新素材占着只看这一端的项目，内容和方向的原因两端共用。标色规则同上：比这几批合起来高 5 个点以上、而且是它的 1.5 倍以上标红。</p>
+      <p class="lx-note">上传条数只算窗口里放进了这一端项目（或这端花过钱）的素材；现在每条素材基本都同时推两端，所以两张表的上传条数差不多，差的是个别只进了一端的和星广。这一端窗口 3 天（上传当天 + 后 2 天）花到 ¥400 算这端过。没过的原因顺序和上面一样，每条只归一列；基建按这一端的老项目判（iOS 不到 10 个、安卓不到 30 个），没进已跑量项目、被老素材霸着、被新素材占着只看这一端的项目，内容和方向的原因两端共用。标色规则同上：比这几批合起来高 5 个点以上、而且是它的 1.5 倍以上标红。</p>
       <div data-draw="csplat"></div>
       <h3 class="lx-h3" style="margin-top:22px">按 use case 看冷启率</h3>
       <p class="lx-note">排得多、以为能放量的方向，新素材到底好不好起。冷启率：近两周上传、3 天窗口已走完的新素材。比同期平均：实际过的条数 ÷ 按每条上传那天的整体冷启率算的期望（扣掉每天预算环境的差别），1 倍 = 和同期一样；新素材不到 10 条的不标色。能不能放量看近 7 天这个 use case 一共花了多少、占大盘多少；单条带量看这些钱是靠几条素材花出去的。<b>能放量但新素材难起</b>（近 7 天占大盘 ≥ 2%、新素材 ≥ 10 条、比同期平均 ≤ 0.7 倍）= 量靠少数老素材撑着，再排新素材也接不上。</p>
@@ -1629,27 +1629,27 @@
       box.innerHTML = html;
       for (const p of ['i', 'a']) {
         const tb = box.querySelector('[data-draw="csplat-' + p + '"]');
-        const st = (m) => m['st_' + p], cz = (m, now) => now ? m['cause_now_' + p] : m['cause_' + p];
-        const done = B.filter((b) => b.n_up && !ofDay(b).some((m) => st(m) === 'wait'));
-        const N = d3.sum(done, (b) => b.n_up);
-        const avgR = N ? d3.sum(done, (b) => ofDay(b).filter((m) => st(m) === 'pass').length) / N : null;
-        const AVG = CK.map(([k]) => N ? d3.sum(done, (b) => ofDay(b).filter((m) => st(m) === 'fail' && cz(m) === k).length) / N : null);
+        const OD = (b) => OD(b).filter((m) => m['on_' + p] !== false), st = (m) => m['st_' + p], cz = (m, now) => now ? m['cause_now_' + p] : m['cause_' + p];
+        const done = B.filter((b) => OD(b).length && !OD(b).some((m) => st(m) === 'wait'));
+        const N = d3.sum(done, (b) => OD(b).length);
+        const avgR = N ? d3.sum(done, (b) => OD(b).filter((m) => st(m) === 'pass').length) / N : null;
+        const AVG = CK.map(([k]) => N ? d3.sum(done, (b) => OD(b).filter((m) => st(m) === 'fail' && cz(m) === k).length) / N : null);
         for (const b of B.slice().reverse()) {
-          if (!b.n_up) continue;
-          const L = ofDay(b), tr = document.createElement('tr'), td = cellMaker(tr);
+          const L = OD(b), NU = L.length; if (!NU) continue;
+          const tr = document.createElement('tr'), td = cellMaker(tr);
           const P = L.filter((m) => st(m) === 'pass'), F = L.filter((m) => st(m) === 'fail'), W = L.filter((m) => st(m) === 'wait');
-          const PEND = W.length > 0, SMALL = b.n_up < 10;
+          const PEND = W.length > 0, SMALL = NU < 10;
           { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>'; c.style.whiteSpace = 'nowrap'; }
-          td('num').textContent = b.n_up;
+          { const c = td('num'); c.textContent = NU; if (NU !== b.n_up) c.title = '当天上传 ' + b.n_up + ' 条，其中 ' + (b.n_up - NU) + ' 条窗口里没放进这一端的项目、这端也没花钱，不算'; }
           { const c = td('num'); c.textContent = P.length; if (P.length) c.className = 'num lx-good'; }
-          { const c = td('num'); const r = P.length / b.n_up; if (PEND) { c.innerHTML = '<span class="muted">目前 ' + P1(r) + '</span>'; } else { c.textContent = P1(r); if (avgR != null && Math.abs(r - avgR) >= 0.03) c.className = 'num ' + (r > avgR ? 'lx-good' : 'lx-badv'); } }
+          { const c = td('num'); const r = P.length / NU; if (PEND) { c.innerHTML = '<span class="muted">目前 ' + P1(r) + '</span>'; } else { c.textContent = P1(r); if (avgR != null && Math.abs(r - avgR) >= 0.03) c.className = 'num ' + (r > avgR ? 'lx-good' : 'lx-badv'); } }
           td('num' + (W.length ? '' : ' muted')).textContent = W.length;
           const nowL = W.filter((m) => cz(m, true));
-          { const c = td('num' + (PEND ? ' muted' : '')); const n = F.length + nowL.length; c.innerHTML = (PEND ? '目前 ' : '') + n + ' <span class="muted">（' + fmtP0(n / b.n_up) + '）</span>'; c.style.whiteSpace = 'nowrap'; }
+          { const c = td('num' + (PEND ? ' muted' : '')); const n = F.length + nowL.length; c.innerHTML = (PEND ? '目前 ' : '') + n + ' <span class="muted">（' + fmtP0(n / NU) + '）</span>'; c.style.whiteSpace = 'nowrap'; }
           CK.forEach(([k], j) => {
             const c = td('num cs-why'); if (j === 0) c.classList.add('cs-why-l'); if (j === CK.length - 1) c.classList.add('cs-why-r');
             if ((k === '基建' && !L.some((m) => m['jj_' + p])) || (['跑量', '头部', '占着'].includes(k) && !L.some((m) => m.pjo))) { c.textContent = '—'; c.classList.add('muted'); if (k === '基建') c.title = b.up < JF ? '11/09 前的做法是只建新项目，不判' : '这天还没拉操作日志'; return; }
-            const n = F.filter((m) => cz(m) === k).length + nowL.filter((m) => cz(m, true) === k).length, v = n / b.n_up;
+            const n = F.filter((m) => cz(m) === k).length + nowL.filter((m) => cz(m, true) === k).length, v = n / NU;
             c.innerHTML = (PEND ? '目前 ' : '') + n + ' <span class="muted">（' + fmtP0(v) + '）</span>'; c.style.whiteSpace = 'nowrap';
             if (PEND) { c.classList.add('muted'); }
             else if (!SMALL && AVG[j] != null) { if (v >= AVG[j] + 0.05 && v >= AVG[j] * 1.5) c.classList.add('lx-badv'); else if (v <= AVG[j] - 0.05 && v <= AVG[j] / 1.5) c.classList.add('lx-good'); }
