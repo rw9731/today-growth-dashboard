@@ -3,13 +3,14 @@
 
 用法：python3 tools/roadmap.py --sheet <投放数据_分日 A1:AB 的 get_values 文件> --uclib <✅ Use case 库 A1:H 的 get_values 文件>
 
-口径（和日报冷启那节一致）：
+口径：
 - 测过 = 花过钱的素材（投放数据_分日 里有消耗）。
 - 过冷启 = 上传当天 + 后 2 天花费 ≥ ¥400（日报 CS_COST）。只算上传日在数据开始之后、窗口已过完的素材。
-- use case 状态按近 30 天（到表里最新一天）：
-  已点亮 = 这个 use case 里有一条素材累计花到 ¥5,000（只有约 10% 的素材能到，10/11–11/16 是 1,464 条里 143 条）；
-  判弱 = 30 天花过钱的素材 ≥ 10 条、没点亮（和日报「方向偏弱」结果一致：日报多一条「30 天占大盘 < 1%」，但占大盘 ≥ 1% 的 use case 都有 ¥5,000 的素材，这条从没起过作用）；
-  测试中 = 花过钱、还不够 10 条、没点亮；没测 = 一条都没花过钱；
+- use case 首次点亮取累计消耗 ≥ ¥100,000 且周消耗占同期全盘 > 2% 的第一周。
+  周一到周日为一周，尚未结束的周算到数据截止日。
+- 其余 use case 状态：
+  判弱 = 近 30 天 ≥ 10 条素材有消耗，且最佳单条累计消耗低于 ¥5,000。
+  测试中 = 已投放、继续验证带量能力；没测 = 一条都没花过钱；
   储备 / 暂不做 = Use case 库状态是储备、而且没测过（暂不做的写在 NOT_NOW）。
 - 格子（use case × 素材类型）：这一格里有一条素材累计花到 ¥5,000 = 点亮；花过钱的 ≥ 10 条、都没到 ¥5,000 = 偏弱；有花过钱的 = 测过；空 = 没测。
 - 本周已排与排期看板共用 schedule_entries.py 的条目，分档用 GROUPS。
@@ -28,7 +29,9 @@ from schedule_entries import planned_entries
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CS_COST = 400
-LIT = 5000
+MATERIAL_LIT = 5000
+UC_LIT_COST = 100_000
+UC_LIT_SHARE_PCT = 2
 NOT_NOW = {'TR02': '订高铁票 11/2 定先不做'}
 TYPES = ['AI 原片', 'AI 二剪和重拍', '达人原片', '达人二剪', '星广和自建号']
 
@@ -42,6 +45,11 @@ def type_of(kind):
     if any(s in k for s in ('星广', '星图', '自建号')):
         return '星广和自建号'
     return ''
+
+
+def uc_can_light(cumulative_cents, week_cents, market_cents):
+    """按金额的分比较，保留累计门槛的等号和周占比的严格大于。"""
+    return cumulative_cents >= UC_LIT_COST * 100 and market_cents > 0 and week_cents * 100 > market_cents * UC_LIT_SHARE_PCT
 
 
 def main():
@@ -146,18 +154,14 @@ def main():
         ms = by.get(u, [])
         sp = [m for m in ms if m['cost'] > 0]
         n30 = [m for m in sp if m['c30'] > 0]
-        mx30 = max((m['c30'] for m in n30), default=0)
         c30 = sum(m['c30'] for m in ms)
         sh = c30 / tot30 if tot30 else 0
         best = max(sp, key=lambda m: m['cost'], default=None)
-        lit = bool(best) and best['cost'] >= LIT  # 点亮：有一条素材累计花到 ¥5,000（Reina 11/17 问定义后统一成这一条）
         if u in NOT_NOW and not sp:
             st = '暂不做'
         elif not sp:
             st = '储备' if info['lib'] == '储备' else '没测'
-        elif lit:
-            st = '已点亮'
-        elif len(n30) >= 10:
+        elif len(n30) >= 10 and best['cost'] < MATERIAL_LIT:
             st = '判弱'
         else:
             st = '测试中'
@@ -168,7 +172,7 @@ def main():
                 cells[t] = None
                 continue
             bm = max(cm, key=lambda m: m['cost'])
-            cst = '点亮' if bm['cost'] >= LIT else ('偏弱' if len(cm) >= 10 else '测过')
+            cst = '点亮' if bm['cost'] >= MATERIAL_LIT else ('偏弱' if len(cm) >= 10 else '测过')
             cells[t] = {'n': len(cm), 'best': round(bm['cost']), 'best_name': bm['name'], 'st': cst}
         # 细分场景（Reina 11/17）：每个场景测了几条、最好一条、有没有点亮、这周排了几条
         scs = []
@@ -218,12 +222,13 @@ def main():
     wk_tot = defaultdict(float)
     for r in rows:
         wk_tot[mon(r['date'])] += r['cost']
+    market_cents = {wk: round(cost * 100) for wk, cost in wk_tot.items()}
     # 每条素材累计花到 ¥5,000 的那天
     for m in M.values():
         acc, m['lit_day'] = 0.0, None
         for d_ in sorted(m['days']):
             acc += m['days'][d_]
-            if acc >= LIT:
+            if acc >= MATERIAL_LIT:
                 m['lit_day'] = d_
                 break
     plan_wk = defaultdict(lambda: defaultdict(int))
@@ -232,18 +237,25 @@ def main():
         plan_wk[e['uc']][mon(e['d'])] += int(e.get('n') or 0)
         all_by_uc[e['uc']].append(e)
     for x in out:
-        ms = [m for m in by.get(x['uc'], []) if m['cost'] > 0]
+        case_materials = by.get(x['uc'], [])
+        ms = [m for m in case_materials if m['cost'] > 0]
         tl = {}
+        cumulative = 0
+        x['lit_wk'] = ''
         for wk in weeks:
             new = sum(1 for m in ms if mon(m['first']) == wk)
-            cost = sum(c for m in ms for d_, c in m['days'].items() if mon(d_) == wk)
-            tl[wk] = {'new': new, 'cost': round(cost), 'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0, 'plan': plan_wk[x['uc']].get(wk, 0)}
-        lits = sorted(m['lit_day'] for m in ms if m['lit_day'])
-        x['lit_day'] = lits[0] if lits else ''
-        x['lit_wk'] = mon(lits[0]) if lits else ''
+            cost = sum(c for m in case_materials for d_, c in m['days'].items() if mon(d_) == wk)
+            cents = round(cost * 100)
+            cumulative += cents
+            can_light = uc_can_light(cumulative, cents, market_cents.get(wk, 0))
+            tl[wk] = {'new': new, 'cost': round(cost), 'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0,
+                      'plan': plan_wk[x['uc']].get(wk, 0), 'cumulative': cumulative / 100, 'can_light': can_light}
+            if can_light and not x['lit_wk']:
+                x['lit_wk'] = wk
+        if x['lit_wk']:
+            x['st'] = '已点亮'
         x['first_wk'] = mon(x['first']) if x['first'] else ''
         x['tl'] = tl
-        x['lit_mat'] = next((m['name'] for m in ms if m['lit_day'] == x['lit_day']), '') if lits else ''
         # 细分场景按周（Reina 11/17：在路线图里点 use case 展开，下面同样按周分格）
         scl = SCN.get(x['uc'], {}).get('scenes', [])
         x['tl_sc'] = []
@@ -290,7 +302,7 @@ def main():
     groups = [(g, s) for g, _, s, _ in plan.get('GROUPS', [])]
     weak_sched = [x for x in out if x['st'] == '判弱' and x['sched']]
     untested = [x for x in out if x['st'] == '没测']
-    near = [x for x in out if x['st'] == '测试中' and x['n30'] >= 5]
+    near = [x for x in out if x['st'] == '测试中' and 5 <= x['n30'] < 10]
 
     page = render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
@@ -305,13 +317,14 @@ def fy(v):
 def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL):
     E = html.escape
     md = lambda s: (str(int(s[5:7])) + '/' + str(int(s[8:10]))) if s else '—'
+    uc_rule = f'截至当周累计消耗达到 {fy(UC_LIT_COST)}，且当周消耗占同期全盘高于 {UC_LIT_SHARE_PCT}%'
     STC = {'已点亮': 'st-lit', '测试中': 'st-test', '判弱': 'st-weak', '没测': 'st-none', '储备': 'st-none', '暂不做': 'st-none'}
     CC = {'点亮': 'c-lit', '测过': 'c-test', '偏弱': 'c-weak'}
     def sc_cov(x):
         if not x['scs']:
             return ''
         t = sum(1 for c in x['scs'] if c['cnt'])
-        l = sum(1 for c in x['scs'] if c['best'] >= LIT)
+        l = sum(1 for c in x['scs'] if c['best'] >= MATERIAL_LIT)
         return f'<span class="scv">场景测过 {t}/{len(x["scs"])}' + (f'，点亮 {l}' if l else '') + '</span>'
 
     body = []
@@ -351,9 +364,16 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         tds = ''
         for w in wks:
             c = o['tl'][w]
-            tip = f"{label} {wlab(w)}：新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.1%}）" + (f"，排期 {c['plan']} 条" if c['plan'] else '')
+            tip = f"{label} {wlab(w)}，新测 {c['new']} 条，花 {fy(c['cost'])}（占当周大盘 {c['share']:.2%}）"
+            if 'cumulative' in c and w <= cur:
+                tip += f"，截至该周累计 {fy(c['cumulative'])}"
+            if c['plan']:
+                tip += f"，排期 {c['plan']} 条"
             if w == o['lit_wk']:
-                tip += f"；{md(o['lit_day'])} 点亮（{o['lit_mat']} 累计花到 ¥5,000）"
+                if o.get('lit_day'):
+                    tip += f"，{md(o['lit_day'])} 点亮（{o['lit_mat']} 累计花到 {fy(MATERIAL_LIT)}）"
+                else:
+                    tip += '，首次同时达标'
             inner = ''
             if w == o['lit_wk']:
                 inner += '<span class="star">★</span>'
@@ -376,7 +396,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
 
     for x in out:
         tds = tl_tds(x, x['uc'])
-        lit_txt = md(x['lit_day']) if x['lit_day'] else ''
+        lit_txt = md(x['lit_wk']) + ' 起' if x['lit_wk'] else ''
         has = bool(x.get('tl_sc'))
         row_class = ' class="ucr"' if has else ''
         caret = '<i class="car">▸</i>' if has else ''
@@ -429,16 +449,20 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         f'<div class="pc{" cur" if p["wk"] == cur else ""}"><b>这周新点亮</b>'
         + (''.join(f'<span>{E(n)}</span>' for n in p['new_lit']) or '<span class="mu">没有新点亮</span>') + '</div>' for p in prog)
     pg = ''.join(sv) + f'<div class="pcols" style="grid-template-columns: repeat({nP}, 1fr); margin-left: {L / VW * 100:.2f}%; margin-right: {R / VW * 100:.2f}%">{cols}</div>'
+    latest_qualified = sum(x['tl'][cur]['can_light'] for x in out)
+    latest_new = len(prog[-1]['new_lit'])
     tl_html = f'''
   <section class="card" id="roadmap">
     <h2>路线图：每周测了什么、哪周点亮</h2>
     <h3>点亮进度（累计 use case 数）</h3>
-    <div class="lgd"><span><i style="background:#2f8f5b"></i>到这周为止已点亮（柱内数字）</span><span><i style="background:#cfe5d7"></i>测过、还没点亮（柱顶数字是测过的总数）</span><span>横轴是周（周一到周日）；「新测」= 这周第一次花钱的 use case 数</span></div>\n    <div class="prog">{pg}</div>\n    <p class="note">点亮 = 这个 use case 里第一次有一条素材累计花到 ¥5,000，算在到 ¥5,000 那天所在的周。下面每列是这周新点亮的 use case。</p>
+    <div class="lgd"><span><i style="background:#2f8f5b"></i>到这周为止已点亮（柱内数字）</span><span><i style="background:#cfe5d7"></i>测过、还没点亮（柱顶数字是测过的总数）</span><span>横轴是周（周一到周日），「新测」是这周第一次花钱的 use case 数</span></div>
+    <div class="prog">{pg}</div>
+    <p class="note">首次同时达到两项条件的周记为点亮周。{md(cur)}–{md(D)} 有 {latest_qualified} 个 use case 同时达标，其中 {latest_new} 个首次点亮。</p>
     <h3>每个 use case 每周</h3>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ 这周点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
     <p class="note"><b>点一行 use case 展开它的细分场景</b>（Use case 库里的场景），每个场景一行、同样按周分格：哪周新测了几条、花了多少、哪周点亮、排了几条。<button type="button" class="tgl" id="scall">全部展开</button></p>
     <div class="rmwrap"><table class="rm tl">
-      <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">累计消耗</th><th class="num">点亮日</th></tr></thead>
+      <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">累计消耗</th><th class="num">首次点亮</th></tr></thead>
       <tbody>{''.join(trs)}</tbody>
     </table></div>
     <p class="note">Use case 和展开后的细分场景都按累计消耗从高到低排列，消耗统计覆盖 {md(first_day)}–{md(D)}。排期从 11/3 那周开始有记录。</p>
@@ -551,7 +575,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   <header>
     <h1>点亮路线图：每个 use case 什么时候测、什么时候点亮、接下来排了什么</h1>
     <p class="sub">数据 {md(first_day)}–{md(D)}（投放数据_分日，两端合计），一行一个 use case（Use case 库里在用和储备的）。</p>
-    <p class="def"><b>点亮</b> = 这个 use case 里有一条素材累计花到 ¥5,000，点亮日就是第一条到 ¥5,000 的那天；格子（use case × 素材类型）也一样，这一格里有一条到 ¥5,000 就算点亮。¥5,000 大约是素材里前 10% 的水平（10/11–11/16 花过钱的 1,464 条里 143 条到了）。<b>判弱</b> = 近 30 天花过钱的素材 ≥ 10 条、还没点亮。<b>测试中</b> = 测过、不到 10 条、还没点亮。<b>没测</b> = 一条都没花过钱。</p>
+    <p class="def"><b>Use case 点亮</b>需要{uc_rule}。累计从 {md(first_day)} 起算，首次同时达标的周标 ★。每周从周一算到周日，尚未结束的周统计到数据截止日。</p>
   </header>
 
   <section class="card sum" id="summary">
@@ -562,8 +586,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
     </div>
     <ul>
       <li id="week-plan-summary"><b>本周已排 {tsum} 条（{md(wk0)}–{md(wk1)}）</b>，<span>{tier_line}</span>。</li>
-      <li><b>判弱但这周还在排的：</b><span id="week-plan-weak">{lst(weak_sched)}</span>。30 天花过钱的素材都 ≥ 10 条、没有一条花到 ¥5,000，量一直起不来；如果是因为留存好才留在排期里，要看值不值得继续占产能。</li>
-      <li><b>测试中、已经测了 5 条以上的：</b>{lst(near)}。再测几条就能下结论。</li>
+      <li><b>判弱但这周还在排的：</b><span id="week-plan-weak">{lst(weak_sched)}</span>。这些方向近 30 天至少有 10 条素材产生消耗，单条最高累计消耗低于 {fy(MATERIAL_LIT)}。</li>
+      <li><b>测试中、近 30 天有 5–9 条素材产生消耗的：</b>{lst(near)}。</li>
       <li><b>库里在用、还没测过的：</b>{lst(untested)}。新方向的候选。</li>
     </ul>
     <p class="note" data-plan-status hidden>暂时读不到最新排期，显示上次发布的数量。</p>
@@ -573,7 +597,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
 
   <section class="card" id="map">
     <h2>use case × 素材类型</h2>
-    <div class="lgd"><span><i style="background:#2f8f5b"></i>点亮：有一条素材累计花到 ¥5,000</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 ¥5,000</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
+    <div class="lgd"><span><i style="background:#2f8f5b"></i>素材类型格点亮需要一条素材累计花到 {fy(MATERIAL_LIT)}</span><span><i style="background:#dcebe1"></i>测过，还没点亮</span><span><i style="background:#f3d9d4"></i>偏弱：花过钱的 ≥ 10 条、都没到 {fy(MATERIAL_LIT)}</span><span><i style="background:#ece9e1"></i>空白：这类没测过</span></div>
     <p class="note">格子里大字是花过钱的素材条数，小字是最好一条的累计花费（¥1,000 以上才写），鼠标放上去看素材名。过冷启 = 上传当天 + 后 2 天花到 ¥400，分母是上传日在 {md(first_day)} 以后、窗口已过完的素材。次留率是近 30 天的，激活不到 100 不写。累计消耗覆盖 {md(first_day)}–{md(D)}。本周已排与素材排期看板同口径，剔除建议拿掉和顺延的条目，小字是 AI / 二创各几条。</p>
     <div class="rmwrap"><table class="rm">
       <thead><tr><th>状态</th><th>use case</th>{th_types}<th class="num">花过钱的素材</th><th class="num">过冷启</th><th class="num">最好一条</th><th class="num">近 30 天消耗</th><th class="num">累计消耗</th><th class="num">次留率</th><th class="num">第一次测</th><th class="num">本周已排</th></tr></thead>
@@ -584,12 +608,11 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   <section class="card" id="rule">
     <h2>口径</h2>
     <ul class="take">
-      <li>已点亮：这个 use case 里有一条素材累计花到 ¥5,000（从开始投放算）。点亮日 = 第一条到 ¥5,000 的那天。</li>
-      <li>判弱：近 30 天花过钱的素材 ≥ 10 条、没点亮。和日报冷启「方向偏弱」的结果一致（日报多一条「30 天占大盘 < 1%」，但占大盘 ≥ 1% 的 use case 都有 ¥5,000 的素材，这条从没起过作用）。</li>
-      <li>测试中：花过钱，但 30 天里还不到 10 条、没点亮。没测：一条都没花过钱。储备：Use case 库里状态是储备、还没测。暂不做：已经定了先不做的（订高铁票）。</li>
+      <li>Use case 的点亮周取第一次满足「{uc_rule}」的周。分母是同期两端合计的全盘消耗。</li>
+      <li>已产生消耗且待点亮的方向继续测试。判弱的条件是近 30 天至少有 10 条素材产生消耗，且最佳单条累计消耗低于 {fy(MATERIAL_LIT)}。</li>
       <li>素材类型：AI 原片；AI 二剪和重拍（AI 短剧的只剪辑、换开头、全片重配、AI 重拍）；达人原片（KOC、KOL 原片）；达人二剪（KOC、KOL 的二剪、只剪辑、换开头、全片重配）；星广和自建号（唯西星广、知定堂星广、星图、唯西自建号）。客供和还没对上 use case 的素材不进格子。</li>
       <li>use case 归属和日报一致（UC_ID 列，待对应的按 tools/uc_resolve.py 补）。</li>
-      <li>细分场景的归属来自 notes/scene-map.json，日报每天给新素材打标。场景点亮沿用 use case 的口径，场景里有一条素材累计花到 ¥5,000 即点亮。「排 N」按排期里写的细分场景和库里的场景文字匹配，一行写了几个场景就平分条数。未匹配到场景的素材和排期计入「没对上场景」。</li>
+      <li>细分场景的归属来自 notes/scene-map.json，日报每天给新素材打标。场景里有一条素材累计花到 {fy(MATERIAL_LIT)} 即点亮。「排 N」按排期里写的细分场景和库里的场景文字匹配，一行写了几个场景就平分条数。未匹配到场景的素材和排期计入「没对上场景」。</li>
     </ul>
   </section>
 </div>
