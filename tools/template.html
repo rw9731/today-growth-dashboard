@@ -143,6 +143,7 @@
   .lx-ang-tag.new { border-color: var(--bar); color: var(--bar); }
   .lx-links a + a { margin-left: 6px; }
   .lx-cstable tbody tr.lx-csday { cursor: pointer; }
+  .lx-ucstable td { white-space: nowrap; }
   /* 没过的原因八列框起来（Reina 11/18） */
   .lx-cstable .cs-why { background: color-mix(in srgb, #c0504d 5%, var(--color-panel)); }
   .lx-cstable .cs-why-l { border-left: 2px solid color-mix(in srgb, #c0504d 55%, var(--color-panel)); }
@@ -547,6 +548,21 @@
         </table>
       </div>
       <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
+      <h3 class="lx-h3" style="margin-top:22px">按 use case 看冷启率</h3>
+      <p class="lx-note">排得多、以为能放量的方向，新素材到底好不好起。冷启率：近两周上传、3 天窗口已走完的新素材。比同期平均：实际过的条数 ÷ 按每条上传那天的整体冷启率算的期望（扣掉每天预算环境的差别），1 倍 = 和同期一样；新素材不到 10 条的不标色。能不能放量看近 7 天这个 use case 一共花了多少、占大盘多少；单条带量看这些钱是靠几条素材花出去的。<b>能放量但新素材难起</b> = 量靠少数老素材撑着，再排新素材也接不上。</p>
+      <div class="lx-card lx-scroll">
+        <table class="lx-table lx-ucstable">
+          <thead><tr>
+            <th>Use case</th><th>档位<span class="th-sub">排期里现在的档</span></th>
+            <th class="num">新素材<span class="th-sub">近两周上传（窗口走完）</span></th><th class="num">过冷启</th><th class="num">冷启率</th>
+            <th class="num">比同期平均<span class="th-sub">扣掉每天预算环境</span></th>
+            <th class="num">能不能放量<span class="th-sub">近 7 天消耗（占大盘）</span></th><th class="num">占大盘变化<span class="th-sub">比前 7 天</span></th>
+            <th class="num">单条带量<span class="th-sub">近 7 天花到 ¥1,000 的素材</span></th><th class="num">平均每条<span class="th-sub">近 7 天消耗 ÷ 这些素材</span></th><th class="num">花最多那条<span class="th-sub">占这个 use case</span></th>
+            <th>判断</th>
+          </tr></thead>
+          <tbody data-draw="ucsrows"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -672,6 +688,41 @@
   const REL = '{{REL}}';
   const RESULTS = JSON.parse(document.getElementById('results').textContent);
   const data = (id) => RESULTS[id] || [];
+
+  // 按 use case 看冷启率（Reina 11/19）
+  document.addEventListener('DOMContentLoaded', () => {
+    const tb = document.querySelector('[data-draw="ucsrows"]'); if (!tb) return;
+    const L = data('cs_uc'); if (!L.length) { tb.innerHTML = '<tr><td colspan="12" class="muted">这天没有数据</td></tr>'; return; }
+    const tierS = {'能放量 + 留存好': '第一档', '跑量少 + 留存好': '第二档', '探索': '探索', '没分档': '没分档'};
+    const tag = (u) => {
+      if (u.n >= 10 && u.oe != null && u.oe <= 0.6 && u.share7 >= 0.03) return ['能放量但新素材难起：量靠少数老素材', 'lx-badv'];
+      if (u.n >= 10 && u.oe != null && u.oe <= 0.5) return ['新素材难起，量也不大', 'lx-badv'];
+      if (u.n >= 5 && u.oe != null && u.oe >= 1.5 && u.share7 < 0.03) return ['新素材好起、量还不大，可以加', 'lx-good'];
+      if (u.n >= 10 && u.oe != null && u.oe >= 1.2 && u.share7 >= 0.03) return ['能放量，新素材也好起', 'lx-good'];
+      if (!u.n && u.share7 >= 0.01) return ['近两周没上新素材，量靠老素材', ''];
+      return ['', ''];
+    };
+    L.forEach((u) => {
+      const tr = document.createElement('tr');
+      const td = (t, c, title) => { const x = document.createElement('td'); if (c) x.className = c; x.innerHTML = t; if (title) x.title = title; tr.appendChild(x); return x; };
+      td('<b>' + u.key + '</b> ' + (u.short || ''));
+      td(tierS[u.tier] || u.tier, 'muted');
+      td(u.n ? String(u.n) : '0', 'num');
+      td(String(u.pass), 'num');
+      td(u.n ? fmtP0(u.rate) : '—', 'num' + (u.n ? '' : ' muted'));
+      const oe = td(u.oe == null ? '—' : d3.format('.1f')(u.oe) + ' 倍', 'num');
+      if (u.n >= 10 && u.oe != null) { if (u.oe <= 0.5) oe.classList.add('lx-badv'); else if (u.oe >= 1.5) oe.classList.add('lx-good'); } else oe.classList.add('muted');
+      if (u.n_crowd) oe.title = '其中 ' + u.n_crowd + ' 条是同原片扎堆上的（前后 3 天同原片 ≥ 7 条）';
+      td(fmtY(u.c7) + ' <span class="muted">（' + fmtP0(u.share7) + '）</span>', 'num');
+      const dp = u.share7 - u.share7p; const dc = td((dp >= 0 ? '+' : '') + d3.format('.1f')(dp * 100) + ' 个点', 'num');
+      if (Math.abs(dp) >= 0.02) dc.classList.add(dp > 0 ? 'lx-good' : 'lx-badv'); dc.title = '前 7 天占大盘 ' + fmtP0(u.share7p);
+      td(u.run7 + ' 条', 'num', '近 7 天有消耗的素材 ' + u.nsp7 + ' 条');
+      td(u.run7 ? fmtY(u.c7 / u.run7) : '—', 'num');
+      td(fmtY(u.top7) + ' <span class="muted">（' + fmtP0(u.topsh) + '）</span>', 'num');
+      const [t, c] = tag(u); td(t, c);
+      tb.appendChild(tr);
+    });
+  });
   // 制作方标记（Reina 11/14）：按素材名或素材 ID 对上 maker 列表，在名字后加「唯西A组」「唯西B组」「知定堂星广」等；星广的用橙色
   const STAR_NICK = new Map((RESULTS.star || []).map((x) => [x.id, x.nick]));
   const MK = new Map(); const MK_ID = new Map();

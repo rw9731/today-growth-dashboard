@@ -1386,6 +1386,43 @@ def main():
                 m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
                 m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
     newd_meta['cs_occ'] = CS_OCC
+    # 按 use case 看冷启率（Reina 11/19）：排得多、以为能放量的方向，新素材到底好不好起。
+    # 冷启率：窗口已走完的新素材（cs_mats 里约两周的上传）；倍数 = 实际过的条数 ÷ 按各自上传日整体冷启率算的期望（扣掉每天预算环境的差别）。
+    # 能不能放量：近 7 天这个 use case 的消耗、占大盘、和前 7 天比。单条带量：近 7 天花到 ¥1,000 的素材几条、花最多那条多少、占这个 use case 多少。
+    dayr = defaultdict(lambda: [0, 0])
+    for m in dec_:
+        dayr[m['up'][:10]][0] += m['st'] == 'pass'
+        dayr[m['up'][:10]][1] += 1
+    d7a, d7b = (Dd - dt.timedelta(days=6)).isoformat(), (Dd - dt.timedelta(days=13)).isoformat()
+    c7, c7p, m7, tot7, tot7p = defaultdict(float), defaultdict(float), defaultdict(lambda: defaultdict(float)), 0.0, 0.0
+    for r in allrows:
+        if r['cost'] <= 0:
+            continue
+        if d7a <= r['date'] <= D[3]:
+            c7[r['uc']] += r['cost']
+            m7[r['uc']][r['id']] += r['cost']
+            tot7 += r['cost']
+        elif d7b <= r['date'] < d7a:
+            c7p[r['uc']] += r['cost']
+            tot7p += r['cost']
+    cs_uc = []
+    for k in sorted(set(c7) | {m['uc'] for m in dec_}):
+        if k not in ucs or '旧编号' in ucs[k].get('short', ''):
+            continue
+        ms = [m for m in dec_ if m['uc'] == k]
+        exp = sum(dayr[m['up'][:10]][0] / dayr[m['up'][:10]][1] for m in ms)
+        ps = sum(m['st'] == 'pass' for m in ms)
+        mats = m7.get(k, {})
+        top = max(mats.values()) if mats else 0
+        if not ms and c7.get(k, 0) < 0.005 * tot7:
+            continue
+        cs_uc.append({'key': k, 'short': ucs[k].get('short', ''), 'l1': ucs[k].get('l1', ''), 'tier': _tier.get(k, '没分档'),
+                      'n': len(ms), 'pass': ps, 'rate': ps / len(ms) if ms else None, 'oe': ps / exp if exp else None,
+                      'n_crowd': sum(m['crowd'] >= CS_CROWD for m in ms), 'n_new': sum(1 for m in ms if m['up'][:10] >= d7a),
+                      'c7': round(c7.get(k, 0)), 'share7': c7.get(k, 0) / tot7 if tot7 else 0, 'c7p': round(c7p.get(k, 0)), 'share7p': c7p.get(k, 0) / tot7p if tot7p else 0,
+                      'run7': sum(1 for v in mats.values() if v >= 1000), 'top7': round(top), 'topsh': top / c7[k] if c7.get(k) else 0,
+                      'nsp7': len(mats)})
+    cs_uc.sort(key=lambda x: -x['c7'])
     newd_meta['cs_fair_rate'] = fr
     newd_meta['cs_fair_n'] = len(fair)
     newd_meta['cs_show'] = CS_SHOW
@@ -1534,7 +1571,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir,
+           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
     try:
