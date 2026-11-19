@@ -187,8 +187,8 @@ td.d.f[data-fi]{cursor:pointer}
 .dt tr.flash td{background:var(--today)}
 .dt tr.u td{font-weight:600;background:var(--panel);border-top:1px solid var(--base)}
 .dt tr.u td small{font-weight:400;color:var(--sub);font-size:12px;margin-left:8px}
-.dt tr.th td{color:var(--on);font-size:14px;font-weight:700;border:0;padding:7px 10px}
-.dt tr.th.t1 td{background:var(--t1)}.dt tr.th.t2 td{background:var(--t2)}.dt tr.th.t3 td{background:var(--t3)}
+.dt tr.th :is(td,th){color:var(--on);font-size:14px;font-weight:700;border:0;padding:7px 10px}
+.dt tr.th.t1 :is(td,th){background:var(--t1)}.dt tr.th.t2 :is(td,th){background:var(--t2)}.dt tr.th.t3 :is(td,th){background:var(--t3)}
 .dt tr.th td small{color:var(--on);opacity:.9;font-weight:400;margin-left:8px}
 @media (max-width:640px){#b tr.grp td.gl{position:static}h1{font-size:20px}#b .name{min-width:112px;max-width:112px}.m{grid-template-columns:auto 56px auto}}
 .out{background:var(--panel);border:1px solid var(--grid);padding:12px 14px 10px;max-width:calc(100vw - 32px);box-sizing:border-box}
@@ -492,9 +492,17 @@ const revRows=Object.entries(revBooked).filter(([,planned])=>planned>0).map(([u,
   const up=items.filter(x=>x.up===true).length;
   return {u,planned,n:items.length,up,firstDates,retention,cents:sum(items.map(x=>x.cents)),best:items.find(x=>x.cents>0)};
 }).sort((a,b)=>b.cents-a.cents||b.n-a.n||a.u.localeCompare(b.u));
-document.querySelector('#rev tbody').innerHTML=revReady&&revRows.length
-  ? revRows.map(x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned}</b> <small class="q">${(x.n/x.planned*100).toFixed(1)}%</small></td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`).join('')
-  : `<tr><td colspan="7" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
+const revBody=document.querySelector('#rev tbody');
+if(revReady&&revRows.length){
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned}</b> <small class="q">${(x.n/x.planned*100).toFixed(1)}%</small></td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
+  const groups=[['点亮方向',true,'t1'],['探索',false,'t3']];
+  revBody.outerHTML=groups.map(([title,isLit,tier])=>{
+    const rows=revRows.filter(x=>lit.has(x.u)===isLit).map(renderRow).join('');
+    return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="7">${title}</th></tr>${rows||'<tr><td colspan="7" class="q">本周暂无排期</td></tr>'}</tbody>`;
+  }).join('');
+}else{
+  revBody.innerHTML=`<tr><td colspan="7" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
+}
 if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 首花这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${mk(x.why)}</td><td>${mk(x.next||'')}</td></tr>`).join('')}
 if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
