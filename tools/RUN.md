@@ -354,5 +354,5 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - 唯一的权威：Google 表「国区投放素材」的「素材场景」tab，一条素材一行（素材ID、素材名、use case、场景编号、场景、依据、说明、状态、打标日），人可以直接改。notes/scene-map.json 是副本，看板、路线图、排期页照常读它。
 - 每天打标前：用 Google Sheets 连接器读 '素材场景'!A1:I5000（返回值大会存成文件），python3 tools/scene_sheet.py pull <文件> --date T，把人改过的写回 scene-map.json（依据记「表里改」）。
 - 打标顺序（省 token）：先不花 token 的（排期行写的细分场景、同一条原片其他版本已标的、素材名能看出的），对不上的再读字幕；只给窗口里花到钱的打，没花钱的挂「待看片」。打完 scene_merge.py 合并。
-- 打完：python3 tools/scene_sheet.py export --sheet <分日文件> 生成 notes/scene-tags.csv，推到仓库；Apps Script「巨量投放数据日更」项目里的 SceneTags.gs → syncSceneTags 从看板站点读这个 csv，只追加 tab 里还没有的素材，已有的行（含人改过的）不动。setupSceneTrigger 跑一次可设成每 6 小时自动同步（11/19 Claude 设定时被拦，要 Reina 自己点一次）；没设的话，用 scene_sheet.py rows --since T 打出新行，append_values 追加到 '素材场景'!A1。
+- 打完：python3 tools/scene_sheet.py export --sheet <分日文件> 生成 notes/scene-tags.csv，推到仓库；Apps Script「巨量投放数据日更」项目里的 SceneTags.gs → syncSceneTags 从看板站点读这个 csv，tab 里没有的素材追加；已有的行只在 csv 打标日更新、且依据不是「表里改」时更新（先 pull 再导出，人改过的就会带着「表里改」，之后不会被覆盖）。setupSceneTrigger 跑一次可设成每 6 小时自动同步（11/19 Claude 设定时被拦，要 Reina 自己点一次）；没设的话，用 scene_sheet.py rows --since T 打出新行，append_values 追加到 '素材场景'!A1。
 - 11/19 首次导入 1,460 条（含同原片补的 35 条）。

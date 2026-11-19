@@ -2,8 +2,9 @@
 notes/scene-map.json 是它的副本，看板、路线图、排期页照常读 json。
 
 三个子命令：
-  export --sheet 分日.json   → notes/scene-tags.csv（全量，表头同 tab），只在第一次建 tab 时用：
-                               tab 里 A1 写 =IMPORTDATA(看板站点上的 csv)，再用 copyPaste PASTE_VALUES 原地转成值，不经过对话，省 token。
+  export [--sheet 分日.json] → notes/scene-tags.csv（全量，表头同 tab），推到仓库后由表里 Apps Script SceneTags.gs 的 syncSceneTags 读：
+                               tab 里没有的素材追加；已有的行，csv 打标日更新、且这一行依据不是「表里改」才更新（数据不经过对话，省 token）。
+                               所以导出前一定先 pull：人改过的会带着「表里改」导出去，此后不会被覆盖。
   pull <tab 读出来的 json>   → tab 里人改过的（use case、场景编号、状态和 json 不一样的）写回 scene-map.json，依据记「表里改」。
                                读 tab 用 Google Sheets 连接器 get_values('素材场景'!A1:I5000)，返回值大会自动存成文件。
   rows --since 日期 --sheet 分日.json → 打印 scene-map.json 里这天以后新打的标，格式是 append_values 要的二维数组，
@@ -28,6 +29,10 @@ def names(sheet):
     nm = {}
     for f in sorted(glob.glob(os.path.join(ROOT, 'notes', 'uploads-*.json'))):
         nm.update(json.load(open(f)).get('items', {}))
+    for f in glob.glob(os.path.join(ROOT, 'notes', 'scene-todo-*.json')):  # 待补清单里带了素材名
+        for g in json.load(open(f)).values():
+            for m in g.get('mats', []):
+                nm.setdefault(m['id'], m.get('name', ''))
     if sheet:
         v = json.load(open(sheet))['values']
         h = v[0]
