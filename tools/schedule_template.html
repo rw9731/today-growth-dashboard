@@ -97,7 +97,9 @@ a{color:var(--link)}
 .alerts b{font-weight:700}
 .t-due{color:var(--crit);font-weight:700;white-space:nowrap}.t-due.m{color:var(--mute);font-weight:400}
 .t-warn{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--crit);color:#fff;font:700 12px/16px Arial,sans-serif;text-align:center;vertical-align:middle;margin:1px 0}.t-warn.m{background:var(--base);color:var(--panel)}
-.rev-note{font-size:12px;color:var(--sub);margin:0 0 8px;max-width:920px;line-height:1.6}#pk td.nm,#rev td.nm{max-width:420px;overflow-wrap:anywhere}
+.rev-note{font-size:12px;color:var(--sub);margin:0 0 8px;max-width:920px;line-height:1.6}#pk td.nm,#rev td.nm,#rev-items td.nm{max-width:420px;overflow-wrap:anywhere}
+#rev-items td.nm small{display:block;margin-top:2px}
+#rev-search{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--base);border-radius:6px;padding:5px 8px;margin:8px 0;width:min(300px,100%)}
 .rt{font-size:11px;font-weight:700;padding:0 5px;white-space:nowrap;display:inline-block}
 .rt.up{color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}.rt.down{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}.rt.one{color:var(--ink);box-shadow:inset 0 0 0 1px var(--base)}.rt.lo{color:var(--bad)}.rt.mu{color:var(--mute);font-weight:400}
 .rules{background:var(--panel);border:1px solid var(--grid);padding:10px 12px;display:grid;gap:6px;max-width:100%}
@@ -220,9 +222,6 @@ td.d.f[data-fi]{cursor:pointer}
 .o-more{margin-top:auto;padding-top:10px;border-top:1px solid var(--grid)}
 .tbox{gap:12px}#alerts{gap:12px}.now-sub{font-size:13px}
 .tbox>*+*,#alerts>*+*{border-top:1px solid var(--grid);padding-top:12px}
-.dd{grid-template-columns:64px minmax(0,1fr);gap:5px 8px;align-items:center}
-.dd code{display:inline-block;padding:1px 7px;margin:0 4px 0 0;border-radius:5px;background:var(--band);box-shadow:inset 0 0 0 1px var(--grid);font-size:12px}
-.dd code.all{background:var(--crit);color:#fff;box-shadow:none}
 .xb{gap:6px 10px}.xb i{height:10px;border-radius:0 5px 5px 0}.xb i span{border-radius:0 5px 5px 0}.xb i em{top:-3px;bottom:-3px}
 .now-tags{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
 @media (max-width:560px){.out,.tbox{padding:12px}.out td.n b{font-size:16px}.out .n{width:32px}.o-pct{min-width:40px}.o-pct b{font-size:14px}}
@@ -234,9 +233,7 @@ td.d.f[data-fi]{cursor:pointer}
 .kv{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px 12px;align-items:baseline;line-height:1.45}
 .kv>.k{font-size:12px;color:var(--mute);white-space:nowrap}#alerts{display:contents}#alerts>*+*{border-top:0;padding-top:0}
 .lag summary{list-style-position:inside}.lag ul{margin-top:4px}
-.dd{grid-template-columns:44px minmax(0,1fr);gap:4px 6px}.dd code{padding:0 6px;margin:0 3px 0 0}
 @media (max-width:980px){.o-more{margin-left:auto}}
-.dd{grid-template-columns:50px minmax(0,1fr)}.dd b{white-space:nowrap}
 @media (max-width:560px){.out tbody th{white-space:normal}.o-track{min-width:32px}.out .n{width:28px}.out th,.out td{padding-right:4px}}
 {{NAV_CSS}}
 .top{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,2fr);gap:12px;align-items:start}
@@ -254,7 +251,6 @@ td.d.f[data-fi]{cursor:pointer}
 .tr-svg{display:block;margin-top:6px;width:320px;height:100px}.tr-svg .tv{stroke:var(--bg);stroke-opacity:.12;stroke-width:1}.tr-svg text{font-size:10px;fill:var(--bg);opacity:.7;font-variant-numeric:tabular-nums}.tr-svg .tg{stroke:var(--bg);stroke-opacity:.16;stroke-width:1}.tr-svg .tm{fill:none;stroke:var(--meter);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.tr-svg .tb{fill:none;stroke:var(--bg);stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:4 3}
 .tr-t{border-collapse:collapse;table-layout:fixed;width:320px;margin-top:0;font-size:10.5px;font-variant-numeric:tabular-nums}.tr-t th:first-child{width:42px}.tr-t th,.tr-t td{padding:1px 0;text-align:center;font-weight:400;white-space:nowrap}.tr-t tbody th{text-align:left;opacity:.7}.tr-t thead th{opacity:.7}
 .tr-v{margin-top:5px;font-size:12px;line-height:1.45;font-weight:600}.tr-n{margin-top:4px;font-size:10.5px;opacity:.65;line-height:1.4}
-.dd{display:grid;grid-template-columns:42px minmax(0,1fr);gap:1px 6px;line-height:1.5}.dd b{font-weight:600;font-variant-numeric:tabular-nums}.dd code{font:600 12px var(--mono);margin-right:6px;white-space:nowrap}
 .xb{display:grid;grid-template-columns:minmax(0,1fr) 70px 44px 56px;gap:3px 8px;align-items:center;font-variant-numeric:tabular-nums}.xb small{color:var(--sub);font-size:12px;text-align:right;white-space:nowrap}.xb i{position:relative;display:block;height:8px;background:var(--grid);border-radius:0 4px 4px 0}.xb i span{display:block;height:100%;background:var(--meter);border-radius:0 4px 4px 0}.xb i em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
 .cap{margin:14px 0 6px;min-width:0;max-width:calc(100vw - 32px)}.cap .scroll{max-width:100%;overflow-x:auto}.cap h2{margin:0 0 4px}.capt th,.capt td{text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums;padding:4px 8px}.capt tbody th{text-align:left;font-weight:600}.capt td b{font-weight:600}.capt td small{color:var(--mute);font-size:11px}.capt td em{display:block;font-style:normal;font-size:11px;color:var(--good);font-weight:600;margin-top:1px}.capt td em.o{color:var(--bad)}.capt .c-past{color:var(--mute);opacity:.6}.capt .c-today{background:var(--today)}.capt .c-over b{color:var(--bad)}.capt tr.c-tot th,.capt tr.c-tot td{border-top:1px solid var(--base)}.capt .c-sum{border-left:1px solid var(--base)}.capt .c-left{font-weight:700}.cap-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:8px 0 10px}.cap-card{background:var(--panel);box-shadow:inset 0 0 0 1px var(--grid);padding:12px 14px}.cap-k{font-size:13px;color:var(--sub);font-weight:600}.cap-big{font-size:15px;margin:2px 0 6px}.cap-big b{font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}.cap-big b.over{color:var(--bad)}.cap-bar{height:10px;background:var(--grid)}.cap-bar span{display:block;height:100%;background:var(--meter)}.cap-sub{font-size:12px;color:var(--mute);margin-top:6px}@media (max-width:560px){.cap-cards{grid-template-columns:minmax(0,1fr)}}
 .now-tag{line-height:1.6}.now-tag a{color:var(--link)}
@@ -287,9 +283,14 @@ td.d.f[data-fi]{cursor:pointer}
 <span class="it help" data-help="warn" tabindex="0"><b class="t-warn" style="margin-right:4px">!</b>预计会跌</span>
 </div>
 <div class="scroll main"><table id="b"><thead></thead><tbody></tbody></table></div>
-<h2>回收：<span id="rev-range"></span> 放出去的素材</h2>
+<h2>回收 <span id="rev-range"></span> 首花的素材</h2>
 <p class="rev-note" id="rev-note"></p>
 <div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>放出</th><th>跑起来</th><th>每条每天</th><th>次留、成本</th><th>标注</th><th>最好一条</th></tr></thead><tbody></tbody></table></div>
+<details class="more" id="rev-assets" hidden><summary>查看全部 <b id="rev-item-count"></b> 条素材</summary>
+<label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、素材 ID 或 use case"></label>
+<p class="rev-note" id="rev-matches" aria-live="polite"></p>
+<div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>首日消耗</th><th>第二天消耗</th><th>累计消耗</th><th>跑量情况</th></tr></thead><tbody></tbody></table></div>
+</details>
 <div id="why" hidden><h3 id="why-h"></h3><p class="rev-note" id="why-note"></p><div class="scroll"><table class="dt" id="why-t"><thead><tr><th></th><th>use case</th><th>这批</th><th>内容上差在哪、好在哪</th><th>下一步</th></tr></thead><tbody></tbody></table></div></div>
 <h3>要看片的素材</h3>
 <p class="rev-note" id="bad-note"></p>
@@ -299,7 +300,7 @@ td.d.f[data-fi]{cursor:pointer}
 <div class="scroll"><table class="dt" id="pk"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>峰值</th><th>最近 2 天日均</th><th>占峰值</th></tr></thead><tbody></tbody></table></div>
 <details class="more"><summary>规则和口径</summary><div class="rules">
 <p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
-<p><b>回收：</b>跑起来：首花第二天，花得比当天大盘平均每条多（全盘消耗 ÷ 在跑条数）。没跑起来的，后来只有 8% 能到大盘平均的 3 倍，跑起来的 55%。预期：这个方向这类素材之前跑起来的比例 × 条数。不及预期要 5 条以上。可能见顶：不及预期，这个方向占比没涨，7 天内还上了 10 条以上；先看片子有没有变差。</p>
+<p><b>回收</b>按素材 ID 统计，合并同一 ID 的分端数据，按首次产生消耗的日期归批。首花第二天的消耗达到当天全盘在跑素材的单条均值，即为「跑起来」。预期用该方向和类型之前的跑起比例乘以本批条数。至少 5 条才判断是否超出预期。可能见顶表示跑起数不及预期、近 3 天的消耗占比未增长，且 7 天内有至少 10 条新素材首花。</p>
 <p><b>A、B 组进度：</b>对照唯西排期表。进度条是本周已交占本周排期，竖线是到昨天该交的位置，数字是到昨天实交 / 该交。成片传了、素材名没填全的算交了；B 组扩量排期开始后只按排期行算，脚本表、二剪表不重复算。只算排期行，所以和左边的本周实际产出不是一个数。</p>
 <p><b>要看片：</b>首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。</p>
 <p><b>可能见顶的素材：</b>首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成。</p>
@@ -435,22 +436,30 @@ document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
 const ucName=x=>(x.part?'PS03 '+x.part:x.u+' '+(P.UC[x.u]||''))+'（'+x.t+'）';
-const warnDays=w=>Object.keys(w).sort().map(md).join('、');
-const lineUp=Object.entries(P.X).filter(([u,x])=>Object.keys(x.warn).length&&lit.has(u)).sort((p,q)=>Object.keys(p[1].warn).sort()[0].localeCompare(Object.keys(q[1].warn).sort()[0]));
-const revTags=t=>P.REV.rows.filter(x=>x.tag===t).map(ucName);
-const dayRows={};if(Object.keys(P.WT).length)Object.keys(P.WT).forEach(d=>(dayRows[d]=dayRows[d]||[]).push('全盘'));lineUp.forEach(([u,x])=>Object.keys(x.warn).forEach(d=>(dayRows[d]=dayRows[d]||[]).push(u)));
-const dayMerged=[];Object.keys(dayRows).sort().forEach(d=>{const k=dayRows[d].join(),l=dayMerged[dayMerged.length-1];if(l&&l.k===k)l.to=d;else dayMerged.push({k,from:d,to:d,us:dayRows[d]})});
-document.getElementById('alerts').innerHTML=[
-  dayMerged.length?`<span class="k">预计会跌</span><div class="dd">${dayMerged.map(r=>`<b>${md(r.from)}${r.to!==r.from?'–'+md(r.to).split('/').pop():''}</b><span>${r.us.map(u=>`<code${u==='全盘'?' class="all"':''}>${esc(u)}</code>`).join('')}</span>`).join('')}</div>`:'',
-  revTags('可能见顶').length?`<span class="k">可能见顶</span><span>${revTags('可能见顶').join('、')}</span>`:'',
-  P.REV.nbad?`<span class="k">要看片</span><a href="#bad">${P.REV.nbad} 条</a>`:'',
-].filter(Boolean).join('');
+const revPeaks=P.REV.rows.filter(x=>x.tag==='可能见顶').map(ucName);
+if(revPeaks.length)document.getElementById('alerts').innerHTML=`<span class="k">可能见顶</span><span>${esc(revPeaks.join('、'))}</span>`;
 const REVCLS={'可能见顶':'<span class="pill red">可能见顶</span>','不及预期':'<span class="rt down">不及预期</span>','超预期':'<span class="rt up">超预期</span>','符合':'<span class="q">符合</span>','样本少':'<span class="q">样本少</span>'};
 document.getElementById('rev-range').textContent=md(P.REV.lo)+'–'+md(P.REV.hi);
-document.getElementById('rev-note').textContent=`一共放出 ${P.REV.nfresh} 条，列 3 条以上的。`;
-document.querySelector('#rev tbody').innerHTML=P.REV.rows.map(x=>`<tr><td class="n">${esc(ucName(x))}</td><td class="n">${x.n} 条<small class="q">（${Object.entries(x.days).map(([d,n])=>md(d)+' '+n).join('，')}）</small></td><td class="n">${x.k} 条，预期 ${x.e}</td><td class="num">${money(x.per)}</td><td class="n">${x.rate==null?'<span class="q">样本小</span>':x.rate.toFixed(1)+'%，¥'+x.cpr}</td><td class="n">${REVCLS[x.tag]}</td><td class="nm">${x.best?esc(x.best)+`<small class="q">（${money(x.best_v)}/天）</small>`:'<span class="q">没有跑起来的</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">这几天放出去的，每个方向都不到 3 条</td></tr>';
+document.getElementById('rev-note').textContent=`本期共 ${P.REV.nfresh} 条首花素材。少于 5 条的分组标为「样本少」。`;
+document.querySelector('#rev tbody').innerHTML=P.REV.rows.map(x=>`<tr><td class="n">${esc(ucName(x))}</td><td class="n">${x.n} 条<small class="q">（${Object.entries(x.days).map(([d,n])=>md(d)+' '+n).join('，')}）</small></td><td class="n">${x.k} 条，预期 ${x.e}</td><td class="num">${money(x.per)}</td><td class="n">${x.rate==null?'<span class="q">样本小</span>':x.rate.toFixed(1)+'%，¥'+x.cpr}</td><td class="n">${REVCLS[x.tag]}</td><td class="nm">${x.best?esc(x.best)+`<small class="q">（${money(x.best_v)}/天）</small>`:'<span class="q">没有跑起来的</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">本期没有首花素材</td></tr>';
 if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 首花这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${mk(x.why)}</td><td>${mk(x.next||'')}</td></tr>`).join('')}
 const lnk=(n,u)=>u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`:esc(n);
+const revItems=P.REV.items||[];
+if(revItems.length){
+  const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
+  const cost=v=>'¥'+v.toLocaleString('en-US',{maximumFractionDigits:2});
+  const show=()=>{
+    const terms=search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const items=revItems.filter(x=>terms.every(q=>`${x.name} ${x.id} ${x.u} ${ucName(x)}`.toLowerCase().includes(q)));
+    document.getElementById('rev-matches').textContent=terms.length?`匹配 ${items.length} 条`:'';
+    document.querySelector('#rev-items tbody').innerHTML=items.map(x=>`<tr data-material-id="${esc(x.id)}"><td class="nm">${lnk(x.name,x.url)}<small class="q">${esc(x.id)}</small></td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${cost(x.first_cost)}</td><td class="num" title="当天单条均值 ${cost(x.avg)}">${cost(x.second_cost)}</td><td class="num">${cost(x.cost)}</td><td class="n">${x.up?'<b class="good">跑起来</b>':x.avg?'低于均值':'待比较'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有匹配的素材</td></tr>';
+  };
+  document.getElementById('rev-item-count').textContent=revItems.length;
+  panel.hidden=false;
+  if(location.hash==='#rev-assets')panel.open=true;
+  search.addEventListener('input',show);
+  show();
+}
 document.getElementById('bad-note').textContent=`共 ${P.REV.nbad} 条，列影响最大的 8 条。这是素材的问题，不代表这个方向不行。`;
 document.querySelector('#bad tbody').innerHTML=P.REV.bad.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${x.act}</td><td class="n">${x.rate.toFixed(1)}%，¥${x.cpr}</td><td class="num">${x.gap.toFixed(1)}</td><td class="nm">${x.base?`<small class="q">${x.base.how}</small> ${lnk(x.base.name,x.base.url)}<small class="q">（${x.base.rate==null?'样本小':x.base.rate.toFixed(1)+'%，¥'+x.base.cpr}，激活 ${x.base.act}）</small>`:'<span class="q">没找到</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有</td></tr>';
 document.getElementById('pk-note').textContent=`共 ${P.REV.npeak} 条，列峰值最高的 8 条。`;

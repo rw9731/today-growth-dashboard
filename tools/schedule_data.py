@@ -154,7 +154,7 @@ class Fam:
         return self.by_uc.most_common(1)[0][0]
 
 
-def families(rows, sub_map):
+def families(rows, sub_map, *, merge_names=True):
     par = {}
 
     def find(x):
@@ -164,15 +164,16 @@ def families(rows, sub_map):
             x = par[x]
         return x
 
-    for r in rows:
-        par[find('i:' + r['id'])] = find('n:' + canon(r['name']))
-        m = CODE.search(canon(r['name']))
-        if m:  # 同一个脚本编号（如 A18-06-cw-20261023）换过名字也是同一条片子
-            par[find('i:' + r['id'])] = find('c:' + m.group(0))
+    if merge_names:
+        for r in rows:
+            par[find('i:' + r['id'])] = find('n:' + canon(r['name']))
+            m = CODE.search(canon(r['name']))
+            if m:  # 同一个脚本编号（如 A18-06-cw-20261023）换过名字也是同一条片子
+                par[find('i:' + r['id'])] = find('c:' + m.group(0))
     fams = defaultdict(Fam)
     of = {}
     for r in rows:
-        f = fams[find('i:' + r['id'])]
+        f = fams[find('i:' + r['id']) if merge_names else r['id']]
         of[r['id']] = f
         f.ids.add(r['id'])
         f.names.add(r['name'])
@@ -192,11 +193,11 @@ def families(rows, sub_map):
         f.batch = f.first if f.first and f.first > start else f.upload
         f.uc = f.key_uc()
         f.kind = 'AI' if f.src.most_common(1)[0][0] == 'AIGC' else '二创'  # 只分两类：AI 片（含二剪）和真人片的二创
-        f.sub = sub_of(f, sub_map)
+        f.sub = sub_of(f, sub_map, warn_missing=merge_names)
     return list(fams.values()), of
 
 
-def sub_of(f, sub_map):
+def sub_of(f, sub_map, *, warn_missing=True):
     """PS03 分三部分，别的 use case 就是自己。有映射按映射，没读字幕的库外微信线算消息排清单。"""
     if f.uc != 'PS03':
         return f.uc
@@ -207,7 +208,7 @@ def sub_of(f, sub_map):
                 return SUB_KEY[sub_map[i]]
         if f.from_fuzzy and WX_NAME in names:
             return '微信'
-        if f.spent:
+        if f.spent and warn_missing:
             UNMARKED.append(f)
         return 'PS03'
     if WX_NAME in names:
@@ -469,30 +470,35 @@ def base_of(f, by_base, stat):
     return None, ''
 
 
-def recover(fams, tot, D):
-    """每天回收前 3 天放出去的素材。一条素材的钱很偏，几条素材的平均值高低多半是碰巧有没有爆款，所以看「跑起来几条」。
+def recover(fams, launches, tot, D):
+    """按素材 ID 回收前 3 天首花的投放，合并同一个 ID 的分端数据。
     跑起来见 is_up。按方向和类型分开看，AI 和二创差很多。
     预期 = 这个方向这类素材之前跑起来的比例（不足 5 条用这类素材全盘的）。碰巧这么低、这么高的概率不到 10% 才标。"""
     one = dt.timedelta(days=1)
     norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
-    avg = day_avg(fams, tot)
+    avg = day_avg(launches, tot)
     up = lambda f: is_up(f, avg, D)
     per_day = lambda f: sum(norm(f, f.first + one * a) for a in range(min(3, (D - f.first).days) + 1)) / (min(3, (D - f.first).days) + 1)
-    name = lambda f: min((n for n in f.names if not n.startswith('推送视频_')), key=len, default=next(iter(f.names)))
+    name = lambda f: min((n for n in f.names if n), key=lambda n: (n.startswith('推送视频_'), len(n), n), default=min(f.ids))
     part = {v: k for k, v in SUB_KEY.items()}
     lo = D - one * 3
-    prior = [f for f in fams if f.first and f.spent and max(STABLE, lo - one * 10) <= f.first < lo]
-    fresh = [f for f in fams if f.first and f.spent and lo <= f.first < D]
+    prior = [f for f in launches if f.first and max(STABLE, lo - one * 10) <= f.first < lo]
+    fresh = [f for f in launches if f.first and lo <= f.first < D]
     rows = []
+    items = []
     share = lambda g: sum(1 for f in g if up(f)) / len(g)
     by = defaultdict(list)
     for f in fresh:
         by[f.sub, f.kind].append(f)
+        second = f.first + one
+        items.append(dict(id=min(f.ids), name=name(f), u=f.sub, part=part.get(f.sub), t=f.kind,
+                          first=f.first.strftime('%m-%d'), first_cost=round(f.c[f.first], 2),
+                          second_cost=round(f.c[second], 2), avg=round(avg.get(second, 0), 2),
+                          cost=round(sum(f.c.values()), 2), up=up(f)))
+    items.sort(key=lambda x: (-x['second_cost'], -x['cost'], x['id']))
     win = lambda fs, a, b: sum(f.c[D - one * k] for f in fs for k in range(a, b + 1))
     tw = lambda a, b: sum(tot.get(D - one * k, 0) for k in range(a, b + 1))
     for (u, t), fs in by.items():
-        if len(fs) < 3:
-            continue
         old = [f for f in prior if f.sub == u and f.kind == t]
         base = old if len(old) >= 5 else [f for f in prior if f.kind == t]
         p = share(base) if base else .5
@@ -502,18 +508,19 @@ def recover(fams, tot, D):
         if n < 5:
             tag = '样本少'
         elif cdf(k) < .1:
-            group = [f for f in fams if f.sub == u]
+            group = [f for f in launches if f.sub == u]
             sh = lambda a, b: win(group, a, b) / tw(a, b) if tw(a, b) else 0
             n7 = sum(1 for f in group if f.first and f.first >= D - one * 6)
             tag = '可能见顶' if sh(0, 2) <= sh(3, 5) and n7 >= 10 else '不及预期'
         elif k >= n / 2 and 1 - cdf(k - 1) < .1:
             tag = '超预期'
-        best = max(fs, key=per_day)
+        best = max((f for f in fs if up(f)), key=per_day, default=None)
         ra, cp = retention(fs, D - one)
         act = sum(f.a[d] for f in fs for d in f.a if d <= D - one)
         days = Counter(f.first.strftime('%m-%d') for f in fs)
         rows.append(dict(u=u, part=part.get(u), t=t, n=n, k=k, e=round(n * p, 1), days=dict(sorted(days.items())), per=round(sum(per_day(f) for f in fs) / n), tag=tag,
-                         rate=ra if act >= 30 else None, cpr=cp if act >= 30 else None, best=name(best) if up(best) else None, best_v=round(per_day(best))))
+                         rate=ra if act >= 30 else None, cpr=cp if act >= 30 else None,
+                         best=name(best) if best else None, best_v=round(per_day(best)) if best else None))
     # 留存明显差的素材，配上底稿去看片。比同样这些天的全盘，不比老素材：老素材是筛过的，全盘每天的次留也在变
     d1 = D - one
     A0, R0 = Counter(), Counter()
@@ -559,7 +566,8 @@ def recover(fams, tot, D):
         if top >= 1000 and pk <= D - one * 2 and last2 >= ALIVE and f.c[D] < top * .7 and f.c[D - one] < top * .7:
             peak.append(dict(name=name(f), u=f.sub, part=part.get(f.sub), first=f.first.strftime('%m-%d'), pk=round(top), pkd=pk.strftime('%m-%d'), last2=round(last2), pct=round(last2 / top * 100)))
     peak.sort(key=lambda x: -x['pk'])
-    return dict(rows=rows, bad=bad[:8], nbad=len(bad), peak=peak[:8], npeak=len(peak), nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
+    return dict(rows=rows, items=items, bad=bad[:8], nbad=len(bad), peak=peak[:8], npeak=len(peak),
+                nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
 
 
 def batches(fams, tot, D):
@@ -926,7 +934,7 @@ def history(rows, fams, D):
     return dict(U=dict(out), base=base)
 
 
-def make_roi(rows, fams, spend, D, T, of=None):
+def make_roi(rows, fams, spend, D, T, of=None, sub_map=None):
     tot = Counter()
     for r in rows:
         tot[r['d']] += r['c']
@@ -950,7 +958,8 @@ def make_roi(rows, fams, spend, D, T, of=None):
         if not y_fs and not any(f.c[D] + f.c[D - dt.timedelta(days=1)] > 0 for f in fs):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
-    out = dict(g=g, U=U, rev=recover(fams, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
+    launches, _ = families(rows, sub_map, merge_names=False)
+    out = dict(g=g, U=U, rev=recover(fams, launches, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
     out['rt'] = rt_diagnose(rows, of, D)
     out['hist'] = history(rows, fams, D)
     out['hist_from'] = min(r['d'] for r in rows).isoformat()
@@ -979,11 +988,12 @@ def main():
         print('NO_DATA')
         sys.exit(2)
     rows = [r for r in rows if r['d'] <= D]
-    fams, of = families(rows, load_sub_map(a.map))
+    sub_map = load_sub_map(a.map)
+    fams, of = families(rows, sub_map)
     if UNMARKED:
         print(f"WARNING PS03 有 {len(UNMARKED)} 条花过钱的素材映射没标子方向，先算接娃和班级群：" + '；'.join(sorted(next(iter(f.names)) for f in UNMARKED)[:5]))
     spend = make_spend(rows, fams, of, D)
-    roi = make_roi(rows, fams, spend, D, T, of)
+    roi = make_roi(rows, fams, spend, D, T, of, sub_map)
     spend['D'], spend['T_day'] = D.isoformat(), T.isoformat()
     os.makedirs(a.out_dir, exist_ok=True)
     json.dump(spend, open(os.path.join(a.out_dir, 'spend.json'), 'w', encoding='utf-8'), ensure_ascii=False)

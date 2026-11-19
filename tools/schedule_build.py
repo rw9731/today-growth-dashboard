@@ -364,6 +364,8 @@ def load_why(T):
 def with_links(rev):
     """回收表的素材配上能打开的片子链接。"""
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    for x in rev.get('items', []):
+        x['url'] = material_urls(links, x['id'], x['name'])[0]
     for x in rev.get('bad', []):
         x['url'] = material_urls(links, x['id'], x.get('name', ''))[0]
         if x.get('base'):
@@ -385,7 +387,7 @@ def short_sub(text):
 
 
 def progress_html(prog, T, wt=None, week_by_group=None, confirmed=None):
-    """「今天要看」最上面：A、B 组这周的进度条，下面一行落下，点开才是具体哪几行。
+    """「今天要看」里的 A、B 组本周交付进度。
     Reina 11/12：分母用这周产能（plan 的 week_total，A 175、B 120），右边写「本周已交 / 产能」，和条的长度一致；
     到昨天该交多少、差多少写在下面那行。竖线是按排期到昨天该交的位置。plan 的 week 对不上（wt 为空）时退回用飞书排期的总条数。"""
     if not prog or not prog.get('line'):
@@ -424,11 +426,7 @@ def progress_html(prog, T, wt=None, week_by_group=None, confirmed=None):
                  f'<span class="o-track" title="{html.escape(tip)}"><span class="o-fill" style="width:{min(100, wg / cap * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, x["due"] / cap * 100):.1f}%"></i></span>'
                  f'<span class="o-pct"><b>{wg}</b>/{cap}{state}</span></div>'
                  f'<small>{" · ".join(bits)}</small></div>')
-    lags = prog.get('lags', [])
-    if not lags:
-        return rows
-    items = ''.join('<li>' + html.escape(x) + '</li>' for x in lags)
-    return rows + f'<span class="k">落下</span><details class="lag"><summary><b>{len(lags)} 行</b></summary><ul>{items}</ul></details>'
+    return rows
 
 
 def cap_html(plan, T, weekly_plan):
