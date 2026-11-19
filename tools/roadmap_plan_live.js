@@ -107,14 +107,16 @@ function updateTimeline(plan) {
     }
   }
 
-  function addBaseline(row) {
+  function addBaseline(row, cost = '') {
     for (const th of dates()) {
       const td = row.insertCell();
       td.className = 'tc emp';
       td.dataset.week = th.dataset.week;
       td.title = (row.dataset.uc || row.dataset.for) + ' ' + th.textContent;
     }
-    row.insertCell().className = 'num';
+    const spend = row.insertCell();
+    spend.className = 'num';
+    spend.textContent = cost;
     row.insertCell().className = 'num';
   }
 
@@ -139,10 +141,13 @@ function updateTimeline(plan) {
     setCell(root, plan.counts[u]);
     const rows = scenarios.get(u);
     if (!rows) continue;
-    const scenes = rows.filter(row => row.dataset.scene !== '0').map(row => {
-      const span = row.querySelector('[data-scene-label]');
-      return {id: row.dataset.scene, label: span.textContent, description: span.title};
-    });
+    // 排期的匹配和平分按场景库编号，页面的消耗排序不影响归属。
+    const scenes = rows.filter(row => row.dataset.scene !== '0')
+      .sort((a, b) => Number(a.dataset.scene) - Number(b.dataset.scene))
+      .map(row => {
+        const span = row.querySelector('[data-scene-label]');
+        return {id: row.dataset.scene, label: span.textContent, description: span.title};
+      });
     const counts = byScene(scenes, plan.cases.get(u)?.entries || []);
     if (counts.get('0') && !rows.some(row => row.dataset.scene === '0')) {
       const last = rows[rows.length - 1];
@@ -155,7 +160,7 @@ function updateTimeline(plan) {
       const name = row.insertCell();
       name.className = 'uc sc';
       name.textContent = '没对上场景';
-      addBaseline(row);
+      addBaseline(row, '¥0');
       rows.push(row);
     }
     for (const row of rows) setCell(row, counts.get(row.dataset.scene));

@@ -267,8 +267,10 @@ def main():
                                'share': cost / wk_tot[wk] if wk_tot.get(wk) else 0, 'plan': pw[n_].get(wk, 0)}
                 fst = min((m['first'] for m in mm), default='')
                 x['tl_sc'].append({'n': n_, 't': t_, 'g': g_, 'full': f_, 'cnt': len(mm), 'tl': tls,
+                                   'cost': sum(m['cost'] for m in mm),
                                    'lit_day': ltd[0] if ltd else '', 'lit_wk': mon(ltd[0]) if ltd else '', 'first_wk': mon(fst) if fst else '',
                                    'lit_mat': next((m['name'] for m in mm if ltd and m['lit_day'] == ltd[0]), '')})
+            x['tl_sc'].sort(key=lambda c: -c['cost'])
     prog = []
     for wk in weeks:
         if wk > mon(D):
@@ -390,7 +392,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
             num = f'<b>{c["n"]}</b> ' if c['n'] else ''
             trs.append(f'<tr class="scr" data-for="{E(x["uc"])}" data-scene="{c["n"]}" hidden><td><span class="pill sm {cls}">{st}</span></td>'
                        f'<td class="uc sc">{gl}{num}<span data-scene-label title="{E(c["full"])}">{E(c["t"])}</span><span class="sub">{"花过钱 " + str(c["cnt"]) + " 条" if c["cnt"] else ""}</span></td>'
-                       f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"])}<td class="num"></td><td class="num">{md(c["lit_day"]) if c["lit_day"] else ""}</td></tr>')
+                       f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"])}'
+                       f'<td class="num">{fy(c["cost"])}</td><td class="num">{md(c["lit_day"]) if c["lit_day"] else ""}</td></tr>')
     th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}" data-week="{w}">{E(wlab(w))}</th>' for w in wks)
     prog = TL['prog']
     n_all = len(out)
@@ -438,7 +441,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
       <thead><tr><th>状态</th><th>use case</th>{th_w}<th class="num">累计消耗</th><th class="num">点亮日</th></tr></thead>
       <tbody>{''.join(trs)}</tbody>
     </table></div>
-    <p class="note">Use case 按累计消耗从高到低排列。排期从 11/3 那周开始有记录。</p>
+    <p class="note">Use case 和展开后的细分场景都按累计消耗从高到低排列，消耗统计覆盖 {md(first_day)}–{md(D)}。排期从 11/3 那周开始有记录。</p>
   </section>'''
 
     tsum = sum(tier_n.values())
@@ -586,7 +589,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
       <li>测试中：花过钱，但 30 天里还不到 10 条、没点亮。没测：一条都没花过钱。储备：Use case 库里状态是储备、还没测。暂不做：已经定了先不做的（订高铁票）。</li>
       <li>素材类型：AI 原片；AI 二剪和重拍（AI 短剧的只剪辑、换开头、全片重配、AI 重拍）；达人原片（KOC、KOL 原片）；达人二剪（KOC、KOL 的二剪、只剪辑、换开头、全片重配）；星广和自建号（唯西星广、知定堂星广、星图、唯西自建号）。客供和还没对上 use case 的素材不进格子。</li>
       <li>use case 归属和日报一致（UC_ID 列，待对应的按 tools/uc_resolve.py 补）。</li>
-      <li>细分场景（路线图里点 use case 展开）：每条素材的场景取 notes/scene-map.json（日报每天给新素材打标；11/17 把花过钱还没标的按素材名、字幕和脚本表补了一遍）。场景点亮的口径和 use case 一样：这个场景里有一条素材累计花到 ¥5,000。「排 N」按排期里写的细分场景和库里的场景文字对，一行写了几个场景就平分条数。名字和字幕看不出场景的、库里没有对应场景的素材，以及对不上场景的排期，都放在最后一行「没对上场景」。</li>
+      <li>细分场景的归属来自 notes/scene-map.json，日报每天给新素材打标。场景点亮沿用 use case 的口径，场景里有一条素材累计花到 ¥5,000 即点亮。「排 N」按排期里写的细分场景和库里的场景文字匹配，一行写了几个场景就平分条数。未匹配到场景的素材和排期计入「没对上场景」。</li>
     </ul>
   </section>
 </div>
@@ -604,7 +607,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   if(b) b.addEventListener('click', function(){{ all = !all; document.querySelectorAll('tr.ucr').forEach(function(tr){{ tog(tr, all); }}); b.textContent = all ? '全部收起' : '全部展开'; }});
 }})();
 </script>
-<script type="module" src="../tools/roadmap_plan_live.js"></script>
+<script type="module" src="../tools/roadmap_plan_live.js?v=2"></script>
 </body>
 </html>
 '''
