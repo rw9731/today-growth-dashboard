@@ -548,6 +548,9 @@
         </table>
       </div>
       <div class="lx-card lx-cspanel" data-draw="cspanel" hidden></div>
+      <h3 class="lx-h3" style="margin-top:22px">分端看冷启：iOS、安卓各一张</h3>
+      <p class="lx-note">这一端窗口 3 天（上传当天 + 后 2 天）花到 ¥400 算这端过。没过的原因顺序和上面一样，每条只归一列；基建按这一端的老项目判（iOS 不到 10 个、安卓不到 30 个），没进已跑量项目、被老素材霸着、被新素材占着只看这一端的项目，内容和方向的原因两端共用。标色规则同上：比这几批合起来高 5 个点以上、而且是它的 1.5 倍以上标红。</p>
+      <div data-draw="csplat"></div>
       <h3 class="lx-h3" style="margin-top:22px">按 use case 看冷启率</h3>
       <p class="lx-note">排得多、以为能放量的方向，新素材到底好不好起。冷启率：近两周上传、3 天窗口已走完的新素材。比同期平均：实际过的条数 ÷ 按每条上传那天的整体冷启率算的期望（扣掉每天预算环境的差别），1 倍 = 和同期一样；新素材不到 10 条的不标色。能不能放量看近 7 天这个 use case 一共花了多少、占大盘多少；单条带量看这些钱是靠几条素材花出去的。<b>能放量但新素材难起</b>（近 7 天占大盘 ≥ 2%、新素材 ≥ 10 条、比同期平均 ≤ 0.7 倍）= 量靠少数老素材撑着，再排新素材也接不上。</p>
       <div class="lx-card lx-scroll">
@@ -1568,8 +1571,8 @@
         { const c = td('num'); if (b.cs != null) { c.textContent = P1(b.cs); if (avgCs != null && Math.abs(b.cs - avgCs) >= 0.03) c.className = 'num ' + (b.cs > avgCs ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_sofar) + '</span>'; c.title = fmtD(b.win_end) + ' 的数出来才定'; } }
         { const c = td('num'); const tx = b.th_c ? '（' + fmtY(b.th_c) + '）' : ''; if (b.cs_c != null) { c.innerHTML = P1(b.cs_c) + ' <span class="muted">' + tx + '</span>'; if (avgCsC != null && Math.abs(b.cs_c - avgCsC) >= 0.03) c.className = 'num ' + (b.cs_c > avgCsC ? 'lx-good' : 'lx-badv'); } else { c.innerHTML = '<span class="muted">目前 ' + P1(b.cs_c_sofar) + ' ' + tx + '</span>'; } c.style.whiteSpace = 'nowrap'; }
         td('num' + (b.cs_wait ? '' : ' muted')).textContent = b.cs_wait;
-        // 没过和四类原因：条数（占上传条数），比这几批合起来的占比高 10 个点以上标红（Reina 11/12）
-        const np = (c, n, base) => { c.innerHTML = n + ' <span class="muted">（' + fmtP0(b.n_up ? n / b.n_up : 0) + '）</span>'; c.style.whiteSpace = 'nowrap'; if (base != null && b.n_up && n / b.n_up >= base + 0.1) c.classList.add('lx-badv'); else if (base != null && b.n_up && b.n_up >= 10 && n / b.n_up <= base - 0.1) c.classList.add('lx-good'); };
+        // 没过的原因：条数（占上传条数）。比这几批合起来的占比高 5 个点以上、而且是它的 1.5 倍以上标红，反过来标绿（Reina 11/19，原来是 ±10 个点，太粗）
+        const np = (c, n, base) => { c.innerHTML = n + ' <span class="muted">（' + fmtP0(b.n_up ? n / b.n_up : 0) + '）</span>'; c.style.whiteSpace = 'nowrap'; if (base == null || !b.n_up) return; const v = n / b.n_up; if (v >= base + 0.05 && v >= base * 1.5) c.classList.add('lx-badv'); else if (b.n_up >= 10 && v <= base - 0.05 && v <= base / 1.5) c.classList.add('lx-good'); };
         // Reina 11/18：上传不到 10 条的批次整行不标色（没统计意义）；窗口没走完的批次，没过和原因各列写「目前 n」、灰字，不标色（未定）
         const SMALL = b.n_up < 10, PEND = b.cs_wait > 0;
         const curN = (L) => L.length;
@@ -1611,6 +1614,55 @@
           tr.classList.add('open'); box.innerHTML = panel(b); box.hidden = false;
           box.scrollIntoView({behavior: 'smooth', block: 'start'});
         });
+      }
+    });
+    // 分端冷启表（Reina 11/19）：st_i / st_a 是这一端窗口花到 ¥400 没有，cause_i / cause_a 是这一端的没过原因
+    fill('csplat', (box) => {
+      if (!CS.some((m) => m.st_i)) { box.hidden = true; return; }
+      const NM = Object.fromEntries(CAUSE), JF = (nm.cs_jj || [])[2] || '2026-11-09';
+      const SUB = {基建: (p) => (p === 'i' ? 'iOS 老项目不到 ' + ((nm.cs_jj || [10])[0]) : '安卓老项目不到 ' + ((nm.cs_jj || [10, 30])[1])) + ' 个', 硬伤: () => '', 扎堆: () => '前后 3 天同原片 ≥ 7 条', 难起: () => '已知难起', 方向: () => '不在验证过的两档', 跑量: () => '这端没老头部的已跑量项目 < 5', 头部: () => '这端被老素材占着', 占着: () => '这端被前 3 天新素材占着', 没跑: () => '前面都排除了'};
+      let html = '';
+      for (const [p, lab] of [['i', 'iOS'], ['a', '安卓']]) {
+        html += '<h4 style="margin:14px 0 6px">' + lab + '</h4><div class="lx-card lx-scroll"><table class="lx-table lx-cstable"><thead><tr class="cs-grp"><th colspan="6"></th><th colspan="9" class="cs-why cs-why-l cs-why-r cs-why-t">' + lab + ' 没过的原因：每条只归一列，按顺序先归前面的，九列加起来 = 没过</th><th></th></tr><tr><th>上传日</th><th class="num">上传条数</th><th class="num">' + lab + ' 过冷启<span class="th-sub">这端窗口花到 ¥400</span></th><th class="num">' + lab + ' 冷启率</th><th class="num">还在看</th><th class="num">没过<span class="th-sub">条数（占上传）</span></th>'
+          + CK.map(([k], j) => '<th class="num cs-why' + (j === 0 ? ' cs-why-l' : '') + (j === CK.length - 1 ? ' cs-why-r' : '') + '">' + esc(NM[k]) + '<span class="th-sub">' + esc(SUB[k](p)) + '（占上传）</span></th>').join('') + '<th class="num">' + lab + ' 窗口消耗<span class="th-sub">这批合计</span></th></tr></thead><tbody data-draw="csplat-' + p + '"></tbody></table></div>';
+      }
+      box.innerHTML = html;
+      for (const p of ['i', 'a']) {
+        const tb = box.querySelector('[data-draw="csplat-' + p + '"]');
+        const st = (m) => m['st_' + p], cz = (m, now) => now ? m['cause_now_' + p] : m['cause_' + p];
+        const done = B.filter((b) => b.n_up && !ofDay(b).some((m) => st(m) === 'wait'));
+        const N = d3.sum(done, (b) => b.n_up);
+        const avgR = N ? d3.sum(done, (b) => ofDay(b).filter((m) => st(m) === 'pass').length) / N : null;
+        const AVG = CK.map(([k]) => N ? d3.sum(done, (b) => ofDay(b).filter((m) => st(m) === 'fail' && cz(m) === k).length) / N : null);
+        for (const b of B.slice().reverse()) {
+          if (!b.n_up) continue;
+          const L = ofDay(b), tr = document.createElement('tr'), td = cellMaker(tr);
+          const P = L.filter((m) => st(m) === 'pass'), F = L.filter((m) => st(m) === 'fail'), W = L.filter((m) => st(m) === 'wait');
+          const PEND = W.length > 0, SMALL = b.n_up < 10;
+          { const c = td(); c.innerHTML = '<b>' + fmtD(b.up) + '</b>'; c.style.whiteSpace = 'nowrap'; }
+          td('num').textContent = b.n_up;
+          { const c = td('num'); c.textContent = P.length; if (P.length) c.className = 'num lx-good'; }
+          { const c = td('num'); const r = P.length / b.n_up; if (PEND) { c.innerHTML = '<span class="muted">目前 ' + P1(r) + '</span>'; } else { c.textContent = P1(r); if (avgR != null && Math.abs(r - avgR) >= 0.03) c.className = 'num ' + (r > avgR ? 'lx-good' : 'lx-badv'); } }
+          td('num' + (W.length ? '' : ' muted')).textContent = W.length;
+          const nowL = W.filter((m) => cz(m, true));
+          { const c = td('num' + (PEND ? ' muted' : '')); const n = F.length + nowL.length; c.innerHTML = (PEND ? '目前 ' : '') + n + ' <span class="muted">（' + fmtP0(n / b.n_up) + '）</span>'; c.style.whiteSpace = 'nowrap'; }
+          CK.forEach(([k], j) => {
+            const c = td('num cs-why'); if (j === 0) c.classList.add('cs-why-l'); if (j === CK.length - 1) c.classList.add('cs-why-r');
+            if ((k === '基建' && !L.some((m) => m['jj_' + p])) || (['跑量', '头部', '占着'].includes(k) && !L.some((m) => m.pjo))) { c.textContent = '—'; c.classList.add('muted'); if (k === '基建') c.title = b.up < JF ? '11/09 前的做法是只建新项目，不判' : '这天还没拉操作日志'; return; }
+            const n = F.filter((m) => cz(m) === k).length + nowL.filter((m) => cz(m, true) === k).length, v = n / b.n_up;
+            c.innerHTML = (PEND ? '目前 ' : '') + n + ' <span class="muted">（' + fmtP0(v) + '）</span>'; c.style.whiteSpace = 'nowrap';
+            if (PEND) { c.classList.add('muted'); }
+            else if (!SMALL && AVG[j] != null) { if (v >= AVG[j] + 0.05 && v >= AVG[j] * 1.5) c.classList.add('lx-badv'); else if (v <= AVG[j] - 0.05 && v <= AVG[j] / 1.5) c.classList.add('lx-good'); }
+            if (k === '方向' && !PEND && v > 0.2) c.classList.add('lx-badv');
+            if (k === '难起' || k === '方向') {
+              const G = L.filter((m) => k === '难起' ? m.hdir : (m.tdir && !m.hdir));
+              if (G.length) { c.dataset.tiph = '<b>' + fmtD(b.up) + ' ' + esc(NM[k]) + '（' + (p === 'i' ? 'iOS' : '安卓') + '）</b>：上传 ' + G.length + ' 条<br>' + d3.rollups(G, (v2) => v2, (m) => m.uc).sort((x, y) => y[1].length - x[1].length).map(([uc, v2]) => '· ' + esc(uc + ' ' + (v2[0].short || '')) + '：上传 ' + v2.length + '，这端过 ' + v2.filter((m) => st(m) === 'pass').length + '，归这列 ' + v2.filter((m) => (cz(m) || cz(m, true)) === k).length).join('<br>'); c.style.cursor = 'help'; c.style.textDecoration = 'underline dotted'; }
+            }
+          });
+          td('num muted').textContent = fmtY(d3.sum(L, (m) => m['c3_' + p] || 0));
+          if (SMALL) tr.title = '上传不到 10 条，比例没有统计意义，不标颜色';
+          tb.appendChild(tr);
+        }
       }
     });
   }

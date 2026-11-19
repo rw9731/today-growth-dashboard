@@ -925,9 +925,11 @@ def main():
     rtd_path = os.path.join(os.path.dirname(HERE), 'notes', f'rtday-{D[3]}.json')
     rtd_note = json.load(open(rtd_path)) if os.path.exists(rtd_path) else None
     cost_by = defaultdict(lambda: defaultdict(float))
+    cost_bp = {'i': defaultdict(lambda: defaultdict(float)), 'a': defaultdict(lambda: defaultdict(float))}  # 分端（Reina 11/19 冷启分端表）
     for r in allrows:
         if r['date'] <= D[3]:
             cost_by[r['id']][r['date']] += r['cost']
+            cost_bp['i' if r.get('platform') == 'iOS' else 'a'][r['id']][r['date']] += r['cost']
     rdays = [(Dd - dt.timedelta(days=k)).isoformat() for k in range(9, -1, -1)]
     recent = []
     for i, dd in cost_by.items():
@@ -1061,6 +1063,11 @@ def main():
             e.update({'first': first_sp.get(i, ''), 'a3': round(a3), 'c3': round(c3), 'r3': r3, 'ar3': round(ar),
                       'st': 'pass' if c3 >= CS_COST else ('fail' if done else 'wait'),
                       'st_c': 'pass' if THU and THU['c'] and c3 >= THU['c'] else ('fail' if done else 'wait')})
+            # 分端冷启（Reina 11/19）：这一端窗口 3 天花到 ¥400 算这端过
+            for p_ in ('i', 'a'):
+                cp_ = sum(cost_bp[p_][i].get((dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat(), 0) for k in range(CSW) if (dt.date.fromisoformat(u) + dt.timedelta(days=k)).isoformat() <= D[3])
+                e['c3_' + p_] = round(cp_)
+                e['st_' + p_] = 'pass' if cp_ >= CS_COST else ('fail' if done else 'wait')
             if i not in first_sp or first_sp[i] > (dt.date.fromisoformat(u) + dt.timedelta(days=CSW - 1)).isoformat():
                 e['nospend'] = True  # 窗口里一分钱没花
             m = rec_by.get(i)
@@ -1268,6 +1275,8 @@ def main():
             head = [pj for pj in run if max((c for mid, c in pj[2] if mid != m['id'] and up_day(mid) < u), default=0) >= CS_HEAD * ptot(pj)]
             goodpj = [pj for pj in run if pj not in head]  # 不能叫 good：会盖掉前面好素材列表 good（11/18 出过错）
             m['pj_n'], m['pj_run'], m['pj_head'], m['pj_good'] = len(ps), len(run), len(head), len(goodpj)
+            _osk = lambda pj: 'i' if len(pj) > 3 and pj[3] == 'iOS' else 'a'
+            m['pjo'] = {p_: [sum(1 for pj in L_ if _osk(pj) == p_) for L_ in (ps, run, head, goodpj)] for p_ in ('i', 'a')}
             m['pj_goodhit'] = sum(1 for pj in goodpj if any(mid == m['id'] and c >= CS_PJ_C for mid, c in pj[2]))
         else:
             m['got'] = m['w_show'] >= CS_SHOW
@@ -1384,7 +1393,7 @@ def main():
     CS_OCC = 0.10
     _snap = {}
 
-    def _pocc(m):
+    def _pocc(m, osk=None):
         u0 = dt.date.fromisoformat(m['up'][:10])
         k = (u0 - dt.timedelta(days=1)).isoformat()
         if k not in _snap:
@@ -1396,7 +1405,7 @@ def main():
         num = den = 0.0
         for kk in MPx.get(m['id'], []):
             x = PP.get(PJx[kk][0])
-            if not x:
+            if not x or (osk and (('i' if len(x) > 3 and x[3] == 'iOS' else 'a') != osk)):
                 continue
             den += sum(c for _, c in x[2])
             num += sum(c for mid, c in x[2] if up_day(mid) and u0 - dt.timedelta(days=3) <= dt.date.fromisoformat(up_day(mid)) < u0)
@@ -1404,6 +1413,8 @@ def main():
 
     for m in cs_mats:
         m['pocc'] = _pocc(m) if pjd else None
+        for p_ in ('i', 'a'):
+            m['pocc_' + p_] = _pocc(m, p_) if pjd else None
 
     # 没过的原因（11/19 Reina 定）：每条只归一列，按顺序先归前面的。
     # 新老项目基建不够（11/19 Reina：放第一，基建没做够其他原因都谈不上）→ 硬伤 → 同原片扎堆 → 冷启难的方向（已知）→ 还在测的方向（好坏未知）
@@ -1429,6 +1440,31 @@ def main():
         m['cause'] = _cz(m) if m['st'] == 'fail' else ''
         m['cause_now'] = _cz(m) if m['st'] == 'wait' else ''
         m['cause2'] = m['cause2_now'] = ''
+
+    # 分端的没过原因（Reina 11/19）：顺序同上；基建按这一端的老项目判（iOS < CS_JJ_IOS_OLD、安卓 < CS_JJ_AND_OLD），
+    # 没进已跑量项目、被老素材霸着、被前 3 天新素材占着只看这一端的项目；内容和方向的原因两端共用。
+    def _czp(m, p_):
+        jj = m.get('jj_' + p_)
+        if jj and jj[1] < (CS_JJ_IOS_OLD if p_ == 'i' else CS_JJ_AND_OLD):
+            return '基建'
+        if m['hard']:
+            return '硬伤'
+        if m['crowd'] >= CS_CROWD:
+            return '扎堆'
+        if m['hdir']:
+            return '难起'
+        if m['tdir']:
+            return '方向'
+        if pjd and 'pjo' in m and m['pjo'][p_][3] < CS_GOOD:
+            return '头部' if m['pjo'][p_][2] else '跑量'
+        if m.get('pocc_' + p_) is not None and m['pocc_' + p_] >= CS_OCC:
+            return '占着'
+        return '没跑'
+    for m in cs_mats:
+        for p_ in ('i', 'a'):
+            st_ = m.get('st_' + p_)
+            m['cause_' + p_] = _czp(m, p_) if st_ == 'fail' else ''
+            m['cause_now_' + p_] = _czp(m, p_) if st_ == 'wait' else ''
     newd_meta['cs_occ'] = CS_OCC
     # 按 use case 看冷启率（Reina 11/19）：排得多、以为能放量的方向，新素材到底好不好起。
     # 冷启率：窗口已走完的新素材（cs_mats 里约两周的上传）；倍数 = 实际过的条数 ÷ 按各自上传日整体冷启率算的期望（扣掉每天预算环境的差别）。
