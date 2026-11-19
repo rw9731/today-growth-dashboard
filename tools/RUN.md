@@ -349,3 +349,10 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - Use case 首次同时达到累计消耗 ≥ ¥100,000 和当周消耗占同期两端全盘 > 2% 的周标 ★。细分场景用同一时间口径，首次同时达到场景累计消耗 ≥ ¥50,000 和当周消耗占同期两端全盘 > 1% 的周标 ☆。周一到周日为一周，进行中的周统计到数据截止日。
 - 素材类型格按单条累计 ¥5,000 点亮。过冷启 = 3 天花费 ≥ ¥400。暂不做的方向写在 roadmap.py 的 NOT_NOW。
 - 最新排期看板和点亮路线图打开或刷新时，通过 tools/weekly_plan.js 读取已发布的 tools/schedule_plan.json，自动更新「本周已排」，排除建议拿掉和顺延的条目。发布排期底表后，路线图的排期即时取新数。按日存档沿用发布当日的数字。
+
+## 细分场景底表（Reina 11/19 定）
+- 唯一的权威：Google 表「国区投放素材」的「素材场景」tab，一条素材一行（素材ID、素材名、use case、场景编号、场景、依据、说明、状态、打标日），人可以直接改。notes/scene-map.json 是副本，看板、路线图、排期页照常读它。
+- 每天打标前：用 Google Sheets 连接器读 '素材场景'!A1:I5000（返回值大会存成文件），python3 tools/scene_sheet.py pull <文件> --date T，把人改过的写回 scene-map.json（依据记「表里改」）。
+- 打标顺序（省 token）：先不花 token 的（排期行写的细分场景、同一条原片其他版本已标的、素材名能看出的），对不上的再读字幕；只给窗口里花到钱的打，没花钱的挂「待看片」。打完 scene_merge.py 合并。
+- 打完：python3 tools/scene_sheet.py export --sheet <分日文件> 生成 notes/scene-tags.csv，推到仓库；Apps Script「巨量投放数据日更」项目里的 SceneTags.gs → syncSceneTags 从看板站点读这个 csv，只追加 tab 里还没有的素材，已有的行（含人改过的）不动。setupSceneTrigger 跑一次可设成每 6 小时自动同步（11/19 Claude 设定时被拦，要 Reina 自己点一次）；没设的话，用 scene_sheet.py rows --since T 打出新行，append_values 追加到 '素材场景'!A1。
+- 11/19 首次导入 1,460 条（含同原片补的 35 条）。
