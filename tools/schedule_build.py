@@ -13,6 +13,7 @@ from collections import defaultdict
 
 from schedule_data import STABLE, flow, total_warn
 from schedule_entries import is_deferred, planned_entries
+from schedule_recovery import weekly_recovery
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -365,7 +366,8 @@ def with_links(rev):
     """回收表的素材配上能打开的片子链接。"""
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
     for x in rev.get('items', []):
-        x['url'] = material_urls(links, x['id'], x['name'])[0]
+        videos = (material_urls(links, mid, x['name'])[0] for mid in x['ids'])
+        x['url'] = next((url for url in videos if url), '')
     for x in rev.get('bad', []):
         x['url'] = material_urls(links, x['id'], x.get('name', ''))[0]
         if x.get('base'):
@@ -637,11 +639,19 @@ def main():
         print('WARNING 有消耗但不在 GROUPS 里：' + '、'.join(unlisted))
     names = uc_names(plan)
     bars = plan.get('bars', 14)
+    production_path = os.path.join(ROOT, 'notes', 'output-items.json')
+    production = None
+    if os.path.exists(production_path):
+        with open(production_path, encoding='utf-8') as source:
+            production = json.load(source)
+    review = weekly_recovery(weekly_plan, production, R.get('review_facts'), T, D)
+    diagnostics = R.get('rev', {})
+    review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
     P = dict(E=E, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, groups, D, total, days), LIGHTING=lighting, RETENTION_REVIEW=RETENTION_REVIEW,
-             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(R.get('rev', dict(rows=[], bad=[], nbad=0, peak=[], npeak=0))), meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D))
+             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D))
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:

@@ -18,7 +18,6 @@
 - roi：这批 = 首花在 D-7 到 D-2 的素材。y 每条产出 = 前 3 天消耗按全盘一天 ¥15 万折算后的条均。其余字段见 roi_row。
 """
 import argparse, datetime as dt, json, os, re, sys
-from math import comb
 from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -76,6 +75,7 @@ def load_rows(path):
     col = {k: h.index(k) for k in ('日期', '素材ID', '素材名', '消耗', '激活', '次留', 'UC_ID')}
     c_src = h.index('来源') if '来源' in h else None
     c_plat = h.index('平台') if '平台' in h else None
+    c_show = h.index('展示') if '展示' in h else None
     rows = []
     for r in v[1:]:
         r = r + [''] * (len(h) - len(r))
@@ -90,7 +90,8 @@ def load_rows(path):
                     uc, fuzzy = u, True
                     break
         rows.append(dict(d=dt.date.fromisoformat(r[col['日期']][:10]), id=str(r[col['素材ID']]).strip(), name=name, c=num(r[col['消耗']]),
-                         a=num(r[col['激活']]), r=num(r[col['次留']]), uc=uc, fuzzy=fuzzy, src=(r[c_src] or '').strip() if c_src is not None else '', p=(r[c_plat] or '').strip() if c_plat is not None else ''))
+                         a=num(r[col['激活']]), r=num(r[col['次留']]), show=num(r[c_show]) if c_show is not None else 0,
+                         uc=uc, fuzzy=fuzzy, src=(r[c_src] or '').strip() if c_src is not None else '', p=(r[c_plat] or '').strip() if c_plat is not None else ''))
     return rows
 
 
@@ -470,57 +471,41 @@ def base_of(f, by_base, stat):
     return None, ''
 
 
-def recover(fams, launches, tot, D):
-    """按素材 ID 回收前 3 天首花的投放，合并同一个 ID 的分端数据。
-    跑起来见 is_up。按方向和类型分开看，AI 和二创差很多。
-    预期 = 这个方向这类素材之前跑起来的比例（不足 5 条用这类素材全盘的）。碰巧这么低、这么高的概率不到 10% 才标。"""
+def review_facts(rows, launches, tot, D, week):
+    """按素材 ID 记录本周首次投放的事实，交由排期看板关联本周成片。"""
     one = dt.timedelta(days=1)
-    norm = lambda f, d: f.c[d] * ONE_DAY / tot[d] if tot.get(d) else 0
+    released = {}
+    for row in rows:
+        if row['c'] > 0 or row.get('show', 0) > 0:
+            mid, day = row['id'], row['d']
+            released[mid] = min(released.get(mid, day), day)
     avg = day_avg(launches, tot)
-    up = lambda f: is_up(f, avg, D)
-    per_day = lambda f: sum(norm(f, f.first + one * a) for a in range(min(3, (D - f.first).days) + 1)) / (min(3, (D - f.first).days) + 1)
+    facts = {}
+    for f in launches:
+        mid = next(iter(f.ids))
+        launch = released.get(mid)
+        if not launch or not week <= launch <= D:
+            continue
+        second_day = f.first + one if f.first else None
+        mature_days = [day for day in f.c if week <= day < D]
+        facts[mid] = {
+            'names': sorted(n for n in f.names if n),
+            'released': launch.isoformat(),
+            'first': f.first.isoformat() if f.first else '',
+            'cents': round(sum(f.c[d] for d in f.c if week <= d <= D) * 100),
+            'ret_cents': round(sum(f.c[d] for d in mature_days) * 100),
+            'act': sum(f.a[d] for d in mature_days),
+            'ret': sum(f.r[d] for d in mature_days),
+            'up': is_up(f, avg, D) if second_day and second_day <= D and second_day in avg else None,
+        }
+    return facts
+
+
+def recent_diagnostics(fams, D):
+    """独立的近期投放诊断，供排期看板的看片和见顶明细使用。"""
+    one = dt.timedelta(days=1)
     name = lambda f: min((n for n in f.names if n), key=lambda n: (n.startswith('推送视频_'), len(n), n), default=min(f.ids))
     part = {v: k for k, v in SUB_KEY.items()}
-    lo = D - one * 3
-    prior = [f for f in launches if f.first and max(STABLE, lo - one * 10) <= f.first < lo]
-    fresh = [f for f in launches if f.first and lo <= f.first < D]
-    rows = []
-    items = []
-    share = lambda g: sum(1 for f in g if up(f)) / len(g)
-    by = defaultdict(list)
-    for f in fresh:
-        by[f.sub, f.kind].append(f)
-        second = f.first + one
-        items.append(dict(id=min(f.ids), name=name(f), u=f.sub, part=part.get(f.sub), t=f.kind,
-                          first=f.first.strftime('%m-%d'), first_cost=round(f.c[f.first], 2),
-                          second_cost=round(f.c[second], 2), avg=round(avg.get(second, 0), 2),
-                          cost=round(sum(f.c.values()), 2), up=up(f)))
-    items.sort(key=lambda x: (-x['second_cost'], -x['cost'], x['id']))
-    win = lambda fs, a, b: sum(f.c[D - one * k] for f in fs for k in range(a, b + 1))
-    tw = lambda a, b: sum(tot.get(D - one * k, 0) for k in range(a, b + 1))
-    for (u, t), fs in by.items():
-        old = [f for f in prior if f.sub == u and f.kind == t]
-        base = old if len(old) >= 5 else [f for f in prior if f.kind == t]
-        p = share(base) if base else .5
-        n, k = len(fs), sum(1 for f in fs if up(f))
-        cdf = lambda m: sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(m + 1))
-        tag = '符合'
-        if n < 5:
-            tag = '样本少'
-        elif cdf(k) < .1:
-            group = [f for f in launches if f.sub == u]
-            sh = lambda a, b: win(group, a, b) / tw(a, b) if tw(a, b) else 0
-            n7 = sum(1 for f in group if f.first and f.first >= D - one * 6)
-            tag = '可能见顶' if sh(0, 2) <= sh(3, 5) and n7 >= 10 else '不及预期'
-        elif k >= n / 2 and 1 - cdf(k - 1) < .1:
-            tag = '超预期'
-        best = max((f for f in fs if up(f)), key=per_day, default=None)
-        ra, cp = retention(fs, D - one)
-        act = sum(f.a[d] for f in fs for d in f.a if d <= D - one)
-        days = Counter(f.first.strftime('%m-%d') for f in fs)
-        rows.append(dict(u=u, part=part.get(u), t=t, n=n, k=k, e=round(n * p, 1), days=dict(sorted(days.items())), per=round(sum(per_day(f) for f in fs) / n), tag=tag,
-                         rate=ra if act >= 30 else None, cpr=cp if act >= 30 else None,
-                         best=name(best) if best else None, best_v=round(per_day(best)) if best else None))
     # 留存明显差的素材，配上底稿去看片。比同样这些天的全盘，不比老素材：老素材是筛过的，全盘每天的次留也在变
     d1 = D - one
     A0, R0 = Counter(), Counter()
@@ -552,7 +537,6 @@ def recover(fams, launches, tot, D):
                 item['base'] = dict(id=sorted(g.ids)[0], name=name(g), how=how, act=round(ga), rate=gr, cpr=gc)
             bad.append((gap * a, item))
     bad = [x[1] for x in sorted(bad, key=lambda x: x[0])]
-    rows.sort(key=lambda x: -x['per'])  # 每条带来的钱从高到低，一眼看出哪些方向 ROI 低
     peak = []
     for f in fams:
         if not f.first or f.first < D - one * 14:
@@ -566,8 +550,7 @@ def recover(fams, launches, tot, D):
         if top >= 1000 and pk <= D - one * 2 and last2 >= ALIVE and f.c[D] < top * .7 and f.c[D - one] < top * .7:
             peak.append(dict(name=name(f), u=f.sub, part=part.get(f.sub), first=f.first.strftime('%m-%d'), pk=round(top), pkd=pk.strftime('%m-%d'), last2=round(last2), pct=round(last2 / top * 100)))
     peak.sort(key=lambda x: -x['pk'])
-    return dict(rows=rows, items=items, bad=bad[:8], nbad=len(bad), peak=peak[:8], npeak=len(peak),
-                nfresh=len(fresh), lo=lo.strftime('%m-%d'), hi=(D - one).strftime('%m-%d'))
+    return dict(bad=bad[:8], nbad=len(bad), peak=peak[:8], npeak=len(peak))
 
 
 def batches(fams, tot, D):
@@ -959,7 +942,9 @@ def make_roi(rows, fams, spend, D, T, of=None, sub_map=None):
             continue
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
     launches, _ = families(rows, sub_map, merge_names=False)
-    out = dict(g=g, U=U, rev=recover(fams, launches, tot, D), batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
+    week = T - dt.timedelta(days=T.weekday())
+    out = dict(g=g, U=U, rev=recent_diagnostics(fams, D), review_facts=review_facts(rows, launches, tot, D, week),
+               batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
     out['rt'] = rt_diagnose(rows, of, D)
     out['hist'] = history(rows, fams, D)
     out['hist_from'] = min(r['d'] for r in rows).isoformat()
