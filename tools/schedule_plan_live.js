@@ -8,6 +8,7 @@ function updateCapacity(plan, reportDate) {
   const section = document.querySelector('.cap');
   if (!section) return;
   const days = Array.from({length: 7}, (_, i) => addDays(plan.week, i));
+  const confirmed = plan.source.capacity_confirmed?.[plan.week] || {};
   const marks = new Map();
   for (const e of plan.entries) {
     if (!types.includes(e.t)) continue;
@@ -30,20 +31,28 @@ function updateCapacity(plan, reportDate) {
     const cap = groupCapacity(plan.source, g, plan.week);
     const groupTotal = sum(days.map(day => count(g, types, day)));
     const capacity = sum(Object.values(cap));
+    const report = confirmed[g];
+    const occupied = report ? Math.max(groupTotal, sum(Object.values(report))) : groupTotal;
     all += groupTotal;
-    const left = capacity - groupTotal;
+    const left = capacity - occupied;
     const big = card.querySelector('.cap-big b');
     big.textContent = remaining(left);
     big.classList.toggle('over', left < 0);
-    card.querySelector('.cap-bar span').style.width = (capacity ? Math.min(100, groupTotal / capacity * 100) : 0) + '%';
+    card.querySelector('.cap-bar span').style.width = (capacity ? Math.min(100, occupied / capacity * 100) : 0) + '%';
     const parts = types.map(type => {
       const slack = (cap[type] || 0) - sum(days.map(day => count(g, [type], day)));
       return type + (slack < 0 ? ' 超了 ' + -slack : ' 还能排 ' + slack);
     });
-    card.querySelector('.cap-sub').textContent = '已排 ' + groupTotal + ' / 本周产能 ' + capacity + '，' + parts.join('，');
+    const summary = report
+      ? '确认排产 ' + occupied + ' / 本周产能 ' + capacity + '，表内已排 ' + groupTotal + ' 条。'
+        + Object.entries(report).map(([type, n]) => type + ' ' + n + ' 条').join('、') + '。'
+      : '已排 ' + groupTotal + ' / 本周产能 ' + capacity + '，' + parts.join('，');
+    card.querySelector('.cap-sub').textContent = summary;
     const progress = document.querySelector('[data-plan-progress="' + g + '"]');
-    if (progress) progress.textContent = '本周已排 ' + groupTotal
-      + (left < 0 ? '，比产能多 ' + -left : left > 0 ? '，比产能少 ' + left : '');
+    if (progress) {
+      progress.textContent = report ? '确认排产 ' + occupied + '，表内已排 ' + groupTotal
+        : '本周已排 ' + groupTotal + (left < 0 ? '，比产能多 ' + -left : left > 0 ? '，比产能少 ' + left : '');
+    }
   }
   section.querySelector('[data-cap-total]').textContent = all;
   section.querySelector('[data-cap-note]').textContent = plan.source.cap_note || '';
@@ -58,9 +67,11 @@ function updateCapacity(plan, reportDate) {
     }
     const n = sum(byDay);
     const capacity = sum(ts.map(t => cap[t] || 0));
+    const report = confirmed[row.dataset.capGroup];
+    const occupied = report ? Math.max(n, sum(Object.values(report))) : n;
     row.querySelector('.c-sum b').textContent = n;
     row.querySelector('.c-sum small').textContent = ' / ' + capacity;
-    row.querySelector('.c-left').textContent = remaining(capacity - n);
+    row.querySelector('.c-left').textContent = report && row.dataset.capKind !== '合计' ? '—' : remaining(capacity - occupied);
   }
 }
 

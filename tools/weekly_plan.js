@@ -50,3 +50,16 @@ export async function loadWeeklyPlan() {
   if (!response.ok) throw new Error('排期同步请求失败');
   return summarizePlan(await response.json());
 }
+
+export async function loadRoadmapLighting() {
+  const response = await fetch(new URL('../roadmap/', import.meta.url), {
+    cache: 'no-store', signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) throw new Error('点亮路线图请求失败');
+  const page = await response.text();
+  const embedded = page.match(/<script id="roadmap-lighting" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!embedded) throw new Error('路线图缺少点亮结果');
+  const lighting = JSON.parse(embedded[1]);
+  if (!lighting.weeks || !lighting.date) throw new Error('路线图的点亮结果不完整');
+  return lighting;
+}

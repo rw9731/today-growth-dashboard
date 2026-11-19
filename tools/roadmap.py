@@ -13,7 +13,7 @@
   测试中 = 已投放、继续验证带量能力；没测 = 一条都没花过钱；
   储备 / 暂不做 = Use case 库状态是储备、而且没测过（暂不做的写在 NOT_NOW）。
 - 格子（use case × 素材类型）：这一格里有一条素材累计花到 ¥5,000 = 点亮；花过钱的 ≥ 10 条、都没到 ¥5,000 = 偏弱；有花过钱的 = 测过；空 = 没测。
-- 本周已排与排期看板共用 schedule_entries.py 的条目，分档用 GROUPS。
+- 本周已排与排期看板共用 schedule_entries.py 的条目，按已点亮和探索汇总。
 """
 import argparse
 import datetime as dt
@@ -140,10 +140,6 @@ def main():
 
     def split(n_, h):
         return {k: n_ // len(h) + (1 if i < n_ % len(h) else 0) for i, k in enumerate(h)}
-    tier = {}
-    for gname, ucs_, share, _ in plan.get('GROUPS', []):
-        for u in ucs_:
-            tier[u] = (gname, share)
 
     # 汇总到 use case
     by = defaultdict(list)
@@ -206,7 +202,7 @@ def main():
                     'cost': sum(m['cost'] for m in ms), 'c30': round(c30), 'share30': sh,
                     'ret': (r_ / a_) if a_ >= 100 else None, 'act30': round(a_),
                     'first': min((m['first'] for m in sp), default=''), 'last': max((m['first'] for m in sp), default=''),
-                    'cells': cells, 'sched': sum(sc.values()), 'sched_t': dict(sc), 'tier': tier.get(u, ('', 0))[0],
+                    'cells': cells, 'sched': sum(sc.values()), 'sched_t': dict(sc),
                     'note': NOT_NOW.get(u, ''), 'scs': scs, 'sc_none': len(none_), 'sc_unk': len(unk_)})
 
     # 时间线（Reina 11/17：要有 roadmap 的时间感）：按周看每个 use case 新测了几条、花了多少、哪周点亮、排了几条
@@ -296,15 +292,16 @@ def main():
     for x in out:
         cnt[x['st']] += 1
     # 本周排期按分档
-    tier_n = defaultdict(int)
-    for x in out:
-        tier_n[x['tier'] or '没分档'] += x['sched']
-    groups = [(g, s) for g, _, s, _ in plan.get('GROUPS', [])]
+    lighting = {'date': D, 'weeks': {x['uc']: x['lit_wk'] for x in out if x['lit_wk']},
+                'cost': UC_LIT_COST, 'share_pct': UC_LIT_SHARE_PCT}
+    tier_n = {'已点亮': 0, '探索': 0}
+    for u, counts in sched.items():
+        tier_n['已点亮' if u in lighting['weeks'] else '探索'] += sum(counts.values())
     weak_sched = [x for x in out if x['st'] == '判弱' and x['sched']]
     untested = [x for x in out if x['st'] == '没测']
     near = [x for x in out if x['st'] == '测试中' and 5 <= x['n30'] < 10]
 
-    page = render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL)
+    page = render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, untested, near, TL)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     open(a.out, 'w').write(page)
     print(json.dumps({'date': D, 'ucs': len(out), 'status': dict(cnt), 'week': wk0, 'sched_by_tier': dict(tier_n)}, ensure_ascii=False))
@@ -314,7 +311,7 @@ def fy(v):
     return '¥' + format(int(round(v)), ',')
 
 
-def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, untested, near, TL):
+def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, untested, near, TL):
     E = html.escape
     md = lambda s: (str(int(s[5:7])) + '/' + str(int(s[8:10]))) if s else '—'
     uc_rule = f'截至当周累计消耗达到 {fy(UC_LIT_COST)}，且当周消耗占同期全盘高于 {UC_LIT_SHARE_PCT}%'
@@ -344,7 +341,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
         best = f'{fy(x["best"])}<span class="sub" title="{E(x["best_name"])}">{E(x["best_name"][:28])}</span>' if x['best'] else '—'
         body.append(
             f'<tr data-uc="{E(x["uc"])}" data-uc-name="{E(x["name"])}"><td><span class="pill {STC[x["st"]]}">{x["st"]}</span></td>'
-            f'<td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}{" · " + E(x["pri"]) if x["pri"] else ""}{" · 库里是储备" if x["lib"] == "储备" else ""}<span data-plan-tier>{" · " + E(x["tier"]) if x["tier"] else ""}</span></span>{note}</td>'
+            f'<td class="uc"><b>{E(x["uc"])}</b> {E(x["name"])}<span class="sub">{E(x["l1"])}{" · " + E(x["pri"]) if x["pri"] else ""}{" · 库里是储备" if x["lib"] == "储备" else ""}</span>{note}</td>'
             f'{cells}'
             f'<td class="num">{x["n"] or ""}<span class="sub">{"近 7 天 +" + str(x["new7"]) if x["new7"] else ""}</span></td>'
             f'<td class="num">{cs}</td>'
@@ -469,9 +466,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   </section>'''
 
     tsum = sum(tier_n.values())
-    tier_line = '、'.join(f'{E(g)} {tier_n.get(g, 0)} 条（{tier_n.get(g, 0) / tsum:.0%}，目标 {s}%）' for g, s in groups) if tsum else '这周还没有排期'
-    if tier_n.get('没分档'):
-        tier_line += f'、没分档 {tier_n["没分档"]} 条'
+    tier_line = '、'.join(f'{E(g)} {n} 条（{n / tsum:.0%}）' for g, n in tier_n.items()) if tsum else '这周还没有排期'
+    lighting_json = json.dumps(lighting, ensure_ascii=False).replace('</', '<\\/')
     lst = lambda v: '、'.join(f'{E(x["uc"])} {E(x["name"])}' for x in v) or '无'
     src = open(os.path.join(ROOT, 'topic', '2026-11-17-coldstart-threshold', 'index.html')).read()
     STYLE = src[src.find('<style>'):src.find('</head>')]
@@ -630,7 +626,8 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, groups, weak_sched, un
   if(b) b.addEventListener('click', function(){{ all = !all; document.querySelectorAll('tr.ucr').forEach(function(tr){{ tog(tr, all); }}); b.textContent = all ? '全部收起' : '全部展开'; }});
 }})();
 </script>
-<script type="module" src="../tools/roadmap_plan_live.js?v=2"></script>
+<script id="roadmap-lighting" type="application/json">{lighting_json}</script>
+<script type="module" src="../tools/roadmap_plan_live.js?v=3"></script>
 </body>
 </html>
 '''

@@ -9,7 +9,7 @@ function fillCount(cell, item, n) {
   cell.append(detail);
 }
 
-function updateMap(plan, tierOf) {
+function updateMap(plan) {
   const table = document.querySelector('#map table');
   const rows = new Map([...table.tBodies[0].querySelectorAll('tr[data-uc]')].map(row => [row.dataset.uc, row]));
   for (const u of plan.cases.keys()) {
@@ -29,8 +29,6 @@ function updateMap(plan, tierOf) {
   const weak = [];
   for (const [u, row] of rows) {
     fillCount(row.querySelector('[data-plan-count]'), plan.cases.get(u), plan.counts[u]);
-    const tier = row.querySelector('[data-plan-tier]');
-    if (tier) tier.textContent = tierOf.has(u) ? ' · ' + tierOf.get(u) : '';
     if (plan.counts[u] && row.cells[0].textContent.trim() === '判弱') weak.push(u + ' ' + row.dataset.ucName);
   }
   document.getElementById('week-plan-weak').textContent = weak.join('、') || '无';
@@ -175,22 +173,18 @@ async function refresh() {
     document.querySelector('[data-plan-status]').hidden = false;
     return;
   }
-  const groups = plan.source.GROUPS || [];
-  const tierOf = new Map(groups.flatMap(([title, us]) => us.map(u => [u, title])));
-  const tiers = new Map();
+  const lit = JSON.parse(document.getElementById('roadmap-lighting').textContent).weeks;
+  const tiers = {'已点亮': 0, '探索': 0};
   for (const [u, n] of Object.entries(plan.counts)) {
-    const title = tierOf.get(u) || '没分档';
-    tiers.set(title, (tiers.get(title) || 0) + n);
+    tiers[Object.hasOwn(lit, u) ? '已点亮' : '探索'] += n;
   }
   const summary = document.getElementById('week-plan-summary');
   summary.querySelector('b').textContent = '本周已排 ' + plan.total + ' 条（' + shortDate(plan.week) + '–' + shortDate(plan.end) + '）';
-  const parts = plan.total ? groups.map(([title,, target]) => {
-    const n = tiers.get(title) || 0;
-    return title + ' ' + n + ' 条（' + Math.round(n / plan.total * 100) + '%，目标 ' + target + '%）';
+  const parts = plan.total ? Object.entries(tiers).map(([title, n]) => {
+    return title + ' ' + n + ' 条（' + Math.round(n / plan.total * 100) + '%）';
   }) : ['这周还没有排期'];
-  if (tiers.get('没分档')) parts.push('没分档 ' + tiers.get('没分档') + ' 条');
   summary.querySelector('span').textContent = parts.join('、');
-  updateMap(plan, tierOf);
+  updateMap(plan);
   updateTimeline(plan);
 }
 await refresh();
