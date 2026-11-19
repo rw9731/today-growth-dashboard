@@ -275,6 +275,7 @@ td.d.f[data-fi]{cursor:pointer}
 <div id="alerts"></div></div></aside>
 </div>
 {{CAP}}
+<p class="rev-note" data-plan-status hidden>暂时读不到最新排期，显示上次发布的数量。</p>
 <div class="meters" id="meters" hidden></div>
 <div class="legend leg-min">
 <span class="it"><i class="sw sw-g"></i>每段一个首花日，颜色越深首花越近</span>
@@ -316,8 +317,9 @@ td.d.f[data-fi]{cursor:pointer}
 <dialog id="pd" aria-labelledby="pd-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="pd-h"></h3><div class="gs" id="pd-g"></div></div><div class="hb" id="pd-b"></div></dialog>
 <dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><div id="hist-cv"></div><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div><div id="htip" hidden></div></dialog>
 <div id="tip" hidden></div>
-<script>
+<script{{PLAN_MODULE}}>
 const P=__P__;
+{{PLAN_LOAD}}
 const START=P.START;
 const pastAll=P.days.map(s=>{const[m,d]=s.split('-');return (+m)+'/'+(+d)});
 const pastDays=pastAll.slice(START);
@@ -329,10 +331,10 @@ function wk(d){const [m,dd]=d.split('/').map(Number);const y=m-TM>6?YR-1:TM-m>6?
 const k=v=>v>=10000?(v/10000).toFixed(1)+'万':v>=1000?(v/1000).toFixed(1)+'k':String(Math.round(v));
 const money=v=>'¥'+Math.round(v).toLocaleString('en-US');
 const md=s=>{const[m,d]=s.split('-');return (+m)+'/'+(+d)};
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const mk=t=>esc(t).replace(/==(.+?)==/g,'<span class="bp-r">$1</span>');
 const sum=a=>a.reduce((x,y)=>x+y,0);
-const booked=P.WEEK_PLAN;
+const booked=liveWeek?.counts||P.WEEK_PLAN;
 const bookedN=us=>sum(us.map(u=>booked[u]||0));
 const folded=P.FOLD.filter(u=>!booked[u]);
 const ent=u=>P.E.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
@@ -405,7 +407,7 @@ displayGroups.forEach(([title,list,target,note],gi)=>{
   const tc=target==null?'unassigned':'t'+(gi+1),is3=gi===2;
   const ids=is3?list.concat(P.FOLD.filter(u=>booked[u]>0)):list;
   const us=list.concat(is3?P.FOLD:[]),es=ent(us);
-  let rows=ids.map(u=>({id:u,code:u,label:P.UC[u]||'',r:P.U[u]||zero(),es:ent(u),us:[u]}));
+  let rows=ids.map(u=>({id:u,code:u,label:P.UC[u]||liveWeek?.source.UC_extra?.[u]||'',r:P.U[u]||zero(),es:ent(u),us:[u]}));
   if(is3&&folded.length)rows.push({id:'__fold',code:'其余',label:folded.length+' 个方向',r:merged(folded),es:ent(folded),last:true,us:folded});
   const max=Math.max(1,...rows.flatMap(x=>x.r.s.map(sum)));
   rows=rows.filter(x=>!x.last).sort((p,q)=>q.r.c7-p.r.c7).concat(rows.filter(x=>x.last));

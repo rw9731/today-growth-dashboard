@@ -436,8 +436,9 @@ def progress_html(prog, T, wt=None, week_by_group=None):
         t = x.get('today') or {}
         bits = [f'到昨天该交 {x["due"]}，交了 {x["got"]}']
         booked = week_by_group.get(k, 0) if week_by_group is not None else wd
-        if wt.get(k) and booked != cap:
-            bits.append(f'本周已排 {booked}' + (f'，比产能多 {booked - cap}' if booked > cap else f'，比产能少 {cap - booked}'))
+        if wt.get(k):
+            diff = f'，比产能多 {booked - cap}' if booked > cap else f'，比产能少 {cap - booked}' if booked < cap else ''
+            bits.append(f'<span data-plan-progress="{k}">本周已排 {booked}{diff}</span>')
         if t.get('due'):
             tl = t['due'] - t['got']
             bits.append(f'今天还差 {tl}' if tl > 0 else '今天的交齐了')
@@ -483,24 +484,24 @@ def cap_html(plan, T, weekly_plan):
         left = tc - tg
         parts = '，'.join(f'{t} 还能排 {sc[t] - sg[t]}' if sc[t] >= sg[t] else f'{t} 超了 {sg[t] - sc[t]}' for t in ('AI', '二创'))
         big = f'<b>{left}</b> 条' if left >= 0 else f'<b class="over">超 {-left}</b> 条'
-        cards += (f'<div class="cap-card"><div class="cap-k">{g} 组本周还能排</div><div class="cap-big">{big}</div>'
+        cards += (f'<div class="cap-card" data-cap-group="{g}"><div class="cap-k">{g} 组本周还能排</div><div class="cap-big">{big}</div>'
                   f'<div class="cap-bar"><span style="width:{min(100, tg / tc * 100):.1f}%"></span></div>'
                   f'<div class="cap-sub">已排 {tg} / 本周产能 {tc}，{parts}</div></div>')
-    head = ''.join(f'<th class="{"c-today" if d == T else ("c-past" if d < T else "")}">{md(d)}<br>周{wd_names[d.weekday()]}</th>' for d in week)
+    head = ''.join(f'<th data-cap-day class="{"c-today" if d == T else ("c-past" if d < T else "")}">{md(d)}<br>周{wd_names[d.weekday()]}</th>' for d in week)
     rows = ''
     for g in ('A', 'B'):
         if g not in cd:
             continue
         for t in ('AI', '二创', '合计'):
             ts = ('AI', '二创') if t == '合计' else (t,)
-            cells = ''.join(f'<td class="{"c-today" if d == T else ("c-past" if d < T else "")}"><b>{sum(got[(g, x, d)] for x in ts)}</b></td>' for d in week)
+            cells = ''.join(f'<td data-cap-day class="{"c-today" if d == T else ("c-past" if d < T else "")}"><b>{sum(got[(g, x, d)] for x in ts)}</b></td>' for d in week)
             n = sum(got[(g, x, d)] for x in ts for d in week)
             c = sum(cap(g, x, d) for x in ts for d in week) + sum(xc(g, x) for x in ts)
-            rows += (f'<tr class="{"c-tot" if t == "合计" else ""}"><th>{g} 组 {t}</th>{cells}'
+            rows += (f'<tr class="{"c-tot" if t == "合计" else ""}" data-cap-group="{g}" data-cap-kind="{t}"><th>{g} 组 {t}</th>{cells}'
                      f'<td class="c-sum"><b>{n}</b><small> / {c}</small></td><td class="c-left">{c - n if c >= n else "超 " + str(n - c)}</td></tr>')
     note = html.escape(plan.get('cap_note', ''))
     return (f'<section class="cap"><h2>本周排期余量</h2><div class="cap-cards">{cards}</div>'
-            f'<p class="rev-note">本周已排 <b>{sum(got.values())}</b> 条，剔除建议拿掉和顺延的条目。下表的每天条数用来看排得匀不匀。{note}</p>'
+            f'<p class="rev-note">本周已排 <b data-cap-total>{sum(got.values())}</b> 条，剔除建议拿掉和顺延的条目。下表的每天条数用来看排得匀不匀。<span data-cap-note>{note}</span></p>'
             f'<div class="scroll"><table class="dt capt"><thead><tr><th></th>{head}<th>本周已排 / 产能</th><th>本周还能排</th></tr></thead><tbody>{rows}</tbody></table></div></section>')
 
 
@@ -574,6 +575,14 @@ def render(tpl, P, fields, rel, T):
     rep = dict(fields)
     rep.update(REL=rel, DATE=T.isoformat(), LABEL=label(T), NAV_CSS=NAV_CSS, NAV=NAV_HTML.format(rel=rel, date=T.isoformat(), label=label(T)),
                NAV_JS=NAV_JS.format(rel=rel, date=T.isoformat()))
+    live = rel == '../'
+    rep['PLAN_MODULE'] = ' type="module"' if live else ''
+    rep['PLAN_LOAD'] = (
+        "const liveWeek = await import('../tools/schedule_plan_live.js')\n"
+        f"  .then(module => module.schedulePlan('{T.isoformat()}'))\n"
+        "  .catch(() => { document.querySelector('[data-plan-status]').hidden = false; return null; });"
+        if live else 'const liveWeek = null;'
+    )
     out = tpl
     for k, v in rep.items():
         out = out.replace('{{' + k + '}}', str(v))
