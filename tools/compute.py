@@ -1329,7 +1329,7 @@ def main():
         ms = [m for m in cs_mats if m['up'][:10] == b['up']]
         b['tdir_up'] = sum(1 for m in ms if m['tdir'])
         b['tdir_pass'] = sum(1 for m in ms if m['tdir'] and m['st'] == 'pass')
-    # 冷启难的方向（Reina 11/19）：验证过的两档里，这个 use case 在这条素材上传前的两周（上传日前 16 天到前 3 天，窗口都已走完）
+    # 冷启难的方向（Reina 11/19）：不分档（11/19 下午改：已知难起排第三，在还在测的方向前面，探索的测够了也算），这个 use case 在这条素材上传前的两周（上传日前 16 天到前 3 天，窗口都已走完）
     # 新素材 ≥ CS_HD_N 条，过冷启的条数不到按各自上传日整体冷启率算的期望的一半。只看上传前的，不受这批自己好坏影响。排第四，在还在测的方向后面。
     CS_HD_N, CS_HD_OE = 10, 0.5
     _dr = defaultdict(lambda: [0, 0])
@@ -1350,7 +1350,7 @@ def main():
     for m in cs_mats:
         n_, o_, oe_ = _hd(m['uc'], m['up'][:10])
         m['hd_n'], m['hd_pass'], m['hd_oe'] = n_, o_, oe_
-        m['hdir'] = (not m['tdir']) and n_ >= CS_HD_N and oe_ is not None and oe_ < CS_HD_OE
+        m['hdir'] = n_ >= CS_HD_N and oe_ is not None and oe_ < CS_HD_OE  # 11/19 Reina：已知难起排在还在测的方向前面，探索、没分档的方向测够了也算
     newd_meta['cs_hd'] = [CS_HD_N, CS_HD_OE]
     for m in cs_mats:
         if m['st'] != 'fail':
@@ -1359,10 +1359,10 @@ def main():
             m['cause'] = '硬伤'
         elif m['crowd'] >= CS_CROWD:
             m['cause'] = '扎堆'
-        elif m['tdir']:
-            m['cause'] = '方向'
         elif m['hdir']:
             m['cause'] = '难起'
+        elif m['tdir']:
+            m['cause'] = '方向'
         elif not m['got']:
             m['cause'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
         else:
@@ -1405,10 +1405,10 @@ def main():
                 m['cause_now'] = '硬伤'
             elif m['crowd'] >= CS_CROWD:
                 m['cause_now'] = '扎堆'
-            elif m['tdir']:
-                m['cause_now'] = '方向'
             elif m['hdir']:
                 m['cause_now'] = '难起'
+            elif m['tdir']:
+                m['cause_now'] = '方向'
             elif not m['got']:
                 m['cause_now'] = {'没进已跑量项目': '基建', '已跑量项目被老头部占着': '头部'}.get(m['tst'], '测试')
                 m['cause2_now'] = _sub(m) if m['cause_now'] == '测试' else ''
