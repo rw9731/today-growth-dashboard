@@ -376,7 +376,7 @@ function row(id,code,label,r,es,max,cls,gi){
   const yCell=x?`<td class="st"><b>${x.mult.toFixed(1)} 倍</b><small class="q">${x.n} 条，放量 ${x.hit}</small>${x.mx!=null?`<small class="q">去掉最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const rCell=x?`<td class="st"><span class="rt ${rtCls[tagOf(x,gi)]}">${rtTxt[tagOf(x,gi)]}</span></td>`:'<td class="st"></td>';
   const tr=P.TIER.U[id];
-  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${tr&&tr.fresh?'<em>新进</em>':''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
+  return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${tr?` data-help="u:${esc(id)}"`:''}><code>${esc(code)}</code><span>${esc(label)}</span>${tr&&tr.fresh?`<em>${gi===2?'调入探索':'新进'}</em>`:''}${tr&&tr.can?'<em>可升</em>':''}${tr&&tr.risk?'<em class="risk">危险</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===2,P.B[id],id)}
   <td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
@@ -636,7 +636,7 @@ const HELP={y:yHelp,
   if(t.risk)h+=`<br><br><b class="bad">危险</b>：在这一档里不稳，只标不降（连续两周不够才降）：<br>· `+t.risk.map(esc).join('<br>· ');
   if(t.g===0)h+=`<br><br>这一档的线（档位每周改一次，连续两周不够才降）：<br>`+upLines(t);
   else if(t.g===1)h+=`<br><br>升到能放量 + 留存好，这几条都要够：<br>`+upLines(t);
-  else h+=`<br><br>进跑量少 + 留存好，这几条都要够（最近 ${t.win} 天）：<br>激活 ${t.a}（要 ≥${n.act}）${mark(t.a>=n.act)}<br>次留 ${t.rate==null?'·':t.rate+'%'}，比同日全盘 ${t.gap==null?'·':pt(t.gap)+' 个点'}（要 ≥${n.gap}）${mark(t.gap!=null&&t.gap>=n.gap)}<br>成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${t.gc}）${mark(t.cpr!=null&&t.cpr<=t.gc)}<br>最近 14 天：次留 ${t.r14==null?'·':t.r14+'%'}，比同日全盘 ${t.g14==null?'·':pt(t.g14)+' 个点'}，成本 ${t.c14==null?'·':'¥'+t.c14} ${mark(!!t.ok14)}`;
+  else h+=`<br><br>进跑量少 + 留存好，这几条都要够（最近 ${t.win} 天）：<br>激活 ${t.a}（要 ≥${n.act}）${mark(t.a>=n.act)}<br>次留 ${t.rate==null?'·':t.rate+'%'}，比同日全盘 ${t.gap==null?'·':pt(t.gap)+' 个点'}（要 ≥${n.gap}）${mark(t.gap!=null&&t.gap>=n.gap)}<br>成本 ${t.cpr==null?'·':'¥'+t.cpr}（要 ≤¥${t.gc}）${mark(t.cpr!=null&&t.cpr<=t.gc)}<br>最近 14 天激活 ${t.a14}，次留 ${t.r14==null?'·':t.r14+'%'}，比同日全盘 ${t.g14==null?'·':pt(t.g14)+' 个点'}，成本 ${t.c14==null?'·':'¥'+t.c14} ${mark(!!t.ok14)}`;
   return h+'<br><br><span style="opacity:.75">点名字看这个方向历史投过的所有素材。</span>'},
  tr:ha=>{const[id,m]=ha.split('|');return trendCard(id,m)},
  co:ha=>coCard(ha),

@@ -336,7 +336,7 @@ def tier_view(R, groups, total, plan, T):
                 k = 'w7'
                 w = t[k]
                 x.update(win=7, a=w['a'], rate=w['rate'], cpr=w['cpr'], gap=w['gap'], gc=gl.get(k, {}).get('cpr', 0) + COST_OK, can=ok(w7, 'w7') and ok(w14, 'w14'),
-                         r14=w14['rate'], c14=w14['cpr'], g14=w14['gap'], ok14=ok(w14, 'w14'))
+                         a14=w14['a'], r14=w14['rate'], c14=w14['cpr'], g14=w14['gap'], ok14=ok(w14, 'w14'))
             if u in moved:
                 d = date(moved[u]['d'])
                 x['from'] = moved[u]['from']
