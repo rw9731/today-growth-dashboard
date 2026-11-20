@@ -462,6 +462,25 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
                        f'{tl_tds(c, x["uc"] + " " + (str(c["n"]) + " " if c["n"] else "") + c["t"], scene=True)}'
                        f'<td class="num">{fy(c["cost"])}</td><td class="num">{lit_txt}</td></tr>')
     th_w = ''.join(f'<th class="tc{" cur" if w == cur else ""}" data-week="{w}">{E(wlab(w))}</th>' for w in wks)
+    # 一级分类每周（Reina 11/20）：把同一级分类下的 use case 按周加总；★ 是这个分类里第一个 use case 点亮的那周
+    l1g = {}
+    for x in out:
+        g = l1g.setdefault(x['l1'] or '未分类', {'ucs': [], 'cost': 0})
+        g['ucs'].append(x); g['cost'] += x['cost'] or 0
+    l1trs = []
+    for name, g in sorted(l1g.items(), key=lambda kv: -kv[1]['cost']):
+        ucs = g['ucs']
+        o = {'tl': {}, 'lit_wk': min((u['lit_wk'] for u in ucs if u['lit_wk']), default=None),
+             'first_wk': min((u['first_wk'] for u in ucs if u.get('first_wk')), default=None)}
+        for w in wks:
+            o['tl'][w] = {k: sum(u['tl'][w].get(k, 0) or 0 for u in ucs) for k in ('new', 'cost', 'share', 'cumulative', 'plan')}
+        lit_n = sum(1 for u in ucs if u['lit_wk'])
+        tested = sum(1 for u in ucs if u['cost'])
+        st = '已点亮' if lit_n else ('测试中' if tested else '没测')
+        names = '、'.join(u['uc'] for u in ucs if u['lit_wk'])
+        l1trs.append(f'<tr><td><span class="pill {STC[st]}">{st}</span></td>'
+                     f'<td class="uc"><b>{E(name)}</b><span class="sub" title="{E(names)}">点亮 {lit_n}/{len(ucs)} 个 use case{"：" + E(names) if names else ""}</span></td>'
+                     f'{tl_tds(o, name)}<td class="num">{fy(g["cost"]) if g["cost"] else "—"}</td><td class="num">{md(o["lit_wk"]) + " 起" if o["lit_wk"] else ""}</td></tr>')
     prog = TL['prog']
     n_all = len(out)
     nP = len(prog)
@@ -505,6 +524,12 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     <div class="lgd"><span><i style="background:#2f8f5b"></i>到这周为止已点亮（柱内数字）</span><span><i style="background:#cfe5d7"></i>测过、还没点亮（柱顶数字是测过的总数）</span><span>横轴是周（周一到周日），「新测」是这周第一次花钱的 use case 数</span></div>
     <div class="prog">{pg}</div>
     <p class="note">首次同时达到两项条件的周记为点亮周。{md(cur)}–{md(D)} 有 {latest_qualified} 个 use case 同时达标，其中 {latest_new} 个首次点亮。</p>
+    <h3>每个一级分类每周</h3>
+    <p class="note">同一级分类下所有 use case 按周加总，颜色是这个分类当周花费占大盘的比例（档位同下表）。★ 是分类里第一个 use case 点亮的那周，「点亮 N/M」是到现在点亮的 use case 数。</p>
+    <div class="rmwrap" role="region" aria-label="一级分类按周点亮" tabindex="0"><table class="rm tl l1t">
+      <thead><tr><th>状态</th><th>一级分类</th>{th_w}<th class="num">累计消耗</th><th class="num">首次点亮</th></tr></thead>
+      <tbody>{''.join(l1trs)}</tbody>
+    </table></div>
     <h3>每个 use case 每周</h3>
     <div class="lgd"><span><i style="background:#2f8f5b"></i>当周花费占大盘 ≥ 5%</span><span><i style="background:#6fb38c"></i>2–5%</span><span><i style="background:#b9dcc6"></i>0.5–2%</span><span><i style="background:#e6f1ea"></i>有花费，不到 0.5%</span><span>★ Use case 首次点亮</span><span>☆ 细分场景首次点亮</span><span>+N 这周新测（第一次花钱）的条数</span><span>「排 N」排期看板这周排的条数，虚线框是还没到的周</span></div>
     <p class="note"><b>点一行 use case 展开它的细分场景</b>（Use case 库里的场景），每个场景一行、同样按周分格：哪周新测了几条、花了多少、哪周点亮、排了几条。<button type="button" class="tgl" id="scall">全部展开</button></p>
@@ -684,7 +709,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
 }})();
 </script>
 <script id="roadmap-lighting" type="application/json">{lighting_json}</script>
-<script type="module" src="../tools/roadmap_plan_live.js?v=3"></script>
+<script type="module" src="../tools/roadmap_plan_live.js?v=4"></script>
 </body>
 </html>
 '''

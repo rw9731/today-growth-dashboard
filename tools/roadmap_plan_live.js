@@ -64,7 +64,7 @@ function byScene(scenes, entries) {
 }
 
 function updateTimeline(plan) {
-  const table = document.querySelector('#roadmap table');
+  const table = document.querySelector('#roadmap table.tl:not(.l1t)');
   const header = table.tHead.rows[0];
   const body = table.tBodies[0];
   const dates = () => [...header.querySelectorAll('[data-week]')];
