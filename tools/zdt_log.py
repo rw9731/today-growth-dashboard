@@ -2,7 +2,8 @@
 
 表里没有成片通过的时间，「交付日期」是排期日，上周排的行常在这周才交片、才通过。所以每天跑的时候记一次：
 现在通过、日志里还没有的视频，记成 D（昨天，看板的数据日），以后一直用这个日期。
-键用视频文件名（tools/agency_read.js 的 files），没有文件名的用「第 N 行_i」。日志在 notes/zdt-pass-log.json。
+键用视频文件名（tools/agency_read.js 的 files），没有文件名的用「第 N 行_i」。
+日志放在 tools/agency_targets.json 的 zdt_pass_log 里（这个文件每天排期提交都会带上；目标只认日期键，不受影响）。
 排期看板（agency_progress.py）和素材产出看板（output_build.py）都用它，两边的数一致。
 
 11/20 第一次建日志时，已经通过的按文件名里的日期补（如 11.18、-1118-、261118，那天交的片），
@@ -11,7 +12,8 @@
 import datetime as dt, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOG = os.path.join(ROOT, 'notes', 'zdt-pass-log.json')
+LOG = os.path.join(ROOT, 'tools', 'agency_targets.json')
+KEY = 'zdt_pass_log'
 
 
 def file_day(name, T):
@@ -51,7 +53,8 @@ def keys_of(x):
 def update(rows, T, parse_day, write=True):
     """返回 {键: 通过日期} 里现在还是「通过」的那些，以及每个键对应的行。"""
     D = T - dt.timedelta(days=1)
-    log = json.load(open(LOG, encoding='utf-8')) if os.path.exists(LOG) else {}
+    store = json.load(open(LOG, encoding='utf-8')) if os.path.exists(LOG) else {}
+    log = store.get(KEY, {})
     seed = not log
     cur = {}
     for x in rows:
@@ -67,5 +70,6 @@ def update(rows, T, parse_day, write=True):
                 log[k] = d.isoformat()
             cur[k] = (log[k], x)
     if write:
-        json.dump(dict(sorted(log.items())), open(LOG, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        store[KEY] = dict(sorted(log.items()))
+        json.dump(store, open(LOG, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return cur
