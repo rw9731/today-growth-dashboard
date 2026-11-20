@@ -24,7 +24,7 @@
   --b0:#86b6ef;--b1:#5598e7;--b2:#2a78d6;--b3:#184f95;
   --meter:#3987e5;--done:#3fc46a;--todo:#86b6ef;--add:#fab219;--add-ink:#0b0b0b;--cut:#ee8a8a;--good:#3fc46a;--bad:#ee8a8a;--link:#86b6ef;--today:#33290f;--n1:color-mix(in srgb,var(--t1) 24%,var(--panel));--n2:color-mix(in srgb,var(--t2) 24%,var(--panel));--n3:color-mix(in srgb,var(--t3) 24%,var(--panel));color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font:13px/1.5 var(--sans);padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:1290px;margin:0 auto;display:grid;gap:14px}
+.wrap{max-width:1290px;margin:0 auto;display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}.wrap>*{min-width:0}
 h1{font-size:22px;line-height:1.25;margin:0;font-weight:700}
 h2{font-size:17px;margin:18px 0 0;font-weight:700}
 h3{font-size:14px;margin:12px 0 4px;font-weight:700}
@@ -38,7 +38,7 @@ h3{font-size:14px;margin:12px 0 4px;font-weight:700}
 .sw{width:11px;height:11px;display:inline-block}
 .scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--grid)}
 .scroll.main{overflow:auto;max-height:calc(100vh - 16px)}
-@media (min-width:1240px){.scroll.main{overflow:visible;max-height:none}}
+@media (min-width:1240px){.scroll.main{overflow-x:auto;overflow-y:visible;max-height:none}#b thead th{position:relative}}
 table{border-collapse:separate;border-spacing:0;width:100%}
 #b{table-layout:fixed;min-width:1100px}
 #b th,#b td{padding:0;font-weight:400}
@@ -48,7 +48,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 #b th.d i,#b tr.grp td i{display:block;font-style:normal;font-size:10px;line-height:1.3;opacity:.85}
 #b thead th.d.now{background:var(--today);color:var(--ink);font-weight:600}
 #b thead th.d.we{background:var(--band)}
-#b .name{position:sticky;left:0;z-index:2;background:var(--panel);min-width:176px;max-width:176px;text-align:left;padding:3px 6px 3px 10px;box-shadow:1px 0 0 var(--grid);vertical-align:middle}
+#b .name{position:sticky;left:0;z-index:2;background:var(--panel);min-width:160px;max-width:160px;text-align:left;padding:3px 6px 3px 10px;box-shadow:1px 0 0 var(--grid);vertical-align:middle}
 .name button{all:unset;cursor:pointer;display:block;width:100%}
 .name button:hover span{color:var(--link)}
 .name button:focus-visible,a:focus-visible{outline:2px solid var(--link);outline-offset:2px}
@@ -480,7 +480,7 @@ displayGroups.forEach(([title,list],gi)=>{
   }
   if(!days.length)details='<tr><td colspan="6" class="q">没有待交的排期</td></tr>';
 }
-document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px"><col style="width:48px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
+document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:160px"><col style="width:62px"><col style="width:54px"><col style="width:44px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:48px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
@@ -1030,9 +1030,9 @@ addEventListener('load', () => {
   addEventListener('scroll', mark, { passive: true }); mark();
 });
 </script>
-<script id="rev-sticky-js">/* 本周排期素材回收表头吸顶（Reina 11/20）。表在横向滚动容器里，CSS sticky 不生效，用位移跟着滚。 */
-(()=>{const t=document.getElementById('rev');if(!t||!t.tHead)return;const ths=[...t.tHead.querySelectorAll('th')];
-const f=()=>{const r=t.getBoundingClientRect(),h=t.tHead.getBoundingClientRect().height;const y=Math.max(0,Math.min(-r.top,r.height-h*2));const v=y?`translateY(${y}px)`:'';for(const th of ths)th.style.transform=v;};
-addEventListener('scroll',f,{passive:true});addEventListener('resize',f);f();})();</script>
+<script id="rev-sticky-js">/* 表头吸顶（Reina 11/20）：回收表和排期主表都在横向滚动容器里，CSS sticky 管不到页面滚动，用位移跟着滚。 */
+(()=>{const hook=id=>{const t=document.getElementById(id);if(!t||!t.tHead)return null;return ()=>{const ths=t.tHead.querySelectorAll('th');const r=t.getBoundingClientRect(),h=t.tHead.getBoundingClientRect().height;const y=Math.max(0,Math.min(-r.top,r.height-h*2));const v=y?`translateY(${y}px)`:'';for(const th of ths)th.style.transform=v;};};
+const fs=[];const start=()=>{for(const id of ['b','rev']){const f=hook(id);if(f)fs.push(f);}const run=()=>fs.forEach(f=>f());addEventListener('scroll',run,{passive:true});addEventListener('resize',run);run();};
+if(document.readyState==='complete')start();else addEventListener('load',start);})();</script>
 </body>
 </html>
