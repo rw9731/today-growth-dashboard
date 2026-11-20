@@ -6,8 +6,11 @@
 周是 T 所在的周一到周日；目标在 tools/agency_targets.json（键是周一），这周没写就沿用最近一周的，并标出来。
 - 悦普：只算抖音、合作形式是星图的行。按「发布档期」归到这周；发了 = 稿件进度写已发布或发布链接有值。
   到昨天该发 = 档期在周一到 T-1 的；晚了 = 其中还没发的。
-- 知定堂：按「交付日期」归到这周；成片通过 = 成片审核情况写「通过」，条数按「视频链接」那格里的视频数（一行常有真人版、AI 版两条）。
-  到昨天该交 = 交付日期在周一到 T-1 的行，按条数算；晚了 = 其中还没通过的行。
+- 知定堂：本周完成按成片通过算，不按交付日期、不按发布（Reina 11/20）。表里没有成片通过的时间，「交付日期」是排期日，
+  上周排的行常在这周才交片、才通过（11/20 查：上周的行这周通过了 28 条，旧口径只算出 10）。所以本周完成 = 现在全表
+  成片通过的视频数 − 这周开始时全表已通过的数（notes/zdt-baseline.json，键是周一；这周第一次跑时没有就用当时的数记下）。
+  条数按「视频链接」那格里的视频数（一行常有真人版、AI 版两条）。
+  到昨天该交 = 交付日期在周一到 T-1 的行；晚了 = 交付日期在上周一到 T-1、现在还没通过的行。
 """
 import argparse, datetime as dt, json, os, re
 
@@ -65,23 +68,37 @@ def yuepu(rows, T, mon, sun, targets):
                 got=got, due=len(due), due_got=sum(x['done'] for x in due), late=late, todo=todo, rows=wk)
 
 
+BASE = os.path.join(ROOT, 'notes', 'zdt-baseline.json')
+
+
 def zhidingtang(rows, T, mon, sun, targets):
-    wk = []
+    wk, prev = [], []
+    total = 0
     for x in rows:
-        d = parse_day(x.get('d'), T)
-        if not d or not (mon <= d <= sun):
-            continue
         ok = '通过' in (x.get('vst') or '')
         n = max(1, int(x.get('vid') or 0)) if ok else int(x.get('vid') or 0)
-        wk.append(dict(r=x['r'], name=x.get('acct') or '', uc=x.get('uc', ''), st=x.get('vst') or x.get('sst') or '', d=d.isoformat(), done=ok, n=n, vid=int(x.get('vid') or 0), pub=bool(x.get('pub'))))
+        if ok:
+            total += n
+        d = parse_day(x.get('d'), T)
+        if not d:
+            continue
+        item = dict(r=x['r'], name=x.get('acct') or '', uc=x.get('uc', ''), st=x.get('vst') or x.get('sst') or '', d=d.isoformat(), done=ok, n=n, vid=int(x.get('vid') or 0), pub=bool(x.get('pub')))
+        if mon <= d <= sun:
+            wk.append(item)
+        elif mon - dt.timedelta(days=7) <= d < mon:
+            prev.append(item)
     wk.sort(key=lambda x: (x['d'], x['r']))
     t, note, stale = target(targets, 'zdt', mon)
+    base = json.load(open(BASE, encoding='utf-8')) if os.path.exists(BASE) else {}
+    if mon.isoformat() not in base:
+        base[mon.isoformat()] = dict(total=total, note=f'{T.isoformat()} 第一次跑时全表已通过的数')
+        json.dump(base, open(BASE, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    got = max(0, total - base[mon.isoformat()]['total'])
     due = [x for x in wk if x['d'] < T.isoformat()]
-    got = sum(x['n'] for x in wk if x['done'])
-    late = [x for x in due if not x['done']]
+    late = sorted([x for x in prev if not x['done'] and x['vid']], key=lambda x: (x['d'], x['r'])) + [x for x in due if not x['done']]
     todo = [x for x in wk if not x['done'] and x['d'] >= T.isoformat()]
     return dict(name='知定堂', what='星广成片', unit='条', verb='成片通过', t=t or len(wk), t_note=note, t_stale=stale, sched=len(wk),
-                got=got, due=len(due), due_got=sum(1 for x in due if x['done']), late=late, todo=todo,
+                got=got, total=total, base=base[mon.isoformat()]['total'], due=len(due), due_got=sum(1 for x in due if x['done']), late=late, todo=todo,
                 vid=sum(x['vid'] for x in wk), pub=sum(x['pub'] for x in wk), rows=wk)
 
 
