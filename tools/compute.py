@@ -1536,6 +1536,25 @@ def main():
                       'run7': sum(1 for v in mats.values() if v >= 1000), 'top7': round(top), 'topsh': top / c7[k] if c7.get(k) else 0,
                       'nsp7': len(mats)})
     cs_uc.sort(key=lambda x: -x['c7'])
+    # 排期用（Reina 11/20）：每个 use case 近 2 周上传的新素材冷启率 + 过冷启素材单条带量，排期页拿来算「已排 × 冷启率 × 单条带量 = 预期量」，复盘和实际比。
+    # 窗口：看板日前 15 天到前 2 天上传的（3 天窗口已走完）；过 = 上传 3 天花到 ¥400；单条带量 = 过冷启素材上传后 7 天消耗的平均（只算满 7 天的）。
+    lo2, hi2 = Dd - dt.timedelta(days=15), Dd - dt.timedelta(days=2)
+    uc2w = defaultdict(lambda: [0, 0, 0.0, 0])
+    for i in every:
+        try:
+            u = dt.date.fromisoformat(up_day(i))
+        except (TypeError, ValueError):
+            continue
+        if not lo2 <= u <= hi2:
+            continue
+        r0 = rows_by_id[i][0] if rows_by_id.get(i) else None
+        k = r0['uc'] if r0 else next((c for c in re.findall(r'(?<![A-Z])([A-Z]{2}\d{2})(?!\d)', nm_of(i)) if c in ucs), '库外')
+        g = uc2w[k]; g[0] += 1
+        if sum(cost_by[i].get((u + dt.timedelta(days=j)).isoformat(), 0) for j in range(3)) >= CS_COST:
+            g[1] += 1
+            if u + dt.timedelta(days=6) <= Dd:
+                g[2] += sum(cost_by[i].get((u + dt.timedelta(days=j)).isoformat(), 0) for j in range(7)); g[3] += 1
+    uc_cs2w = [{'window': [lo2.isoformat(), hi2.isoformat()], 'through': D[3], 'uc': {k: [a, b, round(c), d] for k, (a, b, c, d) in uc2w.items()}}]
     newd_meta['cs_fair_rate'] = fr
     newd_meta['cs_fair_n'] = len(fair)
     newd_meta['cs_show'] = CS_SHOW
@@ -1684,7 +1703,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'rank_meta': [rank_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc,
+           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'rank_meta': [rank_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc, 'uc_cs2w': uc_cs2w,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
     try:
