@@ -456,7 +456,7 @@
 
   <section class="lx-sec" id="good">
     <h2 class="lx-h2">四、昨天消耗排行（含能放量 + 次留好的素材）</h2>
-    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。<span data-draw="ret-good-rule"></span><b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（{{WEEK}} 起）。<b>排位</b>（Reina 11/20，挑头部变式用）：首次消耗后前 3 天花的钱按全盘一天 ¥15 万折算，在近 30 天首次消耗的素材里排第几百分位；才花了 1–2 天的拿同样天数比，标「预备」。<b>P98 以上实线框 = S 级头部</b>，<b>P95 以上虚线框 = 头部</b>，次留不拖后腿的直接进头部变式排期。点素材名字直接打开巨量里投的那条视频；其他链接：原帖 = 博主原帖，成片 = 唯西表里的成片和脚本。<b>单项目最高消耗</b>、<b>头部占比</b>看素材能不能在单个项目里带量（Reina 11/11）：单项目过 ¥1,000 标绿，优先加产；昨天花了 ¥1,000 以上、但单项目不到 ¥500 的标红，是分散在很多项目里各跑一点。按巨量广告的项目拆（智擎户和普通户都算）。<b>当天次留率</b>、<b>当天次留成本</b>是 {{D}} 当天激活的人第二天的次留，要再过一天才回传完，所以出日报时先写「待回补」，下一天出日报时补上（Reina 11/11）；和全盘同一天比上色<span data-draw="rtd-all"></span>，当天激活不到 <b data-draw="th-act2">—</b> 个的灰字带激活数、不上色。标签只看前三天激活的人；回补后当天激活够数、<span data-draw="rtd-good-rule">当天次留率和次留成本都好于全盘</span>的，标签本来不是次留好的，标签下面加一行「几号次留变好」（比如「9 号次留变好」）。</p>
+    <p class="lx-note">按昨天消耗排：只列昨天花了 <b data-draw="th-rank">—</b> 以上的素材。<span data-draw="ret-good-rule"></span><b>能放量</b> = 三天消耗超过 <b data-draw="th-scale">—</b>。<b>新上线</b> = 首次消耗在前天或昨天，次留两格先空着。绿底 = 首次消耗在本周（{{WEEK}} 起）。<b>排位</b>（Reina 11/20，挑头部变式用）：{{D}} 消耗在当天所有花了钱的素材里排第几百分位（<span data-draw="rk-th"></span>）。<b>P98 以上实线框 = S 级头部</b>，<b>P95 以上虚线框 = 头部</b>；首次消耗 3 天内的写「首花第几天」，是刚冒出来的新头部，次留不拖后腿的直接进头部变式排期。点素材名字直接打开巨量里投的那条视频；其他链接：原帖 = 博主原帖，成片 = 唯西表里的成片和脚本。<b>单项目最高消耗</b>、<b>头部占比</b>看素材能不能在单个项目里带量（Reina 11/11）：单项目过 ¥1,000 标绿，优先加产；昨天花了 ¥1,000 以上、但单项目不到 ¥500 的标红，是分散在很多项目里各跑一点。按巨量广告的项目拆（智擎户和普通户都算）。<b>当天次留率</b>、<b>当天次留成本</b>是 {{D}} 当天激活的人第二天的次留，要再过一天才回传完，所以出日报时先写「待回补」，下一天出日报时补上（Reina 11/11）；和全盘同一天比上色<span data-draw="rtd-all"></span>，当天激活不到 <b data-draw="th-act2">—</b> 个的灰字带激活数、不上色。标签只看前三天激活的人；回补后当天激活够数、<span data-draw="rtd-good-rule">当天次留率和次留成本都好于全盘</span>的，标签本来不是次留好的，标签下面加一行「几号次留变好」（比如「9 号次留变好」）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -468,7 +468,7 @@
             <th>首次消耗<span class="th-sub">按首次消耗日期</span></th>
             <th>Use case</th>
             <th>消耗<span class="th-sub">{{D}}（按这列排）</span></th>
-            <th class="num">排位<span class="th-sub">前 3 天消耗，近 30 天新素材里</span></th>
+            <th class="num">排位<span class="th-sub">{{D}} 消耗，当天所有花钱素材里</span></th>
             <th>最近 7 天消耗<span class="th-sub">深色是 {{D}}，每行按自己最高那天</span></th>
             <th class="num">单项目最高消耗<span class="th-sub">{{D}}，花得最多的那个项目</span></th>
             <th class="num">头部占比<span class="th-sub">{{D}}，最高项目占总消耗（几个项目在花）</span></th>
@@ -878,6 +878,7 @@
   fill('k-rate3d', (el) => { const v = data('overview')[0].rate3_days; el.textContent = v ? v.map(fmtP).join('、') : '—'; });
   tile('k-ratew', 'overview', 'rate_w', marketRule ? fmtP : fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
   tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-rank', 'th', 'rank', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
+  fill('rk-th', (el) => { const rm = one('rank_meta'); el.textContent = rm && rm.p95 ? '{{D}} 一共 ' + rm.n + ' 条花了钱，P95 = 单日 ' + fmtY(rm.p95) + '，P98 = 单日 ' + fmtY(rm.p98) : '这天还没有排位'; });
   tile('th-act2', 'th', 'act', fmtN);
   fill('rtd-all', (el) => { const rm = one('rtday_meta'); if (rm && rm.rate != null) el.textContent = '（全盘 ' + fmtP(rm.rate) + '、¥' + d3.format(',.0f')(rm.cpr) + '）'; });
   tile('th-low', 'th', 'low', fmtP0); tile('th-high', 'th', 'high', fmtX); tile('th-act', 'th', 'act', fmtN);
@@ -1178,10 +1179,8 @@
           const b = document.createElement('span'); b.className = 'lx-rk' + (top ? ' ' + top : '');
           b.textContent = 'P' + Math.floor(r.rk) + (top === 's' ? ' S 级' : top === 'h' ? ' 头部' : '');
           rc.appendChild(b);
-          const sub = document.createElement('div'); sub.className = 'muted'; sub.style.fontSize = '11px';
-          sub.textContent = (r.rk_k < 3 ? '前 ' + r.rk_k + ' 天·预备' : '前 3 天') + ' ' + fmtY(r.rk_v);
-          rc.appendChild(sub);
-          rc.title = '前 ' + r.rk_k + ' 天消耗按全盘一天 ¥15 万折算 ' + fmtY(r.rk_v) + '；同天数 P95 ' + fmtY((rm.p95 || {})[r.rk_k]) + '、P98 ' + fmtY((rm.p98 || {})[r.rk_k]);
+          if (r.rk_age) { const sub = document.createElement('div'); sub.className = 'muted'; sub.style.fontSize = '11px'; sub.textContent = '首花第 ' + r.rk_age + ' 天'; rc.appendChild(sub); }
+          rc.title = '{{D}} 消耗在当天所有花了钱的素材（' + rm.n + ' 条）里排 P' + Math.floor(r.rk) + '；P95 = ' + fmtY(rm.p95) + '，P98 = ' + fmtY(rm.p98);
         }
       }
       if (days) spark7(td(), r.days7);

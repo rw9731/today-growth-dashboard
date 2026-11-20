@@ -847,42 +847,26 @@ def main():
             cost7_m[(r['id'], r['date'])] += r['cost']
     for m in mat:
         m['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7_m[(m['id'], d)], 2)] for d in d7]
-    # 排位（Reina 11/20，头部变式用）：首花后前 3 天消耗按全盘一天 ¥15 万折算，在近 30 天首花的素材里排百分位；
-    # 首花才 1–2 天的拿同样天数比（预备）。≥P95 头部、≥P98 S 级，框出来，可以直接加进头部变式。
+    # 排位（Reina 11/20，头部变式用，核心看消耗）：昨天消耗在昨天所有花了钱的素材里排百分位；
+    # ≥P95 头部（虚线框）、≥P98 S 级（实线框）。首次消耗 3 天内的另外标「首花第几天」，是刚冒出来的新头部。
     import bisect
-    day_tot, idday = defaultdict(float), defaultdict(float)
+    dcost = defaultdict(float)
     for r in allrows:
-        if r['date'] <= D[3] and r['cost'] > 0:
-            day_tot[r['date']] += r['cost']; idday[(r['id'], r['date'])] += r['cost']
-    Dd3 = dt.date.fromisoformat(D[3])
-    def early(i, k):
-        f0 = dt.date.fromisoformat(first[i]); s = 0.0
-        for j in range(k):
-            d = (f0 + dt.timedelta(j)).isoformat()
-            if day_tot.get(d):
-                s += idday.get((i, d), 0) / day_tot[d] * 150000
-        return s
-    rk_pool = {1: [], 2: [], 3: []}
-    for i, f0 in first.items():
-        age = (Dd3 - dt.date.fromisoformat(f0)).days + 1
-        if age <= 30:
-            for k in (1, 2, 3):
-                if age >= k:
-                    rk_pool[k].append(early(i, k))
-    for k in rk_pool:
-        rk_pool[k].sort()
+        if r['date'] == D[3] and r['cost'] > 0:
+            dcost[r['id']] += r['cost']
+    rk_pool = sorted(dcost.values())
     pq = lambda P, p: round(P[min(len(P) - 1, int(len(P) * p))]) if P else None
-    rank_meta = {'p95': {k: pq(P, .95) for k, P in rk_pool.items()}, 'p98': {k: pq(P, .98) for k, P in rk_pool.items()}, 'n': len(rk_pool[3])}
+    rank_meta = {'p95': pq(rk_pool, .95), 'p98': pq(rk_pool, .98), 'n': len(rk_pool)}
+    Dd3 = dt.date.fromisoformat(D[3])
     for m in mat:
-        f0 = m.get('first')
-        if not f0 or m['id'] not in first:
+        v = dcost.get(m['id'])
+        if not v or len(rk_pool) < 50:
             continue
-        k = min(3, (Dd3 - dt.date.fromisoformat(f0)).days + 1)
-        P = rk_pool.get(k) or []
-        if len(P) < 50:
-            continue
-        v = early(m['id'], k)
-        m['rk'] = round(bisect.bisect_left(P, v) / len(P) * 100, 1); m['rk_k'] = k; m['rk_v'] = round(v)
+        m['rk'] = round(bisect.bisect_left(rk_pool, v) / len(rk_pool) * 100, 1)
+        if m.get('first'):
+            age = (Dd3 - dt.date.fromisoformat(m['first'])).days + 1
+            if age <= 3:
+                m['rk_age'] = age
     streak = bad_streak(allrows, Dd, th)
     for m in mat:
         m.update(streak.get(m['id'], {}))
