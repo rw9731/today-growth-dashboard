@@ -96,7 +96,7 @@ a{color:var(--link)}
 .t-due{color:var(--crit);font-weight:700;white-space:nowrap}.t-due.m{color:var(--mute);font-weight:400}
 .t-warn{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--crit);color:#fff;font:700 12px/16px Arial,sans-serif;text-align:center;vertical-align:middle;margin:1px 0}.t-warn.m{background:var(--base);color:var(--panel)}
 .rev-note{font-size:12px;color:var(--sub);margin:0 0 8px;max-width:920px;line-height:1.6}#pk td.nm,#rev td.nm,#rev-items td.nm{max-width:420px;overflow-wrap:anywhere}
-#rev-items td.nm small{display:block;margin-top:2px}
+#rev-items td.nm small{display:block;margin-top:2px}#rev .bst{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.8em}#rev .bst small{display:inline;margin:0 4px 0 0}
 #rev-search{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--base);border-radius:6px;padding:5px 8px;margin:8px 0;width:min(300px,100%)}
 .rt{font-size:11px;font-weight:700;padding:0 5px;white-space:nowrap;display:inline-block}
 .rt.up{color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}.rt.down{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}.rt.one{color:var(--ink);box-shadow:inset 0 0 0 1px var(--base)}.rt.lo{color:var(--bad)}.rt.mu{color:var(--mute);font-weight:400}
@@ -530,11 +530,9 @@ const revBody=document.querySelector('#rev tbody');
 if(revReady&&revRows.length){
   const pct=(n,p)=>p?`<small class="q">${(n/p*100).toFixed(1)}%</small>`:'';
   const flagTxt=f=>f&&f.weak?`模板不够头部 ${f.weak} 条`:'';
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}${flagTxt(flagBy.get(x.br+'|'+x.u))?`<small class="q" style="display:block;color:#b5451b">${flagTxt(flagBy.get(x.br+'|'+x.u))}</small>`:''}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
-    const fl=rows.reduce((a,r)=>{const f=flagBy.get(r.br+'|'+r.u);if(f){a.weak+=f.weak;a.none+=f.none;}return a;},{weak:0,none:0});
-    const ft=fl.weak?`<small style="display:block;font-weight:400;font-size:12px">含排了变式但${flagTxt(fl)}</small>`:'';
-    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}${ft}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
   const SPECIAL=[
     {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},

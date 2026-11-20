@@ -365,9 +365,16 @@ def load_why(T):
 def with_links(rev):
     """回收表的素材配上能打开的片子链接。"""
     links = json.load(open(os.path.join(ROOT, 'tools', 'links.json'), encoding='utf-8'))
+    _nm = lambda n: re.sub(r'\.(mp4|mov)$', '', str(n).strip().lower())
+    try:
+        out_by_name = {_nm(o['name']): o for o in json.load(open(os.path.join(ROOT, 'notes', 'output-items.json'), encoding='utf-8')).values()}
+    except FileNotFoundError:
+        out_by_name = {}
     for x in rev.get('items', []):
         videos = (material_urls(links, mid, x['name'])[0] for mid in x['ids'])
-        x['url'] = next((url for url in videos if url), '')
+        o = out_by_name.get(_nm(x['name']), {})
+        # 没投放视频链接时，用唯西日报的视频，再不行用飞书排期里成片那格（Reina 11/20：消耗最高素材要能点开看片）
+        x['url'] = next((url for url in videos if url), '') or o.get('video') or o.get('link') or o.get('cell') or ''
     for x in rev.get('bad', []):
         x['url'] = material_urls(links, x['id'], x.get('name', ''))[0]
         if x.get('base'):
