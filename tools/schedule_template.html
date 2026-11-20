@@ -378,6 +378,9 @@ function rateCell(r,id){
   if(r.a!=null&&r.a<100)return `<td class="st"><b class="trend lt ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend lt ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small><small class="smp">样本小 ${r.a}</small></td>`;
   return `<td class="st"><b class="trend ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small></td>`;
 }
+// 日均激活（Reina 11/20）：和次留同一个窗口（D-6 到 D-1，6 天）的激活数 ÷ 6
+function avgAct(r){const n=P.days.length;let a=0,k=0;for(let i=n-7;i<=n-2;i++){if(i<0)continue;const t=(r.rt||[])[i];if(t){a+=t[0]+t[2]+t[4]+t[6];k++}}if(!k&&r.a!=null)return r.a/6;return k?a/k:null}
+function actCell(r){const v=avgAct(r);return v==null?'<td class="st q">·</td>':`<td class="st"><b>${Math.round(v).toLocaleString('en-US')}</b></td>`}
 function retentionRisks(r){
   const limit=P.RETENTION_REVIEW,risk=[];
   if((r.a||0)<limit.act) return risk;
@@ -397,14 +400,14 @@ function row(id,code,label,r,es,max,planned,cls,gi){
   const tag=x?adviceTag(x,gi,risk):'';
   const rCell=tag?`<td class="st"><span class="rt ${rtCls[tag]}">${rtTxt[tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${id==='__fold'?'':` data-help="u:${esc(id)}"`}><code>${esc(code)}</code><span>${esc(label)}</span>${risk.length?'<em class="risk">留存预警</em>':''}</button></td>
-  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${dayCells(r,es,max,x?x.warn:null,gi===1,P.B[id],id)}
+  <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${actCell(r)}${dayCells(r,es,max,x?x.warn:null,gi===1,P.B[id],id)}
   <td class="st booked"><b>${planned}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td class="st ${mt&&b<mt?'short':'q'}">${mt||''}</td>${yCell}${rCell}</tr>`;
 }
-const NC=3+all.length+5;
-document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
+const NC=4+all.length+5;
+document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="keep" tabindex="0">维持</th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -428,7 +431,7 @@ displayGroups.forEach(([title,list],gi)=>{
   body+=`<tr class="gap"><td colspan="${NC}"></td></tr>`;
   const shareBefore=Math.round(a/(S0||1)*100),shareAfter=Math.round(b/(S1||1)*100);
   const share='上新占 '+(shareBefore===shareAfter?shareAfter+'%':shareBefore+'% → '+shareAfter+'%');
-  body+=`<tr class="grp ${tc}"><td class="gl" colspan="3"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>消耗占 ${(c7/P.T.c7*100).toFixed(0)}%，${share}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b></td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="keep"><small>维持</small><b>${mtS}</b></td><td class="sumc help" data-help="y"><small>单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
+  body+=`<tr class="grp ${tc}"><td class="gl" colspan="4"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>消耗占 ${(c7/P.T.c7*100).toFixed(0)}%，${share}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b></td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="keep"><small>维持</small><b>${mtS}</b></td><td class="sumc help" data-help="y"><small>单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
   for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,bookedN(x.us),tc,gi)}
 });
 { // 执行细节按交付日（Reina 11/20）：每天一个总数，按 A/B 组、素材类型、已点亮/探索拆
@@ -766,6 +769,7 @@ function trendCard(id,m){
 }
 const HELP={y:yHelp,
  booked:()=> '按本周排期底表汇总，剔除建议拿掉和顺延的条目。与点亮路线图的「本周已排」同口径。',
+ act:()=>`<b>日均激活</b>：${document.getElementById('ret-range').textContent} 这个方向平均每天的激活数，和次留、次留成本是同一批人。用来看次留是不是样本太小（6 天加起来不到 100 个激活的，次留那一格会写「样本小」）。`,
  ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 激活不到 100 个的照样按这两条标，但颜色浅一些，下面写着「样本小」和激活数：样本小，只作观察。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
  g:i=>{
   const name=+i===0?'已点亮':'探索';
