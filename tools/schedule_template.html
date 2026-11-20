@@ -261,7 +261,7 @@ td.d.f[data-fi]{cursor:pointer}
   .dt tr.th.tsp :is(td,th){background:#5b4bb7}
   #rev tr.brh.bsp>th,#rev tr.brh.bsp>td{background:#e9e6fa;color:#3c3489}#rev tr.brh.bsp>th{border-left-color:#534ab7}
 </style>
-</head>
+<style id="rev-sticky">#rev thead th{position:relative;z-index:4;background:var(--panel);box-shadow:0 1px 0 var(--base)}</style></head>
 <body>
 <div class="wrap">
 <header>
@@ -963,5 +963,9 @@ addEventListener('load', () => {
   addEventListener('scroll', mark, { passive: true }); mark();
 });
 </script>
+<script id="rev-sticky-js">/* 本周排期素材回收表头吸顶（Reina 11/20）。表在横向滚动容器里，CSS sticky 不生效，用位移跟着滚。 */
+(()=>{const t=document.getElementById('rev');if(!t||!t.tHead)return;const ths=[...t.tHead.querySelectorAll('th')];
+const f=()=>{const r=t.getBoundingClientRect(),h=t.tHead.getBoundingClientRect().height;const y=Math.max(0,Math.min(-r.top,r.height-h*2));const v=y?`translateY(${y}px)`:'';for(const th of ths)th.style.transform=v;};
+addEventListener('scroll',f,{passive:true});addEventListener('resize',f);f();})();</script>
 </body>
 </html>
