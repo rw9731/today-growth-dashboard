@@ -9,6 +9,7 @@
 - 外部 agency（Reina 11/13）：--agency 目录里的知定堂、悦普，--kv 的 AnyMedia，见 agency()。页面「类型」放最前面（AI、二创、星广、抖音星图、抖音达人、小红书达人），「来源」替代原来的「组」（唯西 A 组、唯西 B 组、知定堂、悦普、AnyMedia）。
 - 链接：飞书成片那一格（?sheet=…&range=列行的 base64），已经投出去的再带巨量视频（tools/links.json，按素材名在分日表找素材 ID）。
 """
+import zdt_log
 import argparse, base64, datetime as dt, glob, json, os, re
 from collections import Counter, defaultdict
 
@@ -300,17 +301,10 @@ def agency(folder, kv, T):
         rows = json.load(open(f, encoding='utf-8'))['rows']
         doc, tab = AG_DOCS['ZDT']
         out = []
-        for x in rows:
-            if '通过' not in (x.get('vst') or ''):
-                continue
-            d = ag_day(x.get('d'), T)
-            if not d:
-                continue
-            d = min(d, T)
-            n = max(1, int(x.get('vid') or 0))
-            for i in range(n):
-                out.append(dict(g='ZDT', typ='星广', d=d.isoformat(), uc=ag_uc(x.get('uc')), name=f"知定堂_星广_{x.get('acct') or '账号未填'}_{x.get('uc') or ''}_第{x['r']}行" + (f'_{i + 1}' if n > 1 else ''),
-                                link=f"{doc}?sheet={tab}&range=" + base64.b64encode(f"I{x['r']}".encode()).decode().rstrip('=')))
+        # 按成片通过的日期归日，不按交付日期（Reina 11/20，见 tools/zdt_log.py）
+        for k, (d, x) in sorted(zdt_log.update(rows, T, ag_day).items(), key=lambda kv: (kv[1][0], kv[1][1]['r'])):
+            out.append(dict(g='ZDT', typ='星广', d=d, uc=ag_uc(x.get('uc')), name=f"知定堂_星广_{x.get('acct') or '账号未填'}_{x.get('uc') or ''}_{k}",
+                            link=f"{doc}?sheet={tab}&range=" + base64.b64encode(f"I{x['r']}".encode()).decode().rstrip('=')))
         put('ZDT', out)
     f = os.path.join(folder or '', '5cypAT.json')
     if folder and os.path.exists(f):
