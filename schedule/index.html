@@ -525,6 +525,7 @@ const branchOf=(u,e,ref)=>{
   if(!lit.has(u))return expBranch(u);
   if(e&&(e.k==='变式'||e.tpl)){ // 模板是头部（模板库收了，或近 3 天 P98 / 累计 ¥2 万）才算头部变式，否则归出新内容并标出来
     if(tplk[ref]?.s==='head')return '头部素材模版变式';
+    if(tplk[ref]?.s==='ret')return '量少留存好'; // C 级留存模板的变式（Reina 11/20）
     return '已点亮场景出新内容';
   }
   if((e&&e.k==='新场景')||esc_[ref]==='new')return '新细分场景';

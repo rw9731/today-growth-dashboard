@@ -301,6 +301,9 @@ def main():
         t = re.split(r'_+(?:二创|扩量|换开头|只剪辑|全片重配|全文重配|精剪|精简|混剪)|-修改版|-衍生', t)[0]
         return t.strip(' _-')
     heads = [(core(h['name']), h) for h in HT]
+    # C 级（留存突出、先小测）模板单独放（Reina 11/20），排期照它做的变式记 ret，看板归「量少留存好」
+    RT = json.load(open(os.path.join(ROOT, 'notes', 'retention-templates.json'), encoding='utf-8'))['items'] if os.path.exists(os.path.join(ROOT, 'notes', 'retention-templates.json')) else []
+    rets = [(core(h['name']), h) for h in RT]
     def tpl_of(e):
         t = (e.get('tpl') or '').strip()
         if not t:
@@ -318,6 +321,10 @@ def main():
         key = f"{m_.group(1)}:{int(m_.group(2))}:{e['uc']}"
         if len(c) < 6:
             tplk[key] = {'s': 'none', 't': t[:60]}
+            continue
+        rhit = next((h for hc, h in rets if len(hc) >= 6 and (c.startswith(hc) or hc.startswith(c) or hc in c or c in hc)), None)
+        if rhit:
+            tplk[key] = {'s': 'ret', 'by': 'C 留存突出', 't': rhit['name'][:60]}
             continue
         hit = next((h for hc, h in heads if len(hc) >= 6 and (c.startswith(hc) or hc.startswith(c) or hc in c or c in hc)), None)
         if hit:
