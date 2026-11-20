@@ -314,7 +314,7 @@ html,body{margin:0}
 <section id="recovery" aria-labelledby="sec-4">
 <h2 id="sec-4">本周排期素材回收 <span id="rev-range"></span></h2>
 <p class="rev-note" id="rev-note"></p>
-<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>过冷启</th><th class="num">本周累计消耗</th><th>次留、成本</th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>过冷启</th><th class="num">本周累计消耗</th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">次留第二天才出，只算看板日前一天及以前的激活，满 30 才算</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
 <details class="more" id="rev-assets" hidden><summary>查看 <b id="rev-item-count"></b> 条已放出素材</summary>
 <label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、素材 ID 或 use case"></label>
 <p class="rev-note" id="rev-matches" aria-live="polite"></p>
@@ -551,7 +551,7 @@ const agg=(u,planned,items)=>{
   const firstDates=[...new Set(items.map(x=>x.first).filter(Boolean))].sort().map(reviewDay);
   const act=sum(items.map(x=>x.act)), ret=sum(items.map(x=>x.ret));
   const retCost=ret?reviewMoney(Math.round(sum(items.map(x=>x.ret_cents))/ret)):'—';
-  const retention=act>=30?`${(ret/act*100).toFixed(1)}%，${retCost}`:'—';
+  const retention=act>=30?`${(ret/act*100).toFixed(1)}%，${retCost}`:act>0?`<small class="q">激活 ${act}，不到 30 不算</small>`:'<small class="q">还没有能算次留的激活</small>'; // 次留要第二天才出，只算到看板日前一天的激活（Reina 11/20 问为啥空）
   const best=[...items].sort((a,b)=>b.cents-a.cents).find(x=>x.cents>0&&csOf(x)===true); // 消耗最高素材只写过了冷启的（Reina 11/20）
   return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
 };
