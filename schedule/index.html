@@ -480,7 +480,7 @@ displayGroups.forEach(([title,list],gi)=>{
   }
   if(!days.length)details='<tr><td colspan="6" class="q">没有待交的排期</td></tr>';
 }
-document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
+document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px"><col style="width:48px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
