@@ -847,6 +847,42 @@ def main():
             cost7_m[(r['id'], r['date'])] += r['cost']
     for m in mat:
         m['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7_m[(m['id'], d)], 2)] for d in d7]
+    # 排位（Reina 11/20，头部变式用）：首花后前 3 天消耗按全盘一天 ¥15 万折算，在近 30 天首花的素材里排百分位；
+    # 首花才 1–2 天的拿同样天数比（预备）。≥P95 头部、≥P98 S 级，框出来，可以直接加进头部变式。
+    import bisect
+    day_tot, idday = defaultdict(float), defaultdict(float)
+    for r in allrows:
+        if r['date'] <= D[3] and r['cost'] > 0:
+            day_tot[r['date']] += r['cost']; idday[(r['id'], r['date'])] += r['cost']
+    Dd3 = dt.date.fromisoformat(D[3])
+    def early(i, k):
+        f0 = dt.date.fromisoformat(first[i]); s = 0.0
+        for j in range(k):
+            d = (f0 + dt.timedelta(j)).isoformat()
+            if day_tot.get(d):
+                s += idday.get((i, d), 0) / day_tot[d] * 150000
+        return s
+    rk_pool = {1: [], 2: [], 3: []}
+    for i, f0 in first.items():
+        age = (Dd3 - dt.date.fromisoformat(f0)).days + 1
+        if age <= 30:
+            for k in (1, 2, 3):
+                if age >= k:
+                    rk_pool[k].append(early(i, k))
+    for k in rk_pool:
+        rk_pool[k].sort()
+    pq = lambda P, p: round(P[min(len(P) - 1, int(len(P) * p))]) if P else None
+    rank_meta = {'p95': {k: pq(P, .95) for k, P in rk_pool.items()}, 'p98': {k: pq(P, .98) for k, P in rk_pool.items()}, 'n': len(rk_pool[3])}
+    for m in mat:
+        f0 = m.get('first')
+        if not f0 or m['id'] not in first:
+            continue
+        k = min(3, (Dd3 - dt.date.fromisoformat(f0)).days + 1)
+        P = rk_pool.get(k) or []
+        if len(P) < 50:
+            continue
+        v = early(m['id'], k)
+        m['rk'] = round(bisect.bisect_left(P, v) / len(P) * 100, 1); m['rk_k'] = k; m['rk_v'] = round(v)
     streak = bad_streak(allrows, Dd, th)
     for m in mat:
         m.update(streak.get(m['id'], {}))
@@ -1663,7 +1699,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc,
+           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'rank_meta': [rank_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
     try:
