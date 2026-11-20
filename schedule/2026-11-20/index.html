@@ -525,7 +525,9 @@ if(revReady&&revRows.length){
   revBody.outerHTML=groups.map(([title,brs,tier])=>{
     const all=revRows.filter(x=>brs.includes(x.br));
     const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows)+(rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>');}).join('');
-    return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="7">${title}</th></tr>${body}</tbody>`;
+    const plannedAll=sum(revRows.map(r=>r.planned)), plannedG=sum(all.map(r=>r.planned));
+    const share=plannedAll?`<span style="font-weight:400;margin-left:10px">本周已排 ${plannedG} 条，占 ${(plannedG/plannedAll*100).toFixed(0)}%</span>`:'';
+    return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="7">${title}${share}</th></tr>${body}</tbody>`;
   }).join('');
 }else{
   revBody.innerHTML=`<tr><td colspan="7" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
