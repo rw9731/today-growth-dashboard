@@ -847,22 +847,23 @@ def main():
             cost7_m[(r['id'], r['date'])] += r['cost']
     for m in mat:
         m['days7'] = [[f'{int(d[5:7])}/{int(d[8:])}', round(cost7_m[(m['id'], d)], 2)] for d in d7]
-    # 排位（Reina 11/20，头部变式用，核心看消耗）：昨天消耗在昨天所有花了钱的素材里排百分位；
-    # ≥P95 头部（虚线框）、≥P98 S 级（实线框）。首次消耗 3 天内的另外标「首花第几天」，是刚冒出来的新头部。
+    # 排位（Reina 11/20，头部变式用，核心看消耗）：近 3 天（D-2 到 D）消耗在这 3 天所有花了钱的素材里排百分位；
+    # ≥P98 头部（虚线框），≥P99 S 级（实线框）。首次消耗 3 天内的另外标「首花第几天」，是刚冒出来的新头部。
     import bisect
+    d3set = set(D[1:4])
     dcost = defaultdict(float)
     for r in allrows:
-        if r['date'] == D[3] and r['cost'] > 0:
+        if r['date'] in d3set and r['cost'] > 0:
             dcost[r['id']] += r['cost']
     rk_pool = sorted(dcost.values())
     pq = lambda P, p: round(P[min(len(P) - 1, int(len(P) * p))]) if P else None
-    rank_meta = {'p95': pq(rk_pool, .95), 'p98': pq(rk_pool, .98), 'n': len(rk_pool)}
+    rank_meta = {'p98': pq(rk_pool, .98), 'p99': pq(rk_pool, .99), 'n': len(rk_pool)}
     Dd3 = dt.date.fromisoformat(D[3])
     for m in mat:
         v = dcost.get(m['id'])
         if not v or len(rk_pool) < 50:
             continue
-        m['rk'] = round(bisect.bisect_left(rk_pool, v) / len(rk_pool) * 100, 1)
+        m['rk'] = round(bisect.bisect_left(rk_pool, v) / len(rk_pool) * 100, 1); m['rk_v'] = round(v)
         if m.get('first'):
             age = (Dd3 - dt.date.fromisoformat(m['first'])).days + 1
             if age <= 3:
