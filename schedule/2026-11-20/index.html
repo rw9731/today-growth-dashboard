@@ -563,7 +563,7 @@ if(revReady&&revRows.length){
     return {sp,rows,t,extra:extra.length};
   });
   const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="7">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
-    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.join('、')||'—'}</td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm">${t.best?lnk(t.best.name,t.best.url)+`<small class="q">（${reviewMoney(t.best.cents)}）</small>`:''}</td></tr>`+
+    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.join('、')||'—'}</td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
     (rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
   revBody.outerHTML=specHtml+groups.map(([title,brs,tier])=>{
