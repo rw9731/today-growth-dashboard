@@ -258,6 +258,8 @@ td.d.f[data-fi]{cursor:pointer}
   #rev tr.brh.bt1>th,#rev tr.brh.bt1>td{background:#dcefe8;color:#0b5d47}#rev tr.brh.bt1>th{border-left-color:#0f7a5c}
   #rev tr.brh.bt3>th,#rev tr.brh.bt3>td{background:#f8e3d8;color:#8f3410}#rev tr.brh.bt3>th{border-left-color:#b5451b}
   #rev tr.brh small.q{color:inherit;opacity:.75}
+  .dt tr.th.tsp :is(td,th){background:#5b4bb7}
+  #rev tr.brh.bsp>th,#rev tr.brh.bsp>td{background:#e9e6fa;color:#3c3489}#rev tr.brh.bsp>th{border-left-color:#534ab7}
 </style>
 </head>
 <body>
@@ -517,11 +519,32 @@ const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,pl
 const revBody=document.querySelector('#rev tbody');
 if(revReady&&revRows.length){
   const pct=(n,p)=>p?`<small class="q">${(n/p*100).toFixed(1)}%</small>`:'';
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
     return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+  // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
+  const SPECIAL=[
+    {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},
+    {name:'美好生活计划',uc:[],kw:/美好生活/},
+    {name:'衣物管理',uc:['SH06'],kw:/衣橱|衣柜|穿搭/},
+  ];
+  const txt=e=>[e.sc,e.src,e.how,e.k].filter(Boolean).join(' ');
+  const hitE=(sp,e)=>sp.uc.includes(e.uc)||sp.kw.test(txt(e));
+  const specRows=SPECIAL.map(sp=>{
+    const es=revEntries.filter(e=>hitE(sp,e)), refs=new Set(es.map(entryRef).filter(Boolean));
+    const items=revItems.filter(x=>refs.has(x.ref)||(sp.uc.includes(x.u)&&!entryByRef.get(x.ref)));
+    const names=new Set(items.map(x=>x.name));
+    const extra=sp.uc.flatMap(u=>(P.HIST?.U?.[u]||[]).filter(r=>r[2]&&r[2]>=P.REV.week&&r[2]<=P.REV.end&&!names.has(r[0])).map(r=>({u,name:r[0],first:r[2],cents:Math.round(r[3]*100),act:r[4],ret:r[5],ret_cents:r[5]?Math.round(r[3]*100):0,up:null,url:r[8]||''})));
+    const all=items.concat(extra), us=[...new Set(es.map(e=>e.uc).concat(all.map(x=>x.u)))];
+    const rows=us.map(u=>agg(u,sum(es.filter(e=>e.uc===u).map(e=>Number(e.n))),all.filter(x=>x.u===u))).sort((a,b)=>b.cents-a.cents||b.planned-a.planned);
+    const t=agg('',sum(es.map(e=>Number(e.n))),all);
+    return {sp,rows,t,extra:extra.length};
+  });
+  const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="7">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
+    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?'<small class="q">没进排期</small>':'')}</td><td class="n">${t.firstDates.join('、')||'—'}</td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm">${t.best?lnk(t.best.name,t.best.url)+`<small class="q">（${reviewMoney(t.best.cents)}）</small>`:''}</td></tr>`+
+    (rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
-  revBody.outerHTML=groups.map(([title,brs,tier])=>{
+  revBody.outerHTML=specHtml+groups.map(([title,brs,tier])=>{
     const all=revRows.filter(x=>brs.includes(x.br));
     const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows,tier)+(rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>');}).join('');
     const plannedAll=sum(revRows.map(r=>r.planned)), plannedG=sum(all.map(r=>r.planned));
