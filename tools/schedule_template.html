@@ -298,14 +298,6 @@ td.d.f[data-fi]{cursor:pointer}
 <div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>跑量情况</th></tr></thead><tbody></tbody></table></div>
 </details>
 </section>
-<h2 id="launch-diagnostics">近期投放诊断</h2>
-<div id="why" hidden><h3 id="why-h"></h3><p class="rev-note" id="why-note"></p><div class="scroll"><table class="dt" id="why-t"><thead><tr><th></th><th>use case</th><th>这批</th><th>内容上差在哪、好在哪</th><th>下一步</th></tr></thead><tbody></tbody></table></div></div>
-<h3>要看片的素材</h3>
-<p class="rev-note" id="bad-note"></p>
-<div class="scroll"><table class="dt" id="bad"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>激活</th><th>次留、成本</th><th>比同日全盘</th><th>对比的素材</th></tr></thead><tbody></tbody></table></div>
-<h3>可能开始见顶的素材</h3>
-<p class="rev-note" id="pk-note"></p>
-<div class="scroll"><table class="dt" id="pk"><thead><tr><th>素材</th><th>use case</th><th>首花</th><th>峰值</th><th>最近 2 天日均</th><th>占峰值</th></tr></thead><tbody></tbody></table></div>
 <details class="more"><summary>规则和口径</summary><div class="rules">
 <p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <p><b>本周回收</b>以周一到周日的生效排期为分母。按扩量排期行关联本周成片，分日表有展示或消耗即记为放出。同条成片的投放消耗合计，条数只计一次。首花第二天达到当天全盘在跑素材的单条消耗均值，即计为「跑起来」。同一成片有多个投放 ID 时，任一 ID 跑起来就计一条。</p>
@@ -562,7 +554,6 @@ if(revReady&&revRows.length){
 }else{
   revBody.innerHTML=`<tr><td colspan="7" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
 }
-if(P.WHY){document.getElementById('why').hidden=false;document.getElementById('why-h').textContent=`${md(P.WHY.day)} 首花这批：内容上为什么好、为什么差`;document.getElementById('why-note').textContent=P.WHY.summary||'';document.querySelector('#why-t tbody').innerHTML=P.WHY.rows.map(x=>`<tr><td class="n">${x.color==='green'?'<span class="rt up">好</span>':'<span class="rt down">差</span>'}</td><td class="n">${esc(x.label)}</td><td class="n">${x.n} 条，${x.k} 条跑起来<small class="q">第二天每条 ${money(x.per)}</small></td><td>${mk(x.why)}</td><td>${mk(x.next||'')}</td></tr>`).join('')}
 if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
   const show=()=>{
@@ -577,10 +568,6 @@ if(revItems.length){
   search.addEventListener('input',show);
   show();
 }
-document.getElementById('bad-note').textContent=`共 ${P.REV.nbad} 条，列影响最大的 8 条。这是素材的问题，不代表这个方向不行。`;
-document.querySelector('#bad tbody').innerHTML=P.REV.bad.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="num">${x.act}</td><td class="n">${x.rate.toFixed(1)}%，¥${x.cpr}</td><td class="num">${x.gap.toFixed(1)}</td><td class="nm">${x.base?`<small class="q">${x.base.how}</small> ${lnk(x.base.name,x.base.url)}<small class="q">（${x.base.rate==null?'样本小':x.base.rate.toFixed(1)+'%，¥'+x.base.cpr}，激活 ${x.base.act}）</small>`:'<span class="q">没找到</span>'}</td></tr>`).join('')||'<tr><td colspan="7" class="q">没有</td></tr>';
-document.getElementById('pk-note').textContent=`共 ${P.REV.npeak} 条，列峰值最高的 8 条。`;
-document.querySelector('#pk tbody').innerHTML=P.REV.peak.map(x=>`<tr><td class="nm">${esc(x.name)}</td><td class="n">${esc(ucName(x))}</td><td class="n">${md(x.first)}</td><td class="n">${money(x.pk)}（${md(x.pkd)}）</td><td class="num">${money(x.last2)}</td><td class="num">${x.pct}%</td></tr>`).join('')||'<tr><td colspan="6" class="q">没有</td></tr>';
 // 点 use case 名字：弹出历史上投过的所有素材，按总消耗倒序（Reina 11/9，找 top 素材做小变式扩产）
 function goLines(id){const t=document.querySelector(`#dt tr[data-u="${CSS.escape(id)}"]`);if(!t)return;
   t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1600)}
