@@ -313,16 +313,16 @@ html,body{margin:0}
 <section id="recovery" aria-labelledby="sec-4">
 <h2 id="sec-4">本周排期素材回收 <span id="rev-range"></span></h2>
 <p class="rev-note" id="rev-note"></p>
-<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>跑起来</th><th class="num">本周累计消耗</th><th>次留、成本</th><th>消耗最高素材</th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>过冷启</th><th class="num">本周累计消耗</th><th>次留、成本</th><th>消耗最高素材</th></tr></thead><tbody></tbody></table></div>
 <details class="more" id="rev-assets" hidden><summary>查看 <b id="rev-item-count"></b> 条已放出素材</summary>
 <label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、素材 ID 或 use case"></label>
 <p class="rev-note" id="rev-matches" aria-live="polite"></p>
-<div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>跑量情况</th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
 </details>
 </section>
 <details class="more"><summary>规则和口径</summary><div class="rules">
 <p><b>怎么看这张表：</b>消耗到 11/19，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">11/13–18</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。PS03 一个 use case 一行，按合起来的数进这一块，三部分写在执行细节。新原片首剪 33 条进度在真人原素材表，没有上板。</p>
-<p><b>本周回收</b>以周一到周日的生效排期为分母。按扩量排期行关联本周成片，分日表有展示或消耗即记为放出。同条成片的投放消耗合计，条数只计一次。首花第二天达到当天全盘在跑素材的单条消耗均值，即计为「跑起来」。同一成片有多个投放 ID 时，任一 ID 跑起来就计一条。</p>
+<p><b>本周回收</b>以周一到周日的生效排期为分母。过冷启 = 上传日和后两天合计花到 ¥400。按扩量排期行关联本周成片，分日表有展示或消耗即记为放出。同条成片的投放消耗合计，条数只计一次。首花第二天达到当天全盘在跑素材的单条消耗均值，即计为「跑起来」。同一成片有多个投放 ID 时，任一 ID 跑起来就计一条。</p>
 <p><b>A、B 组进度：</b>对照唯西排期表。进度条是本周已交占本周排期，竖线是到昨天该交的位置，数字是到昨天实交 / 该交。成片传了、素材名没填全的算交了；B 组扩量排期开始后只按排期行算，脚本表、二剪表不重复算。只算排期行，所以和左边的本周实际产出不是一个数。</p>
 <p><b>要看片：</b>首花 7 天内、激活 100 以上、次留比同样这些天的全盘低 5 个点以上。和右边对比，看开头、痛点、Today 出场时间、演示依赖什么。</p>
 <p><b>可能见顶的素材：</b>首花 14 天内、单日花到过 ¥1,000、峰值在 2 天以前、最近 2 天都不到峰值 7 成。</p>
@@ -487,6 +487,19 @@ for(const entry of revPlan?.entries||[]){
   const ref=/([AB])\s*组(?:扩量)?第\s*(\d+)\s*行/.exec(entry.src||'');
   if(ref&&ref[1]===entry.g&&Number(entry.n)>0)revDue.set(`${ref[1]}:${Number(ref[2])}:${entry.uc}`,entry.d);
 }
+// 过冷启（Reina 11/20，和日报一致）：上传日（素材 ID 里带的时间）和后两天合计花到 ¥400；按 HIST 里的逐日消耗算
+const HROW=new Map();for(const rs of Object.values(P.HIST?.U||{}))for(const r of rs)HROW.set(r[0],r);
+const isoAdd=(iso,k)=>{const d=new Date(iso+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+k);return d.toISOString().slice(0,10);};
+const upDay=id=>{try{return new Date((Number(BigInt(id)>>32n)+8*3600)*1000).toISOString().slice(0,10);}catch(e){return '';}};
+const csOf=x=>{
+  const r=HROW.get(x.name), up=x.id?upDay(x.id):(x.first||'');
+  if(!r||!up||!P.HIST?.start)return x.first&&isoAdd(x.first,2)<=P.REV.through?false:null;
+  const seq=r[11]||[], off=seq[0]||0, cs=seq[1]||[];
+  const base=Math.round((Date.parse(up+'T00:00:00Z')-Date.parse(P.HIST.start+'T00:00:00Z'))/864e5)-off;
+  let s=0;for(let k=0;k<3;k++){const v=cs[base+k];if(v)s+=v;}
+  if(s>=400)return true;
+  return isoAdd(up,2)<=P.REV.through?false:null;
+};
 const revItems=revPlan
   ? P.REV.items.filter(x=>revDue.has(x.ref)).map(x=>({...x,due:revDue.get(x.ref)}))
   : P.REV.items;
@@ -494,7 +507,7 @@ const revTotal=sum(Object.values(revBooked));
 const revReady=P.REV.available&&P.REV.through>=P.REV.week;
 document.getElementById('rev-range').textContent=reviewDay(P.REV.week)+'–'+reviewDay(P.REV.end);
 document.getElementById('rev-note').textContent=revReady
-  ? `已核实放出 ${revItems.length} / ${revTotal} 条，投放数据截至 ${reviewDay(P.REV.through)}。首花第二天消耗达到当天全盘在跑素材的单条均值，计为「跑起来」。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
+  ? `已核实放出 ${revItems.length} / ${revTotal} 条，投放数据截至 ${reviewDay(P.REV.through)}。上传当天起 3 天（上传日和后两天）花到 ¥400 计为「过冷启」，窗口还没走完、也还没到 ¥400 的不算。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
   : '本周回收数据待更新。';
 // 按思维导图分支归类（Reina 11/20）：已点亮 = 头部素材模版变式 / 已点亮场景出新内容 / 新细分场景；探索 = 新方向 / 冲点亮 / 量少留存好（use case 级）
 const BR_LIT=['头部素材模版变式','已点亮场景出新内容','新细分场景'], BR_EXP=['新方向','冲点亮','量少留存好'];
@@ -530,7 +543,7 @@ const agg=(u,planned,items)=>{
   const retCost=ret?reviewMoney(Math.round(sum(items.map(x=>x.ret_cents))/ret)):'—';
   const retention=act>=30?`${(ret/act*100).toFixed(1)}%，${retCost}`:'—';
   const best=[...items].sort((a,b)=>b.cents-a.cents).find(x=>x.cents>0);
-  return {u,planned,n:items.length,up:items.filter(x=>x.up===true).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
+  return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
 };
 const keys=new Set([...plannedBy.keys(),...itemsBy.keys()]);
 const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,plannedBy.get(k)||0,itemsBy.get(k)||[])};})
@@ -582,7 +595,7 @@ if(revItems.length){
     const terms=search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
     const items=revItems.filter(x=>terms.every(q=>`${x.name} ${x.ids.join(' ')} ${reviewName(x.u)}`.toLowerCase().includes(q)));
     document.getElementById('rev-matches').textContent=terms.length?`匹配 ${items.length} 条`:'';
-    document.querySelector('#rev-items tbody').innerHTML=items.map(x=>`<tr data-material-id="${esc(x.id)}"><td class="nm">${lnk(x.name,x.url)}<small class="q">${esc(x.ids.join('、'))}</small></td><td class="n">${esc(reviewName(x.u))}</td><td class="n">${reviewDay(x.due)}</td><td class="n">${reviewDay(x.produced)}</td><td class="n">${reviewDay(x.released)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.up?'<b class="good">跑起来</b>':x.up===false?'低于均值':x.first?'待第二天数据':'待消耗'}</td></tr>`).join('')||'<tr><td colspan="8" class="q">没有匹配的素材</td></tr>';
+    document.querySelector('#rev-items tbody').innerHTML=items.map(x=>`<tr data-material-id="${esc(x.id)}"><td class="nm">${lnk(x.name,x.url)}<small class="q">${esc(x.ids.join('、'))}</small></td><td class="n">${esc(reviewName(x.u))}</td><td class="n">${reviewDay(x.due)}</td><td class="n">${reviewDay(x.produced)}</td><td class="n">${reviewDay(x.released)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x))}</td></tr>`).join('')||'<tr><td colspan="8" class="q">没有匹配的素材</td></tr>';
   };
   document.getElementById('rev-item-count').textContent=revItems.length;
   panel.hidden=false;
