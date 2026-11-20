@@ -340,8 +340,8 @@ html,body{margin:0}
 <p><b>判定：</b>按顺序看，先中先停。不足 5 条：不判，按 30 套测完。单条跑量 ≥1.3 倍且去掉最大一条 ≥0.8 倍：加。单条跑量 ≥0.8 倍但去掉最大一条 &lt;0.6 倍，或最大一条占 60% 以上：靠一条，小步复制。单条跑量 &lt;0.6 倍且上新占比不低于消耗占比：减，只用于探索，前两档是验证过的方向，跑不起来先看片。其余持平。阈值是初值，先跑 1–2 周。</p>
 </div></details>
 <h2>执行细节</h2>
-<h3>每个 use case 的排期行</h3>
-<div class="scroll"><table class="dt" id="dt"><thead><tr><th>交付</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
+<h3>每天的排期行</h3>
+<div class="scroll"><table class="dt" id="dt"><thead><tr><th>use case</th><th>组</th><th>类型</th><th>条数</th><th>状态</th><th>飞书位置</th></tr></thead><tbody></tbody></table></div>
 </div>
 <dialog id="pd" aria-labelledby="pd-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="pd-h"></h3><div class="gs" id="pd-g"></div></div><div class="hb" id="pd-b"></div></dialog>
 <dialog id="hist" aria-labelledby="hist-h"><div class="hh"><button class="hx" aria-label="关闭">×</button><h3 id="hist-h"></h3><div id="hist-cv"></div><p id="hist-n"></p><div class="hf" id="hist-f"></div></div><div class="hb"><div class="scroll"><table class="dt"><thead></thead><tbody></tbody></table></div></div><div id="htip" hidden></div></dialog>
@@ -461,9 +461,27 @@ displayGroups.forEach(([title,list],gi)=>{
   const shareBefore=Math.round(a/(S0||1)*100),shareAfter=Math.round(b/(S1||1)*100);
   const share='上新占 '+(shareBefore===shareAfter?shareAfter+'%':shareBefore+'% → '+shareAfter+'%');
   body+=`<tr class="grp ${tc}"><td class="gl" colspan="3"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>消耗占 ${(c7/P.T.c7*100).toFixed(0)}%，${share}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b></td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="keep"><small>维持</small><b>${mtS}</b></td><td class="sumc help" data-help="y"><small>单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
-  details+=`<tr class="u th ${tc}"><td colspan="6">${title}<small>${share}</small></td></tr>`;
-  for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,bookedN(x.us),tc,gi);details+=lines(x.id,x.code,x.label,x.us)}
+  for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,bookedN(x.us),tc,gi)}
 });
+{ // 执行细节按交付日（Reina 11/20）：每天一个总数，按 A/B 组、素材类型、已点亮/探索拆
+  const shown=new Set(candidates.concat(folded)), map={};
+  P.E.filter(e=>shown.has(e.uc)&&e.s!=='live'&&Number(e.n)>0).forEach(e=>{const key=[e.d,e.uc,e.g,e.t,e.s,e.to].join('|');const x=map[key]??={...e,n:0,srcs:[]};x.n+=Number(e.n);x.srcs.push(e.src)});
+  const byDay={};for(const e of Object.values(map))(byDay[e.d]??=[]).push(e);
+  const order=d=>{const i=all.indexOf(d);return i<0?999:i;};
+  const days=Object.keys(byDay).sort((a,b)=>order(a)-order(b)||a.localeCompare(b));
+  const cnt=(es,f)=>{const m={};for(const e of es){const k=f(e)||'其他';m[k]=(m[k]||0)+e.n}return m;};
+  const fmt=m=>Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${esc(k)} ${v}`).join('、');
+  const seenU=new Set();
+  for(const d of days){
+    const es=byDay[d].sort((p,q)=>(lit.has(q.uc)-lit.has(p.uc))||p.uc.localeCompare(q.uc)||String(p.g).localeCompare(String(q.g)));
+    const tot=sum(es.map(e=>e.n));
+    const g=fmt(cnt(es,e=>e.g?e.g+' 组':'')), t=fmt(cnt(es,e=>e.t)), tier=fmt(cnt(es,e=>lit.has(e.uc)?'已点亮':'探索'));
+    details+=`<tr class="u th t1 dayh"><td colspan="6">${d} 周${wk(d)}${d===P.today?'（今天）':''}　共 ${tot} 条<small>${g}　｜　${t}　｜　${tier}</small></td></tr>`;
+    for(const e of es){const src=[...new Set(e.srcs)].join('；');const first=!seenU.has(e.uc);seenU.add(e.uc);
+      details+=`<tr${first?` data-u="${esc(e.uc)}"`:''}><td class="n">${esc(e.uc)} ${esc(P.UC[e.uc]||'')}</td><td class="n">${e.g?e.g+' 组':'—'}</td><td class="n">${esc(e.t||'—')}</td><td class="num">${e.n}</td><td class="n">${st[e.s]||e.s}${e.to?'：'+esc(e.to):''}</td><td>${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc(src)}</a>`:esc(src)}</td></tr>`}
+  }
+  if(!days.length)details='<tr><td colspan="6" class="q">没有待交的排期</td></tr>';
+}
 document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:176px"><col style="width:62px"><col style="width:54px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:54px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:40px"><col style="width:76px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
