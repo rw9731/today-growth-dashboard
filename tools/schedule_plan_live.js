@@ -5,8 +5,9 @@ const sum = values => values.reduce((a, b) => a + b, 0);
 const remaining = n => n < 0 ? '超 ' + -n : String(n);
 
 function updateCapacity(plan, reportDate) {
+  // 「本周排期余量」那节 11/20 按 Reina 删了，只剩顶部两张卡；那节还在的老页面照样更新
   const section = document.querySelector('.cap');
-  if (!section) return;
+  if (!section && !document.querySelector('.cap-card[data-cap-group]')) return;
   const days = Array.from({length: 7}, (_, i) => addDays(plan.week, i));
   const confirmed = plan.source.capacity_confirmed?.[plan.week] || {};
   const marks = new Map();
@@ -20,7 +21,7 @@ function updateCapacity(plan, reportDate) {
     cell.classList.toggle('c-past', day < reportDate);
     cell.classList.toggle('c-today', day === reportDate);
   };
-  for (const [i, th] of [...section.querySelectorAll('th[data-cap-day]')].entries()) {
+  for (const [i, th] of [...(section?.querySelectorAll('th[data-cap-day]') || [])].entries()) {
     setDay(th, days[i]);
     th.replaceChildren(shortDate(days[i]), document.createElement('br'), '周' + '一二三四五六日'[i]);
   }
@@ -54,6 +55,7 @@ function updateCapacity(plan, reportDate) {
         : '本周已排 ' + groupTotal + (left < 0 ? '，比产能多 ' + -left : left > 0 ? '，比产能少 ' + left : '');
     }
   }
+  if (!section) return;
   section.querySelector('[data-cap-total]').textContent = all;
   section.querySelector('[data-cap-note]').textContent = plan.source.cap_note || '';
 

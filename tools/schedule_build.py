@@ -575,7 +575,7 @@ def render(tpl, P, fields, rel, T):
     rep['PLAN_MODULE'] = ' type="module"' if live else ''
     rep['PLAN_LOAD'] = (
         "const [liveWeek, liveLighting] = await Promise.all([\n"
-        "  import('../tools/schedule_plan_live.js?v=2')\n"
+        "  import('../tools/schedule_plan_live.js?v=3')\n"
         f"    .then(module => module.schedulePlan('{T.isoformat()}'))\n"
         "    .catch(() => { document.querySelector('[data-plan-status]').hidden = false; return null; }),\n"
         "  import('../tools/weekly_plan.js?v=2').then(module => module.loadRoadmapLighting()).catch(() => null),\n"
@@ -606,7 +606,9 @@ def move_cap_cards(page):
             break
     cards = page[i:j]
     page = page[:i] + page[j:]
-    return page.replace(slot, '<div class="top-cap">' + cards + '</div>', 1)
+    page = page.replace(slot, '<div class="top-cap">' + cards + '</div>', 1)
+    # 「本周排期余量」那节（每天条数表）11/20 Reina 说删掉，只留顶部两张卡
+    return re.sub(r'<section class="cap">.*?</section>', '', page, count=1, flags=re.S)
 
 
 def load_uccs(D):
