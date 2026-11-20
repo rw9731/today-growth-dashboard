@@ -586,9 +586,27 @@ def render(tpl, P, fields, rel, T):
     for k, v in rep.items():
         out = out.replace('{{' + k + '}}', str(v))
     out = out.replace('__P__', blob)
+    out = move_cap_cards(out)
     left = re.findall(r'\{\{[A-Z0-9_]+\}\}', out.replace(blob, ''))
     assert not left, f'没填的占位符 {left}'
     return out
+
+
+def move_cap_cards(page):
+    """Reina 11/20：A、B 组本周还能排的两张卡放到「素材团队执行进度」右边，余量那节只留每天条数表。"""
+    i = page.find('<div class="cap-cards">')
+    slot = '<div class="top-cap"></div>'
+    if i < 0 or slot not in page:
+        return page
+    depth, j = 0, i
+    for m in re.finditer(r'<(/?)div\b', page[i:]):
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            j = page.find('>', i + m.start()) + 1
+            break
+    cards = page[i:j]
+    page = page[:i] + page[j:]
+    return page.replace(slot, '<div class="top-cap">' + cards + '</div>', 1)
 
 
 def main():

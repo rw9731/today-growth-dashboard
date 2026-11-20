@@ -148,7 +148,7 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - 悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（11月执行表，换月换 sheet id，文件名还用 5cypAT.json）：只取抖音、合作形式是星图的行，按「发布档期」归周，稿件进度写已发布或发布链接有值算发了。
    - 知定堂 https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP（排期和审核）：按「交付日期」归周，成片审核情况写「通过」算完成，条数按视频链接那格的视频数（真人版、AI 版各算一条）。
    目标在 tools/agency_targets.json（键是周一）：读「Today AI X 悦普 项目执行群」「Today AI X 知定堂」当天的日报（悦普「本周发布进度」里抖音视频的本周预期；知定堂「本周目标进度」星广已成片 x/目标），和文件里不一样就改，note 写来源和日期。这周没写的沿用上一周，页面标「目标沿用上周」。11/16 那周悦普按 Reina 11/12 说的 30 个（25–30）。
-   然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「今天要看」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
+   然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「素材团队执行进度」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
 5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
@@ -251,7 +251,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 
 进度条分母（Reina 11/12）：A、B 组进度条按这周产能算（plan 的 week_total，A 175、B 120），右边写「本周已交 / 产能」，条长和数字一致；竖线是按飞书排期到昨天该交的位置；下面一行写到昨天该交多少、交了多少，飞书这周排的总数和产能不一样时写出来（比产能多就是排超了），再写按产能算剩下每个工作日要交多少。plan 的 week 对不上时退回用飞书排期总数。
 
-页面排版（Reina 11/5 要小字少、看图清楚）：顶上左边本周实际产出，右边「今天要看」只放要动手的：A、B 组对照排期的进度条（Reina 11/6 要，取代 B 组速度那一行）、落下几行、预计会跌、可能见顶、要看片，每项一行（Reina 11/5：不需要这么多东西，两块高度对齐，不占位置）。定义和口径都放进折叠的「规则和口径」，页面上不再常驻解释性小字，新加内容也照这样放。
+页面排版（Reina 11/5 要小字少、看图清楚）：顶上左边本周实际产出，右边「素材团队执行进度」（11/20 由「素材团队执行进度」改名，A、B 组本周还能排两张卡放在它右边）只放要动手的：A、B 组对照排期的进度条（Reina 11/6 要，取代 B 组速度那一行）、落下几行、预计会跌、可能见顶、要看片，每项一行（Reina 11/5：不需要这么多东西，两块高度对齐，不占位置）。定义和口径都放进折叠的「规则和口径」，页面上不再常驻解释性小字，新加内容也照这样放。
 
 ## 素材产出看板（Reina 11/10）
 

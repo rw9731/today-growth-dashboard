@@ -26,7 +26,7 @@ function updateCapacity(plan, reportDate) {
   }
 
   let all = 0;
-  for (const card of section.querySelectorAll('.cap-card[data-cap-group]')) {
+  for (const card of document.querySelectorAll('.cap-card[data-cap-group]')) {
     const g = card.dataset.capGroup;
     const cap = groupCapacity(plan.source, g, plan.week);
     const groupTotal = sum(days.map(day => count(g, types, day)));
