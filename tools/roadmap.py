@@ -288,6 +288,9 @@ def main():
     p3 = sorted(v for v in s3.values() if v > 0)
     p98 = p3[min(len(p3) - 1, int(len(p3) * .98))] if p3 else float('inf')
     mats = sorted(M.values(), key=lambda m: -m['cost'])
+    def max3(m):  # 历史上任意连续 3 天的消耗最高值
+        ds = m['days']
+        return max((sum(ds.get((dt.date.fromisoformat(d_) + dt.timedelta(days=k)).isoformat(), 0) for k in range(3)) for d_ in ds), default=0)
     def core(t):
         t = re.sub(r'（[^）]*）|\([^)]*\)', '', t or '').strip()
         t = re.sub(r'^[A-Z]{2}\d{2} ', '', t)
@@ -320,14 +323,15 @@ def main():
         if hit:
             tplk[key] = {'s': 'head', 'by': '模板库', 't': hit['name'][:60], 'tier': hit['tier']}
             continue
-        # 模板库还没收的新头部：模板素材近 3 天进 P98（日报排位的头部线），或累计花到 ¥2 万，也算头部
+        # 模板库还没收的：历史上累计花到 ¥1 万或任意连续 3 天花到 ¥7,000（P98 的线），或近 3 天进 P98（抓新模板），也算头部
         t2 = re.sub(r'^[A-Z]{2}\d{2} ', '', t)
         pick = lambda pool: next((m for m in pool if m['name'] and ((len(t2) >= 12 and m['name'].startswith(t2)) or (len(c) >= 8 and c in core(m['name'])))), None)
         mm = pick([m for m in mats if m['uc'] == e['uc']]) or pick(mats)
         if not mm:
             tplk[key] = {'s': 'none', 't': t[:60]}
-        elif s3.get(mm['id'], 0) >= p98 or mm['cost'] >= 20000:
-            tplk[key] = {'s': 'head', 'by': '近 3 天 P98' if s3.get(mm['id'], 0) >= p98 else '累计 ¥2 万', 't': mm['name'][:60], 'c': round(mm['cost'])}
+        elif s3.get(mm['id'], 0) >= p98 or mm['cost'] >= 10000 or max3(mm) >= 7000:
+            by = '近 3 天 P98' if s3.get(mm['id'], 0) >= p98 else ('累计 ¥1 万' if mm['cost'] >= 10000 else '历史连续 3 天 ¥7,000')
+            tplk[key] = {'s': 'head', 'by': by, 't': mm['name'][:60], 'c': round(mm['cost'])}
         else:
             tplk[key] = {'s': 'weak', 't': mm['name'][:60], 'c': round(mm['cost'])}
     lighting['tplk'] = tplk
