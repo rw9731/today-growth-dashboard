@@ -33,6 +33,7 @@ for (const w of __CFG[__kind].want) {
 const __t = (r, w) => (__sh.getText(r, __cols[w]) || '').trim();
 // 一格里有几条：附件个数和链接个数取大的（知定堂一行常传真人版、AI 版两条）
 const __n = (r, w) => { let a = 0; try { a = (__sh.getSegmentArray(r, __cols[w]) || []).filter((s) => s.type === 'attachment').length; } catch (e) { /* 没有附件 */ } const u = (__t(r, w).match(/https?:\/\//g) || []).length; return Math.max(a, u, __t(r, w) && !a && !u ? 1 : 0); };
+const __files = (r, w) => { const out = []; try { for (const x of (__sh.getSegmentArray(r, __cols[w]) || [])) { if (x.type === 'attachment' && x.text) out.push(x.text.slice(0, 80)); } } catch (e) { /* 没有附件 */ } for (const u of (__t(r, w).match(/https?:\/\/\S+/g) || [])) out.push(u.slice(0, 120)); return out; };
 const __has = (r, w) => { if (__t(r, w)) return 1; try { return (__sh.getSegmentArray(r, __cols[w]) || []).some((s) => s.type === 'attachment') ? 1 : 0; } catch (e) { return 0; } };
 const __rows = [];
 for (let r = 1; r < __sh.getRowCount(); r++) {
@@ -52,7 +53,7 @@ for (let r = 1; r < __sh.getRowCount(); r++) {
     __rows.push({ r: r + 1, name, d, status, id: __t(r, '素材ID'), uc: __t(r, 'UC_ID') });
   } else {
     if (!__t(r, '交付日期') && !__t(r, 'UC_ID')) continue;
-    __rows.push({ r: r + 1, d: __t(r, '交付日期').slice(0, 12), uc: __t(r, 'UC_ID').slice(0, 6), acct: __t(r, '账号名称').slice(0, 20), sst: __t(r, '脚本审核情况').split('\n')[0].slice(0, 8), vid: __n(r, '视频链接'), vst: __t(r, '成片审核情况').split('\n')[0].slice(0, 8), fin: __t(r, '成片定稿时间').slice(0, 12), pub: __has(r, '发布链接'), mid: __t(r, '素材id') ? 1 : 0 });
+    __rows.push({ r: r + 1, d: __t(r, '交付日期').slice(0, 12), uc: __t(r, 'UC_ID').slice(0, 6), acct: __t(r, '账号名称').slice(0, 20), sst: __t(r, '脚本审核情况').split('\n')[0].slice(0, 8), vid: __n(r, '视频链接'), files: __files(r, '视频链接'), vst: __t(r, '成片审核情况').split('\n')[0].slice(0, 8), fin: __t(r, '成片定稿时间').slice(0, 12), pub: __has(r, '发布链接'), mid: __t(r, '素材id') ? 1 : 0 });
   }
 }
 JSON.stringify({ kind: __kind, sheet: __tab, name: __sh.name(), rows: __rows });
