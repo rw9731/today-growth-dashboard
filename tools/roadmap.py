@@ -20,6 +20,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import re
 import os
 import sys
 from collections import defaultdict
@@ -266,6 +267,19 @@ def main():
     # 本周排期按分档
     lighting = {'date': D, 'weeks': {x['uc']: x['lit_wk'] for x in out if x['lit_wk']},
                 'cost': UC_LIT_COST, 'share_pct': UC_LIT_SHARE_PCT}
+    # 排期看板「本周排期素材回收」按思维导图分支归类用（Reina 11/20）：
+    # grid = 有素材类型格点亮（单条累计 ≥ MATERIAL_LIT）的 use case，探索里算「冲点亮」；
+    # esc = 近期排期行（键 组:行号:UC）写的细分场景点亮没有，lit = 已点亮场景，new = 还没点亮的场景。
+    lighting['grid'] = sorted(x['uc'] for x in out if any(c and c['st'] == '点亮' for c in x['cells'].values()))
+    sc_lit = {(x['uc'], c['n']) for x in out for c in x.get('tl_sc', []) if c['n'] and c['lit_wk']}
+    esc = {}
+    for e in all_planned:
+        m_ = re.search(r'([AB])\s*组(?:扩量)?第\s*(\d+)\s*行', e.get('src') or '')
+        if not m_ or m_.group(1) != e.get('g') or e['d'] < (dt.date.fromisoformat(D) - dt.timedelta(days=21)).isoformat():
+            continue
+        h = hits(e['uc'], e.get('sc', '')) if e.get('sc') else []
+        esc[f"{m_.group(1)}:{int(m_.group(2))}:{e['uc']}"] = 'lit' if any((e['uc'], n_) in sc_lit for n_ in h) else 'new'
+    lighting['esc'] = esc
     tier_n = {'已点亮': 0, '探索': 0}
     for u, counts in sched.items():
         tier_n['已点亮' if u in lighting['weeks'] else '探索'] += sum(counts.values())
