@@ -268,8 +268,11 @@ html,body{margin:0}
 .cap{margin:14px 0 6px;min-width:0;max-width:calc(100vw - 32px)}.cap .scroll{max-width:100%;overflow-x:auto}.cap h2{margin:0 0 4px}.capt th,.capt td{text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums;padding:4px 8px}.capt tbody th{text-align:left;font-weight:600}.capt td b{font-weight:600}.capt td small{color:var(--mute);font-size:11px}.capt td em{display:block;font-style:normal;font-size:11px;color:var(--good);font-weight:600;margin-top:1px}.capt td em.o{color:var(--bad)}.capt .c-past{color:var(--mute);opacity:.6}.capt .c-today{background:var(--today)}.capt .c-over b{color:var(--bad)}.capt tr.c-tot th,.capt tr.c-tot td{border-top:1px solid var(--base)}.capt .c-sum{border-left:1px solid var(--base)}.capt .c-left{font-weight:700}.cap-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:8px 0 10px}.cap-card{background:var(--panel);box-shadow:inset 0 0 0 1px var(--grid);padding:12px 14px}.cap-k{font-size:13px;color:var(--sub);font-weight:600}.cap-big{font-size:15px;margin:2px 0 6px}.cap-big b{font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}.cap-big b.over{color:var(--bad)}.cap-bar{height:10px;background:var(--grid)}.cap-bar span{display:block;height:100%;background:var(--meter)}.cap-sub{font-size:12px;color:var(--mute);margin-top:6px}@media (max-width:560px){.cap-cards{grid-template-columns:minmax(0,1fr)}}
 .now-tag{line-height:1.6}.now-tag a{color:var(--link)}
 .leg-min{gap:3px 12px}
-  #rev tr.brh>th,#rev tr.brh>td{background:#f6f4ee;font-weight:600;border-top:1px solid #ddd8cc}
-  #rev tr.brh>th{text-align:left;padding-left:10px}
+  #rev tr.brh>th,#rev tr.brh>td{font-weight:700;font-size:14px;padding-top:10px;padding-bottom:10px;border-top:2px solid #fff}
+  #rev tr.brh>th{text-align:left;padding-left:12px;border-left:5px solid}
+  #rev tr.brh.bt1>th,#rev tr.brh.bt1>td{background:#dcefe8;color:#0b5d47}#rev tr.brh.bt1>th{border-left-color:#0f7a5c}
+  #rev tr.brh.bt3>th,#rev tr.brh.bt3>td{background:#f8e3d8;color:#8f3410}#rev tr.brh.bt3>th{border-left-color:#b5451b}
+  #rev tr.brh small.q{color:inherit;opacity:.75}
 </style>
 </head>
 <body>
@@ -524,12 +527,12 @@ const revBody=document.querySelector('#rev tbody');
 if(revReady&&revRows.length){
   const pct=(n,p)=>p?`<small class="q">${(n/p*100).toFixed(1)}%</small>`:'';
   const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
-  const sumRow=(title,rows)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
-    return `<tr class="brh"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+  const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
+    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
   revBody.outerHTML=groups.map(([title,brs,tier])=>{
     const all=revRows.filter(x=>brs.includes(x.br));
-    const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows)+(rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>');}).join('');
+    const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows,tier)+(rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>');}).join('');
     const plannedAll=sum(revRows.map(r=>r.planned)), plannedG=sum(all.map(r=>r.planned));
     const share=plannedAll?`<span style="font-weight:400;margin-left:10px">本周已排 ${plannedG} 条，占 ${(plannedG/plannedAll*100).toFixed(0)}%</span>`:'';
     return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="7">${title}${share}</th></tr>${body}</tbody>`;
