@@ -484,13 +484,16 @@ document.getElementById('rev-note').textContent=revReady
   : '本周回收数据待更新。';
 // 按思维导图分支归类（Reina 11/20）：已点亮 = 头部素材模版变式 / 已点亮场景出新内容 / 新细分场景；探索 = 新方向 / 冲点亮 / 量少留存好（use case 级）
 const BR_LIT=['头部素材模版变式','已点亮场景出新内容','新细分场景'], BR_EXP=['新方向','冲点亮','量少留存好'];
-const esc_=lighting.esc||{}, grid=new Set(lighting.grid||[]);
+const esc_=lighting.esc||{}, grid=new Set(lighting.grid||[]), tplk=lighting.tplk||{};
 const retGoodUC=u=>{const x=P.U[u];return !!x&&x.a>=100&&x.rate!=null&&x.cpr!=null&&x.rate>=P.T.rate+1&&x.cpr<=P.T.cpr+3;};
 const expBranch=u=>(grid.has(u)||['加','靠一条'].includes(P.X[u]?.tag))?'冲点亮':retGoodUC(u)?'量少留存好':'新方向';
 const entryRef=e=>{const m=/([AB])\s*组(?:扩量)?第\s*(\d+)\s*行/.exec(e.src||'');return m&&m[1]===e.g?`${m[1]}:${Number(m[2])}:${e.uc}`:'';};
 const branchOf=(u,e,ref)=>{
   if(!lit.has(u))return expBranch(u);
-  if(e&&(e.k==='变式'||e.tpl))return '头部素材模版变式';
+  if(e&&(e.k==='变式'||e.tpl)){ // 模板是头部（模板库收了，或近 3 天 P98 / 累计 ¥2 万）才算头部变式，否则归出新内容并标出来
+    if(tplk[ref]?.s==='head')return '头部素材模版变式';
+    return '已点亮场景出新内容';
+  }
   if((e&&e.k==='新场景')||esc_[ref]==='new')return '新细分场景';
   return '已点亮场景出新内容';
 };
@@ -498,7 +501,9 @@ const wkIso=d=>{if(/^\d{4}-/.test(d))return d;const [m,dd]=d.split('/').map(Numb
 const revEntries=(revPlan?.entries||P.WE_PLAN||P.E).filter(e=>Number(e.n)>0&&wkIso(e.d)>=P.REV.week&&wkIso(e.d)<=P.REV.end);
 const entryByRef=new Map(revEntries.map(e=>[entryRef(e),e]).filter(([r])=>r));
 const plannedBy=new Map();
-for(const e of revEntries){const k=branchOf(e.uc,e,entryRef(e))+'|'+e.uc;plannedBy.set(k,(plannedBy.get(k)||0)+Number(e.n));}
+const flagBy=new Map(), flagOf=(u,e,ref)=>lit.has(u)&&e&&(e.k==='变式'||e.tpl)&&tplk[ref]?.s!=='head'?(tplk[ref]?.s==='weak'?'weak':'none'):'';
+for(const e of revEntries){const r=entryRef(e),k=branchOf(e.uc,e,r)+'|'+e.uc;plannedBy.set(k,(plannedBy.get(k)||0)+Number(e.n));
+  const f=flagOf(e.uc,e,r);if(f){const m=flagBy.get(k)||{weak:0,none:0};m[f]+=Number(e.n);flagBy.set(k,m);}}
 for(const [u,n] of Object.entries(revBooked)){ // 排期行对不上的条数按 use case 补齐
   const have=[...plannedBy].filter(([k])=>k.endsWith('|'+u)).reduce((a,[,v])=>a+v,0);
   if(n>have){const k=branchOf(u,null,'')+'|'+u;plannedBy.set(k,(plannedBy.get(k)||0)+n-have);}
@@ -519,9 +524,12 @@ const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,pl
 const revBody=document.querySelector('#rev tbody');
 if(revReady&&revRows.length){
   const pct=(n,p)=>p?`<small class="q">${(n/p*100).toFixed(1)}%</small>`:'';
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
+  const flagTxt=f=>f?[f.weak?`模板不够头部 ${f.weak} 条`:'',f.none?`没写模板 ${f.none} 条`:''].filter(Boolean).join('，'):'';
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}${flagTxt(flagBy.get(x.br+'|'+x.u))?`<small class="q" style="display:block;color:#b5451b">${flagTxt(flagBy.get(x.br+'|'+x.u))}</small>`:''}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?lnk(x.best.name,x.best.url)+`<small class="q">（${reviewMoney(x.best.cents)}）</small>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
-    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+    const fl=rows.reduce((a,r)=>{const f=flagBy.get(r.br+'|'+r.u);if(f){a.weak+=f.weak;a.none+=f.none;}return a;},{weak:0,none:0});
+    const ft=(fl.weak||fl.none)?`<small style="display:block;font-weight:400;font-size:12px">含排了变式但${flagTxt(fl)}</small>`:'';
+    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}${ft}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
   const SPECIAL=[
     {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},

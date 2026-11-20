@@ -280,6 +280,58 @@ def main():
         h = hits(e['uc'], e.get('sc', '')) if e.get('sc') else []
         esc[f"{m_.group(1)}:{int(m_.group(2))}:{e['uc']}"] = 'lit' if any((e['uc'], n_) in sc_lit for n_ in h) else 'new'
     lighting['esc'] = esc
+    # tplk（Reina 11/20）：排期写了「变式」或模板的行，模板是不是头部模板库（notes/head-templates.json，飞书「头部素材结构提取和变式」）里的代表素材
+    # 或它的同原片版本。head = 是，weak = 写了模板但不在库里，none = 没写模板。看板据此决定算不算「头部素材模版变式」。
+    HT = json.load(open(os.path.join(ROOT, 'notes', 'head-templates.json'), encoding='utf-8'))['items']
+    d3 = {(dt.date.fromisoformat(D) - dt.timedelta(days=k)).isoformat() for k in range(3)}
+    s3 = {i: sum(c for d_, c in m['days'].items() if d_ in d3) for i, m in M.items()}
+    p3 = sorted(v for v in s3.values() if v > 0)
+    p98 = p3[min(len(p3) - 1, int(len(p3) * .98))] if p3 else float('inf')
+    mats = sorted(M.values(), key=lambda m: -m['cost'])
+    def core(t):
+        t = re.sub(r'（[^）]*）|\([^)]*\)', '', t or '').strip()
+        t = re.sub(r'^[A-Z]{2}\d{2} ', '', t)
+        t = re.sub(r'^推送视频_', '', t)
+        q = re.search(r'today[ _]?ko[cl]_(.+)', t)
+        if q:
+            t = q.group(1)
+        t = re.split(r'_+(?:二创|扩量|换开头|只剪辑|全片重配|全文重配|精剪|精简|混剪)|-修改版|-衍生', t)[0]
+        return t.strip(' _-')
+    heads = [(core(h['name']), h) for h in HT]
+    def tpl_of(e):
+        t = (e.get('tpl') or '').strip()
+        if not t:
+            q = re.search(r'「([^」]{6,})」', e.get('how') or '')
+            t = q.group(1) if q else ''
+        return t
+    tplk = {}
+    for e in all_planned:
+        if not (e.get('k') == '变式' or e.get('tpl')):
+            continue
+        m_ = re.search(r'([AB])\s*组(?:扩量)?第\s*(\d+)\s*行', e.get('src') or '')
+        if not m_ or m_.group(1) != e.get('g') or e['d'] < (dt.date.fromisoformat(D) - dt.timedelta(days=21)).isoformat():
+            continue
+        t = tpl_of(e); c = core(t)
+        key = f"{m_.group(1)}:{int(m_.group(2))}:{e['uc']}"
+        if len(c) < 6:
+            tplk[key] = {'s': 'none', 't': t[:60]}
+            continue
+        hit = next((h for hc, h in heads if len(hc) >= 6 and (c.startswith(hc) or hc.startswith(c) or hc in c or c in hc)), None)
+        if hit:
+            tplk[key] = {'s': 'head', 'by': '模板库', 't': hit['name'][:60], 'tier': hit['tier']}
+            continue
+        # 模板库还没收的新头部：模板素材近 3 天进 P98（日报排位的头部线），或累计花到 ¥2 万，也算头部
+        t2 = re.sub(r'^[A-Z]{2}\d{2} ', '', t)
+        pick = lambda pool: next((m for m in pool if m['name'] and ((len(t2) >= 12 and m['name'].startswith(t2)) or (len(c) >= 8 and c in core(m['name'])))), None)
+        mm = pick([m for m in mats if m['uc'] == e['uc']]) or pick(mats)
+        if not mm:
+            tplk[key] = {'s': 'none', 't': t[:60]}
+        elif s3.get(mm['id'], 0) >= p98 or mm['cost'] >= 20000:
+            tplk[key] = {'s': 'head', 'by': '近 3 天 P98' if s3.get(mm['id'], 0) >= p98 else '累计 ¥2 万', 't': mm['name'][:60], 'c': round(mm['cost'])}
+        else:
+            tplk[key] = {'s': 'weak', 't': mm['name'][:60], 'c': round(mm['cost'])}
+    lighting['tplk'] = tplk
+    lighting['p98_3d'] = round(p98) if p3 else None
     tier_n = {'已点亮': 0, '探索': 0}
     for u, counts in sched.items():
         tier_n['已点亮' if u in lighting['weeks'] else '探索'] += sum(counts.values())
