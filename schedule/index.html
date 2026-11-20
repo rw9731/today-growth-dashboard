@@ -532,6 +532,7 @@ const retGoodUC=u=>{const x=P.U[u];return !!x&&x.a>=100&&x.rate!=null&&x.cpr!=nu
 const expBranch=u=>(grid.has(u)||['加','靠一条'].includes(P.X[u]?.tag))?'冲点亮':retGoodUC(u)?'量少留存好':'新方向';
 const entryRef=e=>{const m=/([AB])\s*组(?:扩量)?第\s*(\d+)\s*行/.exec(e.src||'');return m&&m[1]===e.g?`${m[1]}:${Number(m[2])}:${e.uc}`:'';};
 const branchOf=(u,e,ref)=>{
+  if(e&&e.bt&&(BR_LIT.includes(e.bt)||BR_EXP.includes(e.bt)))return e.bt; // 排期表里填了「排期类型」就直接用（Reina 11/20）
   if(!lit.has(u))return expBranch(u);
   if(e&&(e.k==='变式'||e.tpl)){ // 模板是头部（模板库收了，或近 3 天 P98 / 累计 ¥2 万）才算头部变式，否则归出新内容并标出来
     if(tplk[ref]?.s==='head')return '头部素材模版变式';

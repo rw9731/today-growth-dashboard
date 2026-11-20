@@ -49,7 +49,8 @@ def entry(g, x, d, old=None):
     e = dict(uc=x['uc'], d=d.isoformat(), g=g, t=kind(x), n=int(x['n']), s='todo',
              src=f"{g} 组扩量第 {x['r']} 行：{x.get('sc') or x['uc']}", link=LINK[g],
              to='顺延到下周' if (x.get('day') or '').startswith('下周') else '', sc=x.get('sc') or '', k=k,
-             tpl=f"{x['uc']} {tpl[:30]}" if tpl and k == '变式' else '', how=how[:80])
+             tpl=f"{x['uc']} {tpl[:30]}" if tpl and k == '变式' else '', how=how[:80],
+             tier=x.get('tier') or '', bt=x.get('bt') or '')  # 档位、排期类型：排期表 11/20 起有这两列，看板优先用
     if old:  # 留着原来手写的说明，只改对不上的字段
         for f in ('to',):
             if old.get(f) and not e[f]:

@@ -696,7 +696,7 @@ def main():
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, groups, D, total, days), LIGHTING=lighting, RETENTION_REVIEW=RETENTION_REVIEW,
-             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), WE_PLAN=[{k: e.get(k) for k in ('uc', 'd', 'g', 'n', 'k', 'tpl', 'src', 'sc', 'how')} for e in weekly_plan], meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D), UCCS=load_uccs(D))
+             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), WE_PLAN=[{k: e.get(k) for k in ('uc', 'd', 'g', 'n', 'k', 'tpl', 'src', 'sc', 'how', 'tier', 'bt')} for e in weekly_plan], meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D), UCCS=load_uccs(D))
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
