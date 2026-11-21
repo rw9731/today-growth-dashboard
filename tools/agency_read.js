@@ -15,7 +15,7 @@ for (let i = 0; i < 60; i++) {
   try {
     __sh = window.spread && window.spread.getActiveSheet();
     if (__sh && (!__tab || __sh.id() === __tab) && __sh.getText(0, 0)) {
-      __kind = Object.keys(__CFG).find((k) => __CFG[k].test(__sh.name()));
+      __kind = Object.keys(__CFG).find((k) => __CFG[k].test(__sh.name().trim()));
       if (__kind) break;
     }
   } catch (e) { /* 还没加载 */ }
