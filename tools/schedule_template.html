@@ -292,7 +292,7 @@ td.d.f[data-fi]{cursor:pointer}
 <section id="recovery" aria-labelledby="sec-4">
 <h2 id="sec-4">本周排期素材回收 <span id="rev-range"></span></h2>
 <p class="rev-note" id="rev-note"></p>
-<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>过冷启</th><th class="num" title="预期 = 已排 × 冷启率 × 单条带量（主表），按上传后 7 天算，素材满 7 天再和实际比">本周累计消耗<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">小字是预期</span></th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">次留第二天才出，只算看板日前一天及以前的激活，满 30 才算</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>冷启率<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">已放出、满 3 天的里过冷启的占比</span></th><th class="num" title="预期 = 已排 × 冷启率 × 单条带量（主表），按上传后 7 天算，素材满 7 天再和实际比">本周累计消耗<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">小字是预期</span></th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">次留第二天才出，只算看板日前一天及以前的激活，满 30 才算</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
 <details class="more" id="rev-assets" hidden><summary>查看 <b id="rev-item-count"></b> 条已放出素材</summary>
 <label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、素材 ID 或 use case"></label>
 <p class="rev-note" id="rev-matches" aria-live="polite"></p>
@@ -496,7 +496,7 @@ const revTotal=sum(Object.values(revBooked));
 const revReady=P.REV.available&&P.REV.through>=P.REV.week;
 document.getElementById('rev-range').textContent=reviewDay(P.REV.week)+'–'+reviewDay(P.REV.end);
 document.getElementById('rev-note').textContent=revReady
-  ? `已核实放出 ${revItems.length} / ${revTotal} 条，投放数据截至 ${reviewDay(P.REV.through)}。上传当天起 3 天（上传日和后两天）花到 ¥400 计为「过冷启」，窗口还没走完、也还没到 ¥400 的不算。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
+  ? `已核实放出 ${revItems.length} / ${revTotal} 条，投放数据截至 ${reviewDay(P.REV.through)}。上传当天起 3 天（上传日和后两天）花到 ¥400 计为「过冷启」；冷启率 = 已放出、3 天窗口已走完的素材里过冷启的占比，窗口还没走完、也还没到 ¥400 的不进分母。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
   : '本周回收数据待更新。';
 // 按思维导图分支归类（Reina 11/20）：已点亮 = 头部素材模版变式 / 已点亮场景出新内容 / 新细分场景；探索 = 新方向 / 冲点亮 / 量少留存好（use case 级）
 const BR_LIT=['头部素材模版变式','已点亮场景出新内容','新细分场景'], BR_EXP=['新方向','冲点亮','量少留存好'];
@@ -534,7 +534,7 @@ const agg=(u,planned,items)=>{
   const retCost=ret?reviewMoney(Math.round(sum(items.map(x=>x.ret_cents))/ret)):'—';
   const retention=act>=30?`${(ret/act*100).toFixed(1)}%，${retCost}`:act>0?`<small class="q">激活 ${act}，不到 30 不算</small>`:'<small class="q">还没有能算次留的激活</small>'; // 次留要第二天才出，只算到看板日前一天的激活（Reina 11/20 问为啥空）
   const best=[...items].sort((a,b)=>b.cents-a.cents).find(x=>x.cents>0&&csOf(x)===true); // 消耗最高素材只写过了冷启的（Reina 11/20）
-  return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
+  return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,done:items.filter(x=>csOf(x)!==null).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
 };
 const keys=new Set([...plannedBy.keys(),...itemsBy.keys()]);
 const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,plannedBy.get(k)||0,itemsBy.get(k)||[])};})
@@ -550,10 +550,11 @@ if(revReady&&revRows.length){
   const rateTd=c=>c.n?`${(c.p/c.n*100).toFixed(0)}%<small class="q" style="display:block">过 ${c.p} 条 / 共 ${c.n} 条</small>`:'<small class="q">近 2 周没上新</small>';
   const yuan=v=>'¥'+Math.round(v).toLocaleString('en-US');
   const bandTd=c=>c.band!=null?`${yuan(c.band)}<small class="q" style="display:block">${c.bn} 条的平均</small>`:(c.p?'<small class="q">过冷启的还没满 7 天</small>':'—');
+  const csTd=x=>x.done?`<td class="n"><b>${(x.up/x.done*100).toFixed(0)}%</b><small class="q" style="display:block">过 ${x.up} / 满 3 天 ${x.done} 条</small></td>`:`<td class="n"><small class="q">${x.n?'都还没满 3 天':'—'}</small></td>`; // 冷启率（Reina 11/21）：已放出且 3 天窗口走完的里，过冷启的占比
   const expTd=e=>e?`<small class="q" style="display:block">预期 ${yuan(e)}</small>`:'';
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td><td class="n">${x.up} 条</td><td class="num">${reviewMoney(x.cents)}${expTd(expOf(x.u,x.planned))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.join('、')||'—'}</td>${csTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(expOf(x.u,x.planned))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
-    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td>${csTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
   const SPECIAL=[
     {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},
@@ -573,7 +574,7 @@ if(revReady&&revRows.length){
     return {sp,rows,t,extra:extra.length};
   });
   const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="7">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
-    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.join('、')||'—'}</td><td class="n">${t.up} 条</td><td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
+    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.join('、')||'—'}</td>${csTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
     (rows.map(renderRow).join('')||'<tr><td colspan="7" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
   revBody.outerHTML=specHtml+groups.map(([title,brs,tier])=>{
