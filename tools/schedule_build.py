@@ -453,7 +453,7 @@ def progress_html(prog, T, wt=None, week_by_group=None, confirmed=None):
         if left and cap > wg:
             bits.append(f'按 {cap} 算，剩下 {left} 天（含周末）每天约 {-(-(cap - wg) // left)} 条')
         tip = f'本周产能 {cap} 条，已交 {wg} 条（含提前交的）；竖线是按一周 7 天均摊到昨天该交的 {pace} 条（{done_days}/7）'
-        rows += (f'<span class="k">{k} 组</span><div class="pg"><div class="o-cell">'
+        rows += (f'<span class="k">{k} 组<small class="k-sub">（AI / 真人二创）</small></span><div class="pg"><div class="o-cell">'
                  f'<span class="o-track" title="{html.escape(tip)}"><span class="o-fill" style="width:{min(100, wg / cap * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, pace / cap * 100):.1f}%"></i></span>'
                  f'<span class="o-pct"><b>{wg}</b>/{cap}{state}</span></div>'
                  f'<small>{" · ".join(bits)}</small></div>')
