@@ -430,6 +430,21 @@ def progress_html(prog, T, wt=None, week_by_group=None, confirmed=None):
         if not x or not x.get('week') or not x['week']['due']:
             continue
         wd, wg = x['week']['due'], x['week']['got']
+        if prog.get('since', '') < monday(T).isoformat():
+            # 周一核对的是上周（T-1 所在周），不能拿这周产能比（Reina 11/23 看到 A 组 253/230）
+            rng = f"{md(date(prog['since']))}–{md(date(prog['upto']))}"
+            lag = wd - wg
+            state = f'<em class="o-late">差 {lag}</em>' if lag > 0 else '<em class="o-over">交齐</em>'
+            booked = week_by_group.get(k, 0) if week_by_group is not None else 0
+            capn = wt.get(k)
+            bits = [f'这是上周 {rng} 的交付：应交 {wd}，已交 {wg}', '这周的交付明天开始算']
+            if capn:
+                bits.append(f'<span data-plan-progress="{k}">本周已排 {booked} / 产能 {capn}</span>')
+            rows += (f'<span class="k">{k} 组<small class="k-sub">（AI / 真人二创）</small></span><div class="pg"><div class="o-cell">'
+                     f'<span class="o-track" title="上周应交 {wd}，已交 {wg}"><span class="o-fill" style="width:{min(100, wg / wd * 100):.1f}%"></span></span>'
+                     f'<span class="o-pct"><b>{wg}</b>/{wd}{state}</span></div>'
+                     f'<small>{" · ".join(bits)}</small></div>')
+            continue
         cap = wt.get(k) or wd
         # Reina 11/20：竖线按一周 7 天均摊产能，到昨天（周一到 T-1）该交 cap × 天数 / 7
         done_days = T.weekday()
