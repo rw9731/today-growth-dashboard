@@ -244,6 +244,11 @@ def hist_view(R, D):
     H = R.get('hist', {})
     if 'U' not in H:  # 旧格式
         H = dict(U=H, base=[])
+    _nm = lambda n: re.sub(r'\.(mp4|mov)$', '', str(n).strip().lower())
+    try:  # 没投放视频链接时，用唯西日报的视频，再不行用飞书排期里成片那格（同 with_links，Reina 11/23：回收展开里的素材都要能点开）
+        out_by_name = {_nm(o['name']): o for o in json.load(open(os.path.join(ROOT, 'notes', 'output-items.json'), encoding='utf-8')).values()}
+    except FileNotFoundError:
+        out_by_name = {}
     out = {}
     for u, items in H['U'].items():
         rows = []
@@ -255,6 +260,10 @@ def hist_view(R, D):
                 video, orig = video or v, orig or o
                 if video and orig:
                     break
+            if not video:
+                k = re.sub(r'\s*\(\d+\)$', '', _nm(name))
+                o = out_by_name.get(k) or next((v for n, v in out_by_name.items() if len(k) >= 20 and (n.startswith(k) or k.startswith(n))), {})
+                video = o.get('video') or o.get('link') or o.get('cell') or ''
             tags = [SM[i] for i in ids if i in SM]
             ok = [t for t in tags if t.get('st') == 'ok' and t.get('s')]
             sc = ok[0]['s'] if ok else (-1 if any(t.get('st') == 'none' for t in tags) else 0 if tags else None)
