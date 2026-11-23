@@ -579,7 +579,7 @@ if(revReady&&revRows.length){
   const upTd=x=>x.upN?`<td class="num">${reviewMoney(Math.round(x.upCents/x.upN))}<small class="q" style="display:block">${x.upN} 条的平均</small></td>`:'<td class="num"><small class="q">—</small></td>'; // 过冷启素材单条跑量（Reina 11/23）
   // 和预期比（Reina 11/23）：只拿已经放出的素材比，按每条已经跑了几天折算预期（周末上的素材不会被 7 天的预期压成个位数）。
   // 每条预期 = 冷启率 × 过冷启单条 7 天跑量 × 前 k 天占 7 天的比例；比例用逐日历史里已满 7 天、过了冷启的素材实际算（DAYCURVE）。
-  // 实际 ÷ 预期 ≥120% 超过预期（绿），<80% 不达预期（红），中间差得不多不标；放出不到 3 条、都还没满 3 天、或两成以上素材没有预期数据的不标。
+  // 实际 ÷ 预期 ≥110% 超过预期（绿），≤90% 不达预期（红），±10% 以内差得不多不标（Reina 11/23）；放出不到 3 条、都还没满 3 天、或两成以上素材没有预期数据的不标。
   const DAYCURVE=(()=>{const st=P.HIST?.start,th=P.REV.through;if(!st)return null;const acc=[0,0,0,0,0,0,0];let n=0;
     for(const rs of Object.values(P.HIST?.U||{}))for(const r of rs){const f=r[2],seq=r[11];if(!f||!seq||isoAdd(f,6)>th)continue;
       const off=seq[0]||0,cs=seq[1]||[],d0=Math.round((Date.parse(f+'T00:00:00Z')-Date.parse(st+'T00:00:00Z'))/864e5)-off;
@@ -592,7 +592,7 @@ if(revReady&&revRows.length){
     return {e,c,n,m,all};};
   const expTd=(items,full)=>{const {e,c,n,m,all}=expNow(items||[]);const fullTxt=full?`<small class="q" style="display:block">整批预期 ${yuan(full)}</small>`:'';
     if(!e||n<3||!m||n<all*0.8)return fullTxt; // 两成以上素材所在 use case 没有近 2 周冷启数据时不比，免得拿少数几条的预期比整行的消耗
-    const r=c/e, k=r>=1.2?'up':r>=0.8?'ok':'dn';
+    const r=c/e, k=r>=1.1?'up':r>0.9?'ok':'dn';
     const tip=`已放出 ${n} 条按各自跑的天数折算，预期到现在 ${yuan(e)}，实际 ${yuan(c)}，实际 ÷ 预期 = ${(r*100).toFixed(0)}%`;
     if(k==='ok')return `<small class="q" style="display:block" title="${tip}，差得不多不标">已放出的预期 ${yuan(e)}</small>${fullTxt}`;
     return `<small class="q" style="display:block" title="${tip}">已放出的预期 ${yuan(e)}</small>${fullTxt}<span class="xp ${k}" title="${tip}">${k==='up'?'超过预期':'不达预期'} ${(r*100).toFixed(0)}%</span>`;};
