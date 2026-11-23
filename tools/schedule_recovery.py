@@ -21,7 +21,30 @@ def type_label(name, ids, facts, plan_t=''):
             return 'AI'
         if k.startswith(('KOC', 'KOL')):
             return '达人原片' if k.endswith('原片') else '达人剪辑'
+    if re.search(r'(?:^|[_-])AI(?:[_-]|素材|重拍)|AI素材|AI重拍|照真人', name):
+        return 'AI'
+    if re.search(r'(?i)koc|kol|达人|二创|真人', name):
+        return '达人剪辑'
     return {'AI': 'AI', '二创': '达人剪辑'}.get(plan_t, '未标')
+
+
+def xingtu_items(hist, week, end):
+    """星图达人原生视频（Reina 11/23）：不在唯西排期行里，按 tools/xingtu.json 的素材 ID 从逐日历史里补进回收，
+    首花在这一周的才算；类型写「星图达人原生」，ext=True 不计入「已放出 / 本周已排」。"""
+    out = []
+    H = (hist or {}).get('U', hist or {})
+    for u, rows in H.items():
+        for ids, name, *rest in rows:
+            hit = [i for i in ids if i in compute.XT]
+            first = rest[1] if len(rest) > 1 else ''
+            if not hit or not first or not week <= first <= end:
+                continue
+            cost, act, ret, c1 = (rest[2:6] + [0, 0, 0, 0])[:4]
+            out.append(dict(id=hit[0], ids=sorted(ids), ref='', u=u, name=name, ext=True,
+                            typ='星图达人原生 · ' + compute.XT[hit[0]][0].replace('星图', ''),
+                            due='', produced='', released=first, first=first,
+                            cents=round(cost * 100), ret_cents=round(c1 * 100), act=act or 0, ret=ret or 0, up=None))
+    return out
 
 
 def plan_ref(entry):
