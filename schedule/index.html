@@ -610,11 +610,12 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
   const SPECIAL=[
     {name:'新执行场景（浏览器代办、曹操叫车）',uc:['AI01','TR02','TR03','SH09','WK07'],kw:/浏览器|执行能力|云端/},
     {name:'AI 打电话（AI03）',uc:['AI03'],kw:/打电话|AI 电话|AI03/},
+    {name:'Ongoings（帮你跟进，中文名暂定）',uc:['AI02'],kw:/^Ongoings/,field:'sc'}, // 只认细分场景以 Ongoings 开头的行，美好生活里用 Ongoings 拍的几条不算（Reina 11/23）
     {name:'美好生活计划',uc:[],kw:/美好生活/},
     {name:'衣物管理',uc:['SH06'],kw:/衣橱|衣柜|穿搭/,auto:'达人原片，唯西拿到原片自动剪，不进排期'},
   ];
   const txt=e=>[e.sc,e.src,e.how,e.k].filter(Boolean).join(' ');
-  const hitE=(sp,e)=>sp.uc.includes(e.uc)||sp.kw.test(txt(e));
+  const hitE=(sp,e)=>sp.uc.includes(e.uc)||sp.kw.test(sp.field?(e[sp.field]||''):txt(e));
   const specRows=SPECIAL.map(sp=>{
     const es=revEntries.filter(e=>hitE(sp,e)), refs=new Set(es.map(entryRef).filter(Boolean));
     const items=revItems.filter(x=>refs.has(x.ref)||(sp.uc.includes(x.u)&&!entryByRef.get(x.ref)));
@@ -625,7 +626,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const t=agg('',sum(es.map(e=>Number(e.n))),all);
     return {sp,rows,t,extra:extra.length};
   });
-  const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="8">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、AI 打电话、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
+  const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="8">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、AI 打电话、Ongoings、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
     `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.slice(0,1).join('')||'—'}</td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(t.items,sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
     (rows.map(renderRow).join('')||'<tr><td colspan="8" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
