@@ -368,13 +368,17 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const booked=liveWeek?.counts||P.WEEK_PLAN;
 const lighting=liveLighting||P.LIGHTING;
 const lit=new Set(Object.keys(lighting.weeks));
-const bookedN=us=>sum(us.map(u=>booked[u]||0));
+const bookedN=us=>sum(us.map(u=>(booked[u]||0)+(CUTB[u]||0))), bookedWX=us=>sum(us.map(u=>booked[u]||0));
 const folded=P.FOLD.filter(u=>!booked[u]&&!lit.has(u));
 // 主表只列到今天后 4 天，周末交的排期行不在 P.E 里；本周上新要和本周已排同口径，按整周算（Reina 11/23 看到 351 / 355 对不上）
 const isoOf=d=>/^\d{4}-/.test(d)?d:`${P.year}-${String(+d.split('/')[0]).padStart(2,'0')}-${String(+d.split('/')[1]).padStart(2,'0')}`;
 const lastE=P.E.reduce((m,e)=>{const x=isoOf(e.d);return x>m?x:m;},'');
 const TAIL=(P.WE_PLAN||[]).filter(e=>Number(e.n)>0&&isoOf(e.d)>lastE).map(e=>({...e,s:'todo',n:Number(e.n),tail:1}));
-const EW=P.E.concat(TAIL);
+// 原片精剪也算进主表的已排、上新和每天的待交（Reina 11/23）；预期不算精剪（没有冷启和跑量基线）
+const CUTW=(P.CUT||[]).filter(e=>Number(e.n)>0).map(e=>{const [y,m,d]=e.d.split('-');return {...e,d:`${+m}/${+d}`,s:'todo',n:Number(e.n),cut:1};});
+const CUTB={};for(const e of CUTW)CUTB[e.uc]=(CUTB[e.uc]||0)+e.n;
+const cutN=us=>sum(us.map(u=>CUTB[u]||0));
+const EW=P.E.concat(TAIL,CUTW);
 const ent=u=>EW.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
 const nowN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','cut'].includes(e.s)).map(e=>e.n));
 const aftN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','add'].includes(e.s)).map(e=>e.n));
@@ -442,13 +446,13 @@ function row(id,code,label,r,es,max,planned,cls,gi){
   const rCell=tag?`<td class="st"><span class="rt ${rtCls[tag]}">${rtTxt[tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${id==='__fold'?'':` data-help="u:${esc(id)}"`}><code>${esc(code)}</code><span>${esc(label)}</span>${risk.length?'<em class="risk">留存预警</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${actCell(r)}${dayCells(r,es,max,x?x.warn:null,gi===1,P.B[id],id)}
-  <td class="st booked"><b>${planned}</b>${uccExp(id,planned)?`<small class="q">预期 ${yuanK(uccExp(id,planned))}</small>`:''}</td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td>${csCell([id])}${yCell}${rCell}</tr>`;
+  <td class="st booked"><b>${planned}</b>${(c=>c?`<small class="q">含精剪 ${c}</small>`:'')(cutN(id==='__fold'?folded:[id]))}${uccExp(id,planned-cutN(id==='__fold'?folded:[id]))?`<small class="q">预期 ${yuanK(uccExp(id,planned-cutN(id==='__fold'?folded:[id])))}</small>`:''}</td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td>${csCell([id])}${yCell}${rCell}</tr>`;
 }
 const NC=4+all.length+5;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="cs" tabindex="0">冷启率<i>近 2 周</i></th><th class="help" data-help="y" tabindex="0">过冷启单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(EW),S1=aftN(EW);
-body+=(()=>{const a=nowN(EW),b=aftN(EW);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+body+=(()=>{const a=nowN(EW),b=aftN(EW);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,EW,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))+cutN(Object.keys(CUTB))}</b>${cutN(Object.keys(CUTB))?`<small class="q">含精剪 ${cutN(Object.keys(CUTB))}</small>`:''}</td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
@@ -458,7 +462,7 @@ function lines(id,code,label,us){
   for(const e of rows){const src=[...new Set(e.srcs)].join('；');h+=`<tr><td class="n">${e.d}</td><td class="n">${e.g} 组</td><td class="n">${e.t}</td><td class="num">${e.n}</td><td class="n">${st[e.s]}${e.to?'：'+esc(e.to):''}</td><td>${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc(src)}</a>`:esc(src)}</td></tr>`}
   return h;
 }
-const candidates=[...new Set(P.GROUPS.flatMap(g=>g[1]).concat(P.FOLD,[...lit],Object.keys(booked).filter(u=>booked[u]>0)))].filter(u=>!folded.includes(u));
+const candidates=[...new Set(P.GROUPS.flatMap(g=>g[1]).concat(P.FOLD,[...lit],Object.keys(booked).filter(u=>booked[u]>0),Object.keys(CUTB)))].filter(u=>!folded.includes(u));
 const displayGroups=[['已点亮',candidates.filter(u=>lit.has(u))],['探索',candidates.filter(u=>!lit.has(u))]];
 displayGroups.forEach(([title,list],gi)=>{
   const exploration=gi===1,tc=exploration?'t3':'t1';
@@ -472,7 +476,7 @@ displayGroups.forEach(([title,list],gi)=>{
   body+=`<tr class="gap"><td colspan="${NC}"></td></tr>`;
   const shareBefore=Math.round(a/(S0||1)*100),shareAfter=Math.round(b/(S1||1)*100);
   const share='上新占 '+(shareBefore===shareAfter?shareAfter+'%':shareBefore+'% → '+shareAfter+'%');
-  body+=`<tr class="grp ${tc}"><td class="gl" colspan="4"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>消耗占 ${(c7/P.T.c7*100).toFixed(0)}%，${share}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b>${(()=>{const e=sum(rows.flatMap(x=>x.us).map(u=>uccExp(u,bookedN([u]))));return e?`<small>预期 ${yuanK(e)}</small>`:''})()}</td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="cs"><small>冷启率</small><b>${(()=>{const c=ucc(rows.flatMap(x=>x.us));return c.n?(c.p/c.n*100).toFixed(0)+'%':''})()}</b></td><td class="sumc help" data-help="y"><small>过冷启单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
+  body+=`<tr class="grp ${tc}"><td class="gl" colspan="4"><span class="ti help" data-help="g:${gi}" tabindex="0">${title}</span>消耗占 ${(c7/P.T.c7*100).toFixed(0)}%，${share}<br>柱高满格 ${money(max)}</td>${heads}<td class="sumc booked"><small>本周已排</small><b>${bookedN(us)}</b>${cutN(us)?`<small>含精剪 ${cutN(us)}</small>`:''}${(()=>{const e=sum(rows.flatMap(x=>x.us).map(u=>uccExp(u,bookedWX([u]))));return e?`<small>预期 ${yuanK(e)}</small>`:''})()}</td><td class="sumc"><small>本周上新</small><b>${a===b?a:a+' → '+b}</b></td><td class="sumc help" data-help="cs"><small>冷启率</small><b>${(()=>{const c=ucc(rows.flatMap(x=>x.us));return c.n?(c.p/c.n*100).toFixed(0)+'%':''})()}</b></td><td class="sumc help" data-help="y"><small>过冷启单条跑量</small></td><td class="sumc help" data-help="rule"><small>条数建议</small></td></tr>`;
   for(const x of rows){body+=row(x.id,x.code,x.label,x.r,x.es,max,bookedN(x.us),tc,gi)}
 });
 { // 执行细节按交付日（Reina 11/20）：每天一个总数，按 A/B 组、素材类型、已点亮/探索拆
