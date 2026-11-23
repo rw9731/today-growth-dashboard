@@ -260,6 +260,7 @@ html,body{margin:0}
 .lag summary{cursor:pointer}.lag b{font-weight:700}.lag .ct{color:var(--sub);font-variant-numeric:tabular-nums;margin-left:6px}.lag ul{margin:6px 0 0;padding-left:16px;font-size:12px;color:var(--sub);line-height:1.6}
 .supply{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:10px 0 0}.sup-card{background:var(--panel);box-shadow:inset 0 0 0 1px var(--grid);padding:10px 14px;flex:1 1 0;min-width:120px}.sup-tot{flex:1.3 1 0}.sup-card .cap-big{margin:2px 0 2px}.sup-card .cap-sub{margin-top:2px}.sup-tot{box-shadow:inset 0 0 0 2px var(--ink)}.sup-tot .cap-big b{font-size:40px}.sup-op{align-self:center;font-size:24px;font-weight:300;color:var(--sub)}.sup-note{align-self:flex-end;font-size:12px;color:var(--mute)}@media (max-width:640px){.sup-card{min-width:0;flex:1 1 40%}.sup-op{display:none}}
 .k .k-sub{font-size:12px;color:var(--mute);font-weight:400;white-space:nowrap}
+.rx-do{margin:4px 0 0 16px;padding:0;list-style:none;font-size:12px;font-weight:400;color:var(--sub);line-height:1.45;white-space:normal;max-width:360px}.rx-do li::before{content:"· "}.rx-do b{font-weight:600;color:var(--ink)}
 .pg{min-width:0}.pg .o-cell{gap:8px}.pg .o-track{min-width:80px}.pg .o-pct{min-width:0}.pg small{display:block;font-size:11px;color:var(--mute);line-height:1.4;margin-top:2px}
 .st .trend{cursor:help}.st .trend:hover,.st .trend:focus-visible{text-decoration:underline dotted;text-underline-offset:3px}
 .tr-lg{float:right;font-size:11px;opacity:.8;margin-left:12px}.tr-lg i{display:inline-block;width:16px;margin:0 4px 3px 8px;vertical-align:middle;border-top:2px solid var(--meter)}.tr-lg i.d{border-top:2px dashed var(--bg)}
@@ -576,7 +577,15 @@ const agg=(u,planned,items)=>{
   return {u,planned,upN:upIt.length,upCents:sum(upIt.map(x=>x.cents||0)),n:items.filter(x=>!x.ext).length,ext:items.filter(x=>x.ext).length,up:items.filter(x=>csOf(x)===true).length,done:items.filter(x=>csOf(x)!==null).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best,items};
 };
 const keys=new Set([...plannedBy.keys(),...itemsBy.keys()]);
-const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,plannedBy.get(k)||0,itemsBy.get(k)||[])};})
+// 每行具体做法（Reina 11/23）：这个 use case 本周排了哪些细分场景、照哪条底版做、精剪剪谁的原片
+const entriesBy=new Map();for(const e of revEntries){const k=branchOf(e.uc,e,entryRef(e))+'|'+e.uc;if(!entriesBy.has(k))entriesBy.set(k,[]);entriesBy.get(k).push(e);}
+const tplName=e=>{const m=/底版视频（照着改的那条）：([^\n]+)/.exec(e.how||'');let t=m?m[1]:(e.tpl||'').replace(/^[A-Z]{2}\d{2}\s+/,'').split('\n')[0];t=t.replace(/^原片：/,'').replace(/^推送视频_/,'').split('。')[0];const q=t.indexOf('）');if(q>0)t=t.slice(0,q+1);return t.length>34?t.slice(0,34)+'…':t;};
+const doLabel=e=>{if(e.t==='精剪'){const m=/：(.+)·(.+)$/.exec(e.src||'');return m?`${m[2]}（${m[1]}）`:e.src;}
+  const sc=(e.sc||String(e.src||'').replace(/^.*?：/,'')).replace(/（按上周回收调整）|（A 组没剪过）/g,'');const t=(e.bt==='头部素材模版变式'||e.k==='变式'||e.tpl)?tplName(e):'';return t?`${sc}｜底版 ${t}`:sc;};
+const doList=es=>{const m=new Map();for(const e of es||[]){const l=doLabel(e);m.set(l,(m.get(l)||0)+Number(e.n||0));}
+  const L=[...m].sort((a,b)=>b[1]-a[1]);if(!L.length)return '';const show=L.slice(0,6);
+  return `<ul class="rx-do">${show.map(([l,n])=>`<li>${esc(l)} <b>${n}</b></li>`).join('')}${L.length>6?`<li class="q">另 ${L.length-6} 项 ${sum(L.slice(6).map(x=>x[1]))} 条</li>`:''}</ul>`;};
+const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,es:entriesBy.get(k)||[],...agg(u,plannedBy.get(k)||0,itemsBy.get(k)||[])};})
   .filter(x=>x.planned>0||x.n>0||x.ext>0).sort((a,b)=>b.cents-a.cents||b.n-a.n||a.u.localeCompare(b.u));
 const revBody=document.querySelector('#rev tbody');
 if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投放数据时也显示（Reina 11/23）
@@ -612,7 +621,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     return `<small class="q" style="display:block" title="${tip}">已放出的预期 ${yuan(e)}</small>${fullTxt}<span class="xp ${k}" title="${tip}">${k==='up'?'超过预期':'不达预期'} ${(r*100).toFixed(0)}%</span>`;};
   const RI=[];
   const extTxt=x=>x.ext?`<small class="q" style="display:block">另有星图达人原生 ${x.ext} 条</small>`:''; // 星图原生不在排期行里，不算进已放出（Reina 11/23）
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}${extTxt(x)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}${upTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(x.items,expOf(x.u,x.xp??x.planned,x.br))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}${doList(x.es)}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}${extTxt(x)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}${upTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(x.items,expOf(x.u,x.xp??x.planned,x.br))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
     return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}${extTxt(t)}</td><td class="n"></td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(t.items,sum(rows.map(r=>expOf(r.u,r.xp??r.planned,r.br))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
@@ -631,7 +640,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const names=new Set(items.map(x=>x.name));
     const extra=sp.uc.flatMap(u=>(P.HIST?.U?.[u]||[]).filter(r=>r[2]&&r[2]>=P.REV.week&&r[2]<=P.REV.end&&!names.has(r[0])).map(r=>({u,name:r[0],first:r[2],cents:Math.round(r[3]*100),act:r[4],ret:r[5],ret_cents:r[5]?Math.round(r[3]*100):0,up:null,url:r[8]||'',typ:({AI:'AI','二创':'达人剪辑'})[r[1]]||r[1]})));
     const all=items.concat(extra), us=[...new Set(es.map(e=>e.uc).concat(all.map(x=>x.u)))];
-    const rows=us.map(u=>({...agg(u,sum(es.filter(e=>e.uc===u).map(e=>Number(e.n))),all.filter(x=>x.u===u)),xp:sum(es.filter(e=>e.uc===u&&e.t!=='精剪').map(e=>Number(e.n)))})).sort((a,b)=>b.cents-a.cents||b.planned-a.planned);
+    const rows=us.map(u=>({...agg(u,sum(es.filter(e=>e.uc===u).map(e=>Number(e.n))),all.filter(x=>x.u===u)),xp:sum(es.filter(e=>e.uc===u&&e.t!=='精剪').map(e=>Number(e.n))),es:es.filter(e=>e.uc===u)})).sort((a,b)=>b.cents-a.cents||b.planned-a.planned);
     const t=agg('',sum(es.map(e=>Number(e.n))),all);
     return {sp,rows,t,extra:extra.length};
   });
