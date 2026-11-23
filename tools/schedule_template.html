@@ -348,7 +348,12 @@ const lighting=liveLighting||P.LIGHTING;
 const lit=new Set(Object.keys(lighting.weeks));
 const bookedN=us=>sum(us.map(u=>booked[u]||0));
 const folded=P.FOLD.filter(u=>!booked[u]&&!lit.has(u));
-const ent=u=>P.E.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
+// 主表只列到今天后 4 天，周末交的排期行不在 P.E 里；本周上新要和本周已排同口径，按整周算（Reina 11/23 看到 351 / 355 对不上）
+const isoOf=d=>/^\d{4}-/.test(d)?d:`${P.year}-${String(+d.split('/')[0]).padStart(2,'0')}-${String(+d.split('/')[1]).padStart(2,'0')}`;
+const lastE=P.E.reduce((m,e)=>{const x=isoOf(e.d);return x>m?x:m;},'');
+const TAIL=(P.WE_PLAN||[]).filter(e=>Number(e.n)>0&&isoOf(e.d)>lastE).map(e=>({...e,s:'todo',n:Number(e.n),tail:1}));
+const EW=P.E.concat(TAIL);
+const ent=u=>EW.filter(e=>Array.isArray(u)?u.includes(e.uc):e.uc===u);
 const nowN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','cut'].includes(e.s)).map(e=>e.n));
 const aftN=es=>sum(es.filter(e=>e.w!==0&&['live','done','todo','add'].includes(e.s)).map(e=>e.n));
 const zero=()=>({c7:0,rate:null,cpr:null,n:P.days.map(()=>0),s:P.days.map(()=>[0,0,0,0]),k:P.days.map(()=>[0,0,0,0]),rt:P.days.map(()=>[0,0,0,0,0,0,0,0])});
@@ -420,8 +425,8 @@ function row(id,code,label,r,es,max,planned,cls,gi){
 const NC=4+all.length+5;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="cs" tabindex="0">冷启率<i>近 2 周</i></th><th class="help" data-help="y" tabindex="0">过冷启单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
-const S0=nowN(P.E),S1=aftN(P.E);
-body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
+const S0=nowN(EW),S1=aftN(EW);
+body+=(()=>{const a=nowN(EW),b=aftN(EW);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
 const st={done:'已交没花钱',todo:'待交',add:'建议加',cut:'建议拿掉'};
 function lines(id,code,label,us){
   const map={};
