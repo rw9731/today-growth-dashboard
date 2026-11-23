@@ -425,8 +425,8 @@ const yuanK=v=>v>=10000?(v/10000).toFixed(1)+'万':'¥'+Math.round(v).toLocaleSt
 const csCell=us=>{const c=ucc(us);return c.n?`<td class="st"><b>${(c.p/c.n*100).toFixed(0)}%</b><small class="q">${c.p}/${c.n} 条</small></td>`:'<td class="st q">·</td>';};
 function row(id,code,label,r,es,max,planned,cls,gi){
   const a=nowN(es),b=aftN(es),x=P.X[id],risk=retentionRisks(r);
-  const cc=ucc([id]),bandTop=cc.band!=null?`<b>${yuanK(cc.band)}</b><small class="q">7 天均值 ${cc.bn} 条</small>`:'';
-  const yCell=x?`<td class="st yc">${bandTop}<small class="q">${x.mult.toFixed(1)} 倍 放量 ${x.hit}/${x.n}</small>${x.mx!=null?`<small class="q">去最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:(bandTop?`<td class="st">${bandTop}</td>`:'<td class="st q"></td>');
+  const cc=ucc([id]),bandTop=cc.band!=null?`<b>${yuanK(cc.band)}</b><small class="q">过冷启 ${cc.bn} 条，上传后 7 天平均</small>`:'';
+  const yCell=x?`<td class="st yc">${bandTop}<small class="q">全部新素材前 3 天 ${x.mult.toFixed(1)} 倍 放量 ${x.hit}/${x.n}</small>${x.mx!=null?`<small class="q">去最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:(bandTop?`<td class="st">${bandTop}</td>`:'<td class="st q"></td>');
   const tag=x?adviceTag(x,gi,risk):'';
   const rCell=tag?`<td class="st"><span class="rt ${rtCls[tag]}">${rtTxt[tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${id==='__fold'?'':` data-help="u:${esc(id)}"`}><code>${esc(code)}</code><span>${esc(label)}</span>${risk.length?'<em class="risk">留存预警</em>':''}</button></td>
@@ -434,7 +434,7 @@ function row(id,code,label,r,es,max,planned,cls,gi){
   <td class="st booked"><b>${planned}</b>${uccExp(id,planned)?`<small class="q">预期 ${yuanK(uccExp(id,planned))}</small>`:''}</td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td>${csCell([id])}${yCell}${rCell}</tr>`;
 }
 const NC=4+all.length+5;
-document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="cs" tabindex="0">冷启率<i>近 2 周</i></th><th class="help" data-help="y" tabindex="0">单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
+document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="cs" tabindex="0">冷启率<i>近 2 周</i></th><th class="help" data-help="y" tabindex="0">过冷启单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
 let body='',details='';
 const S0=nowN(P.E),S1=aftN(P.E);
 body+=(()=>{const a=nowN(P.E),b=aftN(P.E);return `<tr class="row tot" data-id="__all"><td class="name"><code>全盘</code></td><td class="st"><b>${k(P.T.c7)}</b></td>${rateCell(P.T)}${actCell(P.T)}${dayCells(P.T,P.E,Math.max(...P.T.s.map(sum)),P.WT,false,P.B.__all,'__all')}<td class="st booked"><b>${sum(Object.values(booked))}</b></td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td><td></td><td></td><td></td></tr>`})();
@@ -769,7 +769,7 @@ const batchRt=(u,day)=>{if(u!=='__all')return ((P.BD||{})[u]||{})[day]||null;con
 function yHelp(){
   const t=(document.getElementById('ydef')||{}).textContent||'';
   const fm=(t.match(/首花 (.+?) 的素材/)||[])[1]||'',gy=(t.match(/条均 ¥([\d,]+)/)||[])[1]||'';
-  return `<b>单条跑量</b>：这个方向再做一条新素材，大概能花出多少钱，是全盘平均的几倍。它不是总消耗除以总上新，也不是现在在跑的每条花多少，老素材不算。<br><br><b>怎么算</b>：看 ${fm} 第一次花钱的素材，每条前 3 天花了多少，除以全盘平均每条 ¥${gy}。每天的钱按全盘一天 ¥15 万折算，这样不受当天预算多少影响。前天才首花的只有两天，第 3 天按回测曲线估。<br><br><b>下面两行</b>：「11 条，放量 6」是算了 11 条，其中 6 条单日花到 ¥2,000 以上。「去掉最大一条 2.0 倍」是拿掉跑得最好的那条再算一次；这个数低，说明靠一条撑着，不能照着多做。<br><br><b>注意</b>：它只看能不能花出钱，不看钱花得值不值，要和「次留」那列一起看。`;
+  return `<b>过冷启单条跑量</b>（Reina 11/23 改）：大字是近 2 周上传、过了冷启（上传 3 天内花到 ¥400）的素材，上传后 7 天平均每条花多少，没过冷启的不算；只算满 7 天的。<br><br>下面小字是全部新素材（不管过没过冷启）的<b>单条跑量</b>，条数建议按它判：这个方向再做一条新素材，大概能花出多少钱，是全盘平均的几倍。它不是总消耗除以总上新，也不是现在在跑的每条花多少，老素材不算。<br><br><b>怎么算</b>：看 ${fm} 第一次花钱的素材，每条前 3 天花了多少，除以全盘平均每条 ¥${gy}。每天的钱按全盘一天 ¥15 万折算，这样不受当天预算多少影响。前天才首花的只有两天，第 3 天按回测曲线估。<br><br><b>下面两行</b>：「11 条，放量 6」是算了 11 条，其中 6 条单日花到 ¥2,000 以上。「去掉最大一条 2.0 倍」是拿掉跑得最好的那条再算一次；这个数低，说明靠一条撑着，不能照着多做。<br><br><b>注意</b>：它只看能不能花出钱，不看钱花得值不值，要和「次留」那列一起看。`;
 }
 function placeTip(x,y){
   const w=tip.offsetWidth,h=tip.offsetHeight;
