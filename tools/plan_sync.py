@@ -88,6 +88,11 @@ def roll_week(P, T):
     P['meters'] = [['A 组 AI', 0, c['A'][0]], ['A 组二创', 0, c['A'][1]], ['B 组 AI', 0, c['B'][0]], ['B 组二创', 0, c['B'][1]]]
     P['week'] = mon.isoformat()
     P['MOVES'], P['MT'], P['cap_extra'] = [], {}, {}
+    # 顺延到这周的行，换周后就是这周的排期（11/23：不清掉的话本周回收表、已排条数会漏掉这些行）
+    end = (mon + dt.timedelta(days=6)).isoformat()
+    for e in P.get('E', []):
+        if mon.isoformat() <= e.get('d', '') <= end and '顺延' in (e.get('to') or ''):
+            e['to'] = ''
     return f'换周：plan 的 week {old} → {mon}{note}'
 
 
@@ -155,6 +160,11 @@ def main():
                     if not stale_next and x['r'] >= start and d and in_scope(d) and len(olds) == 1 and old['d'] != d.isoformat():
                         changes.append(f"{g} 第 {x['r']} 行 日期 {old['d']} → {d}")
                         keep[olds[0]] = dict(old, d=d.isoformat(), to=old.get('to') or ('顺延到下周' if d == nxt else ''))
+                    elif (not stale_next and len(olds) == 1 and old.get('to') == '顺延到下周' and d and mon <= d < nxt
+                          and old['d'] == d.isoformat()):
+                        # 上周同步时记成「下周」的行，换周后就是这周的排期，不再算顺延（11/23：不清掉的话本周回收表少算这些行）
+                        changes.append(f"{g} 第 {x['r']} 行 换周后算本周排期，去掉「顺延到下周」")
+                        keep[olds[0]] = dict(old, to='')
                     continue
                 dd = d if (x['r'] >= start and d and in_scope(d)) else dt.date.fromisoformat(old['d'])
                 ne = entry(g, x, dd, old)
