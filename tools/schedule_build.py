@@ -502,9 +502,9 @@ def supply_html(week_by_group, rows):
     card = lambda k, n, sub, cls='': (f'<div class="sup-card{cls}"><div class="cap-k">{k}</div><div class="cap-big"><b>{n}</b> 条</div>'
                                       f'<div class="cap-sub">{sub}</div></div>')
     return ('<div class="supply">'
-            + card('本周素材供给', total, '唯西排期 + 原片精剪', ' sup-tot')
+            + card('本周素材供给', total, '唯西 AI / 真人二创 + 原片精剪', ' sup-tot')
             + '<span class="sup-op">=</span>'
-            + card('唯西排期', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}（AI / 真人二创）')
+            + card('唯西 AI / 真人二创', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}')
             + '<span class="sup-op">+</span>'
             + card('原片精剪', sum(cut.values()), f'A 组 {cut["A"]} · B 组 {cut["B"]}<br>{t}')
             + '<small class="sup-note">悦普、知定堂另算，见下面进度</small></div>')
