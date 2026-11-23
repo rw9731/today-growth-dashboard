@@ -1,6 +1,6 @@
 // 排期进度：读一个飞书 tab，只读，不写任何单元格。
 // 在内置浏览器打开带 ?sheet=<tab id> 的表格页面（切 tab 只能靠 URL），用 javascript_tool 跑这个文件全文，返回值原样存成 <输出目录>/<tab id>.json。
-// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
+// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
 // B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期
 // 本周实际产出还要读 A 组两个 tab：lheDJa 星广脚本审核表、L1c0HC 付费达人执行表（唯西达人），和悦普执行表 https://my.feishu.cn/wiki/OmjFw42Tpiq8lykD9zzclekTnfd?sheet=5cypAT（11月执行表，每月一张）。
 // 然后跑 python3 tools/schedule_progress.py，见 tools/RUN.md「排期看板（每天）」。
@@ -15,7 +15,7 @@ const __WANT = {
   '付费达人执行表': ['合作形式', 'uc_id', '视频链接', '发布时间', '发布链接'],
   '悦普执行表': ['合作平台', '合作形式', '稿件进度', '发布档期', '发布链接'],
 };
-const __key = (n) => (/月执行表$/.test(n) ? '悦普执行表' : n); // 悦普每月一张：11月执行表、12月执行表
+const __key = (n) => (/月执行表$/.test(n) ? '悦普执行表' : n === '每周新素材排期' ? '扩量素材迭代排期' : n); // 悦普每月一张：11月执行表、12月执行表；A 组 11/23 把 kMJdAv 改名「每周新素材排期」，按原来的表处理
 // 文件名里的日期：_20261104、-261104。返回 MMDD，没有就空。
 const __fd = (t) => { const L = [...(t || '').matchAll(/(?<![0-9a-zA-Z])(?:20)?26(\d{2})(\d{2})(?!\d)/g)].filter((m) => +m[1] >= 1 && +m[1] <= 12); return L.length ? L[L.length - 1][1] + L[L.length - 1][2] : ''; }; // 改过的版本名字里有好几个日期，取最后一个
 // 调整写在开头的【】里（【11/4 调整：顺延下周，这周先不拍】）。正文里也可能出现「先不拍」，那种不算。

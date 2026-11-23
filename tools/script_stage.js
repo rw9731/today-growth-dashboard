@@ -1,7 +1,7 @@
 // 素材产出看板「还没成片的脚本」：读脚本表和扩量排期当下的状态，只读，不写任何单元格（Reina 11/11）。
 // 只看最新时间点，不追溯过去：每天跑一次，结果只放进当周页面。
 // 4 个 tab 都要跑：在内置浏览器打开带 ?sheet=<tab id> 的表格页面，用 javascript_tool 跑这个文件全文，返回的 JSON 原样存成 /tmp/out/stage_<tab id>.json，再跑 output_build.py。
-// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：f18d7b 脚本及成片、kMJdAv 扩量素材迭代排期
+// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：f18d7b 脚本及成片、kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）
 // B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、3KtioB 扩量素材迭代排期
 // 脚本表：「脚本状态」是需修改 / 修改后待审核 / 未审核（或空） = 还在脚本中；「脚本状态」是可制作、「成片」还空着 = 脚本已完成、还没开始做。
 // 成片有了的、脚本未通过的、脚本备注写了先不拍 / 不用拍 / 弃用 / 顺延这类的都不算（Reina 11/11：说了不要做的、弃用的不算）。A 组从第 485 行（11 月起）读。

@@ -140,7 +140,7 @@ Reina 11/4 定：「本周素材排期」放进素材看板。Reina 11/23 改成
 2. `python3 tools/schedule_data.py --sheet <分日文件> --map <素材映射文件> --date D --out-dir /tmp/sched`。输出 `NO_DATA`：表里还没有 D，等 20 分钟再读。有 WARNING（PS03 没标子方向）写进最后回复。
    补链接：点柱子面板里素材名链到这条投出去的视频，不用博主原帖（原帖在后面单独写「原帖」）。schedule_data 跑完后，`python3 tools/links_js.py /tmp/results.json --out /tmp/linkjs --roi /tmp/sched/roi.json`，在内置浏览器跑 yulan.js，存成 yulan.json，再跑 `python3 tools/links_merge.py /tmp/linkjs`，然后才跑 schedule_build。唯西日报只覆盖一部分，最近几批经常没有（11/6：11/4 那批 79 条全没有），所以再跑巨量直取：取这些窗口里还没有 video 的素材，用 jl.js 同样的 NEED 在巨量素材页跑，存成 /tmp/linkjs/jl.json 再 links_merge（巨量链接约 2 天过期，每天都要刷新）。扩量之外，星广素材巨量库里常找不到，没有就不带链接。这一步改出来的 tools/links.json 是临时的，schedule_build 之后 git checkout -- tools/links.json，不提交。连不上浏览器就跳过，还没有视频的素材名不带链接。
 3. 进度核对（要用 Reina 电脑上的内置浏览器，只读，不改飞书）。下面 6 个 tab 每个都 navigate 到带 `?sheet=` 的网址（切 tab 只能靠 URL），用 javascript_tool 跑 tools/schedule_read.js 全文，返回值原样存成 /tmp/sched/feishu/<tab id>.json：
-   - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
+   - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）、f18d7b 脚本及成片、nPw5Dc 新素材每周排期
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪、3KtioB 扩量素材迭代排期（是空的也存，能正常跑）
    然后 `python3 tools/schedule_progress.py --dir /tmp/sched/feishu --date T --out /tmp/sched/progress.json`。某组的 tab 没读全，这组不进页面，missing 里写着，最后回复里说哪组没核对。
    分日表审核核对（Reina 11/5）：`python3 tools/review_cover.py --sheet <分日文件> --date D --dir /tmp/sched/feishu --out /tmp/sched/review_cover.json`，跑完 `cp /tmp/sched/review_cover.json notes/review-D.json`（冷启三类排查读它算「审核要求修改还在投」）。用 schedule_read.js 返回的 cov，查 11/5 起首花的扩量、二剪有没有都审过：no_table 没传表就投了，not_reviewed 传了没审就投了（含他们自己标通过、没有审核备注的），need_fix 要改还在投。第一行 line 进推送，名单写进 claude/schedule-progress-MMDD.md。只告诉 Reina，不发群，不改飞书。11/5 用 11/3、11/4 的数据试跑过：扩量都对得上，没传表的 27 条全是 A 组新原片首剪（today koc_UC_博主_二创_精剪_剪辑），11/5 23:39 已在 Today素材群告诉单志远、赵勇洲，以后这类也传到扩量排期，对应行或最下面加一行。
@@ -282,7 +282,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 两组每天交的素材统一放在 output/（output/ 是这周，output/<周一>/ 按周归档，目录 outputs.json），日报、周报、排期页导航里都有「素材产出」。分类：头部模板变式（照「头部素材结构提取和变式（11/9）」22 个模板做的，含同脚本换画面），目标占 70%、每天至少 20 条；新测试约 30%；只换前贴（只换开头 hook 画面，名字里写「换前贴」）的不算数。另有 AI / 二创、一级分类、use case、细分场景几个维度，每条都链到飞书里的成片那一格（?sheet=…&range=列行的 base64），已经投出去的再带巨量视频和累计消耗。
 
 1. 内置浏览器打开下面 5 个 tab（带 ?sheet=），用 javascript_tool 跑 tools/output_read.js 全文，跑之前把 SINCE 改成 D 的 MMDD（每天只读昨天和今天交的，旧的已经存在 notes/output-items.json；周一改成上周一，全周重读一遍）。返回的文本原样存成 /tmp/out/<tab id>.tsv。
-   - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片
+   - A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）、f18d7b 脚本及成片
    - B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：3KtioB 扩量素材迭代排期、c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪
    同一个域名下可以把脚本存进 localStorage（键名 __claude_ 开头，用 AsyncFunction 跑，结束时删掉），不用每个 tab 都贴一遍。
 1之二. 还没成片的脚本（Reina 11/11，只看最新时间点，不追溯过去，只放进当周页面）：在 A 组 f18d7b、kMJdAv，B 组 c665d9、3KtioB 四个 tab 用 javascript_tool 跑 tools/script_stage.js 全文（同域名可以先存进 localStorage 键 __claude_stage、用 AsyncFunction 跑，跑完删掉），返回的 JSON 原样存成 /tmp/out/stage_<tab id>.json（不要手抄，从会话记录里解析工具结果写文件）。口径：「脚本状态」需修改、修改后待审核、未审核 = 还在脚本中；可制作、「成片」空着、交付日在本周 = 脚本已完成、还没开始做（以前的、几个月前一直没做的不算）。说了不要做的、弃用的不算：脚本备注或对应扩量排期行写了先不拍、不用拍、弃用、顺延这类。交付日：A 组按脚本名里写的扩量排期行号（-75-、76行、【60】、_158_）取那一行的日期，热点按名字里的 MMDD，都没有沿用表里上一条的；B 组按产出日期，没有就按 3KtioB「45，46脚本已贴表」写到它的那一行。A 组从第 485 行读，B 组全表。成片没回填、但同 use case 同标题素材已经交了的挪到 done。没读到就沿用 notes/output-stage.json。
@@ -401,3 +401,4 @@ M = 上周一。数据要等「投放数据_分日」更新到周日（周一 07
 - 两组「原片精剪排期」tab（A 0QkwzO、B mICbZe）每次更新排期页前用浏览器读一遍，写 notes/cut-items.json（g、id、row、d 交付日、typ、uc、who、n、done、films 成片 1–3）。
 - 排期页 4 节改名「本周素材回收」：总数 = 唯西排期 + 原片精剪；已点亮 / 探索各加一行「原片精剪」（use case 已点亮进已点亮）；分组标题同时写唯西排期自己的占比（70% 目标看这个）。
 - 精剪不套 AI/二创 的预期（没基线），不进产能卡片和 A、B 组进度。成片按文件名关联投放 ID，按成片所在行算（名字里的编号可能抄错）。
+- 11/23 A 组把 kMJdAv 改名「每周新素材排期」（B 组 3KtioB 还叫扩量素材迭代排期）。浏览器里按名字点 tab 时 A 组用新名字；schedule_read.js 已把新名字当原来的表处理，其余脚本按 sheet id 读，不受影响。

@@ -2,7 +2,7 @@
 // 在内置浏览器打开带 ?sheet=<tab id> 的表格页面，用 javascript_tool 跑这个文件全文。跑之前把下面 SINCE 改成要读的第一天（MMDD）。
 // 返回一段文本，每行一条素材，用 \t 分隔：组 表 行号 成片列 日期MMDD UC 细分场景 类型(V 变式 / S 同脚本换画面 / N 新测试 / X 只换前贴不计) AI或二创(A/E) 素材名 这次换什么(扩量表「怎么改」里的一句) 成片附件 fileToken 成片状态（这一行的「成片状态」，只有「通过」的才算，Reina 11/10）
 // 原样存成 <输出目录>/<tab id>.tsv，再跑 python3 tools/output_build.py，见 tools/RUN.md「素材产出看板」。
-// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 扩量素材迭代排期、f18d7b 脚本及成片
+// A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）、f18d7b 脚本及成片
 // B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：3KtioB 扩量素材迭代排期、c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪
 const SINCE = '1109';
 const __CFG = {
