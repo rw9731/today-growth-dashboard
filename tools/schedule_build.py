@@ -508,12 +508,14 @@ def supply_html(week_by_group, rows, ext=None):
     card = lambda k, n, sub, cls='': (f'<div class="sup-card{cls}"><div class="cap-k">{k}</div><div class="cap-big"><b>{n}</b> 条</div>'
                                       f'<div class="cap-sub">{sub}</div></div>')
     return ('<div class="supply">'
-            + card('本周素材供给', total, '唯西 AI / 真人二创 + 原片精剪' + (' + 外部 agency' if ext else ''), ' sup-tot')
+            + card('本周素材供给', total, '唯西 AI / 真人二创 + 原片精剪' + (' + 星广 + 抖音星图' if ext else ''), ' sup-tot')
             + '<span class="sup-op">=</span>'
             + card('唯西 AI / 真人二创', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}')
             + '<span class="sup-op">+</span>'
             + card('原片精剪', sum(cut.values()), f'A 组 {cut["A"]} · B 组 {cut["B"]}<br>{t}')
-            + ('<span class="sup-op">+</span>' + card('外部 agency', sum(ext.values()), ' · '.join(f'{k} {v}' for k, v in ext.items())) if ext else '')
+            + ''.join('<span class="sup-op">+</span>' + card(title, sum(v for _, v in parts), ' · '.join(f'{k} {v}' for k, v in parts))
+                      for title, parts in (('星广', [(k[:-2], v) for k, v in ext.items() if k.endswith('星广')]),
+                                           ('抖音星图', [(k[:-2], v) for k, v in ext.items() if k.endswith('星图')])) if parts)
             + '</div>')
 
 def cap_html(plan, T, weekly_plan):
