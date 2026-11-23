@@ -1,10 +1,11 @@
-"""出当天的排期看板，更新 schedules.json。
+"""出排期看板（每周一页，每天在这周的页面里更新），更新 schedules.json。
 
 用法（在仓库根目录）：
   python3 tools/schedule_data.py --sheet <分日文件> --date D --out-dir /tmp/sched
   python3 tools/schedule_build.py --data-dir /tmp/sched --date T [--progress /tmp/sched/progress.json] [--agency /tmp/sched/agency.json]
 
-写 schedule/T/index.html、schedules.json；T 是最新一天时同时写 schedule/index.html。
+写 schedule/<T 所在周的周一>/index.html（Reina 11/23 定：排期每周一个链接，每天更新这一页），更新 schedules.json（每周一条：date 是周一，updated 是看板日 T）；这周是最新一周时同时写 schedule/index.html。
+上周的页面在新一周的周一到周三用 tools/schedule_rev_refresh.py 只刷新「本周排期素材回收」。
 排期内容只从 tools/schedule_plan.json 读，use case 名字从 tools/ucs.json 读，页面骨架是 tools/schedule_template.html。
 标了 schedule-source=manual 的页面（11/4 那版）不覆盖，要覆盖加 --force。
 """
@@ -64,7 +65,7 @@ NAV_JS = """<script>
   const rest=list.filter(r=>!shown.includes(r));
   if(rest.length){{
     const sel=document.getElementById('sx-more');
-    const head=document.createElement('option');head.value='';head.textContent='更早 '+rest.length+' 天';
+    const head=document.createElement('option');head.value='';head.textContent='更早 '+rest.length+' 周';
     sel.replaceChildren(head,...rest.map(r=>{{const o=document.createElement('option');o.value=hrefOf(r);o.textContent=r.label;return o}}));
     sel.hidden=false;
     sel.addEventListener('change',()=>{{if(sel.value)location.href=sel.value}});
@@ -91,6 +92,15 @@ def short_range(a, b):
 
 def label(d):
     return f'{md(d)} 周{WEEK[d.weekday()]}'
+
+
+def monday(d):
+    return d - dt.timedelta(days=d.weekday())
+
+
+def week_label(d):
+    m = monday(d)
+    return full_range(m, m + dt.timedelta(days=6))
 
 
 def dec(s):
@@ -569,8 +579,9 @@ def output_html(o):
 def render(tpl, P, fields, rel, T):
     blob = json.dumps(P, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     rep = dict(fields)
-    rep.update(REL=rel, DATE=T.isoformat(), LABEL=label(T), NAV_CSS=NAV_CSS, NAV=NAV_HTML.format(rel=rel, date=T.isoformat(), label=label(T)),
-               NAV_JS=NAV_JS.format(rel=rel, date=T.isoformat()))
+    wk = monday(T).isoformat()
+    rep.update(REL=rel, DATE=T.isoformat(), LABEL=label(T), NAV_CSS=NAV_CSS, NAV=NAV_HTML.format(rel=rel, date=wk, label=week_label(T)),
+               NAV_JS=NAV_JS.format(rel=rel, date=wk))
     live = rel == '../'
     rep['PLAN_MODULE'] = ' type="module"' if live else ''
     rep['PLAN_LOAD'] = (
@@ -645,7 +656,7 @@ def main():
         sys.exit(f'T {T} 要晚于数据日 {D}')
     if T != D + dt.timedelta(days=1):
         print(f'WARNING 数据日 {D} 不是 T 的前一天')
-    day_dir = os.path.join(a.root, 'schedule', T.isoformat())
+    day_dir = os.path.join(a.root, 'schedule', monday(T).isoformat())
     page = os.path.join(day_dir, 'index.html')
     if os.path.exists(page) and 'name="schedule-source" content="manual"' in open(page, encoding='utf-8').read() and not a.force:
         sys.exit(f'{page} 是手工定稿的版本，不覆盖；确实要覆盖加 --force')
@@ -721,15 +732,16 @@ def main():
 
     path = os.path.join(a.root, 'schedules.json')
     lst = json.load(open(path, encoding='utf-8')) if os.path.exists(path) else []
-    lst = [r for r in lst if r['date'] != T.isoformat()]
-    lst.append(dict(date=T.isoformat(), label=label(T)))
+    wk = monday(T).isoformat()
+    lst = [r for r in lst if r['date'] != wk]
+    lst.append(dict(date=wk, label=week_label(T), updated=T.isoformat(), updated_label=label(T)))
     lst.sort(key=lambda r: r['date'], reverse=True)
     json.dump(lst, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    latest = lst[0]['date'] == T.isoformat()
+    latest = lst[0]['date'] == wk
     if latest:
         open(os.path.join(a.root, 'schedule', 'index.html'), 'w', encoding='utf-8').write(render(tpl, P, fields, '../', T))
     red = [u for u, x in X.items() if x['warn'] and u in lit]
-    print(json.dumps(dict(date=T.isoformat(), D=D.isoformat(), latest=latest, in_week=in_week, all=WT, red={u: X[u]['warn'] for u in red},
+    print(json.dumps(dict(date=T.isoformat(), week=wk, page=os.path.relpath(page, a.root), D=D.isoformat(), latest=latest, in_week=in_week, all=WT, red={u: X[u]['warn'] for u in red},
                           schedules=[r['date'] for r in lst][:5]), ensure_ascii=False))
 
 

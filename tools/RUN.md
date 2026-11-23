@@ -134,7 +134,7 @@ compute.py 自动算：
 
 ## 排期看板（每天）
 
-Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天归档可回溯。页面在 schedule/<T>/，schedule/ 是最新一天，schedules.json 是目录。日报、周报导航里的「素材排期」链到这里。T = 今天（看板当天），D = 昨天（数据日）。「投放数据_分日」更新到 D 之后跑。
+Reina 11/4 定：「本周素材排期」放进素材看板。Reina 11/23 改成每周一个链接：页面在 schedule/<T 所在周的周一>/，每天在这一页里更新，schedule/ 是最新一周，schedules.json 是目录（每周一条，date 是周一，updated 是最后一次更新的看板日）。11/23 已把 11/4 到 11/22 的每日页面合并：每周的页面用这周最后一天的版本，其他日期的旧链接自动跳到所在周（旧版本在 git 历史里），11/4 手工定稿版原样保留、不进目录。日报、周报导航里的「素材排期」链到这里。T = 今天（看板当天），D = 昨天（数据日）。「投放数据_分日」更新到 D 之后跑。
 
 1. 读 `'投放数据_分日'!A1:AB`（日报读过就复用）和 `'素材映射'!A1:J`（J 列是「子方向（PS03）」），get_values 结果存成文件。
 2. `python3 tools/schedule_data.py --sheet <分日文件> --map <素材映射文件> --date D --out-dir /tmp/sched`。输出 `NO_DATA`：表里还没有 D，等 20 分钟再读。有 WARNING（PS03 没标子方向）写进最后回复。
@@ -149,7 +149,8 @@ Reina 11/4 定：「本周素材排期」放进素材看板，从 11/4 起按天
    - 知定堂 https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP（排期和审核）：本周完成按成片通过算，不按交付日期、不按发布（Reina 11/20）。表里没有通过时间，交付日期是排期日，上周的行常在这周才通过。agency_read.js 带上每条视频的文件名，tools/zdt_log.py 把每条视频第一次看到「通过」的日期记在 tools/agency_targets.json 的 zdt_pass_log（每天新通过的记成 D），排期看板的本周完成、素材产出看板的每日星广都按这个日期算，日志每天要提交。11/20 建日志时 35 条算上周通过，其余 35 条这周通过但不知道哪天，记在 11/16。晚了 = 交付日期在上周一到昨天、现在还没通过的行。
    目标在 tools/agency_targets.json（键是周一）：读「Today AI X 悦普 项目执行群」「Today AI X 知定堂」当天的日报（悦普「本周发布进度」里抖音视频的本周预期；知定堂「本周目标进度」星广已成片 x/目标），和文件里不一样就改，note 写来源和日期。这周没写的沿用上一周，页面标「目标沿用上周」。11/16 那周悦普按 Reina 11/12 说的 30 个（25–30）。
    然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「素材团队执行进度」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
-4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/T/index.html、schedule/index.html，更新 schedules.json。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
+4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/<本周一>/index.html、schedule/index.html，更新 schedules.json。
+   上周回收（Reina 11/23）：T 是周一到周三时，再跑 `python3 tools/schedule_rev_refresh.py --data-dir /tmp/sched --week <上周一>`，用最新数据重算上周页面的「本周排期素材回收」（上周末上传的素材周二才走完 3 天冷启窗口，周日激活的次留周一才回传），上周页面其他部分不动。临时版（分日表还没有 D）不跑这一步。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
 5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
 改排期（Reina 11/5 定）：今天之后的排期，确定要改就直接在原来的行上改，把这一行的 UC、原素材、条数、怎么改都换成新的，不加「调整」标记、不写改了什么、不留旧内容，也不用通知唯西。改之前先看「扩量素材名」有没有已交，已交的不动。今天的行不改。
@@ -223,7 +224,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
 - 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT 都要更新。换之前先把上一周的产出目标（ai、ec 取上一周 meters 的合计，xg、kol 取 output_targets）写进 targets_by_week[上周一]，周一页面看上周产出时用它，不然会拿新一周的目标去比。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
 - 周一自动换周（Reina 11/23：周一就要出新一周的视图，能看到新一周排期分布，不等手动换）：plan_sync.py 发现 T 所在那周的周一晚于 week，就先换周（上周目标写进 targets_by_week，week 换成这周一，产能取 capacity_by_week[这周一]，没写就沿用上周并打印提示；MOVES、MT、cap_extra 清空），再按飞书同步这周的行，meters 已排数和 sub 按 E 重算。所以周一跑排期看板时 plan_sync 一定要加 --apply。飞书里写「下周」的老顺延行（如 A 组第 210–216 行）换周后不再往后推。下周产能要提前写进 capacity_by_week[下周一]。
-- schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
+- schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算；11/23 合并成每周页面后它不进目录，那周的页面是 schedule/2026-11-02/。
 
 页面日期都按 D 和 T 算：柱子是 D 往前 14 天，排期列是 T 到 T+4。过了日子的 todo、cut、add 不再算进后面的供给，看进度那一行；已交没花钱的挪到今天，asof 之后上线的条数扣掉。
 
