@@ -581,8 +581,9 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
   const bandTd=c=>c.band!=null?`${yuan(c.band)}<small class="q" style="display:block">${c.bn} 条的平均</small>`:(c.p?'<small class="q">过冷启的还没满 7 天</small>':'—');
   const csTd=x=>x.done?`<td class="n"><b>${(x.up/x.done*100).toFixed(0)}%</b><small class="q" style="display:block">过 ${x.up} / 满 3 天 ${x.done} 条</small></td>`:`<td class="n"><small class="q">${x.n?'都还没满 3 天':'—'}</small></td>`; // 冷启率（Reina 11/21）：已放出且 3 天窗口走完的里，过冷启的占比
   const upTd=x=>x.upN?`<td class="num">${reviewMoney(Math.round(x.upCents/x.upN))}<small class="q" style="display:block">${x.upN} 条的平均</small></td>`:'<td class="num"><small class="q">—</small></td>'; // 过冷启素材单条跑量（Reina 11/23）
-  // 和预期比（Reina 11/23）：实际 ÷ 预期 ≥120% 超过预期（绿），80–120% 达到预期，<80% 不达预期（红）；这周还没过完时前面写「目前」
+  // 和预期比（Reina 11/23）：实际 ÷ 预期 ≥120% 超过预期（绿），80–120% 差得不多不标，<80% 不达预期（红）；这周还没过完时前面写「目前」
   const expTd=(e,c)=>{if(!e)return '';const r=(c||0)/100/e, k=r>=1.2?'up':r>=0.8?'ok':'dn', w={up:'超过预期',ok:'达到预期',dn:'不达预期'}[k], live=P.REV.through<P.REV.end;
+    if(k==='ok')return `<small class="q" style="display:block" title="实际 ÷ 预期 = ${(r*100).toFixed(0)}%，差得不多不标">预期 ${yuan(e)}</small>`;
     return `<small class="q" style="display:block">预期 ${yuan(e)}</small><span class="xp ${k}${live?' live':''}" title="实际 ÷ 预期 = ${(r*100).toFixed(0)}%${live?'，这周还没过完':''}">${live?'目前':''}${w} ${(r*100).toFixed(0)}%</span>`;};
   const RI=[];
   const extTxt=x=>x.ext?`<small class="q" style="display:block">另有星图达人原生 ${x.ext} 条</small>`:''; // 星图原生不在排期行里，不算进已放出（Reina 11/23）
