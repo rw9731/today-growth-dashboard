@@ -216,6 +216,7 @@ schedule_read.js 只返回算进度要的字段和最近 10 天的行，脚本�
 - 飞书排期和 E 对表（Reina 11/12：飞书排期改了，关联的数据要一起改）：在 A 组 kMJdAv、B 组 3KtioB 跑 tools/plan_rows_read.js 全文，结果存成 /tmp/sync/<tab id>.json，再跑 `python3 tools/plan_sync.py --dir /tmp/sync --date T`（只打印差异），没问题加 `--apply` 写回。它按行号对：UC、条数、AI/二创对不上的按表重写，表里新加的这周、下周的行补上，表里删掉的行从 E 删掉；不碰别的周和不是扩量排期行的条目。每次改飞书排期（不管是我们改的还是唯西改的）都要跑；每天出排期页面之前也跑一次。11/12 第一次跑改了 18 处（11/11 调产能时飞书改了，E 没跟着改）。
 - 表里写了「先不拍」「顺延」（开头的【】或脚本备注）的行不算该交。B 组二创那张表没有备注列，这种行写进 plan 的 skip_rows。
 - 每周一换新一周：week、asof、sub、meters（已排 / 本周产能）、E、MOVES、MT 都要更新。换之前先把上一周的产出目标（ai、ec 取上一周 meters 的合计，xg、kol 取 output_targets）写进 targets_by_week[上周一]，周一页面看上周产出时用它，不然会拿新一周的目标去比。week 和 T 所在那周对不上时，页面不显示产能条、结论和要改什么，脚本打 WARNING。
+- 周一自动换周（Reina 11/23：周一就要出新一周的视图，能看到新一周排期分布，不等手动换）：plan_sync.py 发现 T 所在那周的周一晚于 week，就先换周（上周目标写进 targets_by_week，week 换成这周一，产能取 capacity_by_week[这周一]，没写就沿用上周并打印提示；MOVES、MT、cap_extra 清空），再按飞书同步这周的行，meters 已排数和 sub 按 E 重算。所以周一跑排期看板时 plan_sync 一定要加 --apply。飞书里写「下周」的老顺延行（如 A 组第 210–216 行）换周后不再往后推。下周产能要提前写进 capacity_by_week[下周一]。
 - schedule/2026-11-04/ 是 11/4 手工定稿版（schedule-source=manual），不覆盖，也不重算。
 
 页面日期都按 D 和 T 算：柱子是 D 往前 14 天，排期列是 T 到 T+4。过了日子的 todo、cut、add 不再算进后面的供给，看进度那一行；已交没花钱的挪到今天，asof 之后上线的条数扣掉。

@@ -58,6 +58,59 @@ def entry(g, x, d, old=None):
     return e
 
 
+def roll_week(P, T):
+    """周一换新一周（Reina 11/23：周一就要能看到新一周的排期分布，不等手动换周）。
+    T 所在那周的周一晚于 plan 的 week 时：上周产出目标写进 targets_by_week，week 换成这周一，
+    产能取 capacity_by_week[这周一]（Reina 给的周产量），没有就沿用上周；MOVES、MT、cap_extra 清空。
+    每天怎么分只按周总量推（周六日每组 AI、二创各 10，其余平摊到周一到周五），只管周总量。"""
+    mon = T - dt.timedelta(days=T.weekday())
+    old = dt.date.fromisoformat(P['week'])
+    if mon <= old:
+        return ''
+    m = P.get('meters') or []
+    if len(m) == 4:
+        P.setdefault('targets_by_week', {})[old.isoformat()] = {
+            'ai': m[0][2] + m[2][2], 'ec': m[1][2] + m[3][2],
+            'xg': P.get('output_targets', {}).get('xg', 0), 'kol': P.get('output_targets', {}).get('kol', 0)}
+    cap = (P.get('capacity_by_week') or {}).get(mon.isoformat()) or {}
+    ga, gb = cap.get('唯西A组信息流') or {}, cap.get('唯西B组') or {}
+    note = ''
+    if ga.get('AI') and gb.get('AI'):
+        c = {'A': (ga['AI'], ga['二创']), 'B': (gb['AI'], gb['二创'])}
+        P['week_total'] = {'A': ga['AI'] + ga['二创'], 'B': gb['AI'] + gb['二创']}
+        P['cap_day'] = {g: {'wd': {'AI': round((ai - 20) / 5), '二创': round((ec - 20) / 5)}, 'we': {'AI': 10, '二创': 10}}
+                        for g, (ai, ec) in c.items()}
+        P['cap_note'] = (f"{mon.month}/{mon.day} 这周产能取 capacity_by_week：A 组信息流 {P['week_total']['A']}（AI {c['A'][0]}、二创 {c['A'][1]}），"
+                         f"B 组 {P['week_total']['B']}（AI {c['B'][0]}、二创 {c['B'][1]}）。每天怎么分按周六日各 10、其余平摊推的，只管周总量。")
+    else:
+        c = {'A': (m[0][2], m[1][2]), 'B': (m[2][2], m[3][2])} if len(m) == 4 else {'A': (0, 0), 'B': (0, 0)}
+        note = '（这周的产能还没写进 capacity_by_week，沿用上周）'
+    P['meters'] = [['A 组 AI', 0, c['A'][0]], ['A 组二创', 0, c['A'][1]], ['B 组 AI', 0, c['B'][0]], ['B 组二创', 0, c['B'][1]]]
+    P['week'] = mon.isoformat()
+    P['MOVES'], P['MT'], P['cap_extra'] = [], {}, {}
+    return f'换周：plan 的 week {old} → {mon}{note}'
+
+
+def week_meters(P, E, mon):
+    """meters 的已排条数和 sub 按 E 里这周的扩量行重算。"""
+    d0, d1 = mon.isoformat(), (mon + dt.timedelta(days=6)).isoformat()
+    s = {}
+    days = set()
+    for e in E:
+        if SRC.match(e.get('src', '')) and d0 <= e['d'] <= d1 and e['d'] >= d0:
+            s[(e['g'], e['t'])] = s.get((e['g'], e['t']), 0) + e['n']
+            days.add(e['d'])
+    m = P.get('meters') or []
+    if len(m) == 4:
+        for row, key in zip(m, [('A', 'AI'), ('A', '二创'), ('B', 'AI'), ('B', '二创')]):
+            row[1] = s.get(key, 0)
+    last = max(days) if days else ''
+    P['sub'] = (f"这周（{mon.month}/{mon.day}–{(mon + dt.timedelta(days=6)).month}/{(mon + dt.timedelta(days=6)).day}）的排期按飞书 A 组、B 组扩量排期同步"
+                + (f"，飞书现在排到 {int(last[5:7])}/{int(last[8:])}" if last else '') +
+                f"：A 组 AI {s.get(('A', 'AI'), 0)}、二创 {s.get(('A', '二创'), 0)}，B 组 AI {s.get(('B', 'AI'), 0)}、二创 {s.get(('B', '二创'), 0)}。"
+                + (P.get('cap_note') or ''))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', required=True)
@@ -67,6 +120,7 @@ def main():
     T = dt.date.fromisoformat(a.date)
     path = os.path.join(ROOT, 'tools', 'schedule_plan.json')
     P = json.load(open(path, encoding='utf-8'))
+    rolled = roll_week(P, T)
     mon = dt.date.fromisoformat(P['week'])
     nxt = mon + dt.timedelta(days=7)
     in_scope = lambda d: d and mon <= d <= nxt
@@ -96,7 +150,9 @@ def main():
                 tot = sum(E[i]['n'] for i in olds)
                 same = all(E[i]['uc'] == x['uc'] for i in olds) and tot == int(x['n']) and E[olds[0]]['t'] == kind(x)
                 if same:
-                    if x['r'] >= start and d and in_scope(d) and len(olds) == 1 and old['d'] != d.isoformat():
+                    # 表里写「下周」的老顺延行（11/23：A 组第 210–216 行是 11/10 顺延的），换周后不再往后推
+                    stale_next = (x.get('day') or '').startswith('下周') and old['d'] < nxt.isoformat()
+                    if not stale_next and x['r'] >= start and d and in_scope(d) and len(olds) == 1 and old['d'] != d.isoformat():
                         changes.append(f"{g} 第 {x['r']} 行 日期 {old['d']} → {d}")
                         keep[olds[0]] = dict(old, d=d.isoformat(), to=old.get('to') or ('顺延到下周' if d == nxt else ''))
                     continue
@@ -129,8 +185,11 @@ def main():
     for g in 'AB':
         print(f"{g} 组本周（{mon}–{mon + dt.timedelta(days=6)}）E 里扩量行合计：{tot(E, g, str(mon), str(mon + dt.timedelta(days=6)))} → {tot(out, g, str(mon), str(mon + dt.timedelta(days=6)))}；下周 {tot(E, g, str(nxt), str(nxt))} → {tot(out, g, str(nxt), str(nxt))}")
     print(f'共 {len(changes)} 处')
-    if a.apply and changes:
+    if rolled:
+        print(rolled)
+    if a.apply and (changes or rolled):
         P['E'] = out
+        week_meters(P, out, mon)
         P['asof'] = T.isoformat()
         json.dump(P, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
         print('已写回 tools/schedule_plan.json')
