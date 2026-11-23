@@ -681,6 +681,11 @@ def main():
     fut = [T + dt.timedelta(days=i) for i in range(5)]
     W = [md(d) for d in fut]
     E = view_entries(plan, U, days, D, T)
+    # 执行细节只放这一周（周一到周日）的排期行（Reina 11/23：11/16 那周的页面里出现了 11/23 的行，前几天的又没了）
+    mon_ = T - dt.timedelta(days=T.weekday())
+    DET = [{**e, 'd': md(date(e['d'])), 'late': int(date(e['d']) < T)}
+           for e in plan['E'] if not is_deferred(e) and int(e.get('n') or 0) > 0
+           and mon_ <= date(e['d']) <= mon_ + dt.timedelta(days=6)]
     B = batch_view(R, plan['GROUPS'])
     X = rule_rows(RU, U, E, GL, W, T)
     WT = total_warn(X, GL['t0'])
@@ -712,7 +717,7 @@ def main():
     review = weekly_recovery(weekly_plan, production, R.get('review_facts'), T, D)
     diagnostics = R.get('rev', {})
     review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
-    P = dict(E=E, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
+    P = dict(E=E, DET=DET, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, groups, D, total, days), LIGHTING=lighting, RETENTION_REVIEW=RETENTION_REVIEW,

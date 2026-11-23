@@ -443,10 +443,10 @@ displayGroups.forEach(([title,list],gi)=>{
 });
 { // 执行细节按交付日（Reina 11/20）：每天一个总数，按 A/B 组、素材类型、已点亮/探索拆
   const shown=new Set(candidates.concat(folded)), map={};
-  P.E.filter(e=>shown.has(e.uc)&&e.s!=='live'&&Number(e.n)>0).forEach(e=>{const key=[e.d,e.uc,e.g,e.t,e.s,e.to].join('|');const x=map[key]??={...e,n:0,srcs:[]};x.n+=Number(e.n);x.srcs.push(e.src)});
+  (P.DET||P.E).filter(e=>shown.has(e.uc)&&e.s!=='live'&&Number(e.n)>0).forEach(e=>{const key=[e.d,e.uc,e.g,e.t,e.s,e.late,e.to].join('|');const x=map[key]??={...e,n:0,srcs:[]};x.n+=Number(e.n);x.srcs.push(e.src)});
   const byDay={};for(const e of Object.values(map))(byDay[e.d]??=[]).push(e);
   const order=d=>{const i=all.indexOf(d);return i<0?999:i;};
-  const days=Object.keys(byDay).sort((a,b)=>order(a)-order(b)||a.localeCompare(b));
+  const dn=d=>{const [m,dd]=d.split('/').map(Number);return m*100+dd;};const days=Object.keys(byDay).sort((a,b)=>dn(a)-dn(b));
   const cnt=(es,f)=>{const m={};for(const e of es){const k=f(e)||'其他';m[k]=(m[k]||0)+e.n}return m;};
   const fmt=m=>Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${esc(k)} ${v}`).join('、');
   const seenU=new Set();
@@ -456,9 +456,9 @@ displayGroups.forEach(([title,list],gi)=>{
     const g=fmt(cnt(es,e=>e.g?e.g+' 组':'')), t=fmt(cnt(es,e=>e.t)), tier=fmt(cnt(es,e=>lit.has(e.uc)?'已点亮':'探索'));
     details+=`<tr class="u th t1 dayh"><td colspan="6">${d} 周${wk(d)}${d===P.today?'（今天）':''}　共 ${tot} 条<small>${g}　｜　${t}　｜　${tier}</small></td></tr>`;
     for(const e of es){const src=[...new Set(e.srcs)].join('；');const first=!seenU.has(e.uc);seenU.add(e.uc);
-      details+=`<tr${first?` data-u="${esc(e.uc)}"`:''}><td class="n">${esc(e.uc)} ${esc(P.UC[e.uc]||'')}</td><td class="n">${e.g?e.g+' 组':'—'}</td><td class="n">${esc(e.t||'—')}</td><td class="num">${e.n}</td><td class="n">${st[e.s]||e.s}${e.to?'：'+esc(e.to):''}</td><td>${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc(src)}</a>`:esc(src)}</td></tr>`}
+      details+=`<tr${first?` data-u="${esc(e.uc)}"`:''}><td class="n">${esc(e.uc)} ${esc(P.UC[e.uc]||'')}</td><td class="n">${e.g?e.g+' 组':'—'}</td><td class="n">${esc(e.t||'—')}</td><td class="num">${e.n}</td><td class="n">${e.late?'交付日已过（交没交看上面的进度）':(st[e.s]||e.s)}${e.to?'：'+esc(e.to):''}</td><td>${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${esc(src)}</a>`:esc(src)}</td></tr>`}
   }
-  if(!days.length)details='<tr><td colspan="6" class="q">没有待交的排期</td></tr>';
+  if(!days.length)details='<tr><td colspan="6" class="q">这一周没有排期</td></tr>';
 }
 document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:160px"><col style="width:62px"><col style="width:54px"><col style="width:44px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:48px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:58px"><col style="width:108px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
