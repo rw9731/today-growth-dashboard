@@ -584,7 +584,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td>${csTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
   const SPECIAL=[
-    {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},
+    {name:'新执行场景（浏览器代办、曹操叫车）',uc:['AI01','TR02','TR03','SH09','WK07'],kw:/浏览器|执行能力|云端/},
     {name:'美好生活计划',uc:[],kw:/美好生活/},
     {name:'衣物管理',uc:['SH06'],kw:/衣橱|衣柜|穿搭/,auto:'达人原片，唯西拿到原片自动剪，不进排期'},
   ];
