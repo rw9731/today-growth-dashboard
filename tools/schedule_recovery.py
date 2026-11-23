@@ -1,6 +1,7 @@
 """将本周排期、产出底表与分日投放记录关联，按生产素材统计回收。"""
 
 from collections import defaultdict
+import json
 from datetime import timedelta
 import re
 
@@ -44,6 +45,56 @@ def xingtu_items(hist, week, end):
                             typ='星图达人原生 · ' + compute.XT[hit[0]][0].replace('星图', ''),
                             due='', produced='', released=first, first=first,
                             cents=round(cost * 100), ret_cents=round(c1 * 100), act=act or 0, ret=ret or 0, up=None))
+    return out
+
+
+
+def cut_week(path, week, end):
+    """原片精剪（Reina 11/23「放一起」）：两组「原片精剪排期」tab 的行，按交付日落在这一周的算进本周素材回收。
+    notes/cut-items.json 由浏览器读两个 tab 写入（g、id、row、d 交付日、typ 达人原片/星广、uc、who 博主、n 条数、films 成片名）。"""
+    try:
+        src = json.load(open(path, encoding='utf-8'))
+    except FileNotFoundError:
+        return [], {}
+    rows = [r for r in src.get('rows', []) if week <= r.get('d', '') <= end and int(r.get('n') or 0) > 0]
+    return rows, src.get('tabs', {})
+
+
+def cut_entries(rows):
+    return [dict(g=r['g'], uc=r['uc'], d=r['d'], t='精剪', n=int(r['n']), id=r['id'], ref=f"{r['g']}:{r['id']}:{r['uc']}",
+                 src=f"{r['g']} 组原片精剪 {r['id']}：{r['typ']}·{r['who']}", sc='原片精剪：' + r['typ']) for r in rows]
+
+
+def cut_items(rows, facts, T):
+    """精剪成片按名字（去 .mp4、符号）关联投放素材 ID；按成片所在行算，不按名字里写的编号（B 组有几行名字抄错了编号）。"""
+    if not facts:
+        return []
+    by_name = defaultdict(set)
+    for mid, fact in facts.items():
+        for name in fact['names']:
+            by_name[norm(name)].add(mid)
+    claims = defaultdict(list)
+    for r in rows:
+        for name in r.get('films', []):
+            for mid in by_name.get(norm(name), ()):
+                claims[mid].append((r['id'], name))
+    linked = defaultdict(list)
+    for mid, keys in claims.items():
+        if len(set(keys)) == 1:
+            linked[keys[0]].append(mid)
+    by_id = {r['id']: r for r in rows}
+    out = []
+    for (rid, name), ids in linked.items():
+        r = by_id[rid]
+        ids = sorted(ids)
+        records = [facts[mid] for mid in ids]
+        verdicts = [f['up'] for f in records if f['up'] is not None]
+        out.append(dict(
+            id=ids[0], ids=ids, ref=f"{r['g']}:{rid}:{r['uc']}", u=r['uc'], name=re.sub(r'\.(mp4|mov)$', '', name), cut=True,
+            typ='原片精剪 · ' + r['typ'], due=r['d'], produced='', released=min(f['released'] for f in records),
+            first=min((f['first'] for f in records if f['first']), default=''),
+            cents=sum(f['cents'] for f in records), ret_cents=sum(f['ret_cents'] for f in records),
+            act=sum(f['act'] for f in records), ret=sum(f['ret'] for f in records), up=any(verdicts) if verdicts else None))
     return out
 
 

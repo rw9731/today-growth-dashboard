@@ -14,7 +14,7 @@ from collections import defaultdict
 
 from schedule_data import STABLE, flow, total_warn
 from schedule_entries import is_deferred, planned_entries
-from schedule_recovery import weekly_recovery, xingtu_items
+from schedule_recovery import weekly_recovery, xingtu_items, cut_week, cut_entries, cut_items
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -716,13 +716,15 @@ def main():
             production = json.load(source)
     review = weekly_recovery(weekly_plan, production, R.get('review_facts'), T, D)
     review['items'] += xingtu_items(R.get('hist'), review['week'], review['end'])
+    cut_rows, _ = cut_week(os.path.join(ROOT, 'notes', 'cut-items.json'), review['week'], review['end'])  # 原片精剪放进本周素材回收（Reina 11/23）
+    review['items'] += cut_items(cut_rows, R.get('review_facts'), T)
     diagnostics = R.get('rev', {})
     review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
     P = dict(E=E, DET=DET, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
              futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, groups, D, total, days), LIGHTING=lighting, RETENTION_REVIEW=RETENTION_REVIEW,
-             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), WE_PLAN=[{k: e.get(k) for k in ('uc', 'd', 'g', 't', 'n', 'k', 'tpl', 'src', 'sc', 'how', 'tier', 'bt')} for e in weekly_plan], meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D), UCCS=load_uccs(D))
+             WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), CUT=cut_entries(cut_rows), WE_PLAN=[{k: e.get(k) for k in ('uc', 'd', 'g', 't', 'n', 'k', 'tpl', 'src', 'sc', 'how', 'tier', 'bt')} for e in weekly_plan], meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D), UCCS=load_uccs(D))
     asof = date(plan['asof'])
     prog = json.load(open(a.progress, encoding='utf-8')) if a.progress else None
     if a.progress is None:
