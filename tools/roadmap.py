@@ -478,9 +478,16 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
         tested = sum(1 for u in ucs if u['cost'])
         st = '已点亮' if lit_n else ('测试中' if tested else '没测')
         names = '、'.join(u['uc'] for u in ucs if u['lit_wk'])
-        l1trs.append(f'<tr><td><span class="pill {STC[st]}">{st}</span></td>'
-                     f'<td class="uc"><b>{E(name)}</b><span class="sub" title="{E(names)}">点亮 {lit_n}/{len(ucs)} 个 use case{"：" + E(names) if names else ""}</span></td>'
+        l1trs.append(f'<tr class="l1r" data-l1="{E(name)}" title="点开看这个分类下各 use case 的消耗排名"><td><span class="pill {STC[st]}">{st}</span></td>'
+                     f'<td class="uc"><i class="car">▸</i><b>{E(name)}</b><span class="sub" title="{E(names)}">点亮 {lit_n}/{len(ucs)} 个 use case{"：" + E(names) if names else ""}</span></td>'
                      f'{tl_tds(o, name)}<td class="num">{fy(g["cost"]) if g["cost"] else "—"}</td><td class="num">{md(o["lit_wk"]) + " 起" if o["lit_wk"] else ""}</td></tr>')
+        # 点一级分类展开下面的 use case，按累计消耗排名（Reina 11/23）
+        for i, u in enumerate(sorted(ucs, key=lambda u: -(u['cost'] or 0)), 1):
+            share = (u['cost'] or 0) / g['cost'] if g['cost'] else 0
+            lit_txt = md(u['lit_wk']) + ' 起' if u['lit_wk'] else ''
+            l1trs.append(f'<tr class="l1c" data-for-l1="{E(name)}" hidden><td><span class="pill sm {STC[u["st"]]}">{u["st"]}</span></td>'
+                         f'<td class="uc sc"><b>{i}</b> <b>{E(u["uc"])}</b> {E(u["name"])}<span class="sub">{"占这个分类 " + format(share, ".0%") if u["cost"] else "还没花钱"}</span></td>'
+                         f'{tl_tds(u, u["uc"])}<td class="num">{fy(u["cost"]) if u["cost"] else "—"}</td><td class="num">{lit_txt}</td></tr>')
     prog = TL['prog']
     n_all = len(out)
     nP = len(prog)
@@ -525,7 +532,7 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     <div class="prog">{pg}</div>
     <p class="note">首次同时达到两项条件的周记为点亮周。{md(cur)}–{md(D)} 有 {latest_qualified} 个 use case 同时达标，其中 {latest_new} 个首次点亮。</p>
     <h3>每个一级分类每周</h3>
-    <p class="note">同一级分类下所有 use case 按周加总，颜色是这个分类当周花费占大盘的比例（档位同下表）。★ 是分类里第一个 use case 点亮的那周，「点亮 N/M」是到现在点亮的 use case 数。</p>
+    <p class="note">同一级分类下所有 use case 按周加总，颜色是这个分类当周花费占大盘的比例（档位同下表）。★ 是分类里第一个 use case 点亮的那周，「点亮 N/M」是到现在点亮的 use case 数。<b>点一个分类展开它下面的 use case</b>，按累计消耗从高到低排名，每个 use case 同样按周分格。<button type="button" class="tgl" id="l1all">全部展开</button></p>
     <div class="rmwrap" role="region" aria-label="一级分类按周点亮" tabindex="0"><table class="rm tl l1t">
       <thead><tr><th>状态</th><th>一级分类</th>{th_w}<th class="num">累计消耗</th><th class="num">首次点亮</th></tr></thead>
       <tbody>{''.join(l1trs)}</tbody>
@@ -612,7 +619,13 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
   .wk .pc b { font-size: 11px; color: var(--color-fg-muted); font-weight: 600; }
   .wk .pc span { color: var(--color-fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .wk .pc .mu { color: var(--color-fg-muted); }
-  .wk tr.ucr { cursor: pointer; }
+  .wk tr.ucr, .wk tr.l1r { cursor: pointer; }
+  .wk tr.l1r:hover td:nth-child(-n+2) { background: color-mix(in srgb, var(--color-fg) 4%, transparent); }
+  .wk tr.l1r.open .car { transform: rotate(90deg); }
+  .wk .tl tr.l1c td { padding-top: 3px; padding-bottom: 3px; }
+  .wk .tl tr.l1c td:nth-child(1), .wk .tl tr.l1c td:nth-child(2) { background: var(--color-bg); }
+  .wk .tl tr.l1c td.uc { padding-left: 1.6rem; font-size: 12px; font-weight: 400; }
+  .wk .tl tr.l1c td.tc { font-size: 11px; }
   .wk tr.ucr:hover td { background: color-mix(in srgb, var(--color-fg) 4%, transparent); }
   .wk tr.ucr:hover td.cell { background: revert-layer; }
   .wk .car { display: inline-block; width: 1em; font-style: normal; color: var(--color-fg-muted); transition: transform .15s; }
@@ -704,6 +717,15 @@ def render(out, cnt, D, d30, first_day, wk0, wk1, tier_n, lighting, weak_sched, 
     rs.forEach(function(r){{ r.hidden = !open; }}); tr.classList.toggle('open', open);
   }}
   document.querySelectorAll('tr.ucr').forEach(function(tr){{ tr.addEventListener('click', function(){{ tog(tr); }}); }});
+  function tog1(tr, open){{
+    var n = tr.getAttribute('data-l1'), rs = [].filter.call(document.querySelectorAll('tr.l1c'), function(r){{ return r.getAttribute('data-for-l1') === n; }});
+    if(!rs.length) return;
+    if(open === undefined) open = rs[0].hidden;
+    rs.forEach(function(r){{ r.hidden = !open; }}); tr.classList.toggle('open', open);
+  }}
+  document.querySelectorAll('tr.l1r').forEach(function(tr){{ tr.addEventListener('click', function(){{ tog1(tr); }}); }});
+  var b1 = document.getElementById('l1all'), all1 = false;
+  if(b1) b1.addEventListener('click', function(){{ all1 = !all1; document.querySelectorAll('tr.l1r').forEach(function(tr){{ tog1(tr, all1); }}); b1.textContent = all1 ? '全部收起' : '全部展开'; }});
   var b = document.getElementById('scall'), all = false;
   if(b) b.addEventListener('click', function(){{ all = !all; document.querySelectorAll('tr.ucr').forEach(function(tr){{ tog(tr, all); }}); b.textContent = all ? '全部收起' : '全部展开'; }});
 }})();
