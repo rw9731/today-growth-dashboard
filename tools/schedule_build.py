@@ -580,7 +580,7 @@ def render(tpl, P, fields, rel, T):
     blob = json.dumps(P, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     rep = dict(fields)
     wk = monday(T).isoformat()
-    rep.update(REL=rel, DATE=T.isoformat(), LABEL=label(T), NAV_CSS=NAV_CSS, NAV=NAV_HTML.format(rel=rel, date=wk, label=week_label(T)),
+    rep.update(REL=rel, DATE=T.isoformat(), LABEL=label(T), WEEK=week_label(T), NAV_CSS=NAV_CSS, NAV=NAV_HTML.format(rel=rel, date=wk, label=week_label(T)),
                NAV_JS=NAV_JS.format(rel=rel, date=wk))
     live = rel == '../'
     rep['PLAN_MODULE'] = ' type="module"' if live else ''
