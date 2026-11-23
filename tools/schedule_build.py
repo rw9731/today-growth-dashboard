@@ -460,6 +460,50 @@ def progress_html(prog, T, wt=None, week_by_group=None, confirmed=None):
     return rows
 
 
+def cut_progress_html(rows, T):
+    """原片精剪进度（Reina 11/23：达人 / 星广剪辑的总数要在第一屏）。已交 = 精剪 tab 成片格填了的条数（每行不超过条数）；
+    到昨天该交 = 交付日在今天以前的行的条数。精剪不占唯西每周排期产能，单列两行。"""
+    out = ''
+    for g in ('A', 'B'):
+        rs = [r for r in rows if r['g'] == g]
+        cap = sum(int(r['n']) for r in rs)
+        if not cap:
+            continue
+        got = sum(min(int(r['n']), len(r.get('films', []))) for r in rs)
+        pace = sum(int(r['n']) for r in rs if r['d'] < T.isoformat())
+        gap = pace - got
+        state = f'<em class="o-late">落后 {gap}</em>' if gap > 0 else '<em class="o-over">没落下</em>'
+        typ = defaultdict(int)
+        for r in rs:
+            typ[r['typ']] += int(r['n'])
+        days = sorted(r['d'] for r in rs)
+        bits = ['、'.join(f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1])),
+                f'交付日 {md(date(days[0]))}–{md(date(days[-1]))}', f'到昨天该交 {pace}，已交 {got}', '不占每周排期产能']
+        tip = f'{g} 组原片精剪 tab 本周 {len(rs)} 行 {cap} 条，成片格已填 {got} 条'
+        out += (f'<span class="k">{g} 组精剪</span><div class="pg"><div class="o-cell">'
+                f'<span class="o-track" title="{html.escape(tip)}"><span class="o-fill" style="width:{min(100, got / cap * 100):.1f}%"></span><i class="o-pace" style="left:{min(100, pace / cap * 100):.1f}%"></i></span>'
+                f'<span class="o-pct"><b>{got}</b>/{cap}{state}</span></div>'
+                f'<small>{" · ".join(bits)}</small></div>')
+    return out
+
+
+def supply_html(week_by_group, rows):
+    """第一屏的本周素材供给总数（Reina 11/23）：唯西排期 + 原片精剪，和「本周素材回收」的合计一致。"""
+    wx = {g: week_by_group.get(g, 0) for g in ('A', 'B')}
+    cut = defaultdict(int)
+    typ = defaultdict(int)
+    for r in rows:
+        cut[r['g']] += int(r['n'])
+        typ[r['typ']] += int(r['n'])
+    if not sum(cut.values()):
+        return ''
+    total = sum(wx.values()) + sum(cut.values())
+    t = '、'.join(f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1]))
+    return (f'<p class="supply">本周素材供给 <b>{total}</b> 条 = 唯西排期 <b>{sum(wx.values())}</b>（A {wx["A"]}、B {wx["B"]}）'
+            f' + 原片精剪 <b>{sum(cut.values())}</b>（A {cut["A"]}、B {cut["B"]}；{t}）'
+            f'<small>悦普、知定堂另算，见下面进度</small></p>')
+
+
 def cap_html(plan, T, weekly_plan):
     """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面每天只列已排条数看匀不匀（Reina 11/18：只管每周总量，哪天早做晚做都行，不标每天超、空）。
     产能按 plan 的 cap_day：周一到周五一套、周六周日一套（周六日每组每天约 20 条，AI 和二创 1:1）。
@@ -734,8 +778,9 @@ def main():
     fields = dict(
         SUB=short_sub(plan.get('sub', '')) if in_week and not (prog and any(v.get('week') for v in prog.get('groups', {}).values())) else '',
         PROG=progress_html(prog, T, plan.get('week_total') if in_week else None, week_by_group if in_week else None,
-                           plan.get('capacity_confirmed', {}).get(plan['week']) if in_week else None) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
+                           plan.get('capacity_confirmed', {}).get(plan['week']) if in_week else None) + cut_progress_html(cut_rows, T) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
         CAP=cap_html(plan, T, weekly_plan) if in_week else '',
+        SUPPLY=supply_html(week_by_group, cut_rows) if in_week else '',
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
