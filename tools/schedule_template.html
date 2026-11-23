@@ -506,8 +506,8 @@ const revTotal=sum(Object.values(revBooked));
 const revReady=P.REV.available&&P.REV.through>=P.REV.week;
 document.getElementById('rev-range').textContent=reviewDay(P.REV.week)+'–'+reviewDay(P.REV.end);
 document.getElementById('rev-note').textContent=revReady
-  ? `本周供给 ${revTotal+cutTotal} 条：唯西 AI / 真人二创 ${revTotal} 条、原片精剪 ${cutTotal} 条（两组精剪 tab，按交付日算；不占唯西每周排期产能）。已核实放出 ${revItems.filter(x=>!x.ext).length} / ${revTotal+cutTotal} 条${(n=>n?`（另有星图达人原生 ${n} 条，不在排期里，只算消耗、次留和冷启）`:'')(revItems.filter(x=>x.ext).length)}，投放数据截至 ${reviewDay(P.REV.through)}。上传当天起 3 天（上传日和后两天）花到 ¥400 计为「过冷启」；冷启率 = 已放出、3 天窗口已走完的素材里过冷启的占比，窗口还没走完、也还没到 ¥400 的不进分母。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
-  : `本周供给 ${revTotal+cutTotal} 条（唯西 AI / 真人二创 ${revTotal}、原片精剪 ${cutTotal}），投放数据截至 ${reviewDay(P.REV.through)}，本周排期的素材还没有投放数据，先列出已排的 use case 和条数。`;
+  ? `唯西和精剪本周 ${revTotal+cutTotal} 条：唯西 AI / 真人二创 ${revTotal} 条、原片精剪 ${cutTotal} 条（两组精剪 tab，按交付日算；不占唯西每周排期产能；外部 agency 不在这张表里）。已核实放出 ${revItems.filter(x=>!x.ext).length} / ${revTotal+cutTotal} 条${(n=>n?`（另有星图达人原生 ${n} 条，不在排期里，只算消耗、次留和冷启）`:'')(revItems.filter(x=>x.ext).length)}，投放数据截至 ${reviewDay(P.REV.through)}。上传当天起 3 天（上传日和后两天）花到 ¥400 计为「过冷启」；冷启率 = 已放出、3 天窗口已走完的素材里过冷启的占比，窗口还没走完、也还没到 ¥400 的不进分母。按思维导图分支分组：已点亮的按排期行分头部素材模版变式（排期写了变式或模板）、新细分场景（排的场景还没点亮）、已点亮场景出新内容（其余）；探索的按 use case 分冲点亮（有素材类型格点亮或单条跑量判「加」「靠一条」）、量少留存好（激活满 100、次留高全盘 1 个点以上且成本不高 ¥3 以上）、新方向（其余）。`
+  : `唯西和精剪本周 ${revTotal+cutTotal} 条（唯西 AI / 真人二创 ${revTotal}、原片精剪 ${cutTotal}），投放数据截至 ${reviewDay(P.REV.through)}，本周排期的素材还没有投放数据，先列出已排的 use case 和条数。`;
 // 按思维导图分支归类（Reina 11/20）：已点亮 = 头部素材模版变式 / 已点亮场景出新内容 / 新细分场景；探索 = 新方向 / 冲点亮 / 量少留存好（use case 级）
 const BR_LIT=['头部素材模版变式','已点亮场景出新内容','新细分场景','原片精剪'], BR_EXP=['新方向','冲点亮','量少留存好','原片精剪（探索方向）'];
 const esc_=lighting.esc||{}, grid=new Set(lighting.grid||[]), tplk=lighting.tplk||{};

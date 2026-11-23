@@ -20,6 +20,16 @@
    "note": "知定堂日报 11/20（数据截止 11/19）：本周目标进度 星广已发布成片 84/120"
   }
  },
+ "2026-11-23": {
+  "yp": {
+   "t": 7,
+   "note": "Reina 11/20 给的 11/23 这周产量：抖音星图达人 7 个（schedule_plan.json capacity_by_week）"
+  },
+  "zdt": {
+   "t": 30,
+   "note": "Reina 11/20 给的 11/23 这周产量：星广（知定堂）30 条（schedule_plan.json capacity_by_week）"
+  }
+ },
  "zdt_pass_log": {
   "1-麦麦-学习与成长真人1-cpa.mp4": "2026-11-20",
   "1118-today-01-H.mp4": "2026-11-18",

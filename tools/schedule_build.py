@@ -487,7 +487,12 @@ def cut_progress_html(rows, T):
     return out
 
 
-def supply_html(week_by_group, rows):
+def agency_week(plan, T):
+    c = plan.get('capacity_by_week', {}).get(monday(T).isoformat(), {})
+    return {'知定堂星广': c.get('星广（知定堂）', 0), '芦鸣星广': c.get('星广（芦鸣，新）', 0), '悦普星图': c.get('抖音星图达人', 0)}
+
+
+def supply_html(week_by_group, rows, ext=None):
     """第一屏的本周素材供给总数（Reina 11/23）：唯西排期 + 原片精剪，和「本周素材回收」的合计一致。"""
     wx = {g: week_by_group.get(g, 0) for g in ('A', 'B')}
     cut = defaultdict(int)
@@ -497,17 +502,19 @@ def supply_html(week_by_group, rows):
         typ[r['typ']] += int(r['n'])
     if not sum(cut.values()):
         return ''
-    total = sum(wx.values()) + sum(cut.values())
+    ext = {k: v for k, v in (ext or {}).items() if v}  # 外部 agency 这周产量（Reina 11/23：悦普星图、知定堂和芦鸣星广也算进总数），取 capacity_by_week
+    total = sum(wx.values()) + sum(cut.values()) + sum(ext.values())
     t = '、'.join(f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1]))
     card = lambda k, n, sub, cls='': (f'<div class="sup-card{cls}"><div class="cap-k">{k}</div><div class="cap-big"><b>{n}</b> 条</div>'
                                       f'<div class="cap-sub">{sub}</div></div>')
     return ('<div class="supply">'
-            + card('本周素材供给', total, '唯西 AI / 真人二创 + 原片精剪', ' sup-tot')
+            + card('本周素材供给', total, '唯西 AI / 真人二创 + 原片精剪' + (' + 外部 agency' if ext else ''), ' sup-tot')
             + '<span class="sup-op">=</span>'
             + card('唯西 AI / 真人二创', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}')
             + '<span class="sup-op">+</span>'
             + card('原片精剪', sum(cut.values()), f'A 组 {cut["A"]} · B 组 {cut["B"]}<br>{t}')
-            + '<small class="sup-note">悦普、知定堂另算，见下面进度</small></div>')
+            + ('<span class="sup-op">+</span>' + card('外部 agency', sum(ext.values()), ' · '.join(f'{k} {v}' for k, v in ext.items())) if ext else '')
+            + '</div>')
 
 def cap_html(plan, T, weekly_plan):
     """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面每天只列已排条数看匀不匀（Reina 11/18：只管每周总量，哪天早做晚做都行，不标每天超、空）。
@@ -785,7 +792,7 @@ def main():
         PROG=progress_html(prog, T, plan.get('week_total') if in_week else None, week_by_group if in_week else None,
                            plan.get('capacity_confirmed', {}).get(plan['week']) if in_week else None) + cut_progress_html(cut_rows, T) + agency_html(json.load(open(a.agency, encoding='utf-8')) if a.agency else None, T),
         CAP=cap_html(plan, T, weekly_plan) if in_week else '',
-        SUPPLY=supply_html(week_by_group, cut_rows) if in_week else '',
+        SUPPLY=supply_html(week_by_group, cut_rows, agency_week(plan, T)) if in_week else '',
         OUTPUT=output_html(json.load(open(a.output, encoding='utf-8')) if a.output else None),
         D=md(D), RET=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=1)), T4=md(fut[-1]), TW=full_range(fut[0], fut[-1]),
         PREV=short_range(D - dt.timedelta(days=6), D - dt.timedelta(days=3)), LAST2=short_range(D - dt.timedelta(days=1), D),
