@@ -577,15 +577,30 @@ if(revReady&&revRows.length){
   const bandTd=c=>c.band!=null?`${yuan(c.band)}<small class="q" style="display:block">${c.bn} 条的平均</small>`:(c.p?'<small class="q">过冷启的还没满 7 天</small>':'—');
   const csTd=x=>x.done?`<td class="n"><b>${(x.up/x.done*100).toFixed(0)}%</b><small class="q" style="display:block">过 ${x.up} / 满 3 天 ${x.done} 条</small></td>`:`<td class="n"><small class="q">${x.n?'都还没满 3 天':'—'}</small></td>`; // 冷启率（Reina 11/21）：已放出且 3 天窗口走完的里，过冷启的占比
   const upTd=x=>x.upN?`<td class="num">${reviewMoney(Math.round(x.upCents/x.upN))}<small class="q" style="display:block">${x.upN} 条的平均</small></td>`:'<td class="num"><small class="q">—</small></td>'; // 过冷启素材单条跑量（Reina 11/23）
-  // 和预期比（Reina 11/23）：实际 ÷ 预期 ≥120% 超过预期（绿），80–120% 差得不多不标，<80% 不达预期（红）；这周还没过完时前面写「目前」
-  const expTd=(e,c)=>{if(!e)return '';const r=(c||0)/100/e, k=r>=1.2?'up':r>=0.8?'ok':'dn', w={up:'超过预期',ok:'达到预期',dn:'不达预期'}[k], live=P.REV.through<P.REV.end;
-    if(k==='ok')return `<small class="q" style="display:block" title="实际 ÷ 预期 = ${(r*100).toFixed(0)}%，差得不多不标">预期 ${yuan(e)}</small>`;
-    return `<small class="q" style="display:block">预期 ${yuan(e)}</small><span class="xp ${k}${live?' live':''}" title="实际 ÷ 预期 = ${(r*100).toFixed(0)}%${live?'，这周还没过完':''}">${live?'目前':''}${w} ${(r*100).toFixed(0)}%</span>`;};
+  // 和预期比（Reina 11/23）：只拿已经放出的素材比，按每条已经跑了几天折算预期（周末上的素材不会被 7 天的预期压成个位数）。
+  // 每条预期 = 冷启率 × 过冷启单条 7 天跑量 × 前 k 天占 7 天的比例；比例用逐日历史里已满 7 天、过了冷启的素材实际算（DAYCURVE）。
+  // 实际 ÷ 预期 ≥120% 超过预期（绿），<80% 不达预期（红），中间差得不多不标；放出不到 3 条、都还没满 3 天、或两成以上素材没有预期数据的不标。
+  const DAYCURVE=(()=>{const st=P.HIST?.start,th=P.REV.through;if(!st)return null;const acc=[0,0,0,0,0,0,0];let n=0;
+    for(const rs of Object.values(P.HIST?.U||{}))for(const r of rs){const f=r[2],seq=r[11];if(!f||!seq||isoAdd(f,6)>th)continue;
+      const off=seq[0]||0,cs=seq[1]||[],d0=Math.round((Date.parse(f+'T00:00:00Z')-Date.parse(st+'T00:00:00Z'))/864e5)-off;
+      const v=[0,1,2,3,4,5,6].map(k=>cs[d0+k]||0);if(v[0]+v[1]+v[2]<400)continue;const tot=v.reduce((a,b)=>a+b,0);if(!tot)continue;
+      let c=0;v.forEach((x,k)=>{c+=x;acc[k]+=c/tot;});n++;}
+    return n>=10?acc.map(x=>x/n):null;})();
+  const daysRun=x=>x.first?Math.min(7,Math.round((Date.parse(P.REV.through+'T00:00:00Z')-Date.parse(x.first+'T00:00:00Z'))/864e5)+1):0;
+  const expNow=items=>{let e=0,c=0,n=0,m=0,all=0;for(const x of items){if(x.ext||!x.first)continue;all++;const cc=CC[x.u];if(!cc||!cc[0]||!cc[3])continue;
+      const k=daysRun(x);if(k<1)continue;const share=DAYCURVE?DAYCURVE[k-1]:k/7;e+=(cc[1]/cc[0])*(cc[2]/cc[3])*share;c+=(x.cents||0)/100;n++;if(k>=3)m++;}
+    return {e,c,n,m,all};};
+  const expTd=(items,full)=>{const {e,c,n,m,all}=expNow(items||[]);const fullTxt=full?`<small class="q" style="display:block">整批预期 ${yuan(full)}</small>`:'';
+    if(!e||n<3||!m||n<all*0.8)return fullTxt; // 两成以上素材所在 use case 没有近 2 周冷启数据时不比，免得拿少数几条的预期比整行的消耗
+    const r=c/e, k=r>=1.2?'up':r>=0.8?'ok':'dn';
+    const tip=`已放出 ${n} 条按各自跑的天数折算，预期到现在 ${yuan(e)}，实际 ${yuan(c)}，实际 ÷ 预期 = ${(r*100).toFixed(0)}%`;
+    if(k==='ok')return `<small class="q" style="display:block" title="${tip}，差得不多不标">已放出的预期 ${yuan(e)}</small>${fullTxt}`;
+    return `<small class="q" style="display:block" title="${tip}">已放出的预期 ${yuan(e)}</small>${fullTxt}<span class="xp ${k}" title="${tip}">${k==='up'?'超过预期':'不达预期'} ${(r*100).toFixed(0)}%</span>`;};
   const RI=[];
   const extTxt=x=>x.ext?`<small class="q" style="display:block">另有星图达人原生 ${x.ext} 条</small>`:''; // 星图原生不在排期行里，不算进已放出（Reina 11/23）
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}${extTxt(x)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}${upTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(expOf(x.u,x.planned),x.cents)}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}${extTxt(x)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}${upTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(x.items,expOf(x.u,x.planned))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
-    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}${extTxt(t)}</td><td class="n"></td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))),t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
+    return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}${extTxt(t)}</td><td class="n"></td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(t.items,sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
   const SPECIAL=[
     {name:'新执行场景（浏览器代办）',uc:['AI01','TR02','SH09','WK07'],kw:/浏览器|执行能力|云端/},
@@ -605,7 +620,7 @@ if(revReady&&revRows.length){
     return {sp,rows,t,extra:extra.length};
   });
   const specHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="8">本周专项<span style="font-weight:400;margin-left:10px">新执行场景、美好生活计划、衣物管理单独看；和下面的分支有重复</span></th></tr>`+specRows.map(({sp,rows,t,extra})=>
-    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.slice(0,1).join('')||'—'}</td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))),t.cents)}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
+    `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.slice(0,1).join('')||'—'}</td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(t.items,sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
     (rows.map(renderRow).join('')||'<tr><td colspan="8" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
   revBody.outerHTML=specHtml+groups.map(([title,brs,tier])=>{
