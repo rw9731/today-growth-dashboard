@@ -612,11 +612,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     `<tr class="brh bsp"><th scope="rowgroup" class="n">${esc(sp.name)}</th><td class="n"><b>${t.n} / ${t.planned||'—'}</b> ${t.planned?pct(t.n,t.planned):(extra?`<small class="q" style="display:block;font-size:12px;font-weight:400">${esc(sp.auto||'没进排期')}</small>`:'')}</td><td class="n">${t.firstDates.slice(0,1).join('')||'—'}</td>${csTd(t)}${upTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(t.items,sum(rows.map(r=>expOf(r.u,r.xp??r.planned,r.br))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`+
     (rows.map(renderRow).join('')||'<tr><td colspan="8" class="q">本周没有</td></tr>')).join('')+'</tbody>';
   const groups=[['已点亮',BR_LIT,'t1'],['探索',BR_EXP,'t3']];
-  // 顶上总数（Reina 11/23）：本周供给合计 = 唯西排期 + 原片精剪，各自的放出、冷启、消耗也列出来
-  const cutRows=revRows.filter(r=>r.br.startsWith('原片精剪')), wxRows=revRows.filter(r=>!r.br.startsWith('原片精剪'));
-  const totHtml=`<tbody><tr class="th tsp"><th scope="rowgroup" colspan="8">本周合计<span style="font-weight:400;margin-left:10px">本周供给 ${sum(revRows.map(r=>r.planned))} 条 = 唯西 AI / 真人二创 ${sum(wxRows.map(r=>r.planned))} 条 + 原片精剪 ${sum(cutRows.map(r=>r.planned))} 条</span></th></tr>`
-    +sumRow('全部',revRows,'sp')+sumRow('唯西 AI / 真人二创',wxRows,'sp')+sumRow('原片精剪',cutRows,'sp')+'</tbody>';
-  revBody.outerHTML=totHtml+specHtml+groups.map(([title,brs,tier])=>{
+  revBody.outerHTML=specHtml+groups.map(([title,brs,tier])=>{
     const all=revRows.filter(x=>brs.includes(x.br));
     const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows,tier)+(rows.map(renderRow).join('')||'<tr><td colspan="8" class="q">本周没有</td></tr>');}).join('');
     const plannedAll=sum(revRows.map(r=>r.planned)), plannedG=sum(all.map(r=>r.planned));
