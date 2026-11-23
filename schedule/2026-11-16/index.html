@@ -96,7 +96,7 @@ a{color:var(--link)}
 .t-due{color:var(--crit);font-weight:700;white-space:nowrap}.t-due.m{color:var(--mute);font-weight:400}
 .t-warn{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--crit);color:#fff;font:700 12px/16px Arial,sans-serif;text-align:center;vertical-align:middle;margin:1px 0}.t-warn.m{background:var(--base);color:var(--panel)}
 .rev-note{font-size:12px;color:var(--sub);margin:0 0 8px;max-width:920px;line-height:1.6}#pk td.nm,#rev td.nm,#rev-items td.nm{max-width:420px;overflow-wrap:anywhere}
-#rev-items td.nm small{display:block;margin-top:2px}#rev .bst{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.8em}#rev .bst small{display:inline;margin:0 4px 0 0}
+#rev-items td.nm small{display:block;margin-top:2px}#rev .bst{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.8em}#rev .bst small{display:inline;margin:0 4px 0 0}#rev tr.rx{cursor:pointer}#rev tr.rx:hover>td{background:var(--base)}#rev .rx-arrow{display:inline-block;width:14px;color:var(--sub);transition:transform .15s}#rev tr.rx.open .rx-arrow{transform:rotate(90deg)}#rev tr.rx-detail>td{background:var(--base);padding:6px 10px 12px 24px}#rev .rx-t{width:100%;border-collapse:collapse;font-size:12px}#rev .rx-t th{font-weight:600;color:var(--sub);text-align:left;padding:4px 6px;position:static}#rev .rx-t td{padding:4px 6px;border-top:1px solid var(--grid)}#rev .rx-t td.nm{max-width:460px;overflow-wrap:anywhere}#rev .rx-t .num{text-align:right}
 #rev-search{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--base);border-radius:6px;padding:5px 8px;margin:8px 0;width:min(300px,100%)}
 .rt{font-size:11px;font-weight:700;padding:0 5px;white-space:nowrap;display:inline-block}
 .rt.up{color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}.rt.down{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}.rt.one{color:var(--ink);box-shadow:inset 0 0 0 1px var(--base)}.rt.lo{color:var(--bad)}.rt.mu{color:var(--mute);font-weight:400}
@@ -556,7 +556,7 @@ const agg=(u,planned,items)=>{
   const retCost=ret?reviewMoney(Math.round(sum(items.map(x=>x.ret_cents))/ret)):'—';
   const retention=act>=30?`${(ret/act*100).toFixed(1)}%，${retCost}`:act>0?`<small class="q">激活 ${act}，不到 30 不算</small>`:'<small class="q">还没有能算次留的激活</small>'; // 次留要第二天才出，只算到看板日前一天的激活（Reina 11/20 问为啥空）
   const best=[...items].sort((a,b)=>b.cents-a.cents).find(x=>x.cents>0&&csOf(x)===true); // 消耗最高素材只写过了冷启的（Reina 11/20）
-  return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,done:items.filter(x=>csOf(x)!==null).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best};
+  return {u,planned,n:items.length,up:items.filter(x=>csOf(x)===true).length,done:items.filter(x=>csOf(x)!==null).length,firstDates,retention,cents:sum(items.map(x=>x.cents)),best,items};
 };
 const keys=new Set([...plannedBy.keys(),...itemsBy.keys()]);
 const revRows=[...keys].map(k=>{const [br,u]=k.split('|');return {br,...agg(u,plannedBy.get(k)||0,itemsBy.get(k)||[])};})
@@ -574,7 +574,8 @@ if(revReady&&revRows.length){
   const bandTd=c=>c.band!=null?`${yuan(c.band)}<small class="q" style="display:block">${c.bn} 条的平均</small>`:(c.p?'<small class="q">过冷启的还没满 7 天</small>':'—');
   const csTd=x=>x.done?`<td class="n"><b>${(x.up/x.done*100).toFixed(0)}%</b><small class="q" style="display:block">过 ${x.up} / 满 3 天 ${x.done} 条</small></td>`:`<td class="n"><small class="q">${x.n?'都还没满 3 天':'—'}</small></td>`; // 冷启率（Reina 11/21）：已放出且 3 天窗口走完的里，过冷启的占比
   const expTd=e=>e?`<small class="q" style="display:block">预期 ${yuan(e)}</small>`:'';
-  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}"><td class="n">${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(expOf(x.u,x.planned))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  const RI=[];
+  const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td><td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}</td><td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(expOf(x.u,x.planned))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
     return `<tr class="brh b${tier}"><th scope="rowgroup" class="n">${title}</th><td class="n"><b>${t.n} / ${t.planned}</b> ${pct(t.n,t.planned)}</td><td class="n"></td>${csTd(t)}<td class="num">${reviewMoney(t.cents)}${expTd(sum(rows.map(r=>expOf(r.u,r.planned))))}</td><td class="n">${t.retention}</td><td class="nm"></td></tr>`;};
   // 本周专项（Reina 11/20）：新执行场景、美好生活计划、衣物管理单独拎出来看；排期行按 use case 或关键词认，衣物管理这类没进排期的按 use case 从本周首花素材里补
@@ -606,6 +607,18 @@ if(revReady&&revRows.length){
     const share=plannedAll?`<span style="font-weight:400;margin-left:10px">本周已排 ${plannedG} 条，占 ${(plannedG/plannedAll*100).toFixed(0)}%</span>`:'';
     return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="7">${title}${share}</th></tr>${body}</tbody>`;
   }).join('');
+  // 点 use case 行展开这批素材（Reina 11/23）：素材名带视频链接、首次消耗、消耗、激活、次留、冷启
+  const csTxt=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x));
+  const rxRate=x=>x.act>=30&&x.ret!=null?`${(x.ret/x.act*100).toFixed(1)}%`:x.act?`<small class="q">激活 ${x.act}</small>`:'—';
+  const rxCpr=x=>x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—';
+  document.getElementById('rev').addEventListener('click',ev=>{
+    if(ev.target.closest('a'))return;const tr=ev.target.closest('tr.rx');if(!tr)return;
+    const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('rx-detail')){nx.remove();tr.classList.remove('open');return;}
+    const its=[...RI[+tr.dataset.ri]].sort((a,b)=>b.cents-a.cents);
+    const rows=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRate(x)}</td><td class="n">${rxCpr(x)}</td><td class="n">${csTxt(x)}</td></tr>`).join('')||'<tr><td colspan="7" class="q">还没有放出的素材</td></tr>';
+    tr.insertAdjacentHTML('afterend',`<tr class="rx-detail"><td colspan="7"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${rows}</tbody></table></td></tr>`);
+    tr.classList.add('open');
+  });
 }else{
   revBody.innerHTML=`<tr><td colspan="7" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
 }
