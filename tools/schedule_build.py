@@ -499,10 +499,15 @@ def supply_html(week_by_group, rows):
         return ''
     total = sum(wx.values()) + sum(cut.values())
     t = '、'.join(f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1]))
-    return (f'<p class="supply">本周素材供给 <b>{total}</b> 条 = 唯西排期 <b>{sum(wx.values())}</b>（A {wx["A"]}、B {wx["B"]}）'
-            f' + 原片精剪 <b>{sum(cut.values())}</b>（A {cut["A"]}、B {cut["B"]}；{t}）'
-            f'<small>悦普、知定堂另算，见下面进度</small></p>')
-
+    card = lambda k, n, sub, cls='': (f'<div class="sup-card{cls}"><div class="cap-k">{k}</div><div class="cap-big"><b>{n}</b> 条</div>'
+                                      f'<div class="cap-sub">{sub}</div></div>')
+    return ('<div class="supply">'
+            + card('本周素材供给', total, '唯西排期 + 原片精剪', ' sup-tot')
+            + '<span class="sup-op">=</span>'
+            + card('唯西排期', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}（AI / 真人二创）')
+            + '<span class="sup-op">+</span>'
+            + card('原片精剪', sum(cut.values()), f'A 组 {cut["A"]} · B 组 {cut["B"]}<br>{t}')
+            + '<small class="sup-note">悦普、知定堂另算，见下面进度</small></div>')
 
 def cap_html(plan, T, weekly_plan):
     """「本周排期余量」（Reina 11/18）：A、B 组这周还能排多少，大数字放在最上面；下面每天只列已排条数看匀不匀（Reina 11/18：只管每周总量，哪天早做晚做都行，不标每天超、空）。
