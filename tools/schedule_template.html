@@ -621,7 +621,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const body=brs.map(br=>{const rows=all.filter(x=>x.br===br);return sumRow(br,rows,tier)+(rows.map(renderRow).join('')||'<tr><td colspan="8" class="q">本周没有</td></tr>');}).join('');
     const plannedAll=sum(revRows.map(r=>r.planned)), plannedG=sum(all.map(r=>r.planned));
     const isCut=r=>r.br.startsWith('原片精剪'), wxAll=sum(revRows.filter(r=>!isCut(r)).map(r=>r.planned)), wxG=sum(all.filter(r=>!isCut(r)).map(r=>r.planned));
-    const share=plannedAll?`<span style="font-weight:400;margin-left:10px">本周供给 ${plannedG} 条，占 ${(plannedG/plannedAll*100).toFixed(0)}%${wxAll?`；其中唯西排期 ${wxG} 条，占唯西排期 ${(wxG/wxAll*100).toFixed(0)}%`:''}</span>`:'';
+    const share=plannedAll?`<span style="font-weight:400;margin-left:10px">本周供给 ${plannedG} 条，占 ${(plannedG/plannedAll*100).toFixed(0)}%${wxAll?`；其中唯西 AI / 真人二创 ${wxG} 条，占这类 ${(wxG/wxAll*100).toFixed(0)}%`:''}${plannedAll-wxAll?` · 达人 / 星广剪辑 ${plannedG-wxG} 条，占这类 ${((plannedG-wxG)/(plannedAll-wxAll)*100).toFixed(0)}%`:''}</span>`:'';
     return `<tbody><tr class="th ${tier}"><th scope="rowgroup" colspan="8">${title}${share}</th></tr>${body}</tbody>`;
   }).join('');
   // 点 use case 行展开这批素材（Reina 11/23）：素材名带视频链接、首次消耗、消耗、激活、次留、冷启
