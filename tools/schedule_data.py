@@ -490,6 +490,7 @@ def review_facts(rows, launches, tot, D, week):
         mature_days = [day for day in f.c if week <= day < D]
         facts[mid] = {
             'names': sorted(n for n in f.names if n),
+            'src': f.src.most_common(1)[0][0] if f.src else '',
             'released': launch.isoformat(),
             'first': f.first.isoformat() if f.first else '',
             'cents': round(sum(f.c[d] for d in f.c if week <= d <= D) * 100),

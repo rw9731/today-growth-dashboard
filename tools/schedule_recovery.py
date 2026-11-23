@@ -5,6 +5,23 @@ from datetime import timedelta
 import re
 
 from output_build import KX, norm
+import compute
+
+
+def type_label(name, ids, facts, plan_t=''):
+    """回收明细的类型列（Reina 11/23）：AI / 达人剪辑 / 达人原片 / 星广 / 星图 / 自建号。
+    先按投放来源和素材 ID 认星广、星图、自建号，再看名字；认不出时用排期行的 AI / 二创。"""
+    kinds = [compute.kind_of((facts.get(mid) or {}).get('src', ''), '', name, mid) for mid in ids]
+    for k in kinds:
+        for key in ('星图', '星广', '自建号'):
+            if key in k:
+                return key
+    for k in kinds:
+        if k.startswith('AI'):
+            return 'AI'
+        if k.startswith(('KOC', 'KOL')):
+            return '达人原片' if k.endswith('原片') else '达人剪辑'
+    return {'AI': 'AI', '二创': '达人剪辑'}.get(plan_t, '未标')
 
 
 def plan_ref(entry):
@@ -23,6 +40,7 @@ def weekly_recovery(entries, production, facts, T, D):
         return data
 
     due = {plan_ref(e): e['d'] for e in entries if int(e.get('n') or 0) > 0}
+    plan_t = {plan_ref(e): e.get('t', '') for e in entries if int(e.get('n') or 0) > 0}
     by_name = defaultdict(set)
     for mid, fact in facts.items():
         for name in fact['names']:
@@ -56,7 +74,7 @@ def weekly_recovery(entries, production, facts, T, D):
         first = min((fact['first'] for fact in records if fact['first']), default='')
         verdicts = [fact['up'] for fact in records if fact['up'] is not None]
         data['items'].append(dict(
-            id=ids[0], ids=ids, ref=ref, u=film['uc'], name=film['name'],
+            id=ids[0], ids=ids, ref=ref, u=film['uc'], name=film['name'], typ=type_label(film['name'], ids, facts, plan_t.get(ref, '')),
             due=due[ref], produced=film['d'], released=min(fact['released'] for fact in records), first=first,
             cents=sum(fact['cents'] for fact in records), ret_cents=sum(fact['ret_cents'] for fact in records),
             act=sum(fact['act'] for fact in records), ret=sum(fact['ret'] for fact in records),

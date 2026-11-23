@@ -294,9 +294,9 @@ td.d.f[data-fi]{cursor:pointer}
 <p class="rev-note" id="rev-note"></p>
 <div class="scroll"><table class="dt" id="rev"><thead><tr><th>use case</th><th>已放出 / 本周已排</th><th>首次消耗日期</th><th>冷启率<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">已放出、满 3 天的里过冷启的占比</span></th><th class="num" title="预期 = 已排 × 冷启率 × 单条带量（主表），按上传后 7 天算，素材满 7 天再和实际比">本周累计消耗<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">小字是预期</span></th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">次留第二天才出，只算看板日前一天及以前的激活，满 30 才算</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
 <details class="more" id="rev-assets" hidden><summary>查看 <b id="rev-item-count"></b> 条已放出素材</summary>
-<label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、素材 ID 或 use case"></label>
+<label>搜索素材 <input type="search" id="rev-search" placeholder="素材名、类型、素材 ID 或 use case"></label>
 <p class="rev-note" id="rev-matches" aria-live="polite"></p>
-<div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>类型</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
 </details>
 </section>
 <details class="more"><summary>规则和口径</summary><div class="rules">
@@ -604,9 +604,9 @@ if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
   const show=()=>{
     const terms=search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    const items=revItems.filter(x=>terms.every(q=>`${x.name} ${x.ids.join(' ')} ${reviewName(x.u)}`.toLowerCase().includes(q)));
+    const items=revItems.filter(x=>terms.every(q=>`${x.name} ${x.typ||''} ${x.ids.join(' ')} ${reviewName(x.u)}`.toLowerCase().includes(q)));
     document.getElementById('rev-matches').textContent=terms.length?`匹配 ${items.length} 条`:'';
-    document.querySelector('#rev-items tbody').innerHTML=items.map(x=>`<tr data-material-id="${esc(x.id)}"><td class="nm">${lnk(x.name,x.url)}<small class="q">${esc(x.ids.join('、'))}</small></td><td class="n">${esc(reviewName(x.u))}</td><td class="n">${reviewDay(x.due)}</td><td class="n">${reviewDay(x.produced)}</td><td class="n">${reviewDay(x.released)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x))}</td></tr>`).join('')||'<tr><td colspan="8" class="q">没有匹配的素材</td></tr>';
+    document.querySelector('#rev-items tbody').innerHTML=items.map(x=>`<tr data-material-id="${esc(x.id)}"><td class="nm">${lnk(x.name,x.url)}<small class="q">${esc(x.ids.join('、'))}</small></td><td class="n">${esc(x.typ||'')}</td><td class="n">${esc(reviewName(x.u))}</td><td class="n">${reviewDay(x.due)}</td><td class="n">${reviewDay(x.produced)}</td><td class="n">${reviewDay(x.released)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents)}</td><td class="n">${(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x))}</td></tr>`).join('')||'<tr><td colspan="9" class="q">没有匹配的素材</td></tr>';
   };
   document.getElementById('rev-item-count').textContent=revItems.length;
   panel.hidden=false;
