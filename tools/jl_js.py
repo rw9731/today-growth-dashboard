@@ -71,7 +71,13 @@ def main():
     got = json.load(open(yl)) if os.path.exists(yl) else {}
     if isinstance(got, str):
         got = json.loads(got)
-    need = sorted(i for i in ids if not links.get(i, {}).get('video') and i not in got)[:400]
+    # 先排当天日报里的素材（按昨天消耗从高到低，再是昨天上新），再排往期的；原来按 ID 升序截 400，
+    # 往期巨量链接一多，当天排行里 ID 大的新素材全被截掉（11/24 查出来的）
+    pri = {}
+    for m in sorted(res['mat'], key=lambda m: -(m.get('cost27') or 0)) + res.get('newd', []):
+        pri.setdefault(m['id'], len(pri))
+    need = sorted((i for i in ids if not links.get(i, {}).get('video') and i not in got),
+                  key=lambda i: (pri.get(i, len(pri)), -int(i)))[:400]
     start = time.strftime('%Y-%m-%d', time.gmtime(now - 60 * 86400))
     os.makedirs(a.out, exist_ok=True)
     js = JS % (json.dumps(need), json.dumps(hubs), json.dumps(start))
