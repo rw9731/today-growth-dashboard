@@ -1,6 +1,6 @@
 {
  "A": {
-  "asof": "2026-11-23",
+  "asof": "2026-11-24",
   "week": "2026-11-23",
   "start": 485,
   "tab": "f18d7b",
@@ -165,12 +165,164 @@
     "d": "1121"
    },
    {
-    "r": 945,
-    "uc": "PS06",
+    "r": 991,
+    "uc": "TR01",
     "st": "需修改",
-    "name": "个人日程与事务助理-出过福田没-PS06-小月-20261109-b组-换场景-399-01-出过二环没-A组-20261121.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0NQ",
-    "d": "1124"
+    "name": "出行与旅行-TR01-元旦行程-A406-03-20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5MQ",
+    "d": "1125"
+   },
+   {
+    "r": 997,
+    "uc": "IN01",
+    "st": "需修改",
+    "name": "信息检索与追踪-比赛信息提前晓-IN01-02-小李-261105_同结构重写_A415-01-20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5Nw",
+    "d": "1125"
+   },
+   {
+    "r": 998,
+    "uc": "IN01",
+    "st": "需修改",
+    "name": "信息检索与追踪-比赛信息提前晓-IN01-02-小李-261105_同结构重写_A415-02-20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5OA",
+    "d": "1125"
+   },
+   {
+    "r": 999,
+    "uc": "SH06",
+    "st": "未审核",
+    "name": "购物与生活服务-SH06-头回见客户-AI-A组-A401-01-新方向.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5OQ",
+    "d": "1125"
+   },
+   {
+    "r": 1000,
+    "uc": "SH06",
+    "st": "未审核",
+    "name": "购物与生活服务-SH06-妈妈也要顾-AI-A组-A401-02-新方向.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDA",
+    "d": "1125"
+   },
+   {
+    "r": 1001,
+    "uc": "IN01",
+    "st": "未审核",
+    "name": "信息检索与追踪-IN01-Ongoings-讯2-听歌不折腾-AI-A组-A407-01-新细分场景.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDE",
+    "d": "1125"
+   },
+   {
+    "r": 1002,
+    "uc": "IN01",
+    "st": "未审核",
+    "name": "信息检索与追踪-IN01-Ongoings-讯2-放心这回有我-AI-A组-A407-02-新细分场景.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDI",
+    "d": "1125"
+   },
+   {
+    "r": 1003,
+    "uc": "IN01",
+    "st": "未审核",
+    "name": "信息检索与追踪-IN01-Ongoings-讯2-现场主打省心-AI-A组-A407-03-新细分场景.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDM",
+    "d": "1125"
+   },
+   {
+    "r": 1004,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "学习与成长-LG04-Ongoings-学1-A408-01-A组-备考教资，题要练报名也得落定.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDQ",
+    "d": "1125"
+   },
+   {
+    "r": 1005,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "学习与成长-LG04-Ongoings-学1-A408-02-A组-项目要推进，自己的考试也得往前走.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDU",
+    "d": "1125"
+   },
+   {
+    "r": 1006,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "学习与成长-LG04-Ongoings-学1-A408-03-A组-学明白，也能接着往下安排.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDY",
+    "d": "1125"
+   },
+   {
+    "r": 1007,
+    "uc": "PS02",
+    "st": "未审核",
+    "name": "个人日程与事务助理-PS02-Ongoings-婴1-A409-01-A组-外婆代带，妈妈交接少忙一轮.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDc",
+    "d": "1125"
+   },
+   {
+    "r": 1008,
+    "uc": "PS02",
+    "st": "未审核",
+    "name": "个人日程与事务助理-PS02-Ongoings-婴1-A409-02-A组-三个人轮着带，交接不必再开会.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDg",
+    "d": "1125"
+   },
+   {
+    "r": 1009,
+    "uc": "PS02",
+    "st": "未审核",
+    "name": "个人日程与事务助理-PS02-Ongoings-婴1-A409-03-A组-白天爷爷奶奶，晚上我们接着来.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMDk",
+    "d": "1125"
+   },
+   {
+    "r": 1010,
+    "uc": "LG01",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG01_新细分场景_持续慢读与周回顾_410-01_书签都快在书里买房了.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTA",
+    "d": "1125"
+   },
+   {
+    "r": 1011,
+    "uc": "LG01",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG01_新细分场景_持续慢读与周回顾_410-02_全文划重点合上终于有下文.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTE",
+    "d": "1125"
+   },
+   {
+    "r": 1012,
+    "uc": "LG01",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG01_新细分场景_持续慢读与周回顾_410-03_没空看书看了也用不上.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTI",
+    "d": "1125"
+   },
+   {
+    "r": 1013,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG04_同结构重写_二胎妈妈备考CPA_416-01_午休四十分钟不能总欠着题债.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTM",
+    "d": "1126"
+   },
+   {
+    "r": 1014,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG04_同结构重写_幼儿园老师准备教资面试_416-02_幼师下班还得给镜子加个班.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTQ",
+    "d": "1126"
+   },
+   {
+    "r": 1015,
+    "uc": "LG04",
+    "st": "未审核",
+    "name": "A组_学习与成长_LG04_同结构重写_外贸跟单员考中级会计_416-03_订单不能拖转职也不能年年等.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTEwMTU",
+    "d": "1126"
    }
   ],
   "ready": [
@@ -191,28 +343,20 @@
     "d": "1123"
    },
    {
-    "r": 942,
-    "uc": "PS01",
-    "st": "可制作",
-    "name": "个人日程与事务助理-PS01-脑子还在开会-375-01-新角度扩量-A组-20261121.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0Mg",
-    "d": "1123"
-   },
-   {
-    "r": 943,
-    "uc": "PS01",
-    "st": "可制作",
-    "name": "个人日程与事务助理-PS01-我才想起那张画-375-02-新角度扩量-A组-20261121.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0Mw",
-    "d": "1123"
-   },
-   {
     "r": 944,
     "uc": "PS06",
     "st": "可制作",
     "name": "个人日程与事务助理-出过福田没-PS06-小月-20261109-b组-换场景-384-01-出过天河没-A组-20261121.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0NA",
     "d": "1123"
+   },
+   {
+    "r": 945,
+    "uc": "PS06",
+    "st": "可制作",
+    "name": "个人日程与事务助理-出过福田没-PS06-小月-20261109-b组-换场景-399-01-出过二环没-A组-20261121.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0NQ",
+    "d": "1124"
    },
    {
     "r": 946,
@@ -247,54 +391,6 @@
     "d": "1124"
    },
    {
-    "r": 950,
-    "uc": "TR01",
-    "st": "可制作",
-    "name": "出行与旅行-TR01-带爸妈逛扬州-376-01-新内容-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1MA",
-    "d": "1123"
-   },
-   {
-    "r": 951,
-    "uc": "TR01",
-    "st": "可制作",
-    "name": "出行与旅行-TR01-约拍空出的半天-376-02-新内容-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1MQ",
-    "d": "1123"
-   },
-   {
-    "r": 952,
-    "uc": "PS03",
-    "st": "可制作",
-    "name": "个人日程与事务助理-PS03-验收评审接娃撞一天-388-01-同结构重写-A组_照真人.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1Mg",
-    "d": "1124"
-   },
-   {
-    "r": 953,
-    "uc": "LG02",
-    "st": "可制作",
-    "name": "学习与成长-LG02-对答案对到半夜-374-03-同结构重构-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1Mw",
-    "d": "1123"
-   },
-   {
-    "r": 954,
-    "uc": "LG02",
-    "st": "可制作",
-    "name": "学习与成长-LG02-高数错第三回-374-01-同结构重构-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1NA",
-    "d": "1123"
-   },
-   {
-    "r": 955,
-    "uc": "LG02",
-    "st": "可制作",
-    "name": "学习与成长-LG02-四级听力回回丢分-374-02-同结构重构-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1NQ",
-    "d": "1123"
-   },
-   {
     "r": 956,
     "uc": "LG04",
     "st": "可制作",
@@ -309,46 +405,6 @@
     "name": "学习与成长-LG04-法考-387-02-同结构换考试-A组-客户红字修订.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1Nw",
     "d": "1124"
-   },
-   {
-    "r": 958,
-    "uc": "LG04",
-    "st": "可制作",
-    "name": "学习与成长-LG04-教资辨析题错三回-390-01-同结构重构-A组-客户红字修订.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1OA",
-    "d": "1124"
-   },
-   {
-    "r": 959,
-    "uc": "LG04",
-    "st": "可制作",
-    "name": "学习与成长-LG04-考研数学错三回-390-02-同结构重构-A组-客户红字修订.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1OQ",
-    "d": "1124"
-   },
-   {
-    "r": 961,
-    "uc": "LG02",
-    "st": "可制作",
-    "name": "学习与成长-LG02-临考磨枪-378-01-新细分场景-理工大学生期末复习-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2MQ",
-    "d": "1123"
-   },
-   {
-    "r": 962,
-    "uc": "LG02",
-    "st": "可制作",
-    "name": "学习与成长-LG02-文人先别慌-378-02-新细分场景-文科大学生期末复习-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2Mg",
-    "d": "1123"
-   },
-   {
-    "r": 963,
-    "uc": "NT01",
-    "st": "可制作",
-    "name": "随身记事与个人资料管理-NT01-份子随多少-379-01-新细分场景-同事结婚随份子-A组.docx",
-    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2Mw",
-    "d": "1123"
    },
    {
     "r": 964,
@@ -461,21 +517,333 @@
     "name": "工作沟通与协作-WK01-死脑子快动啊-395-01-新细分场景-第一次见新老板会前准备-A组.docx",
     "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk3Nw",
     "d": "1124"
+   },
+   {
+    "r": 981,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS01-每周总结-405-01-20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4MQ",
+    "d": "1125"
+   },
+   {
+    "r": 982,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS01-每周总结-405-02-20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4Mg",
+    "d": "1125"
+   },
+   {
+    "r": 983,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS01-每周总结-405-03-20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4Mw",
+    "d": "1125"
+   },
+   {
+    "r": 984,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-说来惭愧_同结构重写_414-01_20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4NA",
+    "d": "1126"
+   },
+   {
+    "r": 985,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-说来惭愧_同结构重写_414-02_20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4NQ",
+    "d": "1126"
+   },
+   {
+    "r": 986,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "学习与成长-微信读书里读了一半的书，提醒你接着读-LG01-05-lst-20261102_同结构重写_403-02_20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4Ng",
+    "d": "1125"
+   },
+   {
+    "r": 987,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "学习与成长-微信读书里读了一半的书，提醒你接着读-LG01-05-lst-20261102_同结构重写_403-01_20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4Nw",
+    "d": "1125"
+   },
+   {
+    "r": 988,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "学习与成长-微信读书里读了一半的书，提醒你接着读-LG01-05-lst-20261102_同结构重写_403-03_20261123.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4OA",
+    "d": "1125"
+   },
+   {
+    "r": 989,
+    "uc": "TR01",
+    "st": "可制作",
+    "name": "出行与旅行-TR01-元旦行程-A406-01-20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk4OQ",
+    "d": "1125"
+   },
+   {
+    "r": 990,
+    "uc": "TR01",
+    "st": "可制作",
+    "name": "出行与旅行-TR01-元旦行程-A406-02-20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5MA",
+    "d": "1125"
+   },
+   {
+    "r": 992,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-群里一堆事没回-PS01-02-小月-20261111_照真人-b组_同结构重写_A404-01_20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5Mg",
+    "d": "1125"
+   },
+   {
+    "r": 993,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-群里一堆事没回-PS01-02-小月-20261111_照真人-b组_同结构重写_A404-02_20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5Mw",
+    "d": "1125"
+   },
+   {
+    "r": 994,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-群里一堆事没回-PS01-02-小月-20261111_照真人-b组_同结构重写_A404-03_20261123-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5NA",
+    "d": "1125"
+   },
+   {
+    "r": 995,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-年底送礼-A417-01-20261126-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5NQ",
+    "d": "1125"
+   },
+   {
+    "r": 996,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-年底送礼-A417-02-20261126-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk5Ng",
+    "d": "1125"
    }
   ],
-  "done": [],
-  "killed": 49,
-  "old": 272
+  "done": [
+   {
+    "r": 942,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS01-脑子还在开会-375-01-新角度扩量-A组-20261121.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0Mg",
+    "d": "1123",
+    "by": "个人日程与事务助理-PS01-脑子还在开会-375-01-新角度扩量_ltq_20261123"
+   },
+   {
+    "r": 943,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS01-我才想起那张画-375-02-新角度扩量-A组-20261121.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk0Mw",
+    "d": "1123",
+    "by": "个人日程与事务助理-PS01-我才想起那张画-375-02-新角度扩量_ltq_20261123"
+   },
+   {
+    "r": 950,
+    "uc": "TR01",
+    "st": "可制作",
+    "name": "出行与旅行-TR01-带爸妈逛扬州-376-01-新内容-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1MA",
+    "d": "1123",
+    "by": "出行与旅行-TR01-带爸妈逛扬州-A376-01-新内容_lst_20261123"
+   },
+   {
+    "r": 951,
+    "uc": "TR01",
+    "st": "可制作",
+    "name": "出行与旅行-TR01-约拍空出的半天-376-02-新内容-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1MQ",
+    "d": "1123",
+    "by": "出行与旅行-TR01-约拍空出的半天-A376-02-新内容_lst_20261123"
+   },
+   {
+    "r": 952,
+    "uc": "PS03",
+    "st": "可制作",
+    "name": "个人日程与事务助理-PS03-验收评审接娃撞一天-388-01-同结构重写-A组_照真人.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1Mg",
+    "d": "1124",
+    "by": "个人日程与事务助理-PS03-验收评审接娃撞一天-388-01-同结构重写-A组_照真人_yyz_20261123"
+   },
+   {
+    "r": 953,
+    "uc": "LG02",
+    "st": "可制作",
+    "name": "学习与成长-LG02-对答案对到半夜-374-03-同结构重构-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1Mw",
+    "d": "1123",
+    "by": "学习与成长-LG02-对答案对到半夜-A374-03-同结构重构_lst_20261123"
+   },
+   {
+    "r": 954,
+    "uc": "LG02",
+    "st": "可制作",
+    "name": "学习与成长-LG02-高数错第三回-374-01-同结构重构-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1NA",
+    "d": "1123",
+    "by": "学习与成长-LG02-高数错第三回-A374-01-同结构重构_lst_20261123"
+   },
+   {
+    "r": 955,
+    "uc": "LG02",
+    "st": "可制作",
+    "name": "学习与成长-LG02-四级听力回回丢分-374-02-同结构重构-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1NQ",
+    "d": "1123",
+    "by": "学习与成长-LG02-四级听力回回丢分-A374-02-同结构重构_lst_20261123"
+   },
+   {
+    "r": 958,
+    "uc": "LG04",
+    "st": "可制作",
+    "name": "学习与成长-LG04-教资辨析题错三回-390-01-同结构重构-A组-客户红字修订.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1OA",
+    "d": "1124",
+    "by": "学习与成长-LG04-教资辨析题错三回-390-01-同结构重构-A组-zxc-20261123"
+   },
+   {
+    "r": 959,
+    "uc": "LG04",
+    "st": "可制作",
+    "name": "学习与成长-LG04-考研数学错三回-390-02-同结构重构-A组-客户红字修订.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk1OQ",
+    "d": "1124",
+    "by": "学习与成长-LG04-考研数学错三回-390-02-同结构重构-A组-sjl-20261123"
+   },
+   {
+    "r": 961,
+    "uc": "LG02",
+    "st": "可制作",
+    "name": "学习与成长-LG02-临考磨枪-378-01-新细分场景-理工大学生期末复习-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2MQ",
+    "d": "1123",
+    "by": "学习与成长-LG02-临考磨枪-378-01-新细分场景-理工大学生期末复习-A组-sjl-20261123"
+   },
+   {
+    "r": 962,
+    "uc": "LG02",
+    "st": "可制作",
+    "name": "学习与成长-LG02-文人先别慌-378-02-新细分场景-文科大学生期末复习-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2Mg",
+    "d": "1123",
+    "by": "学习与成长-LG02-文人先别慌-378-02-新细分场景-文科大学生期末复习-A组-zxc-20261123"
+   },
+   {
+    "r": 963,
+    "uc": "NT01",
+    "st": "可制作",
+    "name": "随身记事与个人资料管理-NT01-份子随多少-379-01-新细分场景-同事结婚随份子-A组.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc?sheet=f18d7b&range=QTk2Mw",
+    "d": "1123",
+    "by": "随身记事与个人资料管理-NT01-份子随多少-379-01-新细分场景-同事结婚随份子-A组-sjl-20261123"
+   }
+  ],
+  "killed": 52,
+  "old": 262
  },
  "B": {
-  "asof": "2026-11-23",
+  "asof": "2026-11-24",
   "week": "2026-11-23",
   "start": 2,
   "tab": "c665d9",
-  "in_script": [],
-  "ready": [],
+  "in_script": [
+   {
+    "r": 214,
+    "uc": "WK05",
+    "st": "需修改",
+    "name": "工作沟通与协作-WK05-02-出差回来对发票和行程.docx",
+    "d": "1123",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIxNA"
+   },
+   {
+    "r": 216,
+    "uc": "LG04",
+    "st": "需修改",
+    "name": "学习与成长-LG04-02-通勤四十分钟考公.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIxNg",
+    "d": "1123"
+   }
+  ],
+  "ready": [
+   {
+    "r": 205,
+    "uc": "PS01",
+    "st": "可制作",
+    "name": "命名：排期行号写本行，例：个人日程与事务助理-群里一堆事没回-PS01-02-小月-20261111_照真人-b组_同脚本换画面_B147-01_剪辑名_日期",
+    "d": "1123",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIwNQ"
+   },
+   {
+    "r": 206,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "命名：排期行号写本行，例：learning_读书路线规划与每日摘要推送_01_换开头_B177-01_剪辑名_日期",
+    "d": "1123",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIwNg"
+   },
+   {
+    "r": 207,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "命名：排期行号写本行，例：learning_读书路线规划与每日摘要推送_01_换开头_B177-01_剪辑名_日期",
+    "d": "1123",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIwNw"
+   },
+   {
+    "r": 209,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "命名例子：学习与成长-LG01-阅读卡-上班族-AI-01-B组-20261125",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIwOQ",
+    "d": "1123"
+   },
+   {
+    "r": 210,
+    "uc": "LG01",
+    "st": "可制作",
+    "name": "命名例子：学习与成长-LG01-阅读卡-大学生-AI-01-B组-20261125",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIxMA",
+    "d": "1123"
+   },
+   {
+    "r": 211,
+    "uc": "WK05",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK05-01-行政月底收全组发票.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIxMQ",
+    "d": "1123"
+   },
+   {
+    "r": 212,
+    "uc": "WK05",
+    "st": "可制作",
+    "name": "工作沟通与协作-WK05-02-行政月底收全组发票.docx",
+    "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=QTIxMg",
+    "d": "1123"
+   }
+  ],
   "done": [],
-  "killed": 3,
+  "killed": 6,
   "old": 0
  }
 }
