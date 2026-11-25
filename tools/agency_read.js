@@ -28,6 +28,7 @@ for (const w of __CFG[__kind].want) {
   let c = __H.indexOf(w); if (c < 0) c = __H.findIndex((h) => h.startsWith(w));
   if (c < 0 && __kind === 'yp' && w === '合作平台') c = __H.indexOf('平台');
   if (c < 0 && __kind === 'zdt' && w === '成片审核情况' && __H.indexOf('视频链接') >= 0 && !__H[__H.indexOf('视频链接') + 1]) c = __H.indexOf('视频链接') + 1; // 11/24 知定堂这一列表头被清空了（值还是通过/小改/待修改），按视频链接右边一列取
+  if (c < 0 && __kind === 'zdt' && w === '成片审核情况') c = __H.indexOf('成片审核结果'); // 11/25 表头改名成「成片审核结果」
   if (c < 0) throw new Error(__sh.name() + ' 找不到表头：' + w + '，现在的表头：' + __H.join('|'));
   __cols[w] = c;
 }
