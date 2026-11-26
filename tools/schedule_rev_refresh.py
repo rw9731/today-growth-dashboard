@@ -14,7 +14,7 @@ import argparse, datetime as dt, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import schedule_build as sb  # noqa: E402
-from schedule_recovery import weekly_recovery, xingtu_items, cut_week, cut_entries, cut_items  # noqa: E402
+from schedule_recovery import weekly_recovery, xingtu_items, cut_week, cut_entries, cut_items, made_counts  # noqa: E402
 
 ROOT = os.path.dirname(HERE)
 
@@ -52,6 +52,7 @@ def main():
     rev['items'] += xingtu_items(R.get('hist'), rev['week'], rev['end'])
     cut_rows, _ = cut_week(os.path.join(ROOT, 'notes', 'cut-items.json'), rev['week'], rev['end'])
     rev['items'] += cut_items(cut_rows, R.get('review_facts'), sun)
+    rev['made'] = made_counts(plan, production, cut_rows, rev['week'], sun.isoformat())  # 实际完成进度（Reina 11/26）
     P['CUT'] = cut_entries(cut_rows)
     diag = R.get('rev', {})
     rev.update({k: diag.get(k, d) for k, d in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})

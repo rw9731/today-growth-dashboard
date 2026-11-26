@@ -14,7 +14,7 @@ from collections import defaultdict
 
 from schedule_data import STABLE, flow, total_warn
 from schedule_entries import is_deferred, planned_entries
-from schedule_recovery import weekly_recovery, xingtu_items, cut_week, cut_entries, cut_items
+from schedule_recovery import weekly_recovery, xingtu_items, cut_week, cut_entries, cut_items, made_counts
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -791,6 +791,7 @@ def main():
     review['items'] += xingtu_items(R.get('hist'), review['week'], review['end'])
     cut_rows, _ = cut_week(os.path.join(ROOT, 'notes', 'cut-items.json'), review['week'], review['end'])  # 原片精剪放进本周素材回收（Reina 11/23）
     review['items'] += cut_items(cut_rows, R.get('review_facts'), T)
+    review['made'] = made_counts(weekly_plan, production, cut_rows, review['week'], T.isoformat())  # 实际完成进度（Reina 11/26）
     diagnostics = R.get('rev', {})
     review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
     P = dict(E=E, DET=DET, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),

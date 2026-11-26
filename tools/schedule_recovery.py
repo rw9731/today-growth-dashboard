@@ -156,3 +156,41 @@ def weekly_recovery(entries, production, facts, T, D):
         ))
     data['items'].sort(key=lambda x: (-x['cents'], x['released'], x['id']))
     return data
+
+
+ROW_IN_NAME = re.compile(r'(?<![A-Za-z0-9])([AB])(\d{2,3})[-_]0?\d(?!\d)')
+
+
+def made_counts(entries, production, cut_rows, week, T):
+    """每个排期行实际交了几条、审核通过几条（Reina 11/26：回收表要能看到实际完成进度）。
+    扩量表的成片按所在行号对；脚本表、二剪表的成片按名字里写的排期行号（B238-02、A353-01）对；
+    精剪按两组精剪 tab 的成片格数，精剪不用等审，交了就算通过。只换前贴的不算。返回 {ref: [交了, 通过]}。"""
+    refs = {}
+    for e in entries:
+        if int(e.get('n') or 0) > 0:
+            r = plan_ref(e)
+            if r:
+                g, row, _ = r.split(':', 2)
+                refs.setdefault(f'{g}:{row}', r)
+    made = defaultdict(lambda: [0, 0])
+    for film in (production or {}).values():
+        if film.get('k') == 'X' or not week <= film.get('d', '') <= T:
+            continue
+        g = film.get('g')
+        ref = None
+        if film.get('tab') == KX.get(g):
+            ref = refs.get(f'{g}:{film.get("row")}')
+        else:
+            m = ROW_IN_NAME.search(film.get('name', ''))
+            if m and m[1] == g:
+                ref = refs.get(f'{g}:{int(m[2])}')
+        if not ref:
+            continue
+        made[ref][0] += 1
+        if film.get('ok'):
+            made[ref][1] += 1
+    for r in cut_rows or []:
+        n = len(r.get('films') or [])
+        if n:
+            made[f"{r['g']}:{r['id']}:{r['uc']}"] = [n, n]
+    return dict(made)
