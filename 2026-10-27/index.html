@@ -1164,7 +1164,7 @@
       if (days === true) judgeCell(td(), r);
       const vid = r.video || (r.link_type === '预览' ? r.link : '');
       { const nc = td('name'); if (days) nc.style.minWidth = '8.5rem';
-        if (days === true && vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.name; a.className = 'lx-namelink'; nc.appendChild(a); } else nc.textContent = r.name; }
+        if (vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.name; a.className = 'lx-namelink'; nc.appendChild(a); } else nc.textContent = r.name; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       td(r.is_new ? 'date new' : 'date').textContent = fmtD(r.first);
       stack(td(), r.short || r.uc, r.l1);
@@ -1236,7 +1236,9 @@
     if (!rows.length) { const wrap = tb.closest('.lx-card'); if (wrap) wrap.hidden = true; return; }
     for (const r of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
-      { const nc = td('name'); nc.textContent = r.name; nc.style.whiteSpace = 'normal'; nc.style.minWidth = '12rem'; }
+      { const nc = td('name'); nc.style.whiteSpace = 'normal'; nc.style.minWidth = '12rem';
+        const nv = r.video || r.link || '';  // Reina 11/25：素材名本身点开就是视频
+        if (nv) { const a = document.createElement('a'); a.href = nv; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.name; nc.appendChild(a); } else nc.textContent = r.name; }
       { const ps = (r.kind || '').split(' · '); const kc = td(); stack(kc, ps[0], ps.slice(1).join(' · ')); kc.className = 'stack wrap'; }
       stack(td(), r.short || r.uc, r.l1);
       td('date').textContent = r.made ? fmtD(r.made) : '—';
@@ -1699,7 +1701,8 @@
     if (!rows.length) { const wrap = tb.closest('.lx-card'); if (wrap) wrap.hidden = true; return; }
     for (const r of rows) {
       const tr = document.createElement('tr'); const td = cellMaker(tr);
-      { const nc = td('name'); nc.textContent = r.name; nc.style.whiteSpace = 'normal'; }
+      { const nc = td('name'); nc.style.whiteSpace = 'normal'; const vid = r.video || (r.link_type === '预览' ? r.link : '');
+        if (vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.className = 'lx-namelink'; a.textContent = r.name; nc.appendChild(a); } else nc.textContent = r.name; }
       stack(td(), r.short || r.uc, r.l1);
       judgeCell(td(), r);
       td('date').textContent = fmtD(r.bad_first);
