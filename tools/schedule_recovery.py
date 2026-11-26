@@ -8,6 +8,8 @@ import re
 from output_build import KX, norm
 import compute
 
+ROW_IN_NAME = re.compile(r'(?<![A-Za-z0-9])([AB])(\d{2,3})[-_]0?\d(?!\d)')
+
 
 def type_label(name, ids, facts, plan_t=''):
     """回收明细的类型列（Reina 11/23）：AI / 达人剪辑 / 达人原片 / 星广 / 星图 / 自建号。
@@ -115,6 +117,7 @@ def weekly_recovery(entries, production, facts, T, D):
 
     due = {plan_ref(e): e['d'] for e in entries if int(e.get('n') or 0) > 0}
     plan_t = {plan_ref(e): e.get('t', '') for e in entries if int(e.get('n') or 0) > 0}
+    row_ref = {r.rsplit(':', 1)[0]: r for r in due if r}
     by_name = defaultdict(set)
     for mid, fact in facts.items():
         for name in fact['names']:
@@ -127,7 +130,13 @@ def weekly_recovery(entries, production, facts, T, D):
         group = film.get('g')
         uc = film.get('uc')
         ref = f'{group}:{film.get("row")}:{uc}'
-        if (film.get('tab') != KX.get(group) or ref not in due or film.get('k') == 'X'
+        if film.get('tab') != KX.get(group):
+            # 脚本表、二剪表交的成片按名字里写的排期行号（B145-01）归到排期行（Reina 11/26：美好生活放出数对不上）
+            m = ROW_IN_NAME.search(film.get('name', ''))
+            ref = row_ref.get(f'{m[1]}:{int(m[2])}') if m and m[1] == group else None
+            if ref and uc and not ref.endswith(':' + uc):
+                ref = None  # 名字里的行号对上了，use case 对不上的不算（B145-01 雪莉Shirley 是 WK01，不是 B 组第 145 行的美好生活）
+        if (not ref or ref not in due or film.get('k') == 'X'
                 or not week <= film.get('d', '') <= T.isoformat()):
             continue
         candidates = by_name[norm(film['name'])] | {film.get('mid')}
@@ -158,8 +167,6 @@ def weekly_recovery(entries, production, facts, T, D):
     return data
 
 
-ROW_IN_NAME = re.compile(r'(?<![A-Za-z0-9])([AB])(\d{2,3})[-_]0?\d(?!\d)')
-
 
 def made_counts(entries, production, cut_rows, week, T):
     """每个排期行实际交了几条、审核通过几条（Reina 11/26：回收表要能看到实际完成进度）。
@@ -184,6 +191,8 @@ def made_counts(entries, production, cut_rows, week, T):
             m = ROW_IN_NAME.search(film.get('name', ''))
             if m and m[1] == g:
                 ref = refs.get(f'{g}:{int(m[2])}')
+                if ref and film.get('uc') and not ref.endswith(':' + film['uc']):
+                    ref = None
         if not ref:
             continue
         made[ref][0] += 1

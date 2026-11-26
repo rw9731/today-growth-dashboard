@@ -2970,7 +2970,7 @@
   "col": "N",
   "d": "2026-11-06",
   "uc": "NT01",
-  "sc": "",
+  "sc": "生日提前备好礼物",
   "k": "V",
   "t": "E",
   "name": "随身记事与个人资料管理-NT01-说来惭愧_扩量01_二创新剪_包子_20261106",
@@ -2992,9 +2992,9 @@
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=SzE4",
   "lk": "f",
-  "mid": "7705276308443873307",
-  "cost": 3,
-  "first": "2026-11-24"
+  "mid": "7704998599940014143",
+  "cost": 1346,
+  "first": "2026-11-10"
  },
  "B|随身记事与个人资料管理nt01说来惭愧扩量02二创新剪包子20261106": {
   "g": "B",
@@ -26975,7 +26975,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE1NQ"
-  ]
+  ],
+  "mid": "7710079099959967794",
+  "cost": 0,
+  "first": "2026-11-20"
  },
  "B|ai01ai琐事扎堆逐项闭环b11801戈20261119": {
   "g": "B",
@@ -29270,7 +29273,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=Szc3"
-  ]
+  ],
+  "mid": "7710474588165799946",
+  "cost": 0,
+  "first": "2026-11-21"
  },
  "B|工作沟通与协作todaykolwk00程碗饭呗原片b19002包子20261120": {
   "g": "B",
@@ -29295,7 +29301,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=EnYgPG&range=Szc3"
-  ]
+  ],
+  "mid": "7710474802905448491",
+  "cost": 1,
+  "first": "2026-11-21"
  },
  "B|ai个人助手todaykoc按目的地天气准备行李01原片b19101包子20261120": {
   "g": "B",
@@ -29574,7 +29583,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE2Mg"
   ],
-  "var": "只换开头"
+  "var": "只换开头",
+  "mid": "7710479880966488114",
+  "cost": 5,
+  "first": "2026-11-21"
  },
  "B|lg04ai同结构重写把同类题吃透b12401栗子20261120": {
   "g": "B",
@@ -29629,7 +29641,10 @@
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE2Ng"
   ],
-  "var": "同结构重写"
+  "var": "同结构重写",
+  "mid": "7710479648682639398",
+  "cost": 18,
+  "first": "2026-11-21"
  },
  "B|nt01ai同脚本换开头忘记随礼金额怎么办b14201小李20261120": {
   "g": "B",
@@ -30536,7 +30551,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyNQ"
-  ]
+  ],
+  "mid": "7710820908412354570",
+  "cost": 0,
+  "first": "2026-11-22"
  },
  "B|lg02ai同脚本换画面在阳台备考b17501小李20261121": {
   "g": "B",
@@ -30648,7 +30666,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE5Mg"
-  ]
+  ],
+  "mid": "7710609701557305371",
+  "cost": 46,
+  "first": "2026-11-21"
  },
  "B|ai个人助理综述ai00美好生活b14506包子20261121": {
   "g": "B",
@@ -30673,7 +30694,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE5NQ"
-  ]
+  ],
+  "mid": "7710609794589360170",
+  "cost": 17,
+  "first": "2026-11-21"
  },
  "B|ai个人助理综述ai00美好生活b14507包子20261121": {
   "g": "B",
@@ -30698,7 +30722,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE5Ng"
-  ]
+  ],
+  "mid": "7710609737725771785",
+  "cost": 30,
+  "first": "2026-11-21"
  },
  "A|lg01ai原片唯西创意进度条卡在17特殊画风a组zxc20261120": {
   "g": "A",
@@ -30748,7 +30775,10 @@
   "ucn": "订票和改签",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyNg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7710821040712794131",
+  "cost": 0,
+  "first": "2026-11-22"
  },
  "B|ai个人助理综述ai00美好生活b14505包子20261121": {
   "g": "B",
@@ -31439,7 +31469,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjEyNw"
-  ]
+  ],
+  "mid": "7711255260313387027",
+  "cost": 163,
+  "first": "2026-11-23"
  },
  "B|lg01重写ai读书看展ai帮规划b13901戈20261120": {
   "g": "B",
@@ -31571,7 +31604,10 @@
   "lk": "f",
   "alt": [
    "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjE5Mw"
-  ]
+  ],
+  "mid": "7711254989704298506",
+  "cost": 247,
+  "first": "2026-11-23"
  },
  "B|ai01美好生活ai日均空闲不足三时b16301戈20261120": {
   "g": "B",
@@ -36429,7 +36465,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjIwNg",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7712052744303706153",
+  "cost": 1073,
+  "first": "2026-11-25"
  },
  "B|learning读书路线规划与每日摘要推送01换开头b17702包子20261125": {
   "g": "B",
@@ -36454,7 +36493,10 @@
   "ucn": "读书接着读和推书",
   "ok": true,
   "link": "https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb?sheet=c665d9&range=SjIwNw",
-  "lk": "f"
+  "lk": "f",
+  "mid": "7712052544601554995",
+  "cost": 3,
+  "first": "2026-11-25"
  },
  "A|学习自我提升todaykocl08恩泽哥哥和贝拉妹妹二创精剪hyq0120261027全篇重配a39801lst20261125": {
   "g": "A",
