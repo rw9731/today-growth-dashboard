@@ -97,6 +97,14 @@ def cut_items(rows, facts, T):
             first=min((f['first'] for f in records if f['first']), default=''),
             cents=sum(f['cents'] for f in records), ret_cents=sum(f['ret_cents'] for f in records),
             act=sum(f['act'] for f in records), ret=sum(f['ret'] for f in records), up=any(verdicts) if verdicts else None))
+    got = {(rid, name) for (rid, name) in linked}
+    for r in rows:  # 精剪不用审，交了就算上传（Reina 11/26），投放数据里还没有的也算放出
+        for name in r.get('films', []):
+            if (r['id'], name) in got:
+                continue
+            out.append(dict(
+                id='', ids=[], ref=f"{r['g']}:{r['id']}:{r['uc']}", u=r['uc'], name=re.sub(r'\.(mp4|mov)$', '', name), cut=True,
+                typ='原片精剪 · ' + r['typ'], due=r['d'], produced='', released=r['d'], first='', cents=0, ret_cents=0, act=0, ret=0, up=None, nodata=True))
     return out
 
 
@@ -126,6 +134,7 @@ def weekly_recovery(entries, production, facts, T, D):
     # 同一条成片可以在多个账户、平台或素材 ID 下投放。一个 ID 只归到唯一能核实的成片。
     assets = {}
     claims = defaultdict(list)
+    approved = {}
     for key, film in production.items():
         group = film.get('g')
         uc = film.get('uc')
@@ -139,6 +148,8 @@ def weekly_recovery(entries, production, facts, T, D):
         if (not ref or ref not in due or film.get('k') == 'X'
                 or not week <= film.get('d', '') <= T.isoformat()):
             continue
+        if film.get('ok'):
+            approved.setdefault(norm(film['name']), (key, film, ref))  # 审核通过就算上传了（Reina 11/26）
         candidates = by_name[norm(film['name'])] | {film.get('mid')}
         for mid in candidates:
             fact = facts.get(mid)
@@ -163,6 +174,15 @@ def weekly_recovery(entries, production, facts, T, D):
             act=sum(fact['act'] for fact in records), ret=sum(fact['ret'] for fact in records),
             up=any(verdicts) if verdicts else None,
         ))
+    # 审核通过就算放出（Reina 11/26：审核通过了就是上传了，只是投放数据里还没透出来）。投放数据里还没有的，按成片日期记放出，没有消耗
+    seen = {norm(x['name']) for x in data['items']} | {norm(assets[k][0]['name']) for k in linked}
+    for nk, (key, film, ref) in approved.items():
+        if nk in seen:
+            continue
+        seen.add(nk)
+        data['items'].append(dict(
+            id='', ids=[], ref=ref, u=ref.rsplit(':', 1)[1] or film['uc'], name=film['name'], typ=type_label(film['name'], [], facts, plan_t.get(ref, '')),
+            due=due[ref], produced=film['d'], released=film['d'], first='', cents=0, ret_cents=0, act=0, ret=0, up=None, nodata=True))
     data['items'].sort(key=lambda x: (-x['cents'], x['released'], x['id']))
     return data
 
