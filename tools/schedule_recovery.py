@@ -134,7 +134,7 @@ def weekly_recovery(entries, production, facts, T, D):
             # 脚本表、二剪表交的成片按名字里写的排期行号（B145-01）归到排期行（Reina 11/26：美好生活放出数对不上）
             m = ROW_IN_NAME.search(film.get('name', ''))
             ref = row_ref.get(f'{m[1]}:{int(m[2])}') if m and m[1] == group else None
-            if ref and uc and not ref.endswith(':' + uc):
+            if ref and uc and not ref.endswith(':' + uc) and ref.rsplit(':', 1)[1] not in film.get('name', ''):
                 ref = None  # 名字里的行号对上了，use case 对不上的不算（B145-01 雪莉Shirley 是 WK01，不是 B 组第 145 行的美好生活）
         if (not ref or ref not in due or film.get('k') == 'X'
                 or not week <= film.get('d', '') <= T.isoformat()):
@@ -191,7 +191,7 @@ def made_counts(entries, production, cut_rows, week, T):
             m = ROW_IN_NAME.search(film.get('name', ''))
             if m and m[1] == g:
                 ref = refs.get(f'{g}:{int(m[2])}')
-                if ref and film.get('uc') and not ref.endswith(':' + film['uc']):
+                if ref and film.get('uc') and not ref.endswith(':' + film['uc']) and ref.rsplit(':', 1)[1] not in film.get('name', ''):  # 脚本表 UC 标错时以名字里的 UC 为准
                     ref = None
         if not ref:
             continue
