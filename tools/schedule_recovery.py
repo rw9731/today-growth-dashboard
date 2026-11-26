@@ -174,7 +174,7 @@ def weekly_recovery(entries, production, facts, T, D):
             act=sum(fact['act'] for fact in records), ret=sum(fact['ret'] for fact in records),
             up=any(verdicts) if verdicts else None,
         ))
-    # 审核通过就算放出（Reina 11/26：审核通过了就是上传了，只是投放数据里还没透出来）。投放数据里还没有的，按成片日期记放出，没有消耗
+    # 审核通过就算放出（Reina 11/26：审核通过了就是上传了，只是还没投出）。投放数据里还没有的，按成片日期记放出，没有消耗
     seen = {norm(x['name']) for x in data['items']} | {norm(assets[k][0]['name']) for k in linked}
     for nk, (key, film, ref) in approved.items():
         if nk in seen:

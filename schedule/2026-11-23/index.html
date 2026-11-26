@@ -640,7 +640,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     return `<td class="n"><b>${got} / ${pl}</b> <small class="q">${(got/pl*100).toFixed(0)}%</small><small class="q" style="display:block">审核通过 ${ok}</small></td>`;};
   const esOf=x=>x.es||revEntries.filter(e=>e.uc===x.u&&(!x.br||branchOf(e.uc,e,entryRef(e))===x.br)); // 老页面的行没带 es，按 use case 和分支从本周排期里取
   const RI=[];
-  const ndTxt=x=>{const k=(x.items||[]).filter(i=>i.nodata).length;return k?`<small class="q" style="display:block" title="审核通过就算上传（精剪交了就算），投放数据里还没出现">其中 ${k} 条投放数据还没透出</small>`:'';};
+  const ndTxt=x=>{const k=(x.items||[]).filter(i=>i.nodata).length;return k?`<small class="q" style="display:block" title="审核通过就算上传（精剪交了就算），还没投出">其中 ${k} 条还没投出</small>`:'';};
   const extTxt=x=>x.ext?`<small class="q" style="display:block">另有星图达人原生 ${x.ext} 条</small>`:''; // 星图原生不在排期行里，不算进已放出（Reina 11/23）
   const renderRow=x=>`<tr data-review-uc="${esc(x.u)}" data-ri="${RI.push(x.items||[])-1}" class="rx" title="点开看这批素材"><td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}${doList(x.es)}</td>${madeTd(esOf(x))}<td class="n"><b>${x.n} / ${x.planned||'—'}</b> ${pct(x.n,x.planned)}${extTxt(x)}${ndTxt(x)}</td>${dueTd(esOf(x))}<td class="n">${x.firstDates.slice(0,1).join('')||'—'}</td>${csTd(x)}${upTd(x)}<td class="num">${reviewMoney(x.cents)}${expTd(x.items,expOf(x.u,x.xp??x.planned,x.br))}</td><td class="n">${x.retention}</td><td class="nm">${x.best?`<div class="bst" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   const sumRow=(title,rows,tier)=>{const items=[...rows.flatMap(r=>itemsBy.get(r.br+'|'+r.u)||[])];const t=agg('',sum(rows.map(r=>r.planned)),items);
