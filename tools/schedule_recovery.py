@@ -157,7 +157,7 @@ def weekly_recovery(entries, production, facts, T, D):
         first = min((fact['first'] for fact in records if fact['first']), default='')
         verdicts = [fact['up'] for fact in records if fact['up'] is not None]
         data['items'].append(dict(
-            id=ids[0], ids=ids, ref=ref, u=film['uc'], name=film['name'], typ=type_label(film['name'], ids, facts, plan_t.get(ref, '')),
+            id=ids[0], ids=ids, ref=ref, u=ref.rsplit(':', 1)[1] or film['uc'], name=film['name'], typ=type_label(film['name'], ids, facts, plan_t.get(ref, '')),
             due=due[ref], produced=film['d'], released=min(fact['released'] for fact in records), first=first,
             cents=sum(fact['cents'] for fact in records), ret_cents=sum(fact['ret_cents'] for fact in records),
             act=sum(fact['act'] for fact in records), ret=sum(fact['ret'] for fact in records),
