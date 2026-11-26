@@ -944,7 +944,7 @@ def make_roi(rows, fams, spend, D, T, of=None, sub_map=None):
         U[u] = roi_row(fs, batch_fs, tot, D, T, sum(1 for f in new if f.sub == u), len(new), spend['U'].get(u, [0])[0], spend['t7'], y_fs)
     launches, _ = families(rows, sub_map, merge_names=False)
     week = T - dt.timedelta(days=T.weekday())
-    out = dict(g=g, U=U, rev=recent_diagnostics(fams, D), review_facts=review_facts(rows, launches, tot, D, week),
+    out = dict(g=g, U=U, rev=recent_diagnostics(fams, D), review_facts=review_facts(rows, launches, tot, D, week - dt.timedelta(days=7)),  # 从上周一起记，上周页面的回收（schedule_rev_refresh）也要用（Reina 11/26：上周回收只对上 24 条）
                batch=batches(fams, tot, D), batch_items=batch_items(fams, tot, D), tier=tier_stats(rows, fams, of, tot, D))
     out['rt'] = rt_diagnose(rows, of, D)
     out['hist'] = history(rows, fams, D)
