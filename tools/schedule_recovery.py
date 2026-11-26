@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 import json
-from datetime import timedelta
+from datetime import date, timedelta
 import re
 
 from output_build import KX, norm
@@ -142,7 +142,7 @@ def weekly_recovery(entries, production, facts, T, D):
         candidates = by_name[norm(film['name'])] | {film.get('mid')}
         for mid in candidates:
             fact = facts.get(mid)
-            if fact and fact['released'] >= film['d']:
+            if fact and fact['released'] >= (date.fromisoformat(film['d']) - timedelta(days=3)).isoformat():  # 上传可能比表里登记的完成日早一两天
                 claims[mid].append(key)
                 assets[key] = (film, ref)
 

@@ -476,9 +476,15 @@ def review_facts(rows, launches, tot, D, week):
     one = dt.timedelta(days=1)
     released = {}
     for row in rows:
-        if row['c'] > 0 or row.get('show', 0) > 0:
-            mid, day = row['id'], row['d']
-            released[mid] = min(released.get(mid, day), day)
+        # 上传就算放出（Reina 11/26）：分日表里出现过的素材，按素材 ID 里的上传时间算放出日，不要求有展示或消耗
+        mid, day = row['id'], row['d']
+        try:
+            up = upload_day(mid)
+        except (TypeError, ValueError):
+            up = day
+        if up > day or up.year < 2026:
+            up = day
+        released[mid] = min(released.get(mid, up), up)
     avg = day_avg(launches, tot)
     facts = {}
     for f in launches:
