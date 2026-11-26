@@ -631,7 +631,7 @@ if(revReady&&revRows.length){
     const names=new Set(items.map(x=>x.name));
     const extra=sp.uc.flatMap(u=>(P.HIST?.U?.[u]||[]).filter(r=>r[2]&&r[2]>=P.REV.week&&r[2]<=P.REV.end&&!names.has(r[0])).map(r=>({u,name:r[0],first:r[2],cents:Math.round(r[3]*100),act:r[4],ret:r[5],ret_cents:r[5]?Math.round(r[3]*100):0,up:null,url:r[8]||'',typ:({AI:'AI','二创':'达人剪辑'})[r[1]]||r[1]})));
     const all=items.concat(extra), us=[...new Set(es.map(e=>e.uc).concat(all.map(x=>x.u)))];
-    const rows=us.map(u=>agg(u,sum(es.filter(e=>e.uc===u).map(e=>Number(e.n))),all.filter(x=>x.u===u))).sort((a,b)=>b.cents-a.cents||b.planned-a.planned);
+    const rows=us.map(u=>({...agg(u,sum(es.filter(e=>e.uc===u).map(e=>Number(e.n))),all.filter(x=>x.u===u)),es:es.filter(e=>e.uc===u)})).sort((a,b)=>b.cents-a.cents||b.planned-a.planned);
     const t=agg('',sum(es.map(e=>Number(e.n))),all);
     return {sp,rows,t,extra:extra.length};
   });
