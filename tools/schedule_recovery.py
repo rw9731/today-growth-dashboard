@@ -79,10 +79,16 @@ def exec_map(agency_dir):
     """星图执行表里每个达人的 use case 和报价（Reina 11/27：星图在执行表里都有方向，投放数据里常是「待对应」；回收要加达人价格）。
     读排期任务存的 agency_read.js 结果：悦普执行表 5cypAT.json（name、uc、price）。唯西付费达人执行表 L1c0HC 有了也一样读（存成 L1c0HC.json，字段同名）。"""
     out = {}
-    for f in ('5cypAT.json', 'L1c0HC.json'):
-        try:
-            d = json.load(open(os.path.join(agency_dir, f), encoding='utf-8'))
-        except (OSError, ValueError, TypeError):
+    here = os.path.dirname(os.path.abspath(__file__))
+    for f, fallback in (('5cypAT.json', None), ('L1c0HC.json', os.path.join(here, 'paid_exec.json'))):
+        d = None
+        for path in (os.path.join(agency_dir or '', f), fallback):
+            try:
+                d = json.load(open(path, encoding='utf-8'))
+                break
+            except (OSError, ValueError, TypeError):
+                continue
+        if not d:
             continue
         for r in d.get('rows', []):
             name = (r.get('name') or '').strip()
