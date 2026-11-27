@@ -100,7 +100,7 @@
     </div>
     <p class="pl-headline" data-draw="headline" hidden></p>
     <a class="lx-jump" href="#todo">↓ 直接看总结和 to-do</a>
-    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{LABEL}} 整周；次留率、次留成本看 {{WRET}} 激活的人（周日激活的次留下周一才出）；连续 3 留率、连续 3 留成本看 {{WRET3}} 激活的人。<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），和 Daily Insight 日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比，只比素材和 use case 之间的相对高低。比的是上一周 {{PLABEL}}，口径相同。周报门槛比日报高：<b>能放量的 use case</b> = 周消耗过全盘 3% 且 ≥ <b data-draw="uc-bar">—</b>；<b>头部素材</b> = 这周有一天消耗 ≥ ¥2,000，至少 100 个激活，次留率不低于、次留成本不高于全盘。</p>
+    <p class="lx-sub">口径：巨量「投放数据_分日」。消耗看 {{LABEL}} 整周；次留率、次留成本看 {{WRET}} 激活的人（周日激活的次留下周一才出）；{{R3N}}率、{{R3N}}成本看 {{WRET3}} 激活的人。{{R3NOTE}}比的是上一周 {{PLABEL}}。周报门槛比日报高：<b>能放量的 use case</b> = 周消耗过全盘 3% 且 ≥ <b data-draw="uc-bar">—</b>；<b>头部素材</b> = 这周有一天消耗 ≥ ¥2,000，至少 100 个激活，次留率不低于、次留成本不高于全盘。</p>
   </header>
 
   <section class="lx-kpis">
@@ -108,13 +108,13 @@
     <div class="lx-card"><span class="lx-label">周激活 · 激活成本</span><span class="lx-big" data-draw="k-act">—</span><span class="lx-cmp" data-draw="d-act"></span></div>
     <div class="lx-card"><span class="lx-label">次留率（{{WRET}} 激活）</span><span class="lx-big" data-draw="k-rate">—</span><span class="lx-cmp" data-draw="d-rate"></span></div>
     <div class="lx-card"><span class="lx-label">次留成本</span><span class="lx-big" data-draw="k-cpr">—</span><span class="lx-cmp" data-draw="d-cpr"></span></div>
-    <div class="lx-card"><span class="lx-label">连续 3 留率 · 成本（{{WRET3}} 激活）</span><span class="lx-big" data-draw="k-rate3">—</span><span class="lx-cmp" data-draw="d-rate3"></span></div>
+    <div class="lx-card"><span class="lx-label">{{R3N}}率 · 成本（{{WRET3}} 激活）</span><span class="lx-big" data-draw="k-rate3">—</span><span class="lx-cmp" data-draw="d-rate3"></span></div>
     <div class="lx-card"><span class="lx-label">在跑素材 · 本周首次消耗</span><span class="lx-big" data-draw="k-n">—</span><span class="lx-cmp" data-draw="d-n"></span></div>
   </section>
 
   <section class="lx-sec" id="trend">
     <h2 class="lx-h2">一、两周走势</h2>
-    <p class="lx-note">柱 = 每天消耗（浅色是上一周）；实线 = 当天激活的人的次留率；虚线 = 连续 3 留率（激活后满 3 天才画）。</p>
+    <p class="lx-note">柱 = 每天消耗（浅色是上一周）；实线 = 当天激活的人的次留率；虚线 = {{R3N}}率（激活后满 3 天才画）。</p>
     <div class="lx-card">
       <div class="wk-legend" data-draw="trend-legend"></div>
       <div class="wk-chart" data-draw="trend"></div>
@@ -158,8 +158,8 @@
             <th>周消耗<span class="th-sub">占全盘；右边是每天</span></th>
             <th class="num">次留率<span class="th-sub">下面是比上周</span></th>
             <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
-            <th class="num">连续 3 留率</th>
-            <th class="num">连续 3 留成本</th>
+            <th class="num">{{R3N}}率</th>
+            <th class="num">{{R3N}}成本</th>
             <th class="num">素材<span class="th-sub">在跑 · 本周首次消耗</span></th>
             <th>里面的 use case</th>
             <th>下周</th>
@@ -182,8 +182,8 @@
             <th>周消耗<span class="th-sub">占全盘；右边是每天</span></th>
             <th class="num">次留率<span class="th-sub">下面是比上周</span></th>
             <th class="num">次留成本<span class="th-sub">下面是比上周</span></th>
-            <th class="num">连续 3 留率</th>
-            <th class="num">连续 3 留成本</th>
+            <th class="num">{{R3N}}率</th>
+            <th class="num">{{R3N}}成本</th>
             <th class="num">素材<span class="th-sub">在跑 · 本周首次消耗</span></th>
             <th>各供给<span class="th-sub">次留成本 · 次留率，右边是消耗占比；绿 = 最便宜</span></th>
             <th>下一步</th>
@@ -208,8 +208,8 @@
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
             <th class="num">次留成本</th>
-            <th class="num">连续 3 留率</th>
-            <th class="num">连续 3 留成本</th>
+            <th class="num">{{R3N}}率</th>
+            <th class="num">{{R3N}}成本</th>
             <th>说明</th>
             <th>链接</th>
           </tr>
@@ -229,7 +229,7 @@
             <th>周消耗<span class="th-sub">每天</span></th>
             <th class="num">次留率</th>
             <th class="num">次留成本</th>
-            <th class="num">连续 3 留率</th>
+            <th class="num">{{R3N}}率</th>
             <th class="num">多花的钱</th>
             <th>链接</th>
           </tr>
@@ -268,7 +268,7 @@
       </div>
       <div class="pl-card">
         <h3>哪种改法次留便宜</h3>
-        <p class="lx-note">按改法合并（不分 KOC / KOL）；条形 = 次留成本，虚线 = 全盘；右边是次留成本 · 次留率 · 连续 3 留率。</p>
+        <p class="lx-note">按改法合并（不分 KOC / KOL）；条形 = 次留成本，虚线 = 全盘；右边是次留成本 · 次留率 · {{R3N}}率。</p>
         <div class="pl-method" data-draw="method"></div>
       </div>
     </div>
@@ -285,8 +285,8 @@
             <th>周消耗<span class="th-sub">占全盘</span></th>
             <th class="num">次留率</th>
             <th class="num">次留成本</th>
-            <th class="num">连续 3 留率</th>
-            <th class="num">连续 3 留成本</th>
+            <th class="num">{{R3N}}率</th>
+            <th class="num">{{R3N}}成本</th>
           </tr>
         </thead>
         <tbody data-draw="kind-rows"></tbody>
@@ -396,11 +396,11 @@
   fill('k-act', (el) => { el.textContent = fmtN(o.act) + ' · ' + fmtY(o.cpa); }); fill('d-act', (el) => { el.append('激活成本'); delta(el, o.cpa, o.p_cpa, 'pct', false); });
   fill('k-rate', (el) => { el.textContent = fmtP(o.rate); }); fill('d-rate', (el) => delta(el, o.rate, o.p_rate, 'pts', true));
   fill('k-cpr', (el) => { el.textContent = fmtY(o.cpr); }); fill('d-cpr', (el) => delta(el, o.cpr, o.p_cpr, 'pct', false));
-  fill('k-rate3', (el) => { el.textContent = fmtP(o.rate3) + ' · ' + fmtY(o.cpr3); }); fill('d-rate3', (el) => delta(el, o.rate3, o.p_rate3, 'pts', true));
+  fill('k-rate3', (el) => { el.textContent = fmtP(o.rate3) + ' · ' + fmtY(o.cpr3); }); fill('d-rate3', (el) => { if ({{R3CMP}}) delta(el, o.rate3, o.p_rate3, 'pts', true); else el.textContent = '上一周还是旧的连续留存口径，不比'; });
   fill('k-n', (el) => { el.textContent = fmtN(o.n_run) + ' · ' + fmtN(o.n_new); }); fill('d-n', (el) => { el.textContent = '上周 ' + fmtN(o.p_n_run) + ' · ' + fmtN(o.p_n_new); });
 
   // 一、两周走势
-  fill('trend-legend', (el) => { el.innerHTML = `<span><i style="background:${COLOR};opacity:.35"></i>上周消耗</span><span><i style="background:${COLOR}"></i>本周消耗</span><span><i class="ln" style="background:${css('--color-ok')}"></i>次留率</span><span><i class="ln" style="background:${css('--color-warn')}"></i>连续 3 留率（虚线）</span>`; });
+  fill('trend-legend', (el) => { el.innerHTML = `<span><i style="background:${COLOR};opacity:.35"></i>上周消耗</span><span><i style="background:${COLOR}"></i>本周消耗</span><span><i class="ln" style="background:${css('--color-ok')}"></i>次留率</span><span><i class="ln" style="background:${css('--color-warn')}"></i>{{R3N}}率（虚线）</span>`; });
 
   // 分端（Reina 11/16）
   const better2 = (a, b, low) => (a == null || b == null ? [0, 0] : (low ? (a < b ? [1, 0] : a > b ? [0, 1] : [0, 0]) : (a > b ? [1, 0] : a < b ? [0, 1] : [0, 0])));
@@ -442,7 +442,7 @@
     svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', m.l - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').text((v) => (v >= 10000 ? v / 10000 + '万' : v));
     svg.append('g').selectAll('text').data(y2.ticks(5)).join('text').attr('x', W - m.r + 6).attr('y', (v) => y2(v) + 4).text(d3.format('.0%'));
     svg.append('line').attr('x1', (x(ds[7].date) + x(ds[6].date) + x.bandwidth()) / 2).attr('x2', (x(ds[7].date) + x(ds[6].date) + x.bandwidth()) / 2).attr('y1', m.t - 6).attr('y2', H - m.b).style('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '3 3');
-    svg.append('g').selectAll('rect').data(ds).join('rect').attr('x', (d) => x(d.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d.spend)).attr('height', (d) => y(0) - y(d.spend)).attr('rx', 2).style('fill', COLOR).style('opacity', (d) => (d.week === 'this' ? 1 : 0.35)).append('title').text((d) => fmtD(d.date) + ' 消耗 ' + fmtY(d.spend) + '，激活 ' + fmtN(d.act) + '，次留率 ' + fmtP(d.rate) + '，连续 3 留率 ' + fmtP(d.rate3));
+    svg.append('g').selectAll('rect').data(ds).join('rect').attr('x', (d) => x(d.date)).attr('width', x.bandwidth()).attr('y', (d) => y(d.spend)).attr('height', (d) => y(0) - y(d.spend)).attr('rx', 2).style('fill', COLOR).style('opacity', (d) => (d.week === 'this' ? 1 : 0.35)).append('title').text((d) => fmtD(d.date) + ' 消耗 ' + fmtY(d.spend) + '，激活 ' + fmtN(d.act) + '，次留率 ' + fmtP(d.rate) + '，{{R3N}}率 ' + fmtP(d.rate3));
     svg.append('g').selectAll('text').data(ds.filter((d) => d.week === 'this')).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', (d) => y(d.spend) - 4).attr('text-anchor', 'middle').text((d) => fmtW(d.spend).replace('¥', ''));
     svg.append('g').selectAll('text').data(ds).join('text').attr('x', (d) => x(d.date) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle').text((d) => fmtD(d.date));
     const cx = (d) => x(d.date) + x.bandwidth() / 2;
@@ -660,7 +660,7 @@
       const bar = document.createElement('div'); bar.className = 'bar';
       const i = document.createElement('i'); i.style.width = (m.cpr / max * 100) + '%'; i.style.background = m.cpr <= cw ? 'var(--color-ok)' : m.cpr > cw * 1.15 ? 'var(--color-bad)' : 'var(--color-warn)';
       const u_ = document.createElement('u'); u_.style.left = (cw / max * 100) + '%'; u_.title = '全盘 ' + fmtY(cw); bar.append(i, u_);
-      const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · 连续 3 留 ' + fmtP(m.rate3);
+      const r = document.createElement('div'); r.className = 'r'; r.innerHTML = '<b>' + fmtY(m.cpr) + '</b> · ' + fmtP0(m.rate) + ' · {{R3N}} ' + fmtP(m.rate3);
       row.append(lab, bar, r); box.appendChild(row);
     }
   });

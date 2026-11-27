@@ -14,7 +14,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LABELS = {'T1': '能放量、留存好', 'T2': '量中等、留存好', 'T3': '能放量、留存不达标', 'T0': '量小或没达标，先观察'}
 
 
+NEW3 = [False]  # Reina 11/27：激活窗口从 11/16 起是巨量新口径（第 3 天当天回来），叫「3 留」；之前的叫「连续 3 留」
+RET_NEW = '2026-11-16'
+
+
+def prev_week_(w):
+    import datetime as _dt
+    return (_dt.date.fromisoformat(w) - _dt.timedelta(days=7)).isoformat()
+
+
 def c3(s):
+    if NEW3[0]:
+        return re.sub(r'连续\s?3\s?留', '3 留', s)
     """notes 里写的「3 留」统一显示成「连续 3 留」：巨量回传的是 D1、D2、D3 每天都打开，不是第 3 天当天回来。"""
     out, i = [], 0
     for m in re.finditer(r'( ?)3 ?留', s):
@@ -53,7 +64,10 @@ def uc_names(x, names, key=''):
 def render(tpl, style, res, meta, rel):
     blob = json.dumps(res, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     rep = {'{{STYLE}}': style, '{{LABEL}}': meta['label'], '{{PLABEL}}': meta['p_label'], '{{WEEK}}': meta['week'],
-           '{{WRET}}': meta['w_ret'], '{{WRET3}}': meta['w_ret3'], '{{BUILT}}': meta['built'], '{{REL}}': rel,
+           '{{WRET}}': meta['w_ret'], '{{WRET3}}': meta['w_ret3'],
+           '{{R3N}}': '3 留' if NEW3[0] else '连续 3 留',
+           '{{R3CMP}}': 'true' if NEW3[0] == (prev_week_(meta['week']) >= RET_NEW) else 'false',
+           '{{R3NOTE}}': ('<b>3 留</b> = 激活后第 3 天当天回来（巨量回传，11/27 起巨量改成和 Daily Insight 日报一样的口径，回刷到 11/16 激活的人；会漏一部分，比日报略低），只比素材和 use case 之间的相对高低。' if NEW3[0] else '<b>连续 3 留</b> = 激活后第 1、2、3 天每天都打开（巨量回传），和 Daily Insight 日报里第 3 天当天回来的 D3 不是一个口径，数字会低一半左右，不能直接比，只比素材和 use case 之间的相对高低。'), '{{BUILT}}': meta['built'], '{{REL}}': rel,
            '{{RESULTS}}': blob}
     out = tpl
     for k, v in rep.items():
@@ -86,6 +100,7 @@ def lint_notes(n):
 def main():
     res = json.load(open(sys.argv[1]))
     meta = res['meta'][0]
+    NEW3[0] = meta['week'] >= RET_NEW
     notes_path = os.path.join(ROOT, 'notes', 'week-' + meta['week'] + '.json')
     names = {u['uc']: u['short'] for u in res.get('uc', [])}
     if os.path.exists(notes_path):
