@@ -117,7 +117,8 @@ def dec(s):
 
 
 def spend_row(R):
-    return dict(c7=R[0], rate=R[1], cpr=R[2], a=R[3], n=[int(x) for x in R[4].split(',')], s=dec(R[5]))
+    return dict(c7=R[0], rate=R[1], cpr=R[2], a=R[3], n=[int(x) for x in R[4].split(',')], s=dec(R[5]),
+                r3=R[6] if len(R) > 6 else None, c3=R[7] if len(R) > 7 else None, a3=R[8] if len(R) > 8 else None)
 
 
 def load_spend(S):
@@ -137,7 +138,7 @@ def load_spend(S):
             U['PS03']['k'] = dec_run(S['run_merged']['PS03'])
         if S.get('ret_merged', {}).get('PS03'):
             U['PS03']['rt'] = dec_ret(S['ret_merged']['PS03'])
-    total = dict(c7=S['t7'], rate=S['rate'], cpr=S['cpr'], n=[int(x) for x in S['T']['n'].split(',')], s=dec(S['T']['s']))
+    total = dict(c7=S['t7'], rate=S['rate'], cpr=S['cpr'], r3=S.get('rate3'), c3=S.get('cpr3'), a3=S.get('act3'), n=[int(x) for x in S['T']['n'].split(',')], s=dec(S['T']['s']))
     if S['T'].get('k'):
         total['k'] = dec_run(S['T']['k'])
     if S['T'].get('ret'):
@@ -799,7 +800,7 @@ def main():
     review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
     P = dict(E=E, DET=DET, U=U, T=total, UC=names, GROUPS=groups, FOLD=plan.get('FOLD', []), MT=plan['MT'], MOVES=plan['MOVES'] if in_week else [], WEEK_PLAN=dict(week_counts),
              days=S['days'], X=X, GL=GL, NOTE=ps03_note(parts, plan.get('ps03_note', '')), START=14 - bars, futDays=W,
-             futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, WE=[md(d) for d in days + fut if d.weekday() >= 5],
+             futKey={md(d): d.strftime('%m-%d') for d in fut}, today=md(T), year=T.year, W3=f'{md(D - dt.timedelta(days=5))}–{md(D - dt.timedelta(days=3))}', WE=[md(d) for d in days + fut if d.weekday() >= 5],
              DIR=plan.get('DIR', []), WT=WT, B=B, BT=batch_line(B, groups, D, total, days), LIGHTING=lighting, RETENTION_REVIEW=RETENTION_REVIEW,
              WHY=why_rows(load_why(T), load_batch_notes(), B, names, total, days), BD=batch_detail(R), BN=load_batch_notes(), RT=R.get('rt'), REV=with_links(review), KOL=kol, CUT=cut_entries(cut_rows), WE_PLAN=[{k: e.get(k) for k in ('uc', 'd', 'g', 't', 'n', 'k', 'tpl', 'src', 'sc', 'how', 'tier', 'bt')} for e in weekly_plan], meters=plan.get('meters', []) if in_week else [], HIST=hist_view(R, D), UCCS=load_uccs(D))
     asof = date(plan['asof'])

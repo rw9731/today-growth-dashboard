@@ -151,7 +151,8 @@ Reina 11/4 定：「本周素材排期」放进素材看板。Reina 11/23 改成
    然后 `python3 tools/agency_progress.py --dir /tmp/sched/agency --date T --out /tmp/sched/agency.json`，schedule_build 加 `--agency /tmp/sched/agency.json`。页面「素材团队执行进度」A、B 组下面多两行：悦普（已发布 / 本周目标，竖线是档期到昨天该发的）、知定堂（成片通过 / 本周目标），点开是还没发、还没通过的行和进度。读不到哪家就不出哪家。日报里自报的数和表里算的不一样时，以表为准，在最后回复里提一句。
 4. `python3 tools/schedule_build.py --data-dir /tmp/sched --date T --progress /tmp/sched/progress.json`：写 schedule/<本周一>/index.html、schedule/index.html，更新 schedules.json。
    上周回收（Reina 11/23）：T 是周一到周三时，再跑 `python3 tools/schedule_rev_refresh.py --data-dir /tmp/sched --week <上周一>`，用最新数据重算上周页面的「本周排期素材回收」（上周末上传的素材周二才走完 3 天冷启窗口，周日激活的次留周一才回传），上周页面其他部分不动。临时版（分日表还没有 D）不跑这一步。电脑连不上就不加 --progress（页面没有进度那一行），其余照出，最后回复里说今天没核对。输出的 WARNING 都写进最后回复。
-5. 提交 schedule/、schedules.json、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
+4之二. 点亮路线图跟着每天刷新（Reina 11/27 问「这个看板不会每周更新吗」：之前没有任何定时任务重画它，停在 11/23）：读 `'✅ Use case 库'!A1:Z300`（结果会存成文件，取前 8 列存成 {"values": [...]}），跑 `python3 tools/roadmap.py --sheet <分日文件> --uclib <Use case 库文件>`，写 roadmap/index.html。
+5. 提交 schedule/、schedules.json、roadmap/、notes/schedule-T.json、scripts/、tools/agency_targets.json（改过 plan 也提交 tools/schedule_plan.json），push 到 main。
 
 改排期（Reina 11/5 定）：今天之后的排期，确定要改就直接在原来的行上改，把这一行的 UC、原素材、条数、怎么改都换成新的，不加「调整」标记、不写改了什么、不留旧内容，也不用通知唯西。改之前先看「扩量素材名」有没有已交，已交的不动。今天的行不改。
 

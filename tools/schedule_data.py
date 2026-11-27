@@ -76,6 +76,7 @@ def load_rows(path):
     c_src = h.index('来源') if '来源' in h else None
     c_plat = h.index('平台') if '平台' in h else None
     c_show = h.index('展示') if '展示' in h else None
+    c_r3 = h.index('3日留存') if '3日留存' in h else None
     rows = []
     for r in v[1:]:
         r = r + [''] * (len(h) - len(r))
@@ -90,7 +91,7 @@ def load_rows(path):
                     uc, fuzzy = u, True
                     break
         rows.append(dict(d=dt.date.fromisoformat(r[col['日期']][:10]), id=str(r[col['素材ID']]).strip(), name=name, c=num(r[col['消耗']]),
-                         a=num(r[col['激活']]), r=num(r[col['次留']]), show=num(r[c_show]) if c_show is not None else 0,
+                         a=num(r[col['激活']]), r=num(r[col['次留']]), r3=num(r[c_r3]) if c_r3 is not None else 0, show=num(r[c_show]) if c_show is not None else 0,
                          uc=uc, fuzzy=fuzzy, src=(r[c_src] or '').strip() if c_src is not None else '', p=(r[c_plat] or '').strip() if c_plat is not None else ''))
     return rows
 
@@ -227,6 +228,8 @@ def spend_uc(rows, fams, of, days, D):
     ret = defaultdict(lambda: [[0.0] * 8 for _ in days])  # 当天激活、次留，按批次：激活0、次留0、激活1、次留1……
     seven = Counter()
     win = defaultdict(lambda: [0.0, 0.0, 0.0])  # 消耗、激活、次留
+    win3 = defaultdict(lambda: [0.0, 0.0, 0.0])  # 3 留（Reina 11/27）：D-5 到 D-3 激活的人的消耗、激活、3日留存，和日报一样
+    d5, d3 = D - dt.timedelta(days=5), D - dt.timedelta(days=3)
     d6, d1 = D - dt.timedelta(days=6), D - dt.timedelta(days=1)
     for r in rows:
         f = of[r['id']]
@@ -240,6 +243,11 @@ def spend_uc(rows, fams, of, days, D):
             ret[u][idx[r['d']]][b * 2 + 1] += r['r']
         if d6 <= r['d'] <= D:
             seven[u] += r['c']
+        if d5 <= r['d'] <= d3:
+            w3 = win3[u]
+            w3[0] += r['c']
+            w3[1] += r['a']
+            w3[2] += r.get('r3', 0)
         if d6 <= r['d'] <= d1:
             w = win[u]
             w[0] += r['c']
@@ -249,6 +257,7 @@ def spend_uc(rows, fams, of, days, D):
     for f in fams:
         if f.spent and f.batch in idx:
             cnt[f.sub][idx[f.batch]] += 1
+    spend_uc.win3 = win3
     return seg, seven, win, cnt, run, ret
 
 
@@ -259,8 +268,10 @@ def sub_of_row(r, f):
 def spend_row(u, seg, seven, win, cnt, n_days):
     w = win[u]
     s = seg[u] if u in seg else [[0.0] * 4 for _ in range(n_days)]
+    w3 = spend_uc.win3[u] if u in spend_uc.win3 else [0.0, 0.0, 0.0]
     return [round(seven[u]), pct(w[2], w[1]), cost_per(w[0], w[2]), int(w[1]),
-            ','.join(str(x) for x in cnt[u]), ';'.join(enc_day(x) for x in s)]
+            ','.join(str(x) for x in cnt[u]), ';'.join(enc_day(x) for x in s),
+            pct(w3[2], w3[1]) if w3[2] else None, cost_per(w3[0], w3[2]) if w3[2] else None, int(w3[1])]
 
 
 def merge_seg(seg, keys, n_days):
@@ -281,7 +292,10 @@ def make_spend(rows, fams, of, D):
     tw = [sum(win[u][k] for u in win) for k in range(3)]
     tn = [sum(cnt[u][i] for u in cnt) for i in range(n)]
     us = sorted(set(seg) | set(seven) | set(win) | set(cnt), key=lambda u: -seven[u])
+    w3s = spend_uc.win3
+    t3 = [sum(w3s[u][k] for u in w3s) for k in range(3)]
     out = dict(days=[d.strftime('%m-%d') for d in days], t7=round(sum(seven.values())), rate=pct(tw[2], tw[1]), cpr=cost_per(tw[0], tw[2]),
+               rate3=pct(t3[2], t3[1]) if t3[2] else None, cpr3=cost_per(t3[0], t3[2]) if t3[2] else None, act3=int(t3[1]),
                T=dict(s=';'.join(enc_day(x) for x in t), n=','.join(str(x) for x in tn)),
                U={u: spend_row(u, seg, seven, win, cnt, n) for u in us})
     enc_run = lambda m: ';'.join(','.join(str(len(x)) for x in day) for day in m)
@@ -299,8 +313,10 @@ def make_spend(rows, fams, of, D):
         w = [sum(win[k][i] for k in keys) for i in range(3)]
         c = [sum(cnt[k][i] for k in keys) for i in range(n)]
         s = merge_seg(seg, keys, n)
+        m3 = [sum(w3s[k][i] for k in keys if k in w3s) for i in range(3)]
         out['merged'] = {'PS03': [round(sum(seven[k] for k in keys)), pct(w[2], w[1]), cost_per(w[0], w[2]), int(w[1]),
-                                  ','.join(str(x) for x in c), ';'.join(enc_day(x) for x in s)]}
+                                  ','.join(str(x) for x in c), ';'.join(enc_day(x) for x in s),
+                                  pct(m3[2], m3[1]) if m3[2] else None, cost_per(m3[0], m3[2]) if m3[2] else None, int(m3[1])]}
     return out
 
 
