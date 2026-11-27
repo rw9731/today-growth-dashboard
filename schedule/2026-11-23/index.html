@@ -284,6 +284,7 @@ html,body{margin:0}
   #kol-xt tr.xh small{font-weight:400;opacity:.8;margin-left:6px}
   #kol-xt tr.xv>td:first-child{padding-left:22px}
   #kol-xt td.nm{max-width:420px}
+  #kol-xt thead th,#kol thead th{position:relative;z-index:5;background:var(--panel);box-shadow:0 1px 0 var(--base)}
   #kol tr.rx>td:first-child{font-weight:700;border-left:4px solid #5b6b67;background:#eef2f1}
 
   .dt tr.th.tsp :is(td,th){background:#5b4bb7}
@@ -1205,9 +1206,9 @@ addEventListener('load', () => {
   addEventListener('scroll', mark, { passive: true }); mark();
 });
 </script>
-<script id="rev-sticky-js">/* 表头吸顶（Reina 11/20）：回收表和排期主表都在横向滚动容器里，CSS sticky 管不到页面滚动，用位移跟着滚。 */
+<script id="rev-sticky-js">/* 表头吸顶（Reina 11/20，11/27 达人素材回收两张表也加）：回收表和排期主表都在横向滚动容器里，CSS sticky 管不到页面滚动，用位移跟着滚。 */
 (()=>{const hook=id=>{const t=document.getElementById(id);if(!t||!t.tHead)return null;return ()=>{const ths=t.tHead.querySelectorAll('th');const r=t.getBoundingClientRect(),h=t.tHead.getBoundingClientRect().height;const y=Math.max(0,Math.min(-r.top,r.height-h*2));const v=y?`translateY(${y}px)`:'';for(const th of ths)th.style.transform=v;};};
-const fs=[];const start=()=>{for(const id of ['b','rev']){const f=hook(id);if(f)fs.push(f);}const run=()=>fs.forEach(f=>f());addEventListener('scroll',run,{passive:true});addEventListener('resize',run);run();};
+const fs=[];const start=()=>{for(const id of ['b','rev','kol-xt','kol']){const f=hook(id);if(f)fs.push(f);}const run=()=>fs.forEach(f=>f());addEventListener('scroll',run,{passive:true});addEventListener('resize',run);run();};
 if(document.readyState==='complete')start();else addEventListener('load',start);})();</script>
 </body>
 </html>
