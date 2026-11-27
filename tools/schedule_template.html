@@ -321,7 +321,7 @@ td.d.f[data-fi]{cursor:pointer}
 <p class="rev-note" id="kol-note"></p>
 <p class="rev-note" id="kol-src"></p>
 <h3 style="margin:14px 0 6px">星图达人（含付费达人原片）<small class="q" style="font-weight:400;margin-left:8px">一周约 30 条，逐条看内容和效果；按方向分组，每条都摊开</small></h3>
-<div class="scroll"><table class="dt" id="kol-xt"><thead><tr><th>方向 / 视频（点标题看抖音原帖）</th><th>来源 / 达人</th><th class="num">达人价格</th><th>首次消耗</th><th class="num">本周消耗</th><th class="num">消耗 ÷ 报价</th><th class="num">激活</th><th>次留率</th><th class="num">次留成本</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table class="dt" id="kol-xt"><thead><tr><th>方向 / 视频（点标题看抖音原帖）</th><th>来源 / 达人</th><th class="num">达人价格</th><th>发布日<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">星图按执行表档期，没有用上传巨量日</span></th><th>首次消耗</th><th class="num">本周消耗</th><th class="num">消耗 ÷ 报价</th><th class="num">激活</th><th>次留率</th><th class="num">次留成本</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
 <h3 style="margin:18px 0 6px">星广<small class="q" style="font-weight:400;margin-left:8px">走量的硬广，看冷启率和单条跑量；点方向看每条</small></h3>
 <div class="scroll"><table class="dt" id="kol"><thead><tr><th>use case</th><th>已放出<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">本周首花的达人原生条数，小字是来源</span></th><th>首次消耗日期</th><th>冷启率<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">已放出、满 3 天的里过冷启的占比</span></th><th class="num">过冷启素材单条跑量<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">过冷启的本周累计消耗 ÷ 条数</span></th><th class="num">本周累计消耗</th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">只算看板日前一天及以前的激活，满 30 才算；小字比同期大盘</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
 </section>
@@ -714,6 +714,8 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
   const priceTd=xs=>{const ps=xs.filter(x=>x.price);if(!ps.length)return `<td class="num"><small class="q">${xs.some(x=>/星图/.test(x.typ||''))?'执行表没对上':'—'}</small></td>`;
     const p=sum(ps.map(x=>x.price)),c=sum(ps.map(x=>x.cents||0))/100;
     return `<td class="num">${yuanK(p)}<small class="q" style="display:block">${ps.length} 条${ps.length<xs.length?`（另 ${xs.length-ps.length} 条没报价）`:''}，消耗 ÷ 报价 ${(c/p).toFixed(1)}</small></td>`;};
+  const pubTd=x=>{if(!x.pub)return '—';const gap=x.first?Math.round((Date.parse(x.first+'T00:00:00Z')-Date.parse(x.pub+'T00:00:00Z'))/864e5):0;
+    return `${reviewDay(x.pub)}${x.pub<(K.week||'')?'<small class="q" style="display:block">上周及以前发的</small>':gap>=3?`<small class="q" style="display:block">发布 ${gap} 天后才投</small>`:''}`;};
   const KI=[];
   const rowK=(x,head,fam)=>`<tr class="${head?'brh':'rx'+(fam?' '+fam:'')}"${head?'':` data-ki="${KI.push(x.xs)-1}" title="点开看这批素材"`}>${head?`<th scope="rowgroup" class="n">${esc(head)}</th>`:`<td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td>`}<td class="n"><b>${x.n}</b><small class="q" style="display:block">${srcTxt(x.xs)}</small></td><td class="n">${x.first?reviewDay(x.first):'—'}</td>${csTdK(x)}${upTdK(x)}<td class="num">${reviewMoney(x.cents)}</td><td class="n">${retOf(x.xs)}</td><td class="nm">${x.best&&!head?`<div class="bst" style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   if(!items.length){
@@ -737,8 +739,8 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
   const rxRateK=x=>x.act>=30&&x.ret!=null?`${(x.ret/x.act*100).toFixed(1)}%`:x.act?`<small class="q">激活 ${x.act}</small>`:'—';
   const csTxtK=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csK(x));
   const detailK=(xs,sw)=>{const its=[...xs].sort((a,b)=>b.cents-a.cents);
-    const trs=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n"><span class="tag">${esc(shortSrc(x.typ))}</span>${x.who?`<small class="q" style="display:block">${esc(x.who)}</small>`:''}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRateK(x)}</td><td class="n">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td class="n">${csTxtK(x)}</td></tr>`).join('');
-    return `<tr class="rx-detail"><td colspan="8"><div class="rx-w" style="width:${sw}px"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>来源</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${trs}</tbody></table></div></td></tr>`;};
+    const trs=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n"><span class="tag">${esc(shortSrc(x.typ))}</span>${x.who?`<small class="q" style="display:block">${esc(x.who)}</small>`:''}</td><td class="n">${pubTd(x)}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRateK(x)}</td><td class="n">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td class="n">${csTxtK(x)}</td></tr>`).join('');
+    return `<tr class="rx-detail"><td colspan="8"><div class="rx-w" style="width:${sw}px"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>来源</th><th>发布日</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${trs}</tbody></table></div></td></tr>`;};
   document.getElementById('kol').addEventListener('click',ev=>{
     if(ev.target.closest('a'))return;const tr=ev.target.closest('tr.rx');if(!tr)return;
     const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('rx-detail')){nx.remove();tr.classList.remove('open');return;}
@@ -747,12 +749,12 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
   });
   // 星图一周约 30 条（Reina 11/27）：单独一张表，方向一行（色条），下面每条视频一行，列对齐，不用点
   {const xs=items.filter(x=>famOf(x)==='xt'),tb=document.querySelector('#kol-xt tbody');
-   if(!xs.length){tb.innerHTML='<tr><td colspan="10" class="q">本周还没有首花的星图达人视频（新的星图视频要先把素材 ID 加进 tools/xingtu.json 才认得出）</td></tr>';}
+   if(!xs.length){tb.innerHTML='<tr><td colspan="11" class="q">本周还没有首花的星图达人视频（新的星图视频要先把素材 ID 加进 tools/xingtu.json 才认得出）</td></tr>';}
    else{const m=new Map();for(const x of xs){if(!m.has(x.u))m.set(x.u,[]);m.get(x.u).push(x);}
     const ratio=(c,p)=>p?((c/100)/p).toFixed(2):'—';
     const head=(t,v,cls)=>{const a=aggK('',v),ps=v.filter(x=>x.price),p=sum(ps.map(x=>x.price)),pc=sum(ps.map(x=>x.cents||0));
-      return `<tr class="xh${cls}"><td>${t}<small>${v.length} 条 · ${srcTxt(v)}</small></td><td><small>${a.done?`冷启 ${a.up}/${a.done}`:'都还没满 3 天'}</small></td><td class="num">${p?yuanK(p):'—'}</td><td>${a.first?reviewDay(a.first):'—'}</td><td class="num">${reviewMoney(a.cents)}</td><td class="num">${ratio(pc,p)}</td><td class="num">${sum(v.map(x=>x.act||0))}</td><td colspan="2">${retOf(v)}</td><td></td></tr>`;};
-    const vrow=x=>`<tr class="xv"><td class="nm">${lnk(x.name,x.url)}</td><td><span class="tag">${esc(shortSrc(x.typ))}</span><small class="q" style="display:block">${esc(x.who||'')}</small></td><td class="num">${x.price?yuanK(x.price):'—'}</td><td>${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.price?ratio(x.cents||0,x.price):'—'}</td><td class="num">${x.act||0}</td><td>${rxRateK(x)}</td><td class="num">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td>${csTxtK(x)}</td></tr>`;
+      return `<tr class="xh${cls}"><td>${t}<small>${v.length} 条 · ${srcTxt(v)}</small></td><td><small>${a.done?`冷启 ${a.up}/${a.done}`:'都还没满 3 天'}</small></td><td class="num">${p?yuanK(p):'—'}</td><td></td><td>${a.first?reviewDay(a.first):'—'}</td><td class="num">${reviewMoney(a.cents)}</td><td class="num">${ratio(pc,p)}</td><td class="num">${sum(v.map(x=>x.act||0))}</td><td colspan="2">${retOf(v)}</td><td></td></tr>`;};
+    const vrow=x=>`<tr class="xv"><td class="nm">${lnk(x.name,x.url)}</td><td><span class="tag">${esc(shortSrc(x.typ))}</span><small class="q" style="display:block">${esc(x.who||'')}</small></td><td class="num">${x.price?yuanK(x.price):'—'}</td><td>${pubTd(x)}</td><td>${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.price?ratio(x.cents||0,x.price):'—'}</td><td class="num">${x.act||0}</td><td>${rxRateK(x)}</td><td class="num">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td>${csTxtK(x)}</td></tr>`;
     const gs=[...m].map(([u,v])=>[u,v.sort((a,b)=>b.cents-a.cents)]).sort((a,b)=>sum(b[1].map(x=>x.cents))-sum(a[1].map(x=>x.cents)));
     tb.outerHTML='<tbody>'+head('合计',xs,'')+'</tbody>'+gs.map(([u,v])=>`<tbody>${head(esc(reviewName(u))+(lit.has(u)?'':'（探索）'),v,lit.has(u)?'':' exp')}${v.map(vrow).join('')}</tbody>`).join('');}}
 })();

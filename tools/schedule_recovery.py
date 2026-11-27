@@ -96,7 +96,9 @@ def exec_map(agency_dir):
                 continue
             m = re.search(r'[A-Z]{2}\d{2}', re.sub(r'^P5', 'PS', (r.get('uc') or '').upper().replace('Ｐ', 'P')))
             price = re.sub(r'[^\d.]', '', r.get('price') or '')
-            out[name] = dict(uc=m.group(0) if m else '', price=round(float(price)) if price else None)
+            md = re.search(r'(\d{1,2})\s*月\s*(\d{1,2})', r.get('d') or '')
+            out[name] = dict(uc=m.group(0) if m else '', price=round(float(price)) if price else None,
+                             pub=f'{d.get("year", 2026)}-{int(md[1]):02d}-{int(md[2]):02d}' if md else '')
     return out
 
 
@@ -119,6 +121,8 @@ def kol_items(hist, facts, week, end, execs=None):
             who = xt[1] if xt and len(xt) > 1 else ''
             ex = (execs or {}).get(who.strip(), {}) if who else {}
             uc = ex.get('uc') if u in ('待对应', '未标', '', '无') and ex.get('uc') else u  # 星图按执行表的方向归（投放数据里还是待对应的）
+            up = min((compute.up_day(i) for i in ids if compute.up_day(i)), default='')
+            pub = ex.get('pub') or up  # 发布日（Reina 11/27）：星图用执行表的发布档期，没有就用视频上传到巨量的日期；星广用上传日
             douyin = f'https://www.douyin.com/video/{xt[2]}' if xt and len(xt) > 2 and xt[2] else ''  # 星图链到达人抖音原帖，巨量签名链接 2 天就失效
             recs = [facts[i] for i in ids if i in facts]
             if recs:
@@ -128,7 +132,7 @@ def kol_items(hist, facts, week, end, execs=None):
             else:
                 cost, act, ret, c1 = (rest[2:6] + [0, 0, 0, 0])[:4]
                 cents, ret_cents, released = round(cost * 100), round(c1 * 100), first
-            out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=uc, name=name, typ=tag, due='', produced='', who=who, price=ex.get('price'), douyin=douyin,
+            out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=uc, name=name, typ=tag, due='', produced='', who=who, price=ex.get('price'), douyin=douyin, pub=pub,
                             released=released, first=first, cents=cents, ret_cents=ret_cents, act=act or 0, ret=ret or 0, up=None))
     out.sort(key=lambda x: (-x['cents'], x['first'], x['id']))
     return out
