@@ -108,10 +108,15 @@ def kol_items(hist, facts, week, end, execs=None):
     facts = facts or {}
     H = (hist or {}).get('U', hist or {})
     out = []
+    seen = set()
     for u, rows in H.items():
         for ids, name, *rest in rows:
+            seen.update(ids)
             first = rest[1] if len(rest) > 1 else ''
-            if not first or not week <= first <= end:
+            xt0 = next((compute.XT[i] for i in ids if i in compute.XT), None)
+            pub0 = ((execs or {}).get(xt0[1].strip(), {}).get('pub') if xt0 and len(xt0) > 1 else '') or ''
+            # 星图：发布日或首次消耗任一在本周就算（Reina 11/27）；星广只看首次消耗
+            if not (first and week <= first <= end) and not (xt0 and week <= pub0 <= end):
                 continue
             src = next((facts[i]['src'] for i in ids if i in facts), '')
             tag = kol_source(src, name, ids)
@@ -134,7 +139,17 @@ def kol_items(hist, facts, week, end, execs=None):
                 cents, ret_cents, released = round(cost * 100), round(c1 * 100), first
             out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=uc, name=name, typ=tag, due='', produced='', who=who, price=ex.get('price'), douyin=douyin, pub=pub,
                             released=released, first=first, cents=cents, ret_cents=ret_cents, act=act or 0, ret=ret or 0, up=None))
-    out.sort(key=lambda x: (-x['cents'], x['first'], x['id']))
+    # 本周发布、还没花过钱的星图（逐日历史里没有）：按执行表的发布档期补进来，标「还没投」
+    for mid, v in compute.XT.items():
+        if mid in seen or len(v) < 2:
+            continue
+        ex = (execs or {}).get(v[1].strip(), {})
+        if not ex.get('pub') or not week <= ex['pub'] <= end:
+            continue
+        out.append(dict(id=mid, ids=[mid], ref='', u=ex.get('uc') or '待对应', name=f'{v[1]}（本周发布，还没投放）', typ=v[0], due='', produced='',
+                        who=v[1], price=ex.get('price'), douyin=f'https://www.douyin.com/video/{v[2]}' if len(v) > 2 and v[2] else '', pub=ex['pub'],
+                        released=ex['pub'], first='', cents=0, ret_cents=0, act=0, ret=0, up=None, nodata=True))
+    out.sort(key=lambda x: (-x['cents'], x['first'] or '9', x['id']))
     return out
 
 
