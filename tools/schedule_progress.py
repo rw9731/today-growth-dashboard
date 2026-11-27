@@ -48,10 +48,11 @@ def is_uc(s):
 
 
 def kind_of(how):
-    m = re.search(r'【(AI|AI 切片二剪|二创[^】]*|重配[^】]*)】', how or '')
+    # 11/23 起「怎么改」开头写成【AI｜新写脚本 3 条】【二创｜达人原片首剪 3 条】，老格式是【AI】【二创/重配】
+    m = re.search(r'【(AI(?:[｜|][^】]*)?|AI 切片二剪|二创[^】]*|重配[^】]*)】', how or '')
     if not m:
         return ''
-    return 'AI' if m.group(1) == 'AI' else '二创'
+    return 'AI' if m.group(1) == 'AI' or re.match(r'AI[｜|]', m.group(1)) else '二创'
 
 
 def load_tab(folder, tab):
@@ -82,6 +83,20 @@ def load_cut(plan):
     return out
 
 
+def plan_kinds(plan):
+    """排期行是 AI 还是二创，按 schedule_plan.json 的 E（plan_sync 从飞书「类型」列同步）。
+    schedule_read.js 只留「怎么改」开头的标签，11/25 起不少行开头是「【11/26 改：…】」这种调整说明，读不到 AI 标签（11/27 B 组 AI 行实交被算成 0）。"""
+    out = {}
+    for e in plan.get('E', []):
+        m = re.match(r'([AB]) 组扩量第 (\d+) 行', e.get('src', ''))
+        if m and e.get('t') in ('AI', '二创'):
+            out[(m[1], int(m[2]))] = e['t']
+    return out
+
+
+KINDS = {}
+
+
 def kx_rows(rows, group, T, since, upto, cut, pool=None):
     pool = dict(pool or {})
     due, skipped = [], 0
@@ -103,14 +118,15 @@ def kx_rows(rows, group, T, since, upto, cut, pool=None):
         got = x.get('扩量素材名') or 0
         names_n = len(got) if isinstance(got, list) else int(got)
         got = max(names_n, int(x.get('nf') or 0))
-        if kind_of(how) == 'AI' and got < n and pool.get(uc):  # B 组 AI 成片传在脚本表，素材名可能还没填
+        kind = kind_of(how) or KINDS.get((group, x['r']), '')
+        if kind == 'AI' and got < n and pool.get(uc):  # B 组 AI 成片传在脚本表，素材名可能还没填
             used = min(pool[uc], n - got)
             pool[uc] -= used
             got += used
         if got == 0 and (cut.get((group, 'kx', x['r'])) == uc or '先不做' in how):
             skipped += n
             continue
-        due.append(dict(tab='kx', r=x['r'], uc=uc, n=n, got=min(got, n), extra=max(0, got - n), due=when.isoformat(), kind=kind_of(how), no_name=max(0, min(got, n) - names_n)))
+        due.append(dict(tab='kx', r=x['r'], uc=uc, n=n, got=min(got, n), extra=max(0, got - n), due=when.isoformat(), kind=kind, no_name=max(0, min(got, n) - names_n)))
     return due, skipped
 
 
@@ -235,6 +251,7 @@ def main():
     upto = T - dt.timedelta(days=1)
     since = dt.date.fromisoformat(a.since) if a.since else upto - dt.timedelta(days=upto.weekday())
     plan = json.load(open(os.path.join(HERE, 'schedule_plan.json'), encoding='utf-8'))
+    KINDS.update(plan_kinds(plan))
     ucs = json.load(open(os.path.join(HERE, 'ucs.json'), encoding='utf-8'))
     names = {u: v['short'] for u, v in ucs.items() if isinstance(v, dict) and v.get('short')}
     cut = load_cut(plan)

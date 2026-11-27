@@ -682,6 +682,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
 // 本周达人素材回收（Reina 11/27：重点抠达人素材质量）：达人本人拍、本人账号发、授权来投的片子单独看，按 use case 排，点开看每条、标来源。
 // 来源：星图（悦普 / 唯西付费达人）、知定堂星广、唯西星广、没对上代理的星广、没剪过的达人原片；唯西的精剪、二创、换开头、重配不算，留在上面那张表。
 (()=>{
+  const csK=x=>csOf({...x,id:''}); // 达人视频发布（素材 ID 的上传时间）常比投放早很多天，冷启窗口按首次消耗日起算
   const K=P.KOL||{items:[]}, items=K.items||[], body=document.querySelector('#kol tbody');
   if(!body)return;
   document.getElementById('kol-range').textContent=K.week?reviewDay(K.week)+'–'+reviewDay(K.end):'';
@@ -692,7 +693,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const r=ret/act*100,c=ret?Math.round(sum(xs.map(x=>x.ret_cents||0))/ret):0,base=P.T?.rate;
     const d=base!=null?r-base:null;const cls=d==null?'':d<=-1?' style="color:var(--red,#c0392b)"':d>=1?' style="color:var(--green,#2e7d32)"':'';
     return `<b${cls}>${r.toFixed(1)}%</b>，${c?reviewMoney(c):'—'}${d!=null?`<small class="q" style="display:block">比大盘${d>=0?'高':'低'} ${Math.abs(d).toFixed(1)} 个点</small>`:''}`;};
-  const aggK=(u,xs)=>{const up=xs.filter(x=>csOf(x)===true),done=xs.filter(x=>csOf(x)!==null);
+  const aggK=(u,xs)=>{const up=xs.filter(x=>csK(x)===true),done=xs.filter(x=>csK(x)!==null);
     const firstDates=[...new Set(xs.map(x=>x.first).filter(Boolean))].sort();
     return {u,xs,n:xs.length,up:up.length,done:done.length,upCents:sum(up.map(x=>x.cents||0)),cents:sum(xs.map(x=>x.cents||0)),first:firstDates[0]||'',best:[...up].sort((a,b)=>b.cents-a.cents)[0]};};
   const srcTxt=xs=>srcCount(xs).map(([s,n])=>`${esc(s)} ${n}`).join('、');
@@ -705,13 +706,21 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     body.innerHTML='<tr><td colspan="8" class="q">本周还没有</td></tr>';return;}
   const byU=new Map();for(const x of items){if(!byU.has(x.u))byU.set(x.u,[]);byU.get(x.u).push(x);}
   const rows=[...byU].map(([u,xs])=>aggK(u,xs)).sort((a,b)=>b.cents-a.cents||b.n-a.n);
-  document.getElementById('kol-note').textContent=`本周首花的达人原生素材 ${items.length} 条：达人本人拍、本人账号发布、授权来投的片子（星图、星广、没剪过的达人原片）。唯西拿原片做的精剪、二创、换开头、重配不在这里，在上面的本周素材回收。投放数据截至 ${reviewDay(K.through)}；冷启、次留口径和上面一样。知定堂星广的激活和次留不回传，看消耗和冷启；没对上代理的星广是投放表来源写星广、但任务对不上悦普或知定堂的。`;
+  document.getElementById('kol-note').textContent=`本周首花的达人原生素材 ${items.length} 条：达人本人拍、本人账号发布、授权来投的片子（星图、星广、没剪过的达人原片）。唯西拿原片做的精剪、二创、换开头、重配不在这里，在上面的本周素材回收。投放数据截至 ${reviewDay(K.through)}；冷启按首次消耗日起 3 天花到 ¥400 算（达人视频发布常比投放早），次留口径和上面一样。知定堂星广的激活和次留不回传，看消耗和冷启；没对上代理的星广是投放表来源写星广、但任务对不上悦普或知定堂的。`;
   document.getElementById('kol-src').innerHTML='按来源：'+srcCount(items).map(([s])=>{const t=aggK('',items.filter(x=>shortSrc(x.typ)===s));
     return `<b>${esc(s)}</b> ${t.n} 条，${t.done?`冷启率 ${(t.up/t.done*100).toFixed(0)}%`:'都还没满 3 天'}，消耗 ${reviewMoney(t.cents)}`;}).join('；');
-  const groups=[['已点亮',rows.filter(r=>lit.has(r.u))],['探索',rows.filter(r=>!lit.has(r.u))]].filter(g=>g[1].length);
-  body.outerHTML=groups.map(([t,rs])=>`<tbody>${rowK(aggK('',rs.flatMap(r=>r.xs)),t)}${rs.map(r=>rowK(r)).join('')}</tbody>`).join('');
+  // 星图和星广分开（Reina 11/27）：星图是付费高、有创作能力的达人，一周约 30 条，要逐条打磨；星广成本低，是走量的硬广，看冷启和单条跑量
+  const famOf=x=>/星广/.test(x.typ||'')?'xg':'xt';
+  const FAM=[['xt','星图达人（含付费达人原片）','一周约 30 条，逐条看内容和效果'],['xg','星广','走量的硬广，看冷启率和单条跑量']];
+  body.outerHTML=FAM.map(([f,title,sub])=>{const xs=items.filter(x=>famOf(x)===f);
+    const m=new Map();for(const x of xs){if(!m.has(x.u))m.set(x.u,[]);m.get(x.u).push(x);}
+    const rs=[...m].map(([u,v])=>aggK(u,v)).sort((a,b)=>b.cents-a.cents||b.n-a.n);
+    const lab=u=>lit.has(u)?'':'<small class="q">（探索）</small>';
+    const head=`<tr class="th t1"><th scope="rowgroup" colspan="8">${title}<span style="font-weight:400;margin-left:10px">${sub}</span></th></tr>`;
+    if(!xs.length)return `<tbody>${head}<tr><td colspan="8" class="q">本周还没有首花的${f==='xt'?'星图达人视频（新的星图视频要先把素材 ID 加进 tools/xingtu.json 才认得出）':'星广视频'}</td></tr></tbody>`;
+    return `<tbody>${head}${rowK(aggK('',xs),'合计')}${rs.map(r=>rowK(r).replace('</td><td class="n"><b>',lab(r.u)+'</td><td class="n"><b>')).join('')}</tbody>`;}).join('');
   const rxRateK=x=>x.act>=30&&x.ret!=null?`${(x.ret/x.act*100).toFixed(1)}%`:x.act?`<small class="q">激活 ${x.act}</small>`:'—';
-  const csTxtK=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x));
+  const csTxtK=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csK(x));
   document.getElementById('kol').addEventListener('click',ev=>{
     if(ev.target.closest('a'))return;const tr=ev.target.closest('tr.rx');if(!tr)return;
     const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('rx-detail')){nx.remove();tr.classList.remove('open');return;}
