@@ -107,6 +107,8 @@
   .lx-star { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 4px; font-size: 11px; line-height: 16px; font-weight: 600; color: #8a4b00; background: #ffe9c7; vertical-align: 1px; white-space: nowrap; }
   .lx-table tr.uc-row td.l1c::before { content: '▸'; display: inline-block; width: 1em; color: var(--color-fg-muted); transition: transform .15s; }
   .lx-table tr.uc-row.open td.l1c::before { transform: rotate(90deg); }
+  .lx-table tr.uc-row td.kd::before { content: '▸'; display: inline-block; width: 1em; color: var(--color-fg-muted); transition: transform .15s; }
+  .lx-table tr.uc-row.open td.kd::before { transform: rotate(90deg); }
   .lx-good { color: var(--color-ok); font-weight: 600; }
   .lx-badv { color: var(--color-bad); font-weight: 600; }
   .lx-warnv { color: var(--color-warn); font-weight: 600; }
@@ -426,7 +428,7 @@
 
   <section class="lx-sec" id="kind">
     <h2 class="lx-h2">三、按素材类型：消耗和次留</h2>
-    <p class="lx-note">按昨天消耗排。素材类型 = 来源 · 改法：<b>只剪辑</b> = 没新写台词，只删减、调顺序、把原句挪到开头；<b>换开头</b> = 只有开头几句新写、新配音；<b>全片重配</b> = 整段口播重写、重新配音；<b>AI 重拍</b> = AI 照一条跑得好的素材重新生成；<b>二剪（未核对）</b> = 还没对过字幕。标签口径同二；“好素材”是这类里次留好的素材条数（见四）。</p>
+    <p class="lx-note">分 5 大类：<b>AI 素材</b>（AI 短剧各改法）、<b>星广</b>（知定堂星广、唯西星广、唯西自建号）、<b>星图</b>（悦普、唯西付费达人）、<b>真人剪辑</b>（KOC/KOL 原片和只剪辑）、<b>真人二创</b>（KOC/KOL 换开头、全片重配、二剪）。<b>点一行展开</b>：分来源的消耗和次留，和这类昨天按消耗排的前 30 条素材。来源 · 改法：<b>只剪辑</b> = 没新写台词，只删减、调顺序、把原句挪到开头；<b>换开头</b> = 只有开头几句新写、新配音；<b>全片重配</b> = 整段口播重写、重新配音；<b>AI 重拍</b> = AI 照一条跑得好的素材重新生成；<b>二剪（未核对）</b> = 还没对过字幕。标签口径同二；“好素材”是这类里次留好的素材条数（见四）。</p>
     <div class="lx-card lx-scroll">
       <table class="lx-table">
         <thead>
@@ -1028,9 +1030,9 @@
       });
     }
   });
-  function buildUcSub(box, ms) {
+  function buildUcSub(box, ms, byKind) {
     const tbl = document.createElement('table'); tbl.className = 'uc-sub';
-    tbl.innerHTML = '<thead><tr><th>#</th><th>素材</th><th>类型</th><th>上线</th><th>消耗<span class="th-sub">{{D}}</span></th><th class="num">占这个 UC</th><th class="num">激活<span class="th-sub">{{D}}</span></th><th class="num">激活成本<span class="th-sub">{{D}}</span></th><th class="num">次留率<span class="th-sub">{{W}}</span></th><th class="num">次留成本<span class="th-sub">{{W}}</span></th><th>标签</th></tr></thead>';
+    tbl.innerHTML = '<thead><tr><th>#</th><th>素材</th><th>' + (byKind ? 'Use case' : '类型') + '</th><th>上线</th><th>消耗<span class="th-sub">{{D}}</span></th><th class="num">' + (byKind ? '占这类' : '占这个 UC') + '</th><th class="num">激活<span class="th-sub">{{D}}</span></th><th class="num">激活成本<span class="th-sub">{{D}}</span></th><th class="num">次留率<span class="th-sub">{{W}}</span></th><th class="num">次留成本<span class="th-sub">{{W}}</span></th><th>标签</th></tr></thead>';
     const tb = document.createElement('tbody'); tbl.appendChild(tb);
     const max = d3.max(ms, (m) => m.cost27 || m.rest_cost) || 1;
     for (const m of ms) {
@@ -1048,7 +1050,8 @@
       const nc = td('name');
       const vid = m.video || (m.link_type === '预览' ? m.link : '');
       if (vid) { const a = document.createElement('a'); a.href = vid; a.target = '_blank'; a.rel = 'noopener'; a.className = 'lx-namelink'; a.textContent = m.name; nc.appendChild(a); } else nc.textContent = m.name;
-      td('short').textContent = (m.kind || '').split(' · ')[0];
+      if (byKind) { const uc = td('short'); uc.textContent = (m.uc || '') + (m.short ? ' ' + m.short : ''); uc.title = m.kind || ''; }
+      else td('short').textContent = (m.kind || '').split(' · ')[0];
       td(m.first && m.first >= (t.week || '9999') ? 'date new' : 'date').textContent = m.first ? fmtD(m.first) : '—';
       barCell(td(), m.cost27, max, 40);
       td('num').textContent = fmtP0(m.share);
@@ -1090,26 +1093,58 @@
       + '5 天合计次留率 iOS <b>' + fmtP(s.ios.rate) + '</b>、安卓 <b>' + fmtP(s.and.rate) + '</b>；次留成本 iOS <b>' + fmtY(s.ios.cpr) + '</b>、安卓 <b>' + fmtY(s.and.cpr) + '</b>；激活成本 iOS <b>' + fmtY(s.ios.cpa) + '</b>、安卓 <b>' + fmtY(s.and.cpa) + '</b>。'
       + (lr ? '最近一天能看次留的 ' + fmtD(lr.date) + '：iOS ' + fmtP(lr.ios.rate) + '、' + fmtY(lr.ios.cpr) + '，安卓 ' + fmtP(lr.and.rate) + '、' + fmtY(lr.and.cpr) + '。' : '');
   });
+  const KDM = d3.group(data('kind_mats') || [], (m) => m.kd);
+  // 三、按素材类型（Reina 11/27）：5 大类一行，点开看分来源的消耗和次留、这类昨天按消耗排的前 30 条素材
+  const kindRow = (tb, r, max, cls) => {
+    const tr = document.createElement('tr'); const td = cellMaker(tr);
+    td(cls).textContent = r.kind;
+    const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
+    barCell(td(), r.cost27, max, 80);
+    td('num').textContent = fmtP0(r.share27);
+    td('num muted').textContent = fmtY(r.cost26);
+    td('num').textContent = fmtN(r.act27);
+    td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
+    td('num muted').textContent = fmtY(r.cost_w);
+    td('num muted').textContent = fmtN(r.act_w);
+    td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
+    const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? (r.status === '次留没回传，激活不算' ? '没回传' : '激活太少') : fmtRetRate(r.rate);
+    const cc = td(cprCls(r.cpr, r.rate, o, t)); cc.textContent = fmtY(r.cpr);
+    ret3(td, r, o);
+    td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
+    const sc = td(); pill(sc, r.status, tagCls(r.status));
+    if (r.noret27 && r.status !== '次留没回传，激活不算') { const nt = document.createElement('div'); nt.className = 'muted'; nt.style.fontSize = '12px'; nt.textContent = '次留不含知定堂星广（昨天 ' + fmtY(r.noret27) + '，没回传）'; sc.appendChild(nt); }
+    tb.appendChild(tr); return tr;
+  };
   fill('kindrows', (tb) => {
-    const rows = data('kind_tbl'); const max = d3.max(rows, (r) => r.cost27) || 1;
+    // 11/27 前的页面没有 kind_grp：照旧一行一个来源 · 改法
+    if (!(data('kind_grp') || []).length) { const old = data('kind_tbl') || []; const om = d3.max(old, (r) => r.cost27) || 1; for (const r of old) kindRow(tb, r, om, 'short'); return; }
+    const rows = data('kind_grp') || []; const subs = d3.group(data('kind_tbl') || [], (r) => r.grp);
+    const max = d3.max(rows, (r) => r.cost27) || 1;
     for (const r of rows) {
-      const tr = document.createElement('tr'); const td = cellMaker(tr);
-      td('short').textContent = r.kind;
-      const n = td('num'); n.textContent = fmtN(r.n27); n.style.fontWeight = '600';
-      barCell(td(), r.cost27, max, 80);
-      td('num').textContent = fmtP0(r.share27);
-      td('num muted').textContent = fmtY(r.cost26);
-      td('num').textContent = fmtN(r.act27);
-      td('num').textContent = r.act27 ? fmtY(r.cost27 / r.act27) : '—';
-      td('num muted').textContent = fmtY(r.cost_w);
-      td('num muted').textContent = fmtN(r.act_w);
-      td('num muted').textContent = r.act_w ? fmtY(r.cost_w / r.act_w) : '—';
-      const cr = td(rateCls(r.rate, o, t)); cr.textContent = r.rate === null ? '激活太少' : fmtRetRate(r.rate);
-      const cc = td(cprCls(r.cpr, r.rate, o, t)); cc.textContent = fmtY(r.cpr);
-      ret3(td, r, o);
-      td('num').textContent = r.n_good ? fmtN(r.n_good) : '';
-      pill(td(), r.status, tagCls(r.status));
-      tb.appendChild(tr);
+      const tr = kindRow(tb, r, max, 'short kd');
+      tr.children[0].style.fontWeight = '600';
+      const sub = (subs.get(r.kind) || []).slice().sort((a, b) => b.cost27 - a.cost27);
+      const ms = KDM.get(r.kind) || [];
+      if (!sub.length && !ms.length) continue;
+      tr.classList.add('uc-row'); tr.title = '点开看分来源的消耗和次留、这类昨天按消耗排的前 30 条素材';
+      const dr = document.createElement('tr'); dr.className = 'uc-detail'; dr.hidden = true;
+      const dc = document.createElement('td'); dc.colSpan = tr.children.length; dr.appendChild(dc); tb.appendChild(dr);
+      let built = false;
+      tr.addEventListener('click', (ev) => {
+        if (ev.target.closest('a')) return;
+        if (!built) {
+          const h1 = document.createElement('p'); h1.className = 'lx-note'; h1.innerHTML = '<b>分来源</b>（来源 · 改法，按昨天消耗排）'; dc.appendChild(h1);
+          const st = document.createElement('table'); st.className = 'lx-table uc-sub';
+          st.innerHTML = '<thead>' + tr.closest('table').querySelector('thead').innerHTML.replace('素材类型', '来源 · 改法') + '</thead>';
+          const sb = document.createElement('tbody'); st.appendChild(sb);
+          const smax = d3.max(sub, (x) => x.cost27) || 1;
+          for (const x of sub) kindRow(sb, x, smax, 'short');
+          dc.appendChild(st);
+          if (ms.length) { const h2 = document.createElement('p'); h2.className = 'lx-note'; h2.style.marginTop = '12px'; h2.innerHTML = '<b>昨天消耗前 30 条素材</b>'; dc.appendChild(h2); buildUcSub(dc, ms, true); }
+          built = true;
+        }
+        dr.hidden = !dr.hidden; tr.classList.toggle('open', !dr.hidden);
+      });
     }
   });
 

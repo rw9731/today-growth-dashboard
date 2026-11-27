@@ -31,7 +31,7 @@ def main():
                 r = info[m['id']]
                 m['kind'] = kind_of(r['src'], r['track'], m['name'], m['id'])
     from compute import pick_video
-    for m in res['mat'] + res.get('newd', []):
+    for m in res['mat'] + res.get('newd', []) + [x for x in res.get('uc_mats', []) + res.get('kind_mats', []) if x.get('id')]:
         lk = links.get(m['id'], {})
         ltype = lk.get('type', '')
         video = pick_video(lk)

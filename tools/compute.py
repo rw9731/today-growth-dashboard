@@ -72,6 +72,27 @@ except Exception:  # noqa: BLE001
     STAR = {}
 
 
+KIND_GRPS = ['AI 素材', '星广', '星图', '真人剪辑', '真人二创']
+
+
+def kind_grp(kind):
+    """素材类型归 5 大类（Reina 11/27：「不要分那么细，就按 ai素材、星广、星图、真人剪辑、真人二创来」）。
+    AI 素材 = AI 短剧各改法；星广 = 知定堂星广、唯西星广、唯西自建号（挂在星广任务里）、其他星广；星图 = 悦普星图、唯西星图；
+    真人剪辑 = KOC/KOL 原片、只剪辑（没新写台词），客供也放这里；真人二创 = KOC/KOL 换开头、全片重配、二剪（未核对）。"""
+    k = (kind or '').split(' · 扩量')[0]
+    if k.startswith('AI 短剧'):
+        return 'AI 素材'
+    if '星图' in k:
+        return '星图'
+    if '星广' in k or k == ZJH_NAME:
+        return '星广'
+    if k.startswith(('KOC', 'KOL')):
+        return '真人剪辑' if (k.endswith('原片') or k.endswith('只剪辑') or ' · ' not in k) else '真人二创'
+    if k == '客供':
+        return '真人剪辑'
+    return '其他'
+
+
 def kind_of(src, track, name, mid=None, kl=True):
     """素材类型 = 来源 · 改法（原片 / 只剪辑 / 换开头 / 全片重配 / AI 重拍）；唯西自建号单独一类。
     改法以 tools/gaifa.json（对过字幕的）为准；没对过的二剪写「二剪（未核对）」。kl=True 时名字里有「扩量」再加「· 扩量」。"""
@@ -1621,27 +1642,65 @@ def main():
     by_k = defaultdict(list)
     for r in R:
         by_k[kind_id[r['id']]].append(r)
-    kt = []
-    for k, rs in by_k.items():
+    def kind_row(k, rs, k3):
         c, a_, rt = win(rs)
         c27 = S(rs, D[3], 'cost')
         if not (c > 0 or c27 > 0):
-            continue
-        ok = a_ >= th['act']
-        rate = rt / a_ if ok else None
-        cpr = (c / rt) if ok and rt else None
+            return None
+        # 次留没回传的（知定堂星广）不进次留率、次留成本：这部分钱算不出次留，混进来会把整类的次留成本拉得很高
+        rr = [r for r in rs if not r.get('noret')]
+        cr_, ar_, rtr = win(rr) if len(rr) < len(rs) else (c, a_, rt)
+        ok = ar_ >= th['act']
+        rate = rtr / ar_ if ok else None
+        cpr = (cr_ / rtr) if ok and rtr else None
         st = share_label(rate, cpr, c + c27)
-        if any(r.get('noret') for r in rs):
+        if rs and not rr:
             st = '次留没回传，激活不算'
-        kt.append({'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
-                   'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
-                   'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if kind_id.get(m['id']) == k)})
-        kt[-1].update(kind_3.get(k, NO3))
+        ids = {r['id'] for r in rs}
+        row = {'kind': k, 'status': st, 'n27': len({r['id'] for r in rs if r['date'] == D[3] and r['cost'] > 0}),
+               'cost27': c27, 'share27': c27 / t27, 'cost26': S(rs, D[2], 'cost'), 'act27': S(rs, D[3], 'act'),
+               'cost_w': c, 'act_w': a_, 'rate': rate, 'cpr': cpr, 'n_good': sum(1 for m in good if m['id'] in ids),
+               'noret27': S([r for r in rs if r.get('noret')], D[3], 'cost')}
+        row.update(k3 or NO3)
+        return row
+
+    kt = []
+    for k, rs in by_k.items():
+        row = kind_row(k, rs, kind_3.get(k))
+        if row:
+            row['grp'] = kind_grp(k)
+            kt.append(row)
     kt.sort(key=lambda x: -x['cost27'])
+    # 三、按素材类型（Reina 11/27）：先按 5 大类（AI 素材、星广、星图、真人剪辑、真人二创）看，点开看分来源和前 30 条素材
+    grp_3 = group3(lambda r: kind_grp(kind_id[r['id']]))
+    by_g = defaultdict(list)
+    for r in R:
+        by_g[kind_grp(kind_id[r['id']])].append(r)
+    kgt = []
+    for g, rs in by_g.items():
+        row = kind_row(g, rs, grp_3.get(g))
+        if row:
+            row['subs'] = sum(1 for x in kt if x['grp'] == g)
+            kgt.append(row)
+    kgt.sort(key=lambda x: (KIND_GRPS.index(x['kind']) if x['kind'] in KIND_GRPS else 99))
+    KM_N = 30
+    km = defaultdict(list)
+    for uc, ms in ucm.items():
+        for x in ms:
+            km[kind_grp(kind_id.get(x['id'], x['kind']))].append({**x, 'uc': uc, 'short': ucs.get(uc, {}).get('short', '')})
+    kind_mats = []
+    for k, ms in km.items():
+        ms.sort(key=lambda x: -x['cost27'])
+        tot = sum(x['cost27'] for x in ms) or 1
+        for j, x in enumerate(ms[:KM_N]):
+            kind_mats.append({'kd': k, 'rank': j + 1, 'share': x['cost27'] / tot, **x})
+        if len(ms) > KM_N:
+            rest = ms[KM_N:]
+            kind_mats.append({'kd': k, 'rest_n': len(rest), 'rest_cost': sum(x['cost27'] for x in rest), 'share': sum(x['cost27'] for x in rest) / tot})
     if not any(k['kind'] == ZJH_NAME for k in kt):
         # 唯西自建号一直列出来（Reina 11/9），没花钱时写「还没消耗」
         kt.append({'kind': ZJH_NAME, 'status': '还没消耗', 'n27': 0, 'cost27': 0.0, 'share27': 0.0, 'cost26': 0.0, 'act27': 0,
-                   'cost_w': 0.0, 'act_w': 0, 'rate': None, 'cpr': None, 'n_good': 0, **NO3})
+                   'cost_w': 0.0, 'act_w': 0, 'rate': None, 'cpr': None, 'n_good': 0, 'grp': kind_grp(ZJH_NAME), **NO3})
 
     # 单日批次（按首次消耗日期）
     tot = {d: S(R, d, 'cost') for d in D}
@@ -1703,7 +1762,7 @@ def main():
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
-           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'rank_meta': [rank_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc, 'uc_cs2w': uc_cs2w,
+           'uc_tbl': uct, 'rate7_all': [{'s': rate7_all}], 'uc_mats': uc_mats, 'kind_tbl': kt, 'kind_grp': kgt, 'kind_mats': kind_mats, 'ucstats': [{'n_uc': sum(u['status'] == '能放量 + 次留好' for u in uct)}], 'cohort': coh, 'shift': [shift], 'newd': newd, 'newd_meta': [newd_meta], 'rank_meta': [rank_meta], 'ramp_batches': batches, 'ramp_mats': recent, 'cs_mats': cs_mats, 'cs_dir': cs_dir, 'cs_uc': cs_uc, 'uc_cs2w': uc_cs2w,
            'plan_uc': plan['uc'], 'plan_meta': [plan['meta']], 'plan_method': plan['method'], 'patterns': [patterns]}
     # 星广素材（星广任务里的视频，含唯西自建号）页面上加「星广」标记（Reina 11/14）
     try:
