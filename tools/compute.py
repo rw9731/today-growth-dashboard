@@ -1741,8 +1741,20 @@ def main():
             um[r['id']][0] += r['cost']; um[r['id']][1] = r['name'] or names.get(r['id'], '')
     unmapped = [[k, round(v[0]), v[1][:60]] for k, v in sorted(um.items(), key=lambda x: -x[1][0])]
     out['unmapped'] = unmapped
+    # 像星图达人视频、还没归到代理的素材（Reina 11/27：张元一的 vlog 被算成 AI 短剧，「以后不要有这种问题」）：
+    # 近 3 天花过钱、现在算成 AI 短剧或「星广」（不在知定堂、唯西星广任务里）、名字是抖音文案（带 #）又不带我们的 UC 编号。
+    # 不为空就按 claude/flows/dashboard-daily.md 三之六读代理执行表、跑 tools/xt_match.py，对上再重跑；对不上的写进最后回复。
+    xt_suspect = []
+    for m in mat:
+        nm = m.get('name') or ''
+        k = m.get('kind') or ''
+        if (k.startswith('AI 短剧') or k == '星广') and '#' in nm and not re.search(r'[A-Z]{2}\d{2}', nm) \
+                and (m.get('cost_w') or m.get('cost27') or 0) > 0:
+            xt_suspect.append([m['id'], round(m.get('cost27') or 0), k, nm[:40]])
+    xt_suspect.sort(key=lambda x: -x[1])
+    out['xt_suspect'] = xt_suspect
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
-    print(json.dumps({'unmapped_n': len(unmapped), 'unmapped_cost': round(sum(x[1] for x in unmapped)), 'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
+    print(json.dumps({'xt_suspect_n': len(xt_suspect), 'unmapped_n': len(unmapped),'unmapped_cost': round(sum(x[1] for x in unmapped)), 'D': D[3], 'rows': len(R), 'cost_D': round(o['cost27']), 'rate_w': o['rate_w'] and round(o['rate_w'], 4),
                       'cpr_w': o['cpr_w'] and round(o['cpr_w'], 1), 'rate3_w': o['rate3_w'] and round(o['rate3_w'], 4),
                       'cpr3_w': o['cpr3_w'] and round(o['cpr3_w'], 1), 'good_uc': out['ucstats'][0]['n_uc'], 'scale': gs['n_scale'],
                       'pot': gs['n_pot'], 'scripts': len(SCRIPTS), 'pattern_n': patterns['n'], 'unknown_uc': unknown, 'no_video': sum(1 for m in mat if not m['video']), 'kl': len(kl), 'new_D': len(newd), 'new_D_spent': sum(1 for m in newd if m['first']), 'uploads_file': bool(upl),
