@@ -732,7 +732,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const p=sum(ps.map(x=>x.price)),c=sum(ps.map(x=>x.cents||0))/100;
     return `<td class="num">${yuanK(p)}<small class="q" style="display:block">${ps.length} 条${ps.length<xs.length?`（另 ${xs.length-ps.length} 条没报价）`:''}，消耗 ÷ 报价 ${(c/p).toFixed(1)}</small></td>`;};
   const KI=[];
-  const rowK=(x,head)=>`<tr class="${head?'brh':'rx'}"${head?'':` data-ki="${KI.push(x.xs)-1}" title="点开看这批素材"`}>${head?`<th scope="rowgroup" class="n">${esc(head)}</th>`:`<td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td>`}<td class="n"><b>${x.n}</b><small class="q" style="display:block">${srcTxt(x.xs)}</small></td><td class="n">${x.first?reviewDay(x.first):'—'}</td>${csTdK(x)}${upTdK(x)}<td class="num">${reviewMoney(x.cents)}</td>${priceTd(x.xs)}<td class="n">${retOf(x.xs)}</td><td class="nm">${x.best&&!head?`<div class="bst" style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  const rowK=(x,head,fam)=>`<tr class="${head?'brh':'rx'+(fam?' '+fam:'')}"${head?'':` data-ki="${KI.push(x.xs)-1}" title="点开看这批素材"`}>${head?`<th scope="rowgroup" class="n">${esc(head)}</th>`:`<td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td>`}<td class="n"><b>${x.n}</b><small class="q" style="display:block">${srcTxt(x.xs)}</small></td><td class="n">${x.first?reviewDay(x.first):'—'}</td>${csTdK(x)}${upTdK(x)}<td class="num">${reviewMoney(x.cents)}</td>${priceTd(x.xs)}<td class="n">${retOf(x.xs)}</td><td class="nm">${x.best&&!head?`<div class="bst" style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
   if(!items.length){
     document.getElementById('kol-note').textContent=`本周还没有首花的达人原生素材（投放数据截至 ${reviewDay(K.through)}）。`;
     body.innerHTML='<tr><td colspan="9" class="q">本周还没有</td></tr>';return;}
@@ -750,18 +750,20 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
     const lab=u=>lit.has(u)?'':'<small class="q">（探索）</small>';
     const head=`<tr class="th t1"><th scope="rowgroup" colspan="9">${title}<span style="font-weight:400;margin-left:10px">${sub}</span></th></tr>`;
     if(!xs.length)return `<tbody>${head}<tr><td colspan="9" class="q">本周还没有首花的${f==='xt'?'星图达人视频（新的星图视频要先把素材 ID 加进 tools/xingtu.json 才认得出）':'星广视频'}</td></tr></tbody>`;
-    return `<tbody>${head}${rowK(aggK('',xs),'合计')}${rs.map(r=>rowK(r).replace('</td><td class="n"><b>',lab(r.u)+'</td><td class="n"><b>')).join('')}</tbody>`;}).join('');
+    return `<tbody>${head}${rowK(aggK('',xs),'合计')}${rs.map(r=>rowK(r,'',f).replace('</td><td class="n"><b>',lab(r.u)+'</td><td class="n"><b>')).join('')}</tbody>`;}).join('');
   const rxRateK=x=>x.act>=30&&x.ret!=null?`${(x.ret/x.act*100).toFixed(1)}%`:x.act?`<small class="q">激活 ${x.act}</small>`:'—';
   const csTxtK=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csK(x));
+  const detailK=(xs,sw)=>{const its=[...xs].sort((a,b)=>b.cents-a.cents);
+    const trs=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n"><span class="tag">${esc(shortSrc(x.typ))}</span>${x.who?`<small class="q" style="display:block">${esc(x.who)}</small>`:''}</td><td class="num">${x.price?yuanK(x.price):'—'}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRateK(x)}</td><td class="n">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td class="n">${csTxtK(x)}</td></tr>`).join('');
+    return `<tr class="rx-detail"><td colspan="9"><div class="rx-w" style="width:${sw}px"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>来源 / 达人</th><th class="num">达人价格</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${trs}</tbody></table></div></td></tr>`;};
   document.getElementById('kol').addEventListener('click',ev=>{
     if(ev.target.closest('a'))return;const tr=ev.target.closest('tr.rx');if(!tr)return;
     const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('rx-detail')){nx.remove();tr.classList.remove('open');return;}
-    const its=[...KI[+tr.dataset.ki]].sort((a,b)=>b.cents-a.cents);
-    const trs=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n"><span class="tag">${esc(shortSrc(x.typ))}</span>${x.who?`<small class="q" style="display:block">${esc(x.who)}</small>`:''}</td><td class="num">${x.price?yuanK(x.price):'—'}</td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRateK(x)}</td><td class="n">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td class="n">${csTxtK(x)}</td></tr>`).join('');
-    const sw=Math.max(320,(tr.closest('.scroll')||document.body).clientWidth-40);
-    tr.insertAdjacentHTML('afterend',`<tr class="rx-detail"><td colspan="9"><div class="rx-w" style="width:${sw}px"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>来源 / 达人</th><th class="num">达人价格</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${trs}</tbody></table></div></td></tr>`);
+    tr.insertAdjacentHTML('afterend',detailK(KI[+tr.dataset.ki],Math.max(320,(tr.closest('.scroll')||document.body).clientWidth-40)));
     tr.classList.add('open');
   });
+  // 星图一周约 30 条（Reina 11/27）：视频直接摊开，不用点
+  for(const tr of document.querySelectorAll('#kol tr.rx.xt')){tr.insertAdjacentHTML('afterend',detailK(KI[+tr.dataset.ki],Math.max(320,(tr.closest('.scroll')||document.body).clientWidth-40)));tr.classList.add('open');}
 })();
 if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
