@@ -72,6 +72,10 @@ except Exception:  # noqa: BLE001
     STAR = {}
 
 
+# 3 留、7 留口径（Reina 11/27）：巨量把 3 日、7 日留存改成和 Daily Insight 一样的第 N 天当天回来，回刷到 11/16 前后激活的人；
+# 之前激活的还是旧的连续留存（D1 到 DN 每天都打开），不和新口径混算。
+RET_NEW = '2026-11-16'
+
 KIND_GRPS = ['AI 素材', '星广', '星图', '真人剪辑', '真人二创']
 
 
@@ -202,7 +206,8 @@ def load_rows(path):
         out.append({'date': g('date'), 'platform': g('platform'), 'id': g('id'), 'name': g('name').strip() or names.get(g('id'), ''),
                     'cost': num(g('cost')), 'act': num(g('act')), 'ret': num(g('ret')),
                     'l1': g('l1'), 'l2': g('l2'), 'uc': g('uc'), 'src': opt('来源'), 'track': opt('追踪类型'),
-                    'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != '', 'show': num(opt('展示'))})
+                    'r3': num(opt('3日留存')), 'has3': '3日留存' in col and opt('3日留存') != '', 'show': num(opt('展示')),
+                    'r7': num(opt('7日留存')), 'has7': '7日留存' in col and opt('7日留存') != ''})
     # 待对应、未标的素材定好 use case（Reina 11/15：日报里不能再有「无 UC」），规则见 tools/uc_resolve.py
     try:
         import uc_resolve
@@ -220,7 +225,7 @@ def load_rows(path):
         bad = {k for k, v in star.items() if len(v) > 2 and v[2] in noret}
         for r in out:
             if r['id'] in bad:
-                r['act_raw'], r['act'], r['ret'], r['r3'], r['noret'] = r['act'], 0.0, 0.0, 0.0, True
+                r['act_raw'], r['act'], r['ret'], r['r3'], r['r7'], r['noret'] = r['act'], 0.0, 0.0, 0.0, 0.0, True
     except Exception:  # noqa: BLE001
         pass
     return shift_ret(out)
@@ -239,7 +244,7 @@ def shift_ret(rows):
         v, r['ret'] = r['ret'], 0
         nd = (dt.date.fromisoformat(r['date']) + dt.timedelta(days=1)).isoformat()
         if v and nd <= last:
-            extra.append({**r, 'date': nd, 'cost': 0, 'act': 0, 'ret': v, 'r3': 0, 'has3': False, 'show': 0})
+            extra.append({**r, 'date': nd, 'cost': 0, 'act': 0, 'ret': v, 'r3': 0, 'has3': False, 'r7': 0, 'has7': False, 'show': 0})
     return sorted(rows + extra, key=lambda r: r['date'])
 
 
@@ -588,6 +593,9 @@ def main():
     NEXT = {D[i]: D[i + 1] for i in range(3)}
     days3 = [Dd - dt.timedelta(days=k) for k in (5, 4, 3)]
     W3 = [d.isoformat() for d in days3]
+    # 7 留（Reina 11/27 加）：D-9..D-7 激活的人，第 7 天 D 才过完，T 早上表里才有
+    days7 = [Dd - dt.timedelta(days=k) for k in (9, 8, 7)]
+    W7 = [d.isoformat() for d in days7]
     monday = (Dd - dt.timedelta(days=Dd.weekday())).isoformat()
     th = dict(TH, week=monday, retention_rule='market_rate')
 
@@ -611,7 +619,8 @@ def main():
             names[r['id']] = r['name']
     R = [r for r in allrows if r['date'] in D]
     R3 = [r for r in allrows if r['date'] in W3]
-    for r in R + R3:
+    R7 = [r for r in allrows if r['date'] in W7]
+    for r in R + R3 + R7:
         r['fuzzy'] = False
         if r['uc'] == '库外':
             for key, uc in FUZZY:
@@ -628,12 +637,25 @@ def main():
         ok = len(have3) == 3 and a_ >= th['act']
         return {'cost3': c, 'act3': a_, 'ret3': r3, 'rate3': r3 / a_ if ok else None, 'cpr3': c / r3 if ok and r3 else None}
 
+    have7 = {d for d in W7 if any(r.get('has7') for r in R7 if r['date'] == d)} if W7[0] >= RET_NEW else set()
+
+    def w7(rows):
+        """7 留：D-9..D-7 激活的人（按激活日记）。11/16 前激活的是旧的连续留存口径，不算。"""
+        rows = [r for r in rows if r['date'] in have7]
+        c, a_, r7 = sum(r['cost'] for r in rows), sum(r['act'] for r in rows), sum(r.get('r7', 0) for r in rows)
+        ok = len(have7) == 3 and a_ >= th['act']
+        return {'cost7': c, 'act7': a_, 'ret7': r7, 'l7_rate': r7 / a_ if ok else None, 'l7_cpr': c / r7 if ok and r7 else None}
+
     def group3(key):
-        g = defaultdict(list)
+        g, g7 = defaultdict(list), defaultdict(list)
         for r in R3:
             g[key(r)].append(r)
-        return {k: w3(v) for k, v in g.items()}
-    NO3 = {'cost3': 0, 'act3': 0, 'ret3': 0, 'rate3': None, 'cpr3': None}
+        for r in R7:
+            g7[key(r)].append(r)
+        return {k: {**(w3(g[k]) if k in g else NO3_3), **(w7(g7[k]) if k in g7 else NO7)} for k in set(g) | set(g7)}
+    NO3_3 = {'cost3': 0, 'act3': 0, 'ret3': 0, 'rate3': None, 'cpr3': None}
+    NO7 = {'cost7': 0, 'act7': 0, 'ret7': 0, 'l7_rate': None, 'l7_cpr': None}
+    NO3 = {**NO3_3, **NO7}
 
     S = lambda rows, d, k, p=None: sum(r[k] for r in rows if r['date'] == d and (p is None or r['platform'] == p))
 
@@ -655,6 +677,9 @@ def main():
     o['cpr26'] = S(R, D[2], 'cost') / S(R, D[3], 'ret') if S(R, D[3], 'ret') else None
     g3 = w3(R3)
     o['rate3_w'], o['cpr3_w'], o['act3'] = g3['rate3'], g3['cpr3'], g3['act3']
+    g7 = w7(R7)
+    o['l7_rate_w'], o['l7_cpr_w'], o['act7'] = g7['l7_rate'], g7['l7_cpr'], g7['act7']
+    o['l7_days'] = [(sum(r.get('r7', 0) for r in R7 if r['date'] == d) / a_) if d in have7 and (a_ := sum(r['act'] for r in R7 if r['date'] == d)) else None for d in W7]
     o['rate3_days'] = [(sum(r['r3'] for r in R3 if r['date'] == d) / a_) if d in have3 and (a_ := sum(r['act'] for r in R3 if r['date'] == d)) else None for d in W3]
 
     def label(rate, cpr, cost):
@@ -1636,7 +1661,7 @@ def main():
 
     # 素材类型
     kind_id = {}
-    for r in R + R3:
+    for r in R + R3 + R7:
         kind_id.setdefault(r['id'], kind_of(r['src'], r['track'], names.get(r['id'], r['id']), r['id'], kl=False))
     kind_3 = group3(lambda r: kind_id[r['id']])
     by_k = defaultdict(list)
@@ -1724,7 +1749,7 @@ def main():
 
     plan = build_plan(allrows, ucs, Dd, kt, th)
     for x in plan['uc']:
-        x.update({k: v for k, v in uc_3.get(x['uc'], NO3).items() if k in ('act3', 'rate3', 'cpr3')})
+        x.update({k: v for k, v in uc_3.get(x['uc'], NO3).items() if k in ('act3', 'rate3', 'cpr3', 'act7', 'l7_rate', 'l7_cpr')})
 
     # 文字结论（按数据自动写，只陈述事实）
     P0 = lambda v: '—' if v is None else f'{v * 100:.0f}%'
@@ -1759,6 +1784,8 @@ def main():
             'W': f'{lab(days[0])}–{days[2].day}' if days[0].month == days[2].month else f'{lab(days[0])}–{lab(days[2])}',
             'T': lab(Dd + dt.timedelta(days=1)), 'weekday': '周' + WEEK[Dd.weekday()], 'week': lab(dt.date.fromisoformat(th['week'])),
             'W3': f'{lab(days3[0])}–{days3[2].day}' if days3[0].month == days3[2].month else f'{lab(days3[0])}–{lab(days3[2])}',
+            'W7': f'{lab(days7[0])}–{days7[2].day}' if days7[0].month == days7[2].month else f'{lab(days7[0])}–{lab(days7[2])}',
+            'new3': W3[0] >= RET_NEW, 'has7': len(have7) == 3,
             'take': ''.join(take), 'l1_note': l1_note, 'built': dt.date.today().isoformat()}
     # 次留一般的只留消耗排行要列的（Reina 11/11：门槛降到 ¥300 后 ¥300–500 的次留一般被漏掉了）
     out = {'plat': plat_split(allrows, Dd), 'meta': [meta], 'th': [th], 'overview': [o], 'by_l1': bl, 'mat': [m for m in mat if not any(k in m['group'] for k in ('次留一般',)) or m['cost27'] >= min(th['top'], th['rank'])], 'goodstats': [gs], 'kl': kl,
