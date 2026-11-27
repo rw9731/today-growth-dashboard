@@ -981,7 +981,7 @@
   });
   function buildL1Sub(box, ucs, l1) {
     const tbl = document.createElement('table'); tbl.className = 'uc-sub';
-    tbl.innerHTML = '<thead><tr><th>UC</th><th>Use case</th><th>消耗<span class="th-sub">11/11</span></th><th class="num">占这个分类</th><th class="num">在跑素材<span class="th-sub">11/11</span></th><th class="num">激活<span class="th-sub">11/11</span></th><th class="num">激活成本<span class="th-sub">11/11</span></th><th class="num">次留率<span class="th-sub">11/8–10</span></th><th class="num">次留成本<span class="th-sub">11/8–10</span></th><th>标签</th></tr></thead>';
+    tbl.innerHTML = '<thead><tr><th>UC</th><th>Use case</th><th>消耗<span class="th-sub">11/11</span></th><th class="num">占这个分类</th><th class="num">在跑素材<span class="th-sub">11/11</span></th><th class="num">激活<span class="th-sub">11/11</span></th><th class="num">激活成本<span class="th-sub">11/11</span></th><th class="num">次留率<span class="th-sub">11/8–10</span></th><th class="num">次留成本<span class="th-sub">11/8–10</span></th><th class="num">连续 3 留率<span class="th-sub">11/6–8 激活</span></th><th class="num">连续 3 留成本<span class="th-sub">11/6–8</span></th><th class="num c7">7 留率<span class="th-sub">— 激活</span></th><th class="num c7">7 留成本<span class="th-sub">—</span></th><th>标签</th></tr></thead>';
     const tb = document.createElement('tbody'); tbl.appendChild(tb);
     const tot = d3.sum(ucs, (u) => u.cost27) || 1, max = d3.max(ucs, (u) => u.cost27) || 1;
     for (const u of ucs) {
@@ -995,6 +995,7 @@
       td('num').textContent = u.act27 ? fmtY(u.cost27 / u.act27) : '—';
       const cr = td(u.rate == null ? 'num muted' : rateCls(u.rate, o, t)); cr.textContent = u.rate == null ? '激活太少' : fmtRetRate(u.rate);
       const cc = td(u.rate == null ? 'num muted' : cprCls(u.cpr, u.rate, o, t)); cc.textContent = u.rate == null ? '' : fmtY(u.cpr);
+      ret3(td, u, o);
       const gc = td(); if (u.status) pill(gc, u.status, tagCls(u.status));
       tb.appendChild(tr);
     }
