@@ -40,7 +40,7 @@ h3{font-size:14px;margin:12px 0 4px;font-weight:700}
 .scroll.main{overflow:auto;max-height:calc(100vh - 16px)}
 @media (min-width:1240px){.scroll.main{overflow-x:auto;overflow-y:visible;max-height:none}#b thead th{position:relative}}
 table{border-collapse:separate;border-spacing:0;width:100%}
-#b{table-layout:fixed;min-width:1100px}#b td.yc small{white-space:normal;line-height:1.25}
+#b{table-layout:fixed;min-width:1100px}#b td.yc small{white-space:nowrap}
 #b th,#b td{padding:0;font-weight:400}
 #b thead th{font-size:11px;color:var(--mute);padding:5px 1px;border-bottom:1px solid var(--base);text-align:center;white-space:nowrap;background:var(--panel)}
 #b thead th{position:sticky;top:0;z-index:3;box-shadow:0 1px 0 var(--base)}
@@ -55,7 +55,7 @@ table{border-collapse:separate;border-spacing:0;width:100%}
 .name code{font:600 12px var(--mono);margin-right:4px}
 .name span{color:var(--sub);font-size:12px;line-height:1.25}
 .name em{font-style:normal;font-size:11px;color:var(--ink);background:var(--band);box-shadow:inset 0 0 0 1px var(--base);padding:0 3px;margin-left:3px;white-space:nowrap}.name em.risk{color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
-.st{text-align:right;padding:2px 6px;white-space:nowrap;vertical-align:middle;font-variant-numeric:tabular-nums;font-size:12px}
+.st{text-align:right;padding:2px 10px 2px 6px;white-space:nowrap;vertical-align:middle;font-variant-numeric:tabular-nums;font-size:12px}
 .st b{font-weight:600}
 .st small{color:inherit;font-size:11px;display:block;line-height:1.2}
 .st .q{color:var(--mute)}
@@ -326,7 +326,7 @@ td.d.f[data-fi]{cursor:pointer}
 <div class="scroll"><table class="dt" id="kol"><thead><tr><th>use case</th><th>已放出<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">本周的达人原生条数，小字是来源</span></th><th>首次消耗日期</th><th>冷启率<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">已放出、满 3 天的里过冷启的占比</span></th><th class="num">过冷启素材单条跑量<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">过冷启的本周累计消耗 ÷ 条数</span></th><th class="num">本周累计消耗</th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">只算看板日前一天及以前的激活，满 30 才算；小字比同期大盘</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
 </section>
 <details class="more"><summary>规则和口径</summary><div class="rules">
-<p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
+<p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些，鼠标放上去看激活数。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <p><b>本周回收</b>以周一到周日的生效排期为分母。过冷启 = 上传日和后两天合计花到 ¥400。按扩量排期行关联本周成片，成片审核通过（精剪交了）就算上传、记为放出；投放数据里出现过的按素材 ID 的上传时间记放出日，不要求有展示或消耗。同条成片的投放消耗合计，条数只计一次。首花第二天达到当天全盘在跑素材的单条消耗均值，即计为「跑起来」。同一成片有多个投放 ID 时，任一 ID 跑起来就计一条。</p>
 <p><b>原片精剪：</b>两组「原片精剪排期」tab 的行按交付日算进本周，和唯西 AI / 真人二创合在一起算本周供给总数和已点亮 / 探索分布；在各自分组里单列一行「原片精剪」（use case 已点亮的进已点亮，其余进探索）。成片按 tab 里成片格的文件名关联投放素材 ID，按成片所在行算。精剪不占唯西每周排期产能，产能卡片和 A、B 组进度不算它。</p>
 <p><b>A、B 组进度：</b>对照唯西排期表。进度条是本周已交占本周产能，竖线按一周 7 天均摊产能，是到昨天该交的位置（产能 × 已过天数 / 7），落后 = 该交 − 已交。成片传了、素材名没填全的算交了；B 组扩量排期开始后只按排期行算，脚本表、二剪表不重复算。只算排期行，所以和左边的本周实际产出不是一个数。</p>
@@ -410,7 +410,7 @@ function r3Cell(r){
   if(r.r3==null)return '<td class="st q">·</td>';
   const c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
   const g=P.T.r3==null?'':c(r.r3-P.T.r3,1),gc=(P.T.c3==null||r.c3==null)?'':c(P.T.c3-r.c3,5);
-  return `<td class="st" style="padding-right:12px"><b class="trend ${r.a3!=null&&r.a3<100?'lt ':''}${g}">${r.r3.toFixed(1)}%</b><small class="trend ${gc}">${r.c3==null?'·':'¥'+r.c3}</small>${r.a3!=null&&r.a3<100?`<small class="smp">样本小 ${r.a3}</small>`:''}</td>`;
+  return `<td class="st"${r.a3!=null&&r.a3<100?` title="样本小：${r.a3} 个激活"`:''}><b class="trend ${r.a3!=null&&r.a3<100?'lt ':''}${g}">${r.r3.toFixed(1)}%</b><small class="trend ${gc}">${r.c3==null?'·':'¥'+r.c3}</small></td>`;
 }
 function rateCell(r,id){
   if(r.rate==null)return '<td class="st q">·</td>';
@@ -418,7 +418,7 @@ function rateCell(r,id){
   const hp=m=>r.rt?` data-help="tr:${esc(tid)}|${m}" tabindex="0"`:'';
   const c=(x,t)=>x>=t?'good':x<=-t?'bad':'';
   // 激活不到 100（Reina 11/9）：照样按全盘标浅绿、浅红，再写一行激活数和「样本小」，不再整格灰掉
-  if(r.a!=null&&r.a<100)return `<td class="st"><b class="trend lt ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend lt ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small><small class="smp">样本小 ${r.a}</small></td>`;
+  if(r.a!=null&&r.a<100)return `<td class="st" title="样本小：${r.a} 个激活"><b class="trend lt ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend lt ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small></td>`;
   return `<td class="st"><b class="trend ${c(r.rate-P.T.rate,1)}"${hp('rate')}>${r.rate.toFixed(1)}%</b><small class="trend ${r.cpr==null?'':c(P.T.cpr-r.cpr,3)}"${hp('cpr')}>${r.cpr==null?'·':'¥'+r.cpr}</small></td>`;
 }
 // 日均激活（Reina 11/20）：和次留同一个窗口（D-6 到 D-1，6 天）的激活数 ÷ 6
@@ -445,13 +445,15 @@ const yuanK=v=>v>=10000?(v/10000).toFixed(1)+'万':'¥'+Math.round(v).toLocaleSt
 const csCell=us=>{const c=ucc(us);return c.n?`<td class="st"><b>${(c.p/c.n*100).toFixed(0)}%</b><small class="q">${c.p}/${c.n} 条</small></td>`:'<td class="st q">·</td>';};
 function row(id,code,label,r,es,max,planned,cls,gi){
   const a=nowN(es),b=aftN(es),x=P.X[id],risk=retentionRisks(r);
-  const cc=ucc([id]),bandTop=cc.band!=null?`<b>${yuanK(cc.band)}</b><small class="q">过冷启 ${cc.bn} 条，上传后 7 天平均</small>`:'';
-  const yCell=x?`<td class="st yc">${bandTop}<small class="q">全部新素材前 3 天 ${x.mult.toFixed(1)} 倍 放量 ${x.hit}/${x.n}</small>${x.mx!=null?`<small class="q">去最大一条 ${x.mx.toFixed(1)} 倍</small>`:''}</td>`:(bandTop?`<td class="st">${bandTop}</td>`:'<td class="st q"></td>');
+  // 单条跑量格子只留一个大数 + 一行小字（Reina 11/27：每行小字太多）；细节放到悬浮提示
+  const cc=ucc([id]);
+  const yTip=[cc.band!=null?`过冷启 ${cc.bn} 条，上传后 7 天平均每条 ${yuanK(cc.band)}`:'',x?`全部新素材前 3 天是全盘平均的 ${x.mult.toFixed(1)} 倍，放量 ${x.hit}/${x.n} 条`:'',x&&x.mx!=null?`去掉最大一条 ${x.mx.toFixed(1)} 倍`:''].filter(Boolean).join('\n');
+  const yCell=(cc.band!=null||x)?`<td class="st yc" title="${esc(yTip)}">${cc.band!=null?`<b>${yuanK(cc.band)}</b>`:'<b class="q">·</b>'}${x?`<small class="q">新素材 ${x.mult.toFixed(1)} 倍</small>`:''}</td>`:'<td class="st q"></td>';
   const tag=x?adviceTag(x,gi,risk):'';
   const rCell=tag?`<td class="st"><span class="rt ${rtCls[tag]}">${rtTxt[tag]}</span></td>`:'<td class="st"></td>';
   return `<tr class="row ${cls}" data-id="${esc(id)}"><td class="name"><button data-go="${esc(id)}"${id==='__fold'?'':` data-help="u:${esc(id)}"`}><code>${esc(code)}</code><span>${esc(label)}</span>${risk.length?'<em class="risk">留存预警</em>':''}</button></td>
   <td class="st"><b>${k(r.c7)}</b><small class="q">${(r.c7/P.T.c7*100).toFixed(1)}%</small></td>${rateCell(r,id)}${r3Cell(r)}${actCell(r)}${dayCells(r,es,max,x?x.warn:null,gi===1,P.B[id],id)}
-  <td class="st booked"><b>${planned}</b>${(c=>c?`<small class="q">含精剪 ${c}</small>`:'')(cutN(id==='__fold'?folded:[id]))}${uccExp(id,planned-cutN(id==='__fold'?folded:[id]))?`<small class="q">预期 ${yuanK(uccExp(id,planned-cutN(id==='__fold'?folded:[id])))}</small>`:''}</td><td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td>${csCell([id])}${yCell}${rCell}</tr>`;
+  ${(()=>{const cu=cutN(id==='__fold'?folded:[id]),ex=uccExp(id,planned-cu);return `<td class="st booked"${cu?` title="含精剪 ${cu} 条"`:''}><b>${planned}</b>${ex?`<small class="q">预期 ${yuanK(ex)}</small>`:''}</td>`})()}<td class="st">${a===b?`<b>${a}</b>`:`<span class="q">${a} → </span><b>${b}</b>`}</td>${csCell([id])}${yCell}${rCell}</tr>`;
 }
 const NC=5+all.length+5;
 document.querySelector('#b thead').innerHTML=`<tr><th class="name">分档和 use case</th><th>近 7 天</th><th class="help" data-help="ret" tabindex="0">次留</th><th class="help" data-help="r3" tabindex="0">3 留</th><th class="help" data-help="act" tabindex="0">日均激活</th>${pastDays.map((d,i)=>`<th class="d p${WE.has(d)?' we':''}">${(i===0||d.endsWith('/1'))?d:d.split('/')[1]}<i>${wk(d)}</i></th>`).join('')}${futDays.map(d=>`<th class="d f${WE.has(d)?' we':''}${d===P.today?' now':''}">${d===P.today?'今天 '+d:d}<i>周${wk(d)}</i></th>`).join('')}<th class="help" data-help="booked" tabindex="0">本周已排</th><th>本周上新</th><th class="help" data-help="cs" tabindex="0">冷启率<i>近 2 周</i></th><th class="help" data-help="y" tabindex="0">过冷启单条跑量</th><th class="help" data-help="rule" tabindex="0">条数建议</th></tr>`;
@@ -503,7 +505,7 @@ displayGroups.forEach(([title,list],gi)=>{
   }
   if(!days.length)details='<tr><td colspan="6" class="q">这一周没有排期</td></tr>';
 }
-document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:160px"><col style="width:62px"><col style="width:54px"><col style="width:44px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:48px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:58px"><col style="width:108px"><col style="width:58px"></colgroup>');
+document.getElementById('b').insertAdjacentHTML('afterbegin','<colgroup><col style="width:160px"><col style="width:64px"><col style="width:64px"><col style="width:64px"><col style="width:52px">'+pastDays.map(()=>'<col style="width:25px">').join('')+futDays.map(()=>'<col style="width:48px">').join('')+'<col style="width:64px"><col style="width:78px"><col style="width:58px"><col style="width:108px"><col style="width:58px"></colgroup>');
 document.querySelector('#b tbody').innerHTML=body;
 for(const [k,c] of [['lg-add','.t-add'],['lg-cut','.t-cut']])if(document.querySelector('#b '+c))document.getElementById(k).style.display='';
 document.querySelector('#dt tbody').innerHTML=details;
@@ -965,7 +967,7 @@ function trendCard(id,m){
 const HELP={y:yHelp,
  cs:()=>{const w=P.UCCS?.window;return `<b>近 2 周冷启率</b>：${w?w[0].slice(5).replace('-','/')+'–'+w[1].slice(5).replace('-','/'):'近 2 周'} 上传的新素材里，上传 3 天内花到 ¥400 的占比（上传后没花钱的也算在分母里）。<br><b>单条跑量</b>格子最上面的金额：过冷启素材上传后 7 天平均每条花多少（只算满 7 天的）。<br><b>本周已排</b>下面的预期 = 已排 × 冷启率 × 单条带量，按上传后 7 天算；素材满 7 天后去「本周排期素材回收」看实际和预期差多少，再调下周条数。按 use case 算，样本少时会被一条爆款拉高。`},
  booked:()=> '按本周排期底表汇总，剔除建议拿掉和顺延的条目。与点亮路线图的「本周已排」同口径。',
- r3:()=>`<b>3 留、成本</b>：${P.W3||'近 3 天'} 激活的人第 3 天当天回来的比例（巨量回传，11/16 起和 Daily Insight 同口径，回传会漏一点），成本 = 这几天消耗 ÷ 3 留人数。和日报的 3 留同一个窗口：激活后要 3 天才回传完，所以比次留晚两天。比全盘高 1 个点以上标绿、低 1 个点以上标红；激活不到 100 写样本小。只比方向之间的相对高低，不进分档。`,
+ r3:()=>`<b>3 留、成本</b>：${P.W3||'近 3 天'} 激活的人第 3 天当天回来的比例（巨量回传，11/16 起和 Daily Insight 同口径，回传会漏一点），成本 = 这几天消耗 ÷ 3 留人数。和日报的 3 留同一个窗口：激活后要 3 天才回传完，所以比次留晚两天。比全盘高 1 个点以上标绿、低 1 个点以上标红；激活不到 100 的颜色浅一些，鼠标放上去看激活数。只比方向之间的相对高低，不进分档。`,
  act:()=>`<b>日均激活</b>：${document.getElementById('ret-range').textContent} 这个方向平均每天的激活数，和次留、次留成本是同一批人。用来看次留是不是样本太小（6 天加起来不到 100 个激活的，次留那一格会写「样本小」）。`,
  ret:()=>`<b>次留、成本</b>：${document.getElementById('ret-range').textContent} 这个方向的次留率和次留成本。两个数各自和全盘比（现在 ${P.T.rate}%、¥${P.T.cpr}）：<br>· 次留高 1 个点以上标绿，低 1 个点以上标红。<br>· 成本便宜 ¥3 以上标绿，贵 ¥3 以上标红。<br>· 黑色是和全盘差不多。<br>· 激活不到 100 个的照样按这两条标，但颜色浅一些，下面写着「样本小」和激活数：样本小，只作观察。<br><br>鼠标放到某一行的次留或成本上，看最近 7 天的趋势和大盘。`,
  g:i=>{
