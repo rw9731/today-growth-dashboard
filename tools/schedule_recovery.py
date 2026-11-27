@@ -50,6 +50,58 @@ def xingtu_items(hist, week, end):
     return out
 
 
+KOL_EXCLUDE = re.compile(r'精剪|首剪|二创|扩量|[AB]精\d|[_-][AB]\d{2,3}[-_]|换开头|重配|剪辑|照真人|AI素材|AI重拍|_原片_')
+
+
+def kol_source(src, name, ids):
+    """达人原生素材的来源标签（Reina 11/27：单独一块看达人素材质量）。只要达人本人拍、本人账号发、授权来投的片子：
+    星图（悦普 / 唯西付费达人，按 tools/xingtu.json）、知定堂星广、唯西星广、没对上任务的星广，以及没剪过的 KOC / KOL 原片。
+    唯西拿原片做的精剪、二创、换开头、重配都不算（名字里带这些字样的排除），它们留在上面的本周素材回收里。"""
+    if KOL_EXCLUDE.search(name or ''):
+        return ''
+    for mid in ids:
+        if mid in compute.XT:
+            return compute.XT[mid][0]
+    k = compute.kind_of(src, '', name, ids[0] if ids else None, kl=False)
+    if '自建号' in k:
+        return ''
+    if k in ('知定堂星广', '唯西星广'):
+        return k
+    if k == '星广':
+        return '星广（没对上代理）'
+    if k in ('KOC · 原片', 'KOL · 原片'):
+        return '达人原片 · ' + k[:3]
+    return ''
+
+
+def kol_items(hist, facts, week, end):
+    """本周首花的达人原生素材，按 use case 归，给排期看板「本周达人素材回收」用。
+    消耗、激活、次留按本周算（review_facts 里有的用它，没有的用逐日历史的累计）。"""
+    facts = facts or {}
+    H = (hist or {}).get('U', hist or {})
+    out = []
+    for u, rows in H.items():
+        for ids, name, *rest in rows:
+            first = rest[1] if len(rest) > 1 else ''
+            if not first or not week <= first <= end:
+                continue
+            src = next((facts[i]['src'] for i in ids if i in facts), '')
+            tag = kol_source(src, name, ids)
+            if not tag:
+                continue
+            recs = [facts[i] for i in ids if i in facts]
+            if recs:
+                cents, ret_cents = sum(f['cents'] for f in recs), sum(f['ret_cents'] for f in recs)
+                act, ret = sum(f['act'] for f in recs), sum(f['ret'] for f in recs)
+                released = min(f['released'] for f in recs)
+            else:
+                cost, act, ret, c1 = (rest[2:6] + [0, 0, 0, 0])[:4]
+                cents, ret_cents, released = round(cost * 100), round(c1 * 100), first
+            out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=u, name=name, typ=tag, due='', produced='',
+                            released=released, first=first, cents=cents, ret_cents=ret_cents, act=act or 0, ret=ret or 0, up=None))
+    out.sort(key=lambda x: (-x['cents'], x['first'], x['id']))
+    return out
+
 
 def cut_week(path, week, end):
     """原片精剪（Reina 11/23「放一起」）：两组「原片精剪排期」tab 的行，按交付日落在这一周的算进本周素材回收。

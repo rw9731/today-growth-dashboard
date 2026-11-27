@@ -308,6 +308,12 @@ td.d.f[data-fi]{cursor:pointer}
 <div class="scroll"><table class="dt" id="rev-items"><thead><tr><th>素材</th><th>类型</th><th>use case</th><th>排期交付日</th><th>成片日期</th><th>放出日期</th><th>首次消耗日期</th><th class="num">本周累计消耗</th><th>冷启</th></tr></thead><tbody></tbody></table></div>
 </details>
 </section>
+<section id="kol-recovery" aria-labelledby="sec-kol">
+<h2 id="sec-kol">本周达人素材回收 <span id="kol-range"></span></h2>
+<p class="rev-note" id="kol-note"></p>
+<p class="rev-note" id="kol-src"></p>
+<div class="scroll"><table class="dt" id="kol"><thead><tr><th>use case</th><th>已放出<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">本周首花的达人原生条数，小字是来源</span></th><th>首次消耗日期</th><th>冷启率<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">已放出、满 3 天的里过冷启的占比</span></th><th class="num">过冷启素材单条跑量<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">过冷启的本周累计消耗 ÷ 条数</span></th><th class="num">本周累计消耗</th><th>次留、成本<span class="th-sub" style="display:block;font-weight:400;font-size:11px;color:var(--mute)">只算看板日前一天及以前的激活，满 30 才算；小字比同期大盘</span></th><th>消耗最高素材<span class="th-sub" style="display:block;font-weight:400;font-size:11px">只写过了冷启的</span></th></tr></thead><tbody></tbody></table></div>
+</section>
 <details class="more"><summary>规则和口径</summary><div class="rules">
 <p><b>怎么看这张表：</b>消耗到 {{D}}，柱子下面的数字是当天第一次花钱的条数，和日报一样按首花算批次，跑起来是首花第二天花得比当天大盘平均每条多，这批第二天平均每条比当天大盘高标绿色，低标红色（3 条以上才标）。次留、成本是 <span id="ret-range">{{RET}}</span>，各自和全盘比，次留差 1 个点以上、成本差 ¥3 以上才标绿或红，激活不到 100 个的颜色浅一些、写着「样本小」。在跑是当天花了钱的条数。每类柱高各自一个比例。维持：维持现在消耗每周要上的条数。{{FOOT}}</p>
 <p><b>本周回收</b>以周一到周日的生效排期为分母。过冷启 = 上传日和后两天合计花到 ¥400。按扩量排期行关联本周成片，成片审核通过（精剪交了）就算上传、记为放出；投放数据里出现过的按素材 ID 的上传时间记放出日，不要求有展示或消耗。同条成片的投放消耗合计，条数只计一次。首花第二天达到当天全盘在跑素材的单条消耗均值，即计为「跑起来」。同一成片有多个投放 ID 时，任一 ID 跑起来就计一条。</p>
@@ -673,6 +679,49 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
 }else{
   revBody.innerHTML=`<tr><td colspan="10" class="q">${revReady?'本周暂无排期':'等待本周排期与投放数据'}</td></tr>`;
 }
+// 本周达人素材回收（Reina 11/27：重点抠达人素材质量）：达人本人拍、本人账号发、授权来投的片子单独看，按 use case 排，点开看每条、标来源。
+// 来源：星图（悦普 / 唯西付费达人）、知定堂星广、唯西星广、没对上代理的星广、没剪过的达人原片；唯西的精剪、二创、换开头、重配不算，留在上面那张表。
+(()=>{
+  const K=P.KOL||{items:[]}, items=K.items||[], body=document.querySelector('#kol tbody');
+  if(!body)return;
+  document.getElementById('kol-range').textContent=K.week?reviewDay(K.week)+'–'+reviewDay(K.end):'';
+  const shortSrc=t=>String(t||'').replace(/^星图达人原生 · /,'星图 · ');
+  const srcCount=xs=>{const m=new Map();for(const x of xs)m.set(shortSrc(x.typ),(m.get(shortSrc(x.typ))||0)+1);return [...m].sort((a,b)=>b[1]-a[1]);};
+  const retOf=xs=>{const act=sum(xs.map(x=>x.act||0)),ret=sum(xs.map(x=>x.ret||0));
+    if(act<30)return act?`<small class="q">激活 ${act}，不到 30 不算</small>`:'<small class="q">还没有能算次留的激活</small>';
+    const r=ret/act*100,c=ret?Math.round(sum(xs.map(x=>x.ret_cents||0))/ret):0,base=P.T?.rate;
+    const d=base!=null?r-base:null;const cls=d==null?'':d<=-1?' style="color:var(--red,#c0392b)"':d>=1?' style="color:var(--green,#2e7d32)"':'';
+    return `<b${cls}>${r.toFixed(1)}%</b>，${c?reviewMoney(c):'—'}${d!=null?`<small class="q" style="display:block">比大盘${d>=0?'高':'低'} ${Math.abs(d).toFixed(1)} 个点</small>`:''}`;};
+  const aggK=(u,xs)=>{const up=xs.filter(x=>csOf(x)===true),done=xs.filter(x=>csOf(x)!==null);
+    const firstDates=[...new Set(xs.map(x=>x.first).filter(Boolean))].sort();
+    return {u,xs,n:xs.length,up:up.length,done:done.length,upCents:sum(up.map(x=>x.cents||0)),cents:sum(xs.map(x=>x.cents||0)),first:firstDates[0]||'',best:[...up].sort((a,b)=>b.cents-a.cents)[0]};};
+  const srcTxt=xs=>srcCount(xs).map(([s,n])=>`${esc(s)} ${n}`).join('、');
+  const csTdK=x=>x.done?`<td class="n"><b>${(x.up/x.done*100).toFixed(0)}%</b><small class="q" style="display:block">过 ${x.up} / 满 3 天 ${x.done} 条</small></td>`:`<td class="n"><small class="q">${x.n?'都还没满 3 天':'—'}</small></td>`;
+  const upTdK=x=>x.up?`<td class="num">${reviewMoney(Math.round(x.upCents/x.up))}<small class="q" style="display:block">${x.up} 条的平均</small></td>`:'<td class="num"><small class="q">—</small></td>';
+  const KI=[];
+  const rowK=(x,head)=>`<tr class="${head?'brh':'rx'}"${head?'':` data-ki="${KI.push(x.xs)-1}" title="点开看这批素材"`}>${head?`<th scope="rowgroup" class="n">${esc(head)}</th>`:`<td class="n"><span class="rx-arrow">▸</span>${esc(reviewName(x.u))}</td>`}<td class="n"><b>${x.n}</b><small class="q" style="display:block">${srcTxt(x.xs)}</small></td><td class="n">${x.first?reviewDay(x.first):'—'}</td>${csTdK(x)}${upTdK(x)}<td class="num">${reviewMoney(x.cents)}</td><td class="n">${retOf(x.xs)}</td><td class="nm">${x.best&&!head?`<div class="bst" style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(x.best.name)}"><small class="q">${reviewMoney(x.best.cents)}</small> ${lnk(x.best.name,x.best.url)}</div>`:'—'}</td></tr>`;
+  if(!items.length){
+    document.getElementById('kol-note').textContent=`本周还没有首花的达人原生素材（投放数据截至 ${reviewDay(K.through)}）。`;
+    body.innerHTML='<tr><td colspan="8" class="q">本周还没有</td></tr>';return;}
+  const byU=new Map();for(const x of items){if(!byU.has(x.u))byU.set(x.u,[]);byU.get(x.u).push(x);}
+  const rows=[...byU].map(([u,xs])=>aggK(u,xs)).sort((a,b)=>b.cents-a.cents||b.n-a.n);
+  document.getElementById('kol-note').textContent=`本周首花的达人原生素材 ${items.length} 条：达人本人拍、本人账号发布、授权来投的片子（星图、星广、没剪过的达人原片）。唯西拿原片做的精剪、二创、换开头、重配不在这里，在上面的本周素材回收。投放数据截至 ${reviewDay(K.through)}；冷启、次留口径和上面一样。知定堂星广的激活和次留不回传，看消耗和冷启；没对上代理的星广是投放表来源写星广、但任务对不上悦普或知定堂的。`;
+  document.getElementById('kol-src').innerHTML='按来源：'+srcCount(items).map(([s])=>{const t=aggK('',items.filter(x=>shortSrc(x.typ)===s));
+    return `<b>${esc(s)}</b> ${t.n} 条，${t.done?`冷启率 ${(t.up/t.done*100).toFixed(0)}%`:'都还没满 3 天'}，消耗 ${reviewMoney(t.cents)}`;}).join('；');
+  const groups=[['已点亮',rows.filter(r=>lit.has(r.u))],['探索',rows.filter(r=>!lit.has(r.u))]].filter(g=>g[1].length);
+  body.outerHTML=groups.map(([t,rs])=>`<tbody>${rowK(aggK('',rs.flatMap(r=>r.xs)),t)}${rs.map(r=>rowK(r)).join('')}</tbody>`).join('');
+  const rxRateK=x=>x.act>=30&&x.ret!=null?`${(x.ret/x.act*100).toFixed(1)}%`:x.act?`<small class="q">激活 ${x.act}</small>`:'—';
+  const csTxtK=x=>(c=>c===true?'<b class="good">过冷启</b>':c===false?'没过':x.first?'窗口没走完':'待消耗')(csOf(x));
+  document.getElementById('kol').addEventListener('click',ev=>{
+    if(ev.target.closest('a'))return;const tr=ev.target.closest('tr.rx');if(!tr)return;
+    const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('rx-detail')){nx.remove();tr.classList.remove('open');return;}
+    const its=[...KI[+tr.dataset.ki]].sort((a,b)=>b.cents-a.cents);
+    const trs=its.map(x=>`<tr><td class="nm">${lnk(x.name,x.url)}</td><td class="n"><span class="tag">${esc(shortSrc(x.typ))}</span></td><td class="n">${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.act||0}</td><td class="n">${rxRateK(x)}</td><td class="n">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td class="n">${csTxtK(x)}</td></tr>`).join('');
+    const sw=Math.max(320,(tr.closest('.scroll')||document.body).clientWidth-40);
+    tr.insertAdjacentHTML('afterend',`<tr class="rx-detail"><td colspan="8"><div class="rx-w" style="width:${sw}px"><table class="rx-t"><thead><tr><th>素材（点名字看视频）</th><th>来源</th><th>首次消耗</th><th class="num">消耗</th><th class="num">激活</th><th>次留率</th><th>次留成本</th><th>冷启</th></tr></thead><tbody>${trs}</tbody></table></div></td></tr>`);
+    tr.classList.add('open');
+  });
+})();
 if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
   const show=()=>{
