@@ -51,7 +51,7 @@ function retStart_(from, to) {
     return;
   }
   try {
-    const job = { from: from, to: to, idx: 0, fails: [], startedAt: now_(), refreshed: false };
+    const job = { from: from, to: to, idx: 0, fails: [], failReqs: [], redo: [], round: 0, startedAt: now_(), refreshed: false };
     const accs = loadAccounts_(false);
     job.nAcc = accs.list.length;
     const sh = sh_(RET_TAB);
@@ -77,9 +77,19 @@ function retWork() {
     if (!job || job.done) return;
     const accs = loadAccounts_(false).list;
     const sh = sh_(RET_TAB);
+    job.failReqs = job.failReqs || []; job.redo = job.redo || [];
+    // 补拉上一轮被限频的请求（Reina 11/27：日更回填同时在跑会抢频率，失败的隔 10 分钟再拉，最多 3 轮）
+    while (job.redo.length) {
+      if (Date.now() - t0 > MAX_MS) { saveJob_(pr, job); ScriptApp.newTrigger('retWork').timeBased().after(60 * 1000).create(); return; }
+      const part = job.redo.splice(0, CHUNK * 2);
+      const rows = retPull_(null, job, part.map(f => ({ acc: [f[0], f[1]], topic: f[2] === 'S' ? 'STD_MATERIAL_DATA' : 'MATERIAL_DATA', page: f[3], n: 0 })));
+      if (job.tokenDead) { job.done = true; saveJob_(pr, job); log_('ret', 'token 失效，3 留、7 留没刷：' + job.tokenDead); return; }
+      if (rows.length) sh.getRange(sh.getLastRow() + 1, 1, rows.length, 5).setValues(rows);
+      Utilities.sleep(300);
+    }
     while (job.idx < accs.length) {
       if (Date.now() - t0 > MAX_MS) {
-        pr.setProperty('RETJOB', JSON.stringify({ ...job, fails: job.fails.slice(0, 40) }));
+        saveJob_(pr, job);
         ScriptApp.newTrigger('retWork').timeBased().after(60 * 1000).create();
         return;
       }
@@ -95,15 +105,31 @@ function retWork() {
       job.idx += batch.length;
       Utilities.sleep(300);
     }
+    if (job.failReqs.length && job.round < 3) {  // 有被限频的：10 分钟后只补拉这些
+      job.round++;
+      if (job.failReqs.length > 200) {  // 失败太多（脚本属性存不下），整段重拉
+        log_('ret', job.failReqs.length + ' 个请求没拉到（多是限频），15 分钟后第 ' + job.round + ' 轮整段重拉');
+        job.idx = 0; job.failReqs = []; job.fails = []; job.redo = [];
+        sh.getRange(2, 1, Math.max(sh.getLastRow() - 1, 1), 5).clearContent();
+        saveJob_(pr, job);
+        ScriptApp.newTrigger('retWork').timeBased().after(15 * 60 * 1000).create();
+        return;
+      }
+      log_('ret', '主循环拉完，' + job.failReqs.length + ' 个请求没拉到（多是限频），10 分钟后第 ' + job.round + ' 轮补拉');
+      job.redo = job.failReqs; job.failReqs = []; job.fails = [];
+      saveJob_(pr, job);
+      ScriptApp.newTrigger('retWork').timeBased().after(10 * 60 * 1000).create();
+      return;
+    }
     if (Date.now() - t0 > 2.5 * 60000) {  // 写表单独放一次执行
       job.pulled = true;
-      pr.setProperty('RETJOB', JSON.stringify({ ...job, fails: job.fails.slice(0, 40) }));
+      saveJob_(pr, job);
       ScriptApp.newTrigger('retWork').timeBased().after(60 * 1000).create();
       return;
     }
     retWrite_(job);
     job.done = true;
-    pr.setProperty('RETJOB', JSON.stringify({ ...job, fails: job.fails.slice(0, 40) }));
+    saveJob_(pr, job);
   } catch (e) {
     log_('ret', '脚本出错：' + (e && e.stack ? e.stack : e));
     mail_('巨量 3 留、7 留回刷：脚本出错', String(e && e.stack ? e.stack : e));
@@ -113,9 +139,17 @@ function retWork() {
 }
 
 /** 拉一批户（两个主题，翻页取全），返回 [日期, 平台, 素材ID, 3日留存, 7日留存]，排除「标题」和两个都是 0 的 */
-function retPull_(batch, job) {
-  let reqs = [];
-  batch.forEach(a => ['STD_MATERIAL_DATA', 'MATERIAL_DATA'].forEach(tp => reqs.push({ acc: a, topic: tp, page: 1, n: 0 })));
+function failKey_(r) {
+  return [r.acc[0], /安卓/.test(r.acc[1]) ? '安卓' : 'iOS', r.topic === 'STD_MATERIAL_DATA' ? 'S' : 'M', r.page];
+}
+
+function saveJob_(pr, job) {
+  pr.setProperty('RETJOB', JSON.stringify({ ...job, fails: job.fails.slice(0, 40) }));
+}
+
+function retPull_(batch, job, given) {
+  let reqs = given || [];
+  if (batch) batch.forEach(a => ['STD_MATERIAL_DATA', 'MATERIAL_DATA'].forEach(tp => reqs.push({ acc: a, topic: tp, page: 1, n: 0 })));
   const out = [];
   for (let loop = 0; reqs.length && loop < 40; loop++) {
     const resps = UrlFetchApp.fetchAll(reqs.map(r => ({ url: retUrl_(r.acc[0], r.topic, job.from, job.to, r.page), method: 'get',
@@ -144,13 +178,14 @@ function retPull_(batch, job) {
         r.n++; next.push(r); wait = Math.max(wait, isRateErr_(res) ? 3000 * r.n : 2000);
       } else {
         job.fails.push(r.acc[0] + ' ' + r.acc[1] + ' ' + r.topic + ' p' + r.page + '：' + res.code + ' ' + (res.message || ''));
+        job.failReqs.push(failKey_(r));
       }
     });
     if (job.tokenDead) return out;
     if (wait) Utilities.sleep(wait);
     reqs = next;
   }
-  reqs.forEach(r => job.fails.push(r.acc[0] + ' ' + r.topic + ' p' + r.page + '：重试后仍失败'));
+  reqs.forEach(r => { job.fails.push(r.acc[0] + ' ' + r.topic + ' p' + r.page + '：重试后仍失败'); job.failReqs.push(failKey_(r)); });
   return out;
 }
 
