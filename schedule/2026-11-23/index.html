@@ -279,13 +279,12 @@ html,body{margin:0}
   #rev tr.brh.bt1>th,#rev tr.brh.bt1>td{background:#dcefe8;color:#0b5d47}#rev tr.brh.bt1>th{border-left-color:#0f7a5c}
   #rev tr.brh.bt3>th,#rev tr.brh.bt3>td{background:#f8e3d8;color:#8f3410}#rev tr.brh.bt3>th{border-left-color:#b5451b}
   #rev tr.brh small.q{color:inherit;opacity:.75}
-  #kol-xt tr.xh>td{background:#dcefe8;color:#0b5d47;font-weight:700;font-size:14px;padding:9px 10px;border-top:2px solid #fff}
-  #kol-xt tr.xh>td:first-child{border-left:5px solid #0f7a5c}
-  #kol-xt tr.xh.exp>td{background:#f8e3d8;color:#8f3410}#kol-xt tr.xh.exp>td:first-child{border-left-color:#b5451b}
+  #kol-xt tr.xh>td{background:#eef2f1;color:#1f2d2a;font-weight:700;font-size:14px;padding:9px 10px;border-top:2px solid #fff}
+  #kol-xt tr.xh>td:first-child{border-left:5px solid #5b6b67}
   #kol-xt tr.xh small{font-weight:400;opacity:.8;margin-left:6px}
   #kol-xt tr.xv>td:first-child{padding-left:22px}
   #kol-xt td.nm{max-width:420px}
-  #kol tr.rx>td:first-child{font-weight:700;border-left:4px solid #0f7a5c;background:#f1f8f5}
+  #kol tr.rx>td:first-child{font-weight:700;border-left:4px solid #5b6b67;background:#eef2f1}
 
   .dt tr.th.tsp :is(td,th){background:#5b4bb7}
   #rev tr.brh.bsp>th,#rev tr.brh.bsp>td{background:#e9e6fa;color:#3c3489}#rev tr.brh.bsp>th{border-left-color:#534ab7}
@@ -779,7 +778,7 @@ if(revRows.length){ // 已排的 use case 都显示，周一还没有本周投�
       return `<tr class="xh${cls}"><td>${t}<small>${v.length} 条 · ${srcTxt(v)}</small></td><td><small>${a.done?`冷启 ${a.up}/${a.done}`:'都还没满 3 天'}</small></td><td class="num">${p?yuanK(p):'—'}</td><td></td><td>${a.first?reviewDay(a.first):'—'}</td><td class="num">${reviewMoney(a.cents)}</td><td class="num">${ratio(pc,p)}</td><td class="num">${sum(v.map(x=>x.act||0))}</td><td colspan="2">${retOf(v)}</td><td></td></tr>`;};
     const vrow=x=>`<tr class="xv"><td class="nm">${lnk(x.name,x.url)}</td><td><span class="tag">${esc(shortSrc(x.typ))}</span><small class="q" style="display:block">${esc(x.who||'')}</small></td><td class="num">${x.price?yuanK(x.price):'—'}</td><td>${pubTd(x)}</td><td>${reviewDay(x.first)}</td><td class="num">${reviewMoney(x.cents||0)}</td><td class="num">${x.price?ratio(x.cents||0,x.price):'—'}</td><td class="num">${x.act||0}</td><td>${rxRateK(x)}</td><td class="num">${x.ret?reviewMoney(Math.round(x.ret_cents/x.ret)):'—'}</td><td>${csTxtK(x)}</td></tr>`;
     const gs=[...m].map(([u,v])=>[u,v.sort((a,b)=>b.cents-a.cents)]).sort((a,b)=>sum(b[1].map(x=>x.cents))-sum(a[1].map(x=>x.cents)));
-    tb.outerHTML='<tbody>'+head('合计',xs,'')+'</tbody>'+gs.map(([u,v])=>`<tbody>${head(esc(reviewName(u))+(lit.has(u)?'':'（探索）'),v,lit.has(u)?'':' exp')}${v.map(vrow).join('')}</tbody>`).join('');}}
+    tb.outerHTML='<tbody>'+head('合计',xs,'')+'</tbody>'+gs.map(([u,v])=>`<tbody>${head(esc(reviewName(u))+(lit.has(u)?'':'<small style="margin-left:6px;font-weight:400">探索方向</small>'),v,'')}${v.map(vrow).join('')}</tbody>`).join('');}}
 })();
 if(revItems.length){
   const panel=document.getElementById('rev-assets'), search=document.getElementById('rev-search');
