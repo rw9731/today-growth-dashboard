@@ -504,7 +504,8 @@ def cut_progress_html(rows, T):
 
 def agency_week(plan, T):
     c = plan.get('capacity_by_week', {}).get(monday(T).isoformat(), {})
-    return {'知定堂星广': c.get('星广（知定堂）', 0), '芦鸣星广': c.get('星广（芦鸣，新）', 0), '悦普星图': c.get('抖音星图达人', 0)}
+    return {'知定堂星广': c.get('星广（知定堂）', 0), '芦鸣星广': c.get('星广（芦鸣，新）', 0), '唯西星广': c.get('唯西A组星广', 0),
+            '悦普星图': c.get('抖音星图达人', 0), '唯西星图': c.get('唯西A组星图', 0)}
 
 
 def supply_html(week_by_group, rows, ext=None):
@@ -519,7 +520,8 @@ def supply_html(week_by_group, rows, ext=None):
         return ''
     ext = {k: v for k, v in (ext or {}).items() if v}  # 外部 agency 这周产量（Reina 11/23：悦普星图、知定堂和芦鸣星广也算进总数），取 capacity_by_week
     total = sum(wx.values()) + sum(cut.values()) + sum(ext.values())
-    t = '、'.join(f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1]))
+    # 精剪按两个维度各拆一次（Reina 11/27：两行混在一起像不 MECE）：谁剪（A/B 组）和剪什么（星广原片/达人原片），每行各自加起来等于总数
+    t = ' · '.join(f'{k}原片 {v}' if not k.endswith('原片') else f'{k} {v}' for k, v in sorted(typ.items(), key=lambda kv: -kv[1]))
     card = lambda k, n, sub, cls='': (f'<div class="sup-card{cls}"><div class="cap-k">{k}</div><div class="cap-big"><b>{n}</b> 条</div>'
                                       f'<div class="cap-sub">{sub}</div></div>')
     return ('<div class="supply">'
@@ -527,7 +529,7 @@ def supply_html(week_by_group, rows, ext=None):
             + '<span class="sup-op">=</span>'
             + card('唯西 AI / 真人二创', sum(wx.values()), f'A 组 {wx["A"]} · B 组 {wx["B"]}')
             + '<span class="sup-op">+</span>'
-            + card('原片精剪', sum(cut.values()), f'A 组 {cut["A"]} · B 组 {cut["B"]}<br>{t}')
+            + card('原片精剪', sum(cut.values()), f'谁剪：A 组 {cut["A"]} · B 组 {cut["B"]}<br>剪什么：{t}')
             + ''.join('<span class="sup-op">+</span>' + card(title, sum(v for _, v in parts), ' · '.join(f'{k} {v}' for k, v in parts))
                       for title, parts in (('星广', [(k[:-2], v) for k, v in ext.items() if k.endswith('星广')]),
                                            ('抖音星图', [(k[:-2], v) for k, v in ext.items() if k.endswith('星图')])) if parts)
