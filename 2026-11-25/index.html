@@ -905,7 +905,8 @@
   tile('k-rate7', 'overview', 'l7_rate_w', fmtP); tile('k-cpr7', 'overview', 'l7_cpr_w', fmtY);
   fill('k-rate7d', (el) => { const v = data('overview')[0].l7_days; el.textContent = v ? v.map(fmtP).join('、') : '—'; });
   // 没有 7 留数据的页面（11/27 前、或 7 留窗口里有 11/16 前激活的）把 7 留列收起来
-  if (!((data('meta')[0] || {}).has7)) document.body.classList.add('no7');
+  // 没有 7 留数据时列照样显示（Reina 11/27 看不到 7 留列以为没加），格子写「—」，总览卡写清原因
+  if (!((data('meta')[0] || {}).has7)) { fill('k-rate7d', (el) => { el.textContent = '表里还没有 7 日留存，回刷后自动出数'; }); }
   tile('k-ratew', 'overview', 'rate_w', marketRule ? fmtP : fmtP0); tile('k-cprw', 'overview', 'cpr_w', fmtY);
   tile('th-scale', 'th', 'scale', fmtY); tile('th-top', 'th', 'top', fmtY); tile('th-rank', 'th', 'rank', fmtY); tile('th-min', 'th', 'min', fmtY); tile('th-drop', 'th', 'drop', fmtY);
   fill('rk-th', (el) => { const rm = one('rank_meta'); el.textContent = rm && rm.p98 ? '这 3 天一共 ' + rm.n + ' 条花了钱，P98 = 3 天 ' + fmtY(rm.p98) + '，P99 = 3 天 ' + fmtY(rm.p99) : '这天还没有排位'; });
