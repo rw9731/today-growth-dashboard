@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 import json
+import os
 from datetime import date, timedelta
 import re
 
@@ -74,7 +75,26 @@ def kol_source(src, name, ids):
     return ''
 
 
-def kol_items(hist, facts, week, end):
+def exec_map(agency_dir):
+    """星图执行表里每个达人的 use case 和报价（Reina 11/27：星图在执行表里都有方向，投放数据里常是「待对应」；回收要加达人价格）。
+    读排期任务存的 agency_read.js 结果：悦普执行表 5cypAT.json（name、uc、price）。唯西付费达人执行表 L1c0HC 有了也一样读（存成 L1c0HC.json，字段同名）。"""
+    out = {}
+    for f in ('5cypAT.json', 'L1c0HC.json'):
+        try:
+            d = json.load(open(os.path.join(agency_dir, f), encoding='utf-8'))
+        except (OSError, ValueError, TypeError):
+            continue
+        for r in d.get('rows', []):
+            name = (r.get('name') or '').strip()
+            if not name:
+                continue
+            m = re.search(r'[A-Z]{2}\d{2}', re.sub(r'^P5', 'PS', (r.get('uc') or '').upper().replace('Ｐ', 'P')))
+            price = re.sub(r'[^\d.]', '', r.get('price') or '')
+            out[name] = dict(uc=m.group(0) if m else '', price=round(float(price)) if price else None)
+    return out
+
+
+def kol_items(hist, facts, week, end, execs=None):
     """本周首花的达人原生素材，按 use case 归，给排期看板「本周达人素材回收」用。
     消耗、激活、次留按本周算（review_facts 里有的用它，没有的用逐日历史的累计）。"""
     facts = facts or {}
@@ -89,6 +109,11 @@ def kol_items(hist, facts, week, end):
             tag = kol_source(src, name, ids)
             if not tag:
                 continue
+            xt = next((compute.XT[i] for i in ids if i in compute.XT), None)
+            who = xt[1] if xt and len(xt) > 1 else ''
+            ex = (execs or {}).get(who.strip(), {}) if who else {}
+            uc = ex.get('uc') if u in ('待对应', '未标', '', '无') and ex.get('uc') else u  # 星图按执行表的方向归（投放数据里还是待对应的）
+            douyin = f'https://www.douyin.com/video/{xt[2]}' if xt and len(xt) > 2 and xt[2] else ''  # 星图链到达人抖音原帖，巨量签名链接 2 天就失效
             recs = [facts[i] for i in ids if i in facts]
             if recs:
                 cents, ret_cents = sum(f['cents'] for f in recs), sum(f['ret_cents'] for f in recs)
@@ -97,7 +122,7 @@ def kol_items(hist, facts, week, end):
             else:
                 cost, act, ret, c1 = (rest[2:6] + [0, 0, 0, 0])[:4]
                 cents, ret_cents, released = round(cost * 100), round(c1 * 100), first
-            out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=u, name=name, typ=tag, due='', produced='',
+            out.append(dict(id=ids[0], ids=sorted(ids), ref='', u=uc, name=name, typ=tag, due='', produced='', who=who, price=ex.get('price'), douyin=douyin,
                             released=released, first=first, cents=cents, ret_cents=ret_cents, act=act or 0, ret=ret or 0, up=None))
     out.sort(key=lambda x: (-x['cents'], x['first'], x['id']))
     return out

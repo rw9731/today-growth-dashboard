@@ -14,7 +14,7 @@ from collections import defaultdict
 
 from schedule_data import STABLE, flow, total_warn
 from schedule_entries import is_deferred, planned_entries
-from schedule_recovery import weekly_recovery, xingtu_items, kol_items, cut_week, cut_entries, cut_items, made_counts
+from schedule_recovery import weekly_recovery, xingtu_items, kol_items, exec_map, cut_week, cut_entries, cut_items, made_counts
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEEK = '一二三四五六日'
@@ -393,7 +393,7 @@ def with_links(rev):
         videos = (material_urls(links, mid, x['name'])[0] for mid in x['ids'])
         o = out_by_name.get(_nm(x['name']), {})
         # 没投放视频链接时，用唯西日报的视频，再不行用飞书排期里成片那格（Reina 11/20：消耗最高素材要能点开看片）
-        x['url'] = next((url for url in videos if url), '') or o.get('video') or o.get('link') or o.get('cell') or ''
+        x['url'] = x.get('douyin') or next((url for url in videos if url), '') or o.get('video') or o.get('link') or o.get('cell') or ''
     for x in rev.get('bad', []):
         x['url'] = material_urls(links, x['id'], x.get('name', ''))[0]
         if x.get('base'):
@@ -791,7 +791,7 @@ def main():
     review['items'] += xingtu_items(R.get('hist'), review['week'], review['end'])
     cut_rows, _ = cut_week(os.path.join(ROOT, 'notes', 'cut-items.json'), review['week'], review['end'])  # 原片精剪放进本周素材回收（Reina 11/23）
     review['items'] += cut_items(cut_rows, R.get('review_facts'), T)
-    kol = with_links(dict(week=review['week'], end=review['end'], through=review['through'], items=kol_items(R.get('hist'), R.get('review_facts'), review['week'], review['end'])))  # 本周达人素材回收（Reina 11/27）
+    kol = with_links(dict(week=review['week'], end=review['end'], through=review['through'], items=kol_items(R.get('hist'), R.get('review_facts'), review['week'], review['end'], exec_map(os.path.join(os.path.dirname(a.agency), 'agency') if a.agency else ''))))  # 本周达人素材回收（Reina 11/27）
     review['made'] = made_counts(weekly_plan, production, cut_rows, review['week'], T.isoformat())  # 实际完成进度（Reina 11/26）
     diagnostics = R.get('rev', {})
     review.update({k: diagnostics.get(k, default) for k, default in (('bad', []), ('nbad', 0), ('peak', []), ('npeak', 0))})
