@@ -1,6 +1,6 @@
 {
  "ZDT": {
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "items": [
    {
     "g": "ZDT",
@@ -1601,11 +1601,19 @@
     "uc": "LG00",
     "name": "知定堂_星广_账号未填_LG00_ZD-凤鸣-11.26-真人-5.mp4",
     "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STMyOQ"
+   },
+   {
+    "g": "ZDT",
+    "typ": "星广",
+    "d": "2026-11-26",
+    "uc": "LG01",
+    "name": "知定堂_星广_李笑六年之约_LG01_Today-1125-AI.mp4",
+    "link": "https://my.feishu.cn/wiki/RBAwwr8CRi8xBYkeqQyclodQnny?sheet=et1SeP&range=STkw"
    }
   ]
  },
  "YP": {
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "items": [
    {
     "g": "YP",
@@ -1842,7 +1850,7 @@
   ]
  },
  "AM": {
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "items": [
    {
     "g": "AM",
@@ -2727,7 +2735,7 @@
   ]
  },
  "YP_XHS": {
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "items": [
    {
     "g": "YP",
@@ -3340,7 +3348,7 @@
   ]
  },
  "SELF": {
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "items": [
    {
     "g": "SELF",
