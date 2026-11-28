@@ -5,6 +5,9 @@
 // A 组 https://ecn9dk42chzo.feishu.cn/wiki/O1kqwF3CqiguXQkNuTbcOew0nNc ：kMJdAv 每周新素材排期（11/23 前叫扩量素材迭代排期）、f18d7b 脚本及成片
 // B 组 https://ecn9dk42chzo.feishu.cn/wiki/UKghwNDuNiRtPRk82vwcwylwnAb ：3KtioB 扩量素材迭代排期、c665d9 脚本&成片、EnYgPG 真人素材和ai切片二剪
 const SINCE = '1109';
+// 文件名里的日期写错成以后的日子（11/28 A 组脚本及成片 1087 行等写成 20261226）就不用它，按这一行的日期算
+const __TODAY = String(new Date().getMonth() + 1).padStart(2, '0') + String(new Date().getDate()).padStart(2, '0');
+const __fdOk = (t) => { const f = __fd(t); return f && f <= __TODAY ? f : ''; };
 const __CFG = {
   kMJdAv: { g: 'A', kind: 'kx', file: '迭代素材成片' },
   '3KtioB': { g: 'B', kind: 'kx', file: '扩量素材名' },
@@ -47,7 +50,7 @@ if (__cfg.kind === 'kx') {
     if (!names.length) continue;
     const how = __txt(r, cHow) + ' ' + __txt(r, cBasis), ty = __txt(r, cTy), segs = __attS(r, cFile), vv = __var(__txt(r, cHow));
     for (const n0 of names) {
-      const n = __clean(n0), d2 = __fd(n) || day;
+      const n = __clean(n0), d2 = __fdOk(n) || day;
       if (!d2 || d2 < SINCE) continue;
       const t = /二创/.test(ty) || (!ty && /二创|KOC|KOL/i.test(n)) ? 'E' : 'A';
       __out.push([__cfg.g, __tab, r + 1, __L(cFile), d2, __txt(r, cUC).split('\n')[0].slice(0, 6), __txt(r, cSc).split('：')[0].slice(0, 24), __kindOf(n, how), t, n, vv, __tok(segs, n), __st(r)].join('\t'));
@@ -64,7 +67,7 @@ if (__cfg.kind === 'kx') {
     let names = __txt(r, cName).split(/\n/).map((x) => x.trim()).filter(ok); // 二剪表一格里常写好几条素材名
     if (!names.length) names = (files.length ? files : [__txt(r, cFile)]).map(__clean).filter(ok);
     for (const n0 of names) {
-      const n = __clean(n0), d2 = __fd(n) || __fd(files[0] || '') || day;
+      const n = __clean(n0), d2 = __fdOk(n) || __fdOk(files[0] || '') || day;
       if (!d2 || d2 < SINCE) continue;
       let uc = __txt(r, cUC).split('\n')[0].slice(0, 6); if (!uc) { const m = /(?:^|[^A-Za-z])([A-Z]{2}\d{2})(?!\d)/.exec(n); if (m) uc = m[1]; }
       const t = __cfg.kind === 'ec' || /二创|KOC|KOL/i.test(n) ? 'E' : 'A';
